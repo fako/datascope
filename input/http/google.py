@@ -5,6 +5,7 @@ from HIF.exceptions import WaitingForAPIResponse
 
 class GoogleImage(QueryLink, DataLinkMixin):
 
+    # HIF interface
     _link_type = 'GoogleImage'
     _link = 'https://www.googleapis.com/customsearch/v1' # updated at runtime
     _parameters = {
@@ -15,16 +16,18 @@ class GoogleImage(QueryLink, DataLinkMixin):
         "thumbnailLink": None,
     }
     _query_parameter = 'q'
-    _key = ''
-    _cx = ''
+
+    # Class attributes
+    key = ''
+    cx = ''
 
     def __init__(self, key='AIzaSyDf2Eop-euHJGF1oOalFz3cYYZtQkquU1o', cx='004613812033868156538:5pcwbuudj1m', *args, **kwargs):
-        self._key = key
-        self._cx = cx
+        self.key = key
+        self.cx = cx
         super(GoogleImage, self).__init__(*args, **kwargs)
 
     def enable_auth(self):
-        self.auth_link = self.link + unicode(('&key=%s&cx=%s' % (self._key, self._cx)))
+        self.auth_link = self.link + unicode(('&key={}&cx={}'.format(self.key, self.cx)))
 
     def extract_results(self):
         # Extract
