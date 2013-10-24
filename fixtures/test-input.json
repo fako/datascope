@@ -3,8 +3,8 @@
     "pk": 1, 
     "model": "HIF.datalink", 
     "fields": {
-        "hibernation": false, 
-        "link": "http://localhost:8000/test/", 
+        "hibernation": true,
+        "link": "http://localhost:8000/test-db/",
         "response": "{\"response_from_db\": \"test\"}",
         "link_type": "DataLink"
     }

@@ -56,13 +56,13 @@ class DataLink(models.Model):
             self.continue_request()
             self.store_response()
 
-            self.extract_results()
-            self.translate_results()
+            self.results = self.extract_results()
+            self.results = self.translate_results()
             self.results = filter(self.cleaner,self.results)
 
         except DbResponse:
-            self.extract_results()
-            self.translate_results()
+            self.results = self.extract_results()
+            self.results = self.translate_results()
             self.results = filter(self.cleaner,self.results)
 
             return self.results
@@ -78,7 +78,7 @@ class DataLink(models.Model):
     def send_request(self):
         try:
             # Get link from db.
-            db_link = DataLink.objects.get(link=self.link)
+            db_link = DataLink.objects.get(link=self.auth_link)
             # Copy all Django fields from database to self
             for field in db_link._meta.fields:
                 if hasattr(self,field.name):
@@ -103,7 +103,7 @@ class DataLink(models.Model):
         return False
 
     def extract_results(self):
-        pass
+        return self.results
 
     def translate_results(self):
         if self._translations:
@@ -112,6 +112,7 @@ class DataLink(models.Model):
                     if k in r: # if a key that needs translation is found
                         r[v] = r[k] # make a new pair in result with the translated key as key
                         del(r[k]) # delete the old key/value pair
+        return self.results
 
     def hibernate(self):
         if self.results:
