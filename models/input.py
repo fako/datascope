@@ -10,6 +10,7 @@ class DataLink(models.Model):
     link = models.URLField()
     link_type = models.CharField(max_length=256)
     response = models.TextField()
+    response_status = models.IntegerField() # error or success code
     hibernation = models.BooleanField(default=False)
 
     # Class attributes
@@ -38,7 +39,7 @@ class DataLink(models.Model):
     # Abstract interface
 
     # Main function.
-    # Returns an iterator with results coming from DataLink
+    # Returns a list with results coming from link
     def get(self, refresh=False):
 
         try:

@@ -1,6 +1,6 @@
 
 # INPUT
-from input.http.hif import *
+from input.http.base import *
 
 # MODELS
 from models.input import *

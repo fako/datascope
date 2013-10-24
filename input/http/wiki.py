@@ -5,10 +5,7 @@ from HIF.processors.extractors import json_extractor
 class WikiLink(QueryLink, DataLinkMixin):
 
     def extract_results(self):
-        self.results = json_extractor(self.response, self._objective)
-
-    def handle_error(self):
-        pass
+        return json_extractor(self.response, self._objective)
 
     def continue_request(self):
         pass

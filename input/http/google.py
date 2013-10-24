@@ -31,7 +31,7 @@ class GoogleImage(QueryLink, DataLinkMixin):
 
     def extract_results(self):
         # Extract
-        self.results = json_extractor(self.response, self._objective)
+        return json_extractor(self.response, self._objective)
 
     def handle_error(self):
         # Extract and clean error response

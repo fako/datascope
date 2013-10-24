@@ -20,6 +20,7 @@ class TestDataLink(TestCase):
         }
         cls.init_dict = {
             "response": json.dumps(cls.test_response),
+            "response_status": 0,
             "hibernation": False,
             "link": "http://localhost:8000/test/",
             "link_type": "DataLink"

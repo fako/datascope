@@ -6,6 +6,7 @@
         "hibernation": true,
         "link": "http://localhost:8000/test-db/",
         "response": "{\"response_from_db\": \"test\"}",
+        "response_status": 0,
         "link_type": "DataLink"
     }
 }
