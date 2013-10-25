@@ -2,7 +2,7 @@ import json
 
 from django.db import models
 
-from HIF.exceptions import WaitingForAPIResponse
+from HIF.exceptions import HIFDataLinkPending
 
 
 class DataProcess(models.Model):
@@ -75,6 +75,6 @@ class DataProcess(models.Model):
                     self.ready = True
                     self.save()
                 return self.results
-        except WaitingForAPIResponse:
+        except HIFDataLinkPending:
             self.hibernate()
             return None

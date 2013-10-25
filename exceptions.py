@@ -1,11 +1,17 @@
-class DbResponse(Exception):
+# MODELS
+class HIFDBResponse(Exception):
     pass
 
-class WaitingForAPIResponse(Exception):
+
+# INPUT
+class HIFInputError(Exception):
     pass
 
-class WarningImproperUsageLinkPool(Exception):
+class HIFHTTPError50X(HIFInputError):
     pass
 
-class DataProcessCompleted(Exception):
+class HIFHTTPError40X(HIFInputError):
+    pass
+
+class HIFDataLinkPending(HIFInputError):
     pass

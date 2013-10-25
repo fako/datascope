@@ -1,5 +1,5 @@
 from HIF.models import DataLinkMixin
-from HIF.input.http.hif import QueryLink
+from HIF.input.http.base import QueryLink
 from HIF.processors.extractors import json_extractor
 
 class WikiLink(QueryLink, DataLinkMixin):

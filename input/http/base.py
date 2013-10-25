@@ -1,6 +1,7 @@
 import requests
 
 from HIF.models import DataLink, DataLinkMixin
+from HIF.exceptions import HIFHTTPError50X, HIFHTTPError40X
 
 
 class HTTPLink(DataLink, DataLinkMixin):
@@ -29,9 +30,17 @@ class HTTPLink(DataLink, DataLinkMixin):
         self.response = response.content
         self.response_status = response.status_code
 
+    # When getting an error message
+    # This function expects to get a dict
     def handle_error(self):
-        # TODO: catch error response statuses here
-        pass
+        if self.response_status >= 500:
+            message = "{} > {} \n\n {}".format(self._link_type, self.response_status,self.response)
+            raise HIFHTTPError50X(message)
+        elif self.response_status >= 400:
+            message = "{} > {} \n\n {}".format(self._link_type, self.response_status,self.response)
+            raise HIFHTTPError40X(message)
+        else:
+            return True
 
 
 class QueryLink(HTTPLink):

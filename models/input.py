@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.db import models
 
-from HIF.exceptions import DbResponse
+from HIF.exceptions import HIFDBResponse
 
 
 class DataLink(models.Model):
@@ -61,7 +61,7 @@ class DataLink(models.Model):
             self.results = self.translate_results()
             self.results = filter(self.cleaner,self.results)
 
-        except DbResponse:
+        except HIFDBResponse:
             self.results = self.extract_results()
             self.results = self.translate_results()
             self.results = filter(self.cleaner,self.results)
@@ -85,7 +85,7 @@ class DataLink(models.Model):
                 if hasattr(self,field.name):
                     setattr(self,field.name,getattr(db_link,field.name))
             # Change flow for db result cases
-            raise DbResponse
+            raise HIFDBResponse
         except DataLink.DoesNotExist:
             pass
 

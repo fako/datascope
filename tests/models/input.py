@@ -4,7 +4,7 @@ from mock import Mock
 
 from django.test import TestCase
 from HIF.models.input import DataLink
-from HIF.exceptions import DbResponse
+from HIF.exceptions import HIFDBResponse
 
 
 class TestDataLink(TestCase):
@@ -110,7 +110,7 @@ class TestDataLink(TestCase):
 
         # Mock functions
         def raise_db_response():
-            raise DbResponse
+            raise HIFDBResponse
 
         # Setup class
         data_link = DataLink(**self.init_dict)
@@ -133,7 +133,7 @@ class TestDataLink(TestCase):
         data_link = DataLink(**self.init_dict)
         try:
             data_link.send_request()
-        except DbResponse:
+        except HIFDBResponse:
             self.fail()
         self.assertFalse(data_link.hibernation)
 
@@ -143,7 +143,7 @@ class TestDataLink(TestCase):
         try:
             data_link.send_request()
             self.fail()
-        except DbResponse:
+        except HIFDBResponse:
             pass
         self.assertTrue(data_link.hibernation)
 
