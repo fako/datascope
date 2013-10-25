@@ -48,8 +48,12 @@ class QueryLink(HTTPLink):
     _query_parameter = ''
     _query = 'test'
 
-    def get(self, query, refresh=False, *args, **kwargs):
+    def has_db(self, query, *args, **kwargs):
         self._query = query # included through prepare_link()
+        super(QueryLink,self).has_db(*args, **kwargs)
+
+
+    def get(self, query, refresh=False, *args, **kwargs):
         super(QueryLink, self).get(*args, **kwargs)
         return self.results
 

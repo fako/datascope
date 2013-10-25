@@ -2,8 +2,6 @@ import json
 
 from django.db import models
 
-from HIF.exceptions import HIFDataLinkPending
-
 
 class DataProcess(models.Model):
 
@@ -13,7 +11,6 @@ class DataProcess(models.Model):
     results = models.TextField(null=True,default='')
     ready = models.BooleanField(default=False)
 
-    link_pool = []
     initial = None
 
     def hibernate(self):
@@ -55,8 +52,14 @@ class DataProcess(models.Model):
         return None
 
     # This is a function to extend.
-    # It should return the results or None when they are not there yet.
-    # It should make use of self.initial for getting the initial data to work on.
+    # It should start Celery to fetch all data
+    # Returns True when all data is there or False when it isn't
+    def fetch(self, *args, **kwargs):
+        return False
+
+    # This is a function to extend.
+    # It should return the results from processing
+    # It assumes fetch has gathered all data
     def process(self, *args, **kwargs):
         return None
 
@@ -64,17 +67,27 @@ class DataProcess(models.Model):
         # Set arguments in model
         self.args = json.dumps(list(args))
         self.kwargs = json.dumps(dict(kwargs))
-        try:
-            self.awake() # gets hibernating processes from the db.
-            if self.ready:
-                return self.results
-            else:
-                if not self.initial: self.initialize(*args,**kwargs)
-                self.results = self.process()
-                if self.results is not None:
-                    self.ready = True
-                    self.save()
-                return self.results
-        except HIFDataLinkPending:
+
+        # gets hibernating processes from the db.
+        self.awake()
+        # return when we have results already
+        if self.results:
+            return self.results
+        # start with initial if it is not there
+        if not self.initial:
+            self.initialize(*args,**kwargs)
+        # fetch data
+        if self.fetch():
+            # process data if it is there
+            self.ready = True
+            self.results = self.process()
+            self.save()
+            return self.results
+        else:
+            # hibernate as long as data is incomplete
             self.hibernate()
             return None
+
+    class Meta:
+        db_table = "HIF_dataprocess"
+        app_label = "HIF"

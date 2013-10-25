@@ -2,7 +2,7 @@ from django.conf import settings
 from django.db import models
 
 from HIF.exceptions import HIFDBResponse
-
+from HIF.models.processors import DataProcess
 
 class DataLink(models.Model):
 
@@ -12,11 +12,13 @@ class DataLink(models.Model):
     response = models.TextField()
     response_status = models.IntegerField() # error or success code
     hibernation = models.BooleanField(default=False)
+    processes = models.ManyToManyField(DataProcess)
 
     # Class attributes
     auth_link = ''
     cache = False
     results = []
+    db = None
 
     # HIF interface attributes
     _link_type = 'DataLink'
@@ -36,11 +38,23 @@ class DataLink(models.Model):
     def __iter__(self):
         return iter(self.results)
 
-    # Abstract interface
+    # Interface
+
+    # Check whether a certain link exists in the database.
+    def has_db(self, *args, **kwargs):
+        if self.db:
+            return self.db
+        if not self.auth_link:
+            self.enable_auth()
+        try:
+            self.db = DataLink.objects.get(link=self.auth_link)
+            return self.db
+        except DataLink.DoesNotExist:
+            return False
 
     # Main function.
     # Returns a list with results coming from link
-    def get(self, refresh=False):
+    def get(self, refresh=False, *args, **kwargs):
 
         try:
             # Early exit if results are already there.
@@ -52,7 +66,7 @@ class DataLink(models.Model):
             # Get recipe
             self.prepare_link()
             self.enable_auth()
-            self.send_request()
+            self.send_request(*args, **kwargs)
             self.handle_error()
             self.continue_request()
             self.store_response()
@@ -76,20 +90,18 @@ class DataLink(models.Model):
     def enable_auth(self):
         self.auth_link = self.link
 
-    def send_request(self):
-        try:
-            # Get link from db.
-            db_link = DataLink.objects.get(link=self.auth_link)
-            # Copy all Django fields from database to self
-            for field in db_link._meta.fields:
+    def send_request(self, *args, **kwargs):
+        # Check whether link was already fetched
+        db = self.has_db(*args, **kwargs)
+        # Copy all Django fields from database to self if available
+        if db:
+            for field in db._meta.fields:
                 if hasattr(self,field.name):
-                    setattr(self,field.name,getattr(db_link,field.name))
+                    setattr(self,field.name,getattr(db,field.name))
             # Change flow for db result cases
             raise HIFDBResponse
-        except DataLink.DoesNotExist:
-            pass
-
-        return True
+        else:
+            return True
 
     def handle_error(self):
         pass
