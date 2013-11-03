@@ -17,8 +17,6 @@ class Status(object):
 
 class Process(ProcessStorage):
 
-    _async = False
-
     # This functions indicates Celery's process
     def ready(self):
         if self.task:
@@ -47,7 +45,6 @@ class Process(ProcessStorage):
         # gets hibernating processes from the db.
         try:
             self.load()
-            import ipdb; ipdb.set_trace()
             print "Loaded from cache: {}".format(self.identifier)
         except HIFCouldNotLoadFromStorage:
             pass

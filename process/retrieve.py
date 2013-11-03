@@ -3,8 +3,14 @@ from HIF.exceptions import HIFHttpError40X, HIFHttpError50X, HIFHttpLinkPending,
 
 
 class Retrieve(Process):
-    link_class = None
+
     links = []
+
+    _props = ["link"]
+
+    def execute(self,*args,**kwargs):
+        args = args + (self.props.link().__class__.__name__,)
+        super(Retrieve, self).execute(*args,**kwargs)
 
     def extract_continue_url(self, link):
         return ''
@@ -12,7 +18,7 @@ class Retrieve(Process):
     def continue_link(self, link):
         continue_url = self.extract_continue_url(link)
         if continue_url:
-            continuation = self.link_class(*self.args, **self.kwargs)
+            continuation = self.props(props=self.kwargs)
             continuation.identifier = continue_url
             continuation.auth_link = continue_url
             continuation.setup = False
@@ -20,17 +26,8 @@ class Retrieve(Process):
         else:
             raise HIFEndOfInput
 
-    def __init__(self, *args, **kwargs):
-        try:
-            self.link_class = kwargs["target"]
-            del(kwargs["target"])
-        except KeyError:
-            pass
-        super(Retrieve, self).__init__(*args,**kwargs)
-
-
     def process(self):
-        link = self.link_class(*self.args, **self.kwargs)
+        link = self.props.link(props=self.kwargs)
         try:
             while True:
                 self.links.append(link)

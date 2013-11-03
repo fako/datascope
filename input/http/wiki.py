@@ -19,11 +19,13 @@ class WikiTranslate(JsonQueryLink):
         "*": "translation"
     }
     _query_parameter = 'titles'
+    _props = ["query", "source_language", "translate_to"]
+    _props_namespace = "wiki"
 
-    def __init__(self, source=None, destination=None, *args, **kwargs):
-        super(WikiTranslate, self).__init__(*args, **kwargs)
-        self._link = self._link.format(source)
-        self._parameters['iwprefix'] = destination
+    def prepare_link(self, *args, **kwargs):
+        self._link = self._link.format(self.props.source_language)
+        self._parameters['iwprefix'] = self.props.translate_to
+        super(WikiTranslate, self).prepare_link(*args, **kwargs)
 
     class Meta:
         proxy = True

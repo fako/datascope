@@ -46,6 +46,7 @@ class HttpLink(HttpStorage):
         try:
             self.load()
             if self.success(): # early return when previously fetched with success
+                print "Returning link from storage"
                 return self
         except HIFCouldNotLoadFromStorage:
             pass
@@ -82,6 +83,7 @@ class HttpLink(HttpStorage):
         Does a get on the computed link
         Will set storage fields to returned values
         """
+        print "Doing request"
         response = requests.get(self.auth_link, headers=self.request_headers)
         self.head = json.dumps(dict(response.headers), indent=4)
         self.body = response.content
@@ -117,21 +119,13 @@ class HttpQueryLink(HttpLink):
 
     # HIF attributes
     _query_parameter = ''
-
-    def __init__(self, *args, **kwargs):
-        try:
-            self._query = kwargs["query"] # included through prepare_link()
-            del(kwargs["query"])
-        except KeyError:
-            self._query = "HIF"
-        super(HttpQueryLink, self).__init__(*args, **kwargs)
-
+    _props = ["query"]
 
     def prepare_link(self, *args, **kwargs):
         """
         Adds query parameter to _parameters
         """
-        self._parameters[self._query_parameter] = self._query
+        self._parameters[self._query_parameter] = self.props.query
         super(HttpQueryLink, self).prepare_link(*args, **kwargs)
 
     class Meta:

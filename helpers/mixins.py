@@ -1,6 +1,47 @@
 from django.db import models
 
 from HIF.helpers.extractors import json_extractor
+from HIF.models.settings import Domain
+
+
+class Props(object):
+
+    def __init__(self, namespace):
+        super(Props, self).__init__()
+        self.domain = Domain()
+        self.namespace = namespace
+
+    def __getattr__(self, item):
+        return getattr(self.domain, self.namespace + '_' + item)
+
+
+class PropsMixin(object):
+
+    def __init__(self, *args, **kwargs):
+        # Default
+        props = {}
+        # Parse args
+        try:
+            props = args[0]
+            if not isinstance(props, dict):
+                props = {}
+            else:
+                args = args[1:]
+        except IndexError:
+            pass
+        # Parse kwargs
+        try:
+            if not props:
+                props = kwargs["props"]
+            del(kwargs["props"])
+        except KeyError:
+            pass
+        # Super and set props as attributes
+        super(PropsMixin, self).__init__(*args, **kwargs)
+        self.props = Props(self._props_namespace)
+        for key,value in props.iteritems():
+            if key in self._props:
+                setattr(self.props,key,value)
 
 
 class DataMixin(object):

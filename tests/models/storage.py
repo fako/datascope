@@ -27,8 +27,7 @@ class TestHttpStorage(TestCase):
 
     def test_http_query_load(self):
         init = dict(self.init_dict)
-        init["query"] = "HIF"
-        link = HttpQueryLink(**init)
+        link = HttpQueryLink({"query": "HIF"}, **init)
         link.load()
         self.assertEqual(link.body,"Test query body")
         self.assertEqual(link.head,"Test query head")
@@ -36,8 +35,7 @@ class TestHttpStorage(TestCase):
 
     def test_http_no_results(self):
         init = dict(self.init_dict)
-        init["query"] = "HIF"
-        link = HttpQueryLink(**init)
+        link = HttpQueryLink({"query": "HIF"}, **init)
         link.identifier = "http://localhost:8000/test/test/"
         try:
             link.load()

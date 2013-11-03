@@ -3,3 +3,5 @@
 class Domain(object):
     google_key = 'AIzaSyDf2Eop-euHJGF1oOalFz3cYYZtQkquU1o'
     google_cx = '004613812033868156538:5pcwbuudj1m'
+    wiki_source_language = 'en'
+    wiki_translate_to = 'pt'
