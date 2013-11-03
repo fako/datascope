@@ -17,8 +17,8 @@ class Storage(models.Model):
     cached indicates whether the storage happened for performance reasons
     """
     identifier = models.CharField(max_length=256)
-    type = models.CharField(max_length=256)
-    status = models.IntegerField(default=0) # error or success code
+    type = models.CharField(max_length=256, blank=True)
+    status = models.IntegerField(default=0) # error or success code, 0 means Status.NONE
 
     hibernating = models.NullBooleanField()
     cached = models.NullBooleanField()
@@ -39,6 +39,7 @@ class Storage(models.Model):
             self.identifier = identifier
 
         # Database lookup
+        #import ipdb; ipdb.set_trace()
         try:
             model = self.__class__.objects.get(identifier=self.identifier,type=self.type)
         except ObjectDoesNotExist:
@@ -73,7 +74,7 @@ class ProcessStorage(Storage):
     This model adds those fields to the database
     ProcessStorage is a concrete model
     """
-    results = models.TextField()
+    results = models.TextField(null=True, blank=True)
     task = models.CharField(max_length=256)
     processes = models.ManyToManyField("ProcessStorage")
 

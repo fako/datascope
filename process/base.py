@@ -1,55 +1,35 @@
 import json
 
-from django.db import models
-
 from celery.result import AsyncResult
 
+from HIF.models.storage import ProcessStorage
+from HIF.exceptions import HIFCouldNotLoadFromStorage
 
-class DataProcessTemp(models.Model):
 
-    args = models.CharField(max_length=256)
-    kwargs = models.CharField(max_length=256)
-    task_id = models.CharField(max_length=256)
-    results = models.TextField(null=True,default='')
-    hibernation = models.BooleanField()
+class Status(object):
+    NONE = 0
+    DONE = 1
+    PROCESSING = -1
+    WAITING = -2
+    EXTERNAL_SERVER_ERROR = -3
+    EXTERNAL_REQUEST_ERROR = -4
 
-    def hibernate(self):
-        # Hibernate all DataLink objects in the datalink_set for future reference.
-        for link in self.datalink_set.all():
-            link.hibernate()
 
-        # Set hibernation flag
-        self.hibernation = True
+class Process(ProcessStorage):
 
-        # Save self to database for later resurrection
-        self.save()
-
-    def awake(self):
-        try:
-            # Get process from db based on arguments given to execute.
-            db_process = DataProcess.objects.get(args=self.args,kwargs=self.kwargs)
-
-            # Copy all Django fields from database to self
-            for field in db_process._meta.fields:
-                if hasattr(self,field.name):
-                    setattr(self,field.name,getattr(db_process,field.name))
-
-            # Return True to indicate awakening
-            return True
-
-        except DataProcess.DoesNotExist:
-            return False
+    _async = False
 
     # This functions indicates Celery's process
-    def ready(self, *args, **kwargs):
-        if self.task_id:
-            return AsyncResult(self.task_id).ready()
+    def ready(self):
+        if self.task:
+            return AsyncResult(self.task).ready()
         else:
-            return False
+            return self.status == Status.DONE
 
     # This is a function to extend
     # It starts the tasks necessary to do the processing
-    def process(self):
+    # It should store the celery task_id into task
+    def process(self, *args, **kwargs):
         return False
 
     # This is a function to extend.
@@ -58,21 +38,38 @@ class DataProcessTemp(models.Model):
         return None
 
     def execute(self, *args, **kwargs):
-        # Set arguments in model
-        self.args = json.dumps(list(args))
-        self.kwargs = json.dumps(dict(kwargs))
+        # Set arguments as identifier
+        self.identifier = json.dumps(args) + ' | ' + json.dumps(kwargs)
+        print "Executing with {}".format(self.identifier)
+        self.args = args
+        self.kwargs = kwargs
 
         # gets hibernating processes from the db.
-        self.awake()
-        if self.ready(): # processing done, store it
-            self.post_process()
-            return self.results
-        elif not self.task_id: # processing hasn't started
+        try:
+            self.load()
+            import ipdb; ipdb.set_trace()
+            print "Loaded from cache: {}".format(self.identifier)
+        except HIFCouldNotLoadFromStorage:
+            pass
+
+        # Process according to state
+        if not self.ready() and self.status == Status.NONE:
+            print "Started processing"
+            self.status = Status.PROCESSING
             self.process()
-            return True
-        else: # processing busy
-            return False
+
+        if self.ready() and not self.results: # processing done, store it
+            print "Processing done, post processing"
+            results = self.post_process()
+            self.results = json.dumps(results)
+            self.status = Status.DONE
+            return results
+        elif self.task: # Celery process busy
+            print "Celery busy"
+            return self.status == Status.PROCESSING
+        else:
+            print "Returning stored results"
+            return self.results
 
     class Meta:
-        db_table = "HIF_dataprocess"
-        app_label = "HIF"
+        proxy = True

@@ -3,6 +3,7 @@ from django.test import TestCase
 from HIF.input.http.links import HttpLink, HttpQueryLink
 from HIF.exceptions import HIFCouldNotLoadFromStorage
 
+
 class TestHttpStorage(TestCase):
     fixtures = ['test-storage']
 
@@ -25,14 +26,18 @@ class TestHttpStorage(TestCase):
         self.assertEqual(link.type,"HttpLink")
 
     def test_http_query_load(self):
-        link = HttpQueryLink(**self.init_dict)
+        init = dict(self.init_dict)
+        init["query"] = "HIF"
+        link = HttpQueryLink(**init)
         link.load()
         self.assertEqual(link.body,"Test query body")
         self.assertEqual(link.head,"Test query head")
         self.assertEqual(link.type,"HttpQueryLink")
 
     def test_http_no_results(self):
-        link = HttpQueryLink(**self.init_dict)
+        init = dict(self.init_dict)
+        init["query"] = "HIF"
+        link = HttpQueryLink(**init)
         link.identifier = "http://localhost:8000/test/test/"
         try:
             link.load()

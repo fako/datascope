@@ -1,4 +1,4 @@
-import requests
+import json, requests
 
 from HIF.exceptions import HIFCouldNotLoadFromStorage, HIFHttpError40X, HIFHttpError50X
 from HIF.models.storage import HttpStorage
@@ -11,6 +11,7 @@ class HttpLink(HttpStorage):
     auth_link = ''
     cache = False
     request_headers = {}
+    setup = True
 
     # HIF interface attributes
     _parameters = {}
@@ -36,9 +37,10 @@ class HttpLink(HttpStorage):
             self.body = ""
             self.status = 0
 
-        # Prepare to do a get
-        self.prepare_link()
-        self.enable_auth()
+        # Prepare to do a get if necessary in context
+        if self.setup:
+            self.prepare_link()
+            self.enable_auth()
 
         # Try a load from database just before making request
         try:
@@ -81,7 +83,7 @@ class HttpLink(HttpStorage):
         Will set storage fields to returned values
         """
         response = requests.get(self.auth_link, headers=self.request_headers)
-        self.head = response.headers
+        self.head = json.dumps(dict(response.headers), indent=4)
         self.body = response.content
         self.status = response.status_code
 
@@ -113,15 +115,17 @@ class HttpLink(HttpStorage):
 
 class HttpQueryLink(HttpLink):
 
-    # Class attributes
-    query = 'HIF'
-
     # HIF attributes
     _query_parameter = ''
 
-    def get(self, query, refresh=False, *args, **kwargs):
-        self._query = query # included through prepare_link()
-        return super(HttpQueryLink, self).get(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        try:
+            self._query = kwargs["query"] # included through prepare_link()
+            del(kwargs["query"])
+        except KeyError:
+            self._query = "HIF"
+        super(HttpQueryLink, self).__init__(*args, **kwargs)
+
 
     def prepare_link(self, *args, **kwargs):
         """

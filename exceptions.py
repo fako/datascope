@@ -14,3 +14,6 @@ class HIFHttpError40X(HIFInputError):
 
 class HIFHttpLinkPending(HIFInputError):
     pass
+
+class HIFEndOfInput(Exception):
+    pass
