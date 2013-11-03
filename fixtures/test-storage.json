@@ -1,0 +1,41 @@
+[
+{
+    "pk": 1, 
+    "model": "HIF.textstorage", 
+    "fields": {
+        "status": 0, 
+        "body": "Test body", 
+        "head": "Test head",
+        "cached": null, 
+        "hibernating": null, 
+        "identifier": "http://localhost:8000/test/", 
+        "type": "HttpLink"
+    }
+},
+{
+    "pk": 2,
+    "model": "HIF.textstorage",
+    "fields": {
+        "status": 0,
+        "body": "Test query body",
+        "head": "Test query head",
+        "cached": null,
+        "hibernating": null,
+        "identifier": "http://localhost:8000/test/",
+        "type": "HttpQueryLink"
+    }
+},
+{
+    "pk": 3,
+    "model": "HIF.textstorage",
+    "fields": {
+        "status": 0,
+        "body": "Test another body",
+        "head": "Test another head",
+        "cached": null,
+        "hibernating": null,
+        "identifier": "http://localhost:8000/test/test/",
+        "type": "HttpLink"
+    }
+}
+]

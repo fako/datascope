@@ -1,13 +1,13 @@
 from django.contrib import admin
 
-from HIF.models import DataLink, DataProcess
+from HIF.models import TextStorage, ProcessStorage
 
 
-class DataLinkAdmin(admin.ModelAdmin):
-    list_display = ['__unicode__','response']
+class TextStorageAdmin(admin.ModelAdmin):
+    list_display = ['__unicode__','head','body']
 
-class DataProcessAdmin(admin.ModelAdmin):
-    list_display = ['args','kwargs','results']
+class ProcessStorageAdmin(admin.ModelAdmin):
+    list_display = ['__unicode__','results']
 
-admin.site.register(DataLink, DataLinkAdmin)
-admin.site.register(DataProcess, DataProcessAdmin)
+admin.site.register(TextStorage, TextStorageAdmin)
+admin.site.register(ProcessStorage, ProcessStorageAdmin)

@@ -1,6 +1,13 @@
 import json
 
 def extractor(target, objective):
+    """
+    This function takes a data construct and a dictionary
+    From the data it tries to create instances like dictionary
+    Whenever it encounters a key from the dict in the data it will initiate a new copy of dict
+    And fill the rest of the keys with values coming from the same keys present in data construct.
+    """
+
     # Result list to return
     results = []
 
@@ -13,7 +20,8 @@ def extractor(target, objective):
         elif isinstance(target, dict):
             result = {}
             for k in target.iterkeys():
-                # When a key in target is an objective and there is no result yet, create default result from objective and override found key
+                # When a key in target is an objective and there is no result yet, create default result from objective
+                # and override found key
                 if k in objective and not result:
                     result = dict(objective)
                     result[k] = target[k]
@@ -34,5 +42,8 @@ def extractor(target, objective):
     return results
 
 def json_extractor(json_string, objective):
+    """
+    This function turns a JSON string into python data and passes it to extractor()
+    """
     target_dict = json.loads(json_string)
     return extractor(target_dict, objective)

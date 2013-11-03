@@ -1,17 +1,16 @@
-# MODELS
-class HIFDBResponse(Exception):
+# Storage
+class HIFCouldNotLoadFromStorage(Exception):
     pass
-
 
 # INPUT
 class HIFInputError(Exception):
     pass
 
-class HIFHTTPError50X(HIFInputError):
+class HIFHttpError50X(HIFInputError):
     pass
 
-class HIFHTTPError40X(HIFInputError):
+class HIFHttpError40X(HIFInputError):
     pass
 
-class HIFDataLinkPending(HIFInputError):
+class HIFHttpLinkPending(HIFInputError):
     pass

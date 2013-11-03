@@ -1,16 +1,13 @@
-from HIF.models import DataLinkMixin
-from HIF.input.http.base import QueryLink
-from HIF.processors.extractors import json_extractor
-from HIF.exceptions import HIFHTTPError40X, HIFDataLinkPending
+from HIF.input.http.links import JsonQueryLink
 from HIF.models.settings import Domain
+from HIF.exceptions import HIFHttpError40X, HIFHttpLinkPending
 
 DOMAIN = Domain()
 
-class GoogleImage(QueryLink, DataLinkMixin):
+class GoogleImage(JsonQueryLink):
 
     # HIF interface
-    _link_type = 'GoogleImage'
-    _link = 'https://www.googleapis.com/customsearch/v1' # updated at runtime
+    _link = 'https://www.googleapis.com/customsearch/v1'
     _parameters = {
         'searchType':'image',
     }
@@ -32,18 +29,11 @@ class GoogleImage(QueryLink, DataLinkMixin):
     def enable_auth(self):
         self.auth_link = self.link + unicode(('&key={}&cx={}'.format(self.key, self.cx)))
 
-    def extract_results(self):
-        # Extract
-        return json_extractor(self.response, self._objective)
-
     def handle_error(self):
         try:
             return super(GoogleImage,self).handle_error()
-        except HIFHTTPError40X, exception:
-            if self.response_status == 403:
-                raise HIFDataLinkPending(exception.message)
+        except HIFHttpError40X, exception:
+            if self.status == 403:
+                raise HIFHttpLinkPending(exception.message)
             else:
                 raise exception
-
-    def continue_request(self):
-        pass

@@ -1,9 +1,12 @@
+# HELPERS
+from HIF.tests.helpers.extractors import *
+from HIF.tests.helpers.mixins import *
 
 # INPUT
-from input.http.base import *
+from input.http.links import *
 
-# MODELS
-from models.input import *
+# STORAGE
+from HIF.tests.models.storage import *
 
 # PROCESSORS
-from processors.extractors import *
+

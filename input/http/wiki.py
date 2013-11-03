@@ -1,19 +1,8 @@
-from HIF.models import DataLinkMixin
-from HIF.input.http.base import QueryLink
-from HIF.processors.extractors import json_extractor
-
-class WikiLink(QueryLink, DataLinkMixin):
-
-    def extract_results(self):
-        return json_extractor(self.response, self._objective)
-
-    def continue_request(self):
-        pass
+from HIF.input.http.links import JsonQueryLink
 
 
-class WikiTranslate(WikiLink, DataLinkMixin):
+class WikiTranslate(JsonQueryLink):
 
-    _link_type = 'WikiTranslate'
     _link = 'http://%s.wiktionary.org/w/api.php' # updated at runtime
     _parameters = {
         'format':'json',
