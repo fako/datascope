@@ -1,4 +1,4 @@
-from HIF.input.http.links import JsonQueryLink
+from HIF.input.http.core import JsonQueryLink
 
 
 class WikiTranslate(JsonQueryLink):
@@ -19,12 +19,12 @@ class WikiTranslate(JsonQueryLink):
         "*": "translation"
     }
     _query_parameter = 'titles'
-    _props = ["query", "source_language", "translate_to"]
-    _props_namespace = "wiki"
+    _config = ["query", "source_language", "translate_to"]
+    _config_namespace = "wiki"
 
     def prepare_link(self, *args, **kwargs):
-        self._link = self._link.format(self.props.source_language)
-        self._parameters['iwprefix'] = self.props.translate_to
+        self._link = self._link.format(self.config.source_language)
+        self._parameters['iwprefix'] = self.config.translate_to
         super(WikiTranslate, self).prepare_link(*args, **kwargs)
 
     class Meta:

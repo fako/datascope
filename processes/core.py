@@ -37,7 +37,7 @@ class Process(ProcessStorage):
 
     def execute(self, *args, **kwargs):
         # Set arguments as identifier
-        self.identifier = json.dumps(args) + ' | ' + json.dumps(kwargs)
+        self.identifier = str([str(arg) for arg in args]) + ' | ' + str(kwargs)
         print "Executing with {}".format(self.identifier)
         self.args = args
         self.kwargs = kwargs
@@ -63,10 +63,10 @@ class Process(ProcessStorage):
             return results
         elif self.task: # Celery process busy
             print "Celery busy"
-            return self.status == Status.PROCESSING
+            return []
         else:
             print "Returning stored results"
-            return self.results
+            return json.loads(self.results)
 
     class Meta:
         proxy = True

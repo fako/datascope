@@ -1,16 +1,15 @@
-from HIF.process.base import Process, Status
-from HIF.exceptions import HIFHttpError40X, HIFHttpError50X, HIFHttpLinkPending, HIFEndOfInput
+from HIF.processes.core import Process, Status
+from HIF.exceptions import HIFHttpError40X, HIFHttpError50X, HIFHttpLinkPending, HIFEndOfInput, HIFEndlessLoop
 
 
 class Retrieve(Process):
 
     links = []
-
-    _props = ["link"]
+    class_link = None
 
     def execute(self,*args,**kwargs):
-        args = args + (self.props.link().__class__.__name__,)
-        super(Retrieve, self).execute(*args,**kwargs)
+        self.class_link = args[0]
+        return super(Retrieve, self).execute(*args,**kwargs)
 
     def extract_continue_url(self, link):
         return ''
@@ -18,7 +17,7 @@ class Retrieve(Process):
     def continue_link(self, link):
         continue_url = self.extract_continue_url(link)
         if continue_url:
-            continuation = self.props(props=self.kwargs)
+            continuation = self.class_link(config=self.kwargs)
             continuation.identifier = continue_url
             continuation.auth_link = continue_url
             continuation.setup = False
@@ -27,12 +26,14 @@ class Retrieve(Process):
             raise HIFEndOfInput
 
     def process(self):
-        link = self.props.link(props=self.kwargs)
+        link = self.class_link(config=self.kwargs)
         try:
-            while True:
+            for repetition in range(100):
                 self.links.append(link)
                 link.get()
                 link = self.continue_link(link)
+            else:
+                raise HIFEndlessLoop("HIF stopped retrieving links after fetching 100 links. Does extract_continuation_url ever return an empty string?")
         except HIFHttpError50X:
             self.status = Status.EXTERNAL_SERVER_ERROR
         except HIFHttpError40X:
@@ -44,7 +45,7 @@ class Retrieve(Process):
 
         if self.status != Status.DONE:
             for link in self.links:
-                link.hibernate()
+                link.retain()
 
         return self.status
 
@@ -53,6 +54,18 @@ class Retrieve(Process):
         for link in self.links:
             results += link.results
         return results
+
+    def retain(self):
+        for link in self.links:
+            if not link in self.text_set.all():
+                self.text_set.add(link)
+            link.retain()
+        super(Retrieve, self).retain()
+
+    def release(self):
+        for link in self.text_set.all():
+            self.text_set.remove(link)
+        super(Retrieve, self).release()
 
     class Meta:
         proxy = True

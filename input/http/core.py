@@ -119,13 +119,13 @@ class HttpQueryLink(HttpLink):
 
     # HIF attributes
     _query_parameter = ''
-    _props = ["query"]
+    _config = ["query"]
 
     def prepare_link(self, *args, **kwargs):
         """
         Adds query parameter to _parameters
         """
-        self._parameters[self._query_parameter] = self.props.query
+        self._parameters[self._query_parameter] = self.config.query
         super(HttpQueryLink, self).prepare_link(*args, **kwargs)
 
     class Meta:

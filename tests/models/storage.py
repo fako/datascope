@@ -52,9 +52,9 @@ class TestHttpStorage(TestCase):
         except HIFCouldNotLoadFromStorage as exception:
             self.assertEqual(str(exception), "No storage identifier set or given")
 
-    def test_http_hibernate(self):
+    def test_http_retain(self):
         link = HttpLink(**self.init_dict)
         link.load()
-        self.assertEqual(link.hibernating, None)
-        link.hibernate()
-        self.assertTrue(link.hibernating)
+        self.assertEqual(link.retained, None)
+        link.retain()
+        self.assertTrue(link.retained)

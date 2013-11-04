@@ -1,4 +1,4 @@
-from HIF.input.http.links import JsonQueryLink
+from HIF.input.http.core import JsonQueryLink
 from HIF.models.settings import Domain
 from HIF.exceptions import HIFHttpError40X, HIFHttpLinkPending
 
@@ -17,17 +17,14 @@ class GoogleImage(JsonQueryLink):
     }
     _query_parameter = 'q'
 
-    # Class attributes
-    key = ''
-    cx = ''
-
-    def __init__(self, key=DOMAIN.google_key, cx=DOMAIN.google_cx, *args, **kwargs):
-        self.key = key
-        self.cx = cx
-        super(GoogleImage, self).__init__(*args, **kwargs)
+    # Class props
+    _config = ["query","key","cx"]
+    _config_namespace = "google"
 
     def enable_auth(self):
-        self.auth_link = self.link + unicode(('&key={}&cx={}'.format(self.key, self.cx)))
+        key = self.config.key
+        cx = self.config.cx
+        self.auth_link = self.identifier + unicode(('&key={}&cx={}'.format(key, cx)))
 
     def handle_error(self):
         try:
@@ -37,3 +34,6 @@ class GoogleImage(JsonQueryLink):
                 raise HIFHttpLinkPending(exception.message)
             else:
                 raise exception
+
+    class Meta:
+        proxy = True

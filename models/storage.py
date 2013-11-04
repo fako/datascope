@@ -1,7 +1,7 @@
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 
-from HIF.helpers.mixins import PropsMixin
+from HIF.helpers.mixins import ConfigMixin
 from HIF.exceptions import HIFCouldNotLoadFromStorage
 
 
@@ -21,7 +21,7 @@ class Storage(models.Model):
     type = models.CharField(max_length=256, blank=True)
     status = models.IntegerField(default=0) # error or success code, 0 means Status.NONE
 
-    hibernating = models.NullBooleanField()
+    retained = models.NullBooleanField()
     cached = models.NullBooleanField()
 
     def load(self, identifier=None):
@@ -51,13 +51,19 @@ class Storage(models.Model):
         # Enable chaining
         return self
 
-    def hibernate(self):
-        self.hibernating = True
+    def retain(self):
+        self.retained = True
         self.save()
         return self
 
+    def release(self):
+        self.delete()
+
     def __unicode__(self):
         return self.identifier + ' | ' + self.type
+
+    def __str__(self):
+        return self.__class__.__name__
 
     def save(self, *args, **kwargs):
         if not self.type:
@@ -69,7 +75,7 @@ class Storage(models.Model):
         unique_together = ('identifier','type',)
 
 
-class ProcessStorage(PropsMixin, Storage):
+class ProcessStorage(ConfigMixin, Storage):
     """
     A process stores a result and a Celery task_id
     This model adds those fields to the database
@@ -79,8 +85,8 @@ class ProcessStorage(PropsMixin, Storage):
     task = models.CharField(max_length=256)
     processes = models.ManyToManyField("ProcessStorage")
 
-    _props = []
-    _props_namespace = "HIF"
+    _config = []
+    _config_namespace = "HIF"
 
     class Meta:
         db_table = "HIF_processstorage"
@@ -89,7 +95,7 @@ class ProcessStorage(PropsMixin, Storage):
         verbose_name_plural = "Processes"
 
 
-class TextStorage(PropsMixin, Storage):
+class TextStorage(ConfigMixin, Storage):
     """
     Hyper text consists of a head and a body section typically
     This model adds those fields to the database
@@ -100,8 +106,10 @@ class TextStorage(PropsMixin, Storage):
     head = models.TextField()
     body = models.TextField()
 
-    _props = []
-    _props_namespace = "HIF"
+    processes = models.ManyToManyField(ProcessStorage, related_name="text_set")
+
+    _config = []
+    _config_namespace = "HIF"
 
     class Meta:
         db_table = "HIF_textstorage"

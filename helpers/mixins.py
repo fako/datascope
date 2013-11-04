@@ -4,44 +4,49 @@ from HIF.helpers.extractors import json_extractor
 from HIF.models.settings import Domain
 
 
-class Props(object):
+class Config(object):
 
     def __init__(self, namespace):
-        super(Props, self).__init__()
+        super(Config, self).__init__()
         self.domain = Domain()
         self.namespace = namespace
 
     def __getattr__(self, item):
         return getattr(self.domain, self.namespace + '_' + item)
 
+    def __call__(self, new):
+        for key,value in new.iteritems():
+            if hasattr(self, key):
+                setattr(self, key, value)
 
-class PropsMixin(object):
+
+class ConfigMixin(object):
 
     def __init__(self, *args, **kwargs):
         # Default
-        props = {}
+        config = {}
         # Parse args
         try:
-            props = args[0]
-            if not isinstance(props, dict):
-                props = {}
+            config = args[0]
+            if not isinstance(config, dict):
+                config = {}
             else:
-                args = args[1:]
+                args = args[1:] # removes config from args
         except IndexError:
             pass
         # Parse kwargs
         try:
-            if not props:
-                props = kwargs["props"]
-            del(kwargs["props"])
+            if not config:
+                config = kwargs["config"]
+            del(kwargs["config"])
         except KeyError:
             pass
-        # Super and set props as attributes
-        super(PropsMixin, self).__init__(*args, **kwargs)
-        self.props = Props(self._props_namespace)
-        for key,value in props.iteritems():
-            if key in self._props:
-                setattr(self.props,key,value)
+        # Super and set config as attributes
+        super(ConfigMixin, self).__init__(*args, **kwargs)
+        self.config = Config(self._config_namespace)
+        for key,value in config.iteritems():
+            if key in self._config:
+                setattr(self.config,key,value)
 
 
 class DataMixin(object):

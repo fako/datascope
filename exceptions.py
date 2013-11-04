@@ -17,3 +17,7 @@ class HIFHttpLinkPending(HIFInputError):
 
 class HIFEndOfInput(Exception):
     pass
+
+# PROCESS
+class HIFEndlessLoop(Exception):
+    pass
