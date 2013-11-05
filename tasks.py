@@ -30,10 +30,12 @@ def retrieve_multi_query_link(array, query_link_class, *args, **kwargs):
         argument = dict(kwargs)
         argument["query"] = query
         arguments.append(argument)
-
-    result = group(retrieve_link.s(query_link_class, **argument) for argument in arguments).apply_async()
-    result.get()
-    return result
+    results = {}
+    grp = group(retrieve_link.s(query_link_class, **argument) for argument in arguments).apply_async()
+    grp.get()
+    for arg, rsl in zip(array, grp):
+        results[arg] = rsl
+    return results
 
 
 #@task()

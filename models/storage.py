@@ -84,6 +84,7 @@ class ProcessStorage(ConfigMixin, Storage):
     results = models.TextField(null=True, blank=True)
     task = models.CharField(max_length=256)
     processes = models.ManyToManyField("ProcessStorage")
+    
 
     _config = []
     _config_namespace = "HIF"

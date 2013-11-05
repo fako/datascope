@@ -26,6 +26,7 @@ class Retrieve(Process):
             raise HIFEndOfInput
 
     def process(self):
+        self.links = []
         link = self.class_link(config=self.kwargs)
         try:
             for repetition in range(100):
@@ -52,6 +53,7 @@ class Retrieve(Process):
     def post_process(self):
         results = []
         for link in self.links:
+            print self.links
             results += link.results
         return results
 

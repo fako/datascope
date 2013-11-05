@@ -41,6 +41,7 @@ class Process(ProcessStorage):
         print "Executing with {}".format(self.identifier)
         self.args = args
         self.kwargs = kwargs
+        self.results
 
         # gets hibernating processes from the db.
         try:
