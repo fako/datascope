@@ -5,11 +5,6 @@ from HIF.exceptions import HIFHttpError40X, HIFHttpError50X, HIFHttpLinkPending,
 class Retrieve(Process):
 
     links = []
-    class_link = None
-
-    def execute(self,*args,**kwargs):
-        self.class_link = args[0]
-        return super(Retrieve, self).execute(*args,**kwargs)
 
     def extract_continue_url(self, link):
         return ''
@@ -17,21 +12,22 @@ class Retrieve(Process):
     def continue_link(self, link):
         continue_url = self.extract_continue_url(link)
         if continue_url:
-            continuation = self.class_link(config=self.kwargs)
-            continuation.identifier = continue_url
-            continuation.auth_link = continue_url
-            continuation.setup = False
-            return continuation
+            pass # TODO: implement properly and write tests
+            #continuation = self.config.class_link(config=self.kwargs)
+            #continuation.identifier = continue_url
+            #continuation.auth_link = continue_url
+            #continuation.setup = False
+            #return continuation
         else:
             raise HIFEndOfInput
 
     def process(self):
         self.links = []
-        link = self.class_link(config=self.kwargs)
+        link = self.config.link_class(config=self.config.dict()) # TODO: filter link_class from config for the link
         try:
             for repetition in range(100):
                 self.links.append(link)
-                link.get()
+                link.get(*self.args)
                 link = self.continue_link(link)
             else:
                 raise HIFEndlessLoop("HIF stopped retrieving links after fetching 100 links. Does extract_continuation_url ever return an empty string?")
@@ -57,17 +53,9 @@ class Retrieve(Process):
             results += link.results
         return results
 
-    def retain(self):
+    def retain_links_for(self,id):
         for link in self.links:
-            if not link in self.text_set.all():
-                self.text_set.add(link)
-            link.retain()
-        super(Retrieve, self).retain()
-
-    def release(self):
-        for link in self.text_set.all():
-            self.text_set.remove(link)
-        super(Retrieve, self).release()
+            link.retain_for(id)
 
     class Meta:
         proxy = True

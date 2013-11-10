@@ -1,3 +1,5 @@
+import pickle
+
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -62,9 +64,6 @@ class Storage(models.Model):
     def __unicode__(self):
         return self.identifier + ' | ' + self.type
 
-    def __str__(self):
-        return self.__class__.__name__
-
     def save(self, *args, **kwargs):
         if not self.type:
             self.type = self.__class__.__name__
@@ -75,19 +74,41 @@ class Storage(models.Model):
         unique_together = ('identifier','type',)
 
 
-class ProcessStorage(ConfigMixin, Storage):
+class ConfigStorage(ConfigMixin, Storage):
+
+    configuration = models.TextField()
+
+    def identity(self, *args):
+        arguments = str([str(arg) for arg in args])
+        configuration = str(self.config)
+        return "{} | {}".format(arguments, configuration)
+
+    def save(self, *args, **kwargs):
+        if not self.configuration:
+            self.configuration = pickle.dumps(self.config)
+        super(Storage, self).save(*args, **kwargs)
+
+    class Meta:
+        abstract = True
+
+
+class ProcessStorage(ConfigStorage):
     """
     A process stores a result and a Celery task_id
     This model adds those fields to the database
     ProcessStorage is a concrete model
     """
-    results = models.TextField(null=True, blank=True)
     task = models.CharField(max_length=256)
-    processes = models.ManyToManyField("ProcessStorage")
-    
+    processes = models.ManyToManyField("ProcessStorage", blank=True, null=True)
+
+    results = []
 
     _config = []
     _config_namespace = "HIF"
+
+    def release(self):
+        self.text_set.remove()
+        super(ProcessStorage, self).release()
 
     class Meta:
         db_table = "HIF_processstorage"
@@ -96,7 +117,7 @@ class ProcessStorage(ConfigMixin, Storage):
         verbose_name_plural = "Processes"
 
 
-class TextStorage(ConfigMixin, Storage):
+class TextStorage(ConfigStorage):
     """
     Hyper text consists of a head and a body section typically
     This model adds those fields to the database
@@ -107,10 +128,15 @@ class TextStorage(ConfigMixin, Storage):
     head = models.TextField()
     body = models.TextField()
 
-    processes = models.ManyToManyField(ProcessStorage, related_name="text_set")
+    processes = models.ManyToManyField(ProcessStorage, related_name="text_set", blank=True, null=True)
 
     _config = []
     _config_namespace = "HIF"
+
+    def retain_for(self,id):
+        model = ProcessStorage.objects.get(id=id)
+        self.retain()
+        self.processes.add(model)
 
     class Meta:
         db_table = "HIF_textstorage"

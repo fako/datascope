@@ -12,12 +12,23 @@ class Config(object):
         self.namespace = namespace
 
     def __getattr__(self, item):
-        return getattr(self.domain, self.namespace + '_' + item)
+        if hasattr(self.domain, self.namespace + '_' + item):
+            return getattr(self.domain, self.namespace + '_' + item)
+        else:
+            raise AttributeError("Tried to retrieve '{}' in config and namespace '{}', without results.".format(item, self.namespace))
 
     def __call__(self, new):
         for key,value in new.iteritems():
-            if hasattr(self, key):
-                setattr(self, key, value)
+            setattr(self, key, value)
+
+    def __str__(self):
+        return str(self.dict())
+
+    def dict(self):
+        dictionary = dict(self.__dict__)
+        if "domain" in dictionary: del(dictionary["domain"])
+        if "namespace" in dictionary: del(dictionary["namespace"])
+        return dictionary
 
 
 class ConfigMixin(object):
@@ -45,8 +56,7 @@ class ConfigMixin(object):
         super(ConfigMixin, self).__init__(*args, **kwargs)
         self.config = Config(self._config_namespace)
         for key,value in config.iteritems():
-            if key in self._config:
-                setattr(self.config,key,value)
+            setattr(self.config,key,value)
 
 
 class DataMixin(object):

@@ -22,9 +22,10 @@ class GoogleImage(JsonQueryLink):
     _config_namespace = "google"
 
     def enable_auth(self):
+        super(GoogleImage, self).enable_auth()
         key = self.config.key
         cx = self.config.cx
-        self.auth_link = self.identifier + unicode(('&key={}&cx={}'.format(key, cx)))
+        self.auth_link += unicode(('&key={}&cx={}'.format(key, cx)))
 
     def handle_error(self):
         try:

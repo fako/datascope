@@ -8,7 +8,7 @@ from HIF.helpers.mixins import JsonDataMixin
 class HttpLink(HttpStorage):
 
     # Class attributes
-    auth_link = ''
+    auth_link = '' # TODO: rename to URL or something similar
     cache = False
     request_headers = {}
     setup = True
@@ -27,7 +27,7 @@ class HttpLink(HttpStorage):
 
     # Main function.
     # Does a get to computed link
-    def get(self, refresh=False, *args, **kwargs):
+    def get(self, refresh=False, *args):
 
         # Early exit if response is already there and status within success range.
         if self.success() and not refresh:
@@ -41,6 +41,7 @@ class HttpLink(HttpStorage):
         if self.setup:
             self.prepare_link()
             self.enable_auth()
+            self.identifier = self.identity(self.auth_link)
 
         # Try a load from database just before making request
         try:
@@ -52,7 +53,7 @@ class HttpLink(HttpStorage):
             pass
 
         # Make request and do basic response handling
-        self.send_request(*args, **kwargs)
+        self.send_request()
         self.store_response()
         self.handle_error()
 
@@ -63,20 +64,22 @@ class HttpLink(HttpStorage):
         Turns _parameters dictionary into valid query string
         Will execute any callables in values of _parameters
         """
-        self.identifier = self._link
+        url = self._link
         if self._parameters:
-            self.identifier += u'?'
-            for k,v in self._parameters.iteritems():
-                if callable(v):
-                    v = v()
-                self.identifier += k + u'=' + unicode(v) + u'&'
-            self.identifier = self.identifier[:-1] # strips '&' from the end
+            url += u'?'
+            for key ,value in self._parameters.iteritems():
+                if callable(value):
+                    value = value()
+                url += key + u'=' + unicode(value) + u'&'
+            url = url[:-1] # strips '&' from the end
+        self.url = url
+
 
     def enable_auth(self):
         """
         Should do authentication and set auth_link to proper authenticated link.
         """
-        self.auth_link = self.identifier
+        self.auth_link = self.url
 
     def send_request(self):
         """
@@ -119,14 +122,10 @@ class HttpQueryLink(HttpLink):
 
     # HIF attributes
     _query_parameter = ''
-    _config = ["query"]
 
-    def prepare_link(self, *args, **kwargs):
-        """
-        Adds query parameter to _parameters
-        """
-        self._parameters[self._query_parameter] = self.config.query
-        super(HttpQueryLink, self).prepare_link(*args, **kwargs)
+    def get(self, *args):
+        self._parameters[self._query_parameter] = args[0] # TODO: catch improper use here
+        super(HttpQueryLink, self).get()
 
     class Meta:
         proxy = True
