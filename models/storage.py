@@ -83,6 +83,10 @@ class ConfigStorage(ConfigMixin, Storage):
 
     configuration = models.TextField()
 
+    # HIF vars
+    HIF_namespace = "HIF"
+    HIF_private = []
+
     def identity(self, *args):
         arguments = str([str(arg) for arg in args])
         configuration = str(self.config)
@@ -108,9 +112,6 @@ class ProcessStorage(ConfigStorage):
 
     results = jsonfield.JSONField(null=True, blank=True)
     args = jsonfield.JSONField(null=True, blank=True)
-
-    # HIF vars
-    HIF_namespace = "HIF"
 
     def retain(self, parent=None):
         # retain everything in text_set
@@ -145,8 +146,6 @@ class TextStorage(ConfigStorage):
     body = models.TextField()
 
     processes = models.ManyToManyField(ProcessStorage, related_name="text_set", blank=True, null=True)
-
-    HIF_namespace = "HIF"
 
     class Meta:
         db_table = "HIF_textstorage"

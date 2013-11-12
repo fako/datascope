@@ -10,10 +10,11 @@ class Config(object):
 
     _private = ["_domain","_namespace"]
 
-    def __init__(self, namespace):
+    def __init__(self, namespace, private):
         super(Config, self).__init__()
         self._domain = Domain()
         self._namespace = namespace
+        self._private += private
 
     def __getattr__(self, item):
         if hasattr(self._domain, self._namespace + '_' + item):
@@ -65,7 +66,7 @@ class ConfigMixin(object):
             pass
         # Super and set config as attributes
         super(ConfigMixin, self).__init__(*args, **kwargs)
-        self.config = Config(self.HIF_namespace)
+        self.config = Config(self.HIF_namespace, self.HIF_private)
         for key,value in config.iteritems():
             setattr(self.config,key,value)
 
