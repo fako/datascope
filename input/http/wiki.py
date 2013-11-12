@@ -19,8 +19,8 @@ class WikiTranslate(JsonQueryLink):
         "*": "translation"
     }
     _query_parameter = 'titles'
-    _config = ["query", "source_language", "translate_to"]
-    _config_namespace = "wiki"
+
+    HIF_namespace = "wiki"
 
     def prepare_link(self, *args, **kwargs):
         self._link = self._link.format(self.config.source_language)

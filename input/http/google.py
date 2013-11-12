@@ -18,8 +18,7 @@ class GoogleImage(JsonQueryLink):
     _query_parameter = 'q'
 
     # Class props
-    _config = ["query","key","cx"]
-    _config_namespace = "google"
+    HIF_namespace = "google"
 
     def enable_auth(self):
         super(GoogleImage, self).enable_auth()
