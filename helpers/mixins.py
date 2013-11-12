@@ -1,3 +1,5 @@
+import json
+
 from django.db import models
 
 from HIF.helpers.extractors import json_extractor
@@ -6,16 +8,18 @@ from HIF.models.settings import Domain
 
 class Config(object):
 
+    _private = ["_domain","_namespace"]
+
     def __init__(self, namespace):
         super(Config, self).__init__()
-        self.domain = Domain()
-        self.namespace = namespace
+        self._domain = Domain()
+        self._namespace = namespace
 
     def __getattr__(self, item):
-        if hasattr(self.domain, self.namespace + '_' + item):
-            return getattr(self.domain, self.namespace + '_' + item)
+        if hasattr(self._domain, self._namespace + '_' + item):
+            return getattr(self._domain, self._namespace + '_' + item)
         else:
-            raise AttributeError("Tried to retrieve '{}' in config and namespace '{}', without results.".format(item, self.namespace))
+            raise AttributeError("Tried to retrieve '{}' in config and namespace '{}', without results.".format(item, self._namespace))
 
     def __call__(self, new):
         for key,value in new.iteritems():
@@ -24,11 +28,18 @@ class Config(object):
     def __str__(self):
         return str(self.dict())
 
-    def dict(self):
-        dictionary = dict(self.__dict__)
-        if "domain" in dictionary: del(dictionary["domain"])
-        if "namespace" in dictionary: del(dictionary["namespace"])
+    def dict(self, protected=False, private=False):
+        dictionary = dict()
+        for key, value in self.__dict__.iteritems():
+            if key.startswith('_'):
+                if (private and key in self._private) or (protected and key not in self._private):
+                    dictionary[key] = value
+            else:
+                dictionary[key] = value
         return dictionary
+
+    def json(self):
+        return json.dumps(self.dict())
 
 
 class ConfigMixin(object):
@@ -54,7 +65,7 @@ class ConfigMixin(object):
             pass
         # Super and set config as attributes
         super(ConfigMixin, self).__init__(*args, **kwargs)
-        self.config = Config(self._config_namespace)
+        self.config = Config(self.HIF_namespace)
         for key,value in config.iteritems():
             setattr(self.config,key,value)
 

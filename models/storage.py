@@ -3,6 +3,8 @@ import pickle
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 
+import jsonfield
+
 from HIF.helpers.mixins import ConfigMixin
 from HIF.exceptions import HIFCouldNotLoadFromStorage
 
@@ -26,7 +28,7 @@ class Storage(models.Model):
     retained = models.NullBooleanField()
     cached = models.NullBooleanField()
 
-    def load(self, identifier=None):
+    def load(self, identifier=None): # TODO: identifier= still used with new style identifiers? remove?
         """
         This function tries to load a stored version of self
 
@@ -45,7 +47,8 @@ class Storage(models.Model):
         try:
             model = self.__class__.objects.get(identifier=self.identifier,type=self.type)
         except ObjectDoesNotExist:
-            raise HIFCouldNotLoadFromStorage("Model with identifier={} and type={} does not exist".format(self.identifier, self.type))
+            message = "Model with identifier={} and type={} does not exist"
+            raise HIFCouldNotLoadFromStorage(message.format(self.identifier, self.type))
         # Copy fields
         for field in model._meta.fields:
             if hasattr(self,field.name):
@@ -56,10 +59,12 @@ class Storage(models.Model):
     def retain(self):
         self.retained = True
         self.save()
-        return self
+        return (self.__class__, self.id)
 
     def release(self):
-        self.delete()
+        self.retained = False
+        self.save()
+        return self.id
 
     def __unicode__(self):
         return self.identifier + ' | ' + self.type
@@ -85,7 +90,7 @@ class ConfigStorage(ConfigMixin, Storage):
 
     def save(self, *args, **kwargs):
         if not self.configuration:
-            self.configuration = pickle.dumps(self.config)
+            self.configuration = pickle.dumps(self.config.dict())
         super(Storage, self).save(*args, **kwargs)
 
     class Meta:
@@ -101,14 +106,25 @@ class ProcessStorage(ConfigStorage):
     task = models.CharField(max_length=256)
     processes = models.ManyToManyField("ProcessStorage", blank=True, null=True)
 
-    results = []
+    results = jsonfield.JSONField(null=True, blank=True)
+    args = jsonfield.JSONField(null=True, blank=True)
 
-    _config = []
-    _config_namespace = "HIF"
+    # HIF vars
+    HIF_namespace = "HIF"
+
+    def retain(self, parent=None):
+        # retain everything in text_set
+        for text in self.text_set.all():
+            text.retain()
+        # retain parent as process where appropriate
+        if parent:
+            self.processes.add(parent)
+        return super(ProcessStorage, self).retain()
 
     def release(self):
-        self.text_set.remove()
-        super(ProcessStorage, self).release()
+        for text in self.text_set.all():
+            text.release()
+        return super(ProcessStorage, self).release()
 
     class Meta:
         db_table = "HIF_processstorage"
@@ -130,13 +146,7 @@ class TextStorage(ConfigStorage):
 
     processes = models.ManyToManyField(ProcessStorage, related_name="text_set", blank=True, null=True)
 
-    _config = []
-    _config_namespace = "HIF"
-
-    def retain_for(self,id):
-        model = ProcessStorage.objects.get(id=id)
-        self.retain()
-        self.processes.add(model)
+    HIF_namespace = "HIF"
 
     class Meta:
         db_table = "HIF_textstorage"
