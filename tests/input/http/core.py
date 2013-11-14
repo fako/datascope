@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 
 from mock import Mock
 
-from HIF.input.http.links import HttpLink
+from HIF.input.http.core import HttpLink
 from HIF.exceptions import HIFHttpError40X, HIFHttpError50X, HIFCouldNotLoadFromStorage
 
 
@@ -31,11 +31,12 @@ class TestHttpLink(TestCase):
             "head": "",
             "body": json.dumps(cls.test_response),
             "status": 0,
-            "hibernating": False,
+            "retained": False,
             "type": "DataLink",
-            "identifier": "http://localhost:8000/test/",
+            "identifier": "",
         }
         cls.methods_get_uses = ['prepare_link','enable_auth','load','send_request','handle_error', "store_response"]
+        cls.test_url = "http://localhost:8000/test/"
 
     def setup_mock_methods(self, http_link):
         for method in self.methods_get_uses:
@@ -132,25 +133,26 @@ class TestHttpLink(TestCase):
         And is valid
         """
         http_link = HttpLink(**self.init_dict)
-        http_link._link = http_link.identifier # little hack
+        http_link._link = self.test_url
         http_link._parameters = self.parameters
         http_link.prepare_link()
-        self.assertIn("?",http_link.identifier)
-        self.assertIn("test-static=test",http_link.identifier)
-        self.assertIn("test-callable=test",http_link.identifier)
+        self.assertIn("?",http_link.url)
+        self.assertIn("test-static=test",http_link.url)
+        self.assertIn("test-callable=test",http_link.url)
         try:
             validator = URLValidator()
-            validator(http_link.identifier)
+            validator(http_link.url)
         except ValidationError:
-            self.fail("{} by prepare_link did not validate.".format(http_link.identifier))
+            self.fail("{} by prepare_link did not validate.".format(http_link.url))
 
     def test_enable_auth_method(self):
         """
         Enable auth should set the link that send_request will use.
         """
         http_link = HttpLink(**self.init_dict)
+        http_link._url = self.test_url
         http_link.enable_auth()
-        self.assertEqual(http_link.identifier, http_link.auth_link)
+        self.assertEqual(self.test_url, http_link.auth_link)
 
     def test_store_response_function(self):
         http_link = HttpLink(**self.init_dict)

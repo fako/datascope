@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from HIF.input.http.links import HttpLink, HttpQueryLink
+from HIF.input.http.core import HttpLink, HttpQueryLink
 from HIF.exceptions import HIFCouldNotLoadFromStorage
 
 

@@ -7,7 +7,7 @@
         "body": "Test body", 
         "head": "Test head",
         "cached": null, 
-        "hibernating": null, 
+        "retained": null,
         "identifier": "http://localhost:8000/test/", 
         "type": "HttpLink"
     }
@@ -20,7 +20,7 @@
         "body": "Test query body",
         "head": "Test query head",
         "cached": null,
-        "hibernating": null,
+        "retained": null,
         "identifier": "http://localhost:8000/test/",
         "type": "HttpQueryLink"
     }
@@ -33,7 +33,7 @@
         "body": "Test another body",
         "head": "Test another head",
         "cached": null,
-        "hibernating": null,
+        "retained": null,
         "identifier": "http://localhost:8000/test/test/",
         "type": "HttpLink"
     }
