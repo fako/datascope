@@ -9,7 +9,6 @@ def get_process_from_storage(process_tuple):
     process = ProcessClass.objects.get(id=process_id)
 
     # Set configuration correctly
-    process.config.namespace = ProcessClass.HIF_namespace
     process.config(pickle.loads(process.configuration))
 
     # Finish processing where appropriate

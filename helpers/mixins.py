@@ -8,7 +8,7 @@ from HIF.models.settings import Domain
 
 class Config(object):
 
-    _private = ["_domain","_namespace"]
+    _private = ["_private", "_domain", "_namespace"]
 
     def __init__(self, namespace, private):
         super(Config, self).__init__()

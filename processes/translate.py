@@ -29,13 +29,13 @@ class ImageTranslate(AsyncProcess):
 
         # Start Celery task
         self.retain()
-        async_result = (execute_process.s([query], translate_retriever.retain()) | flatten_process_results.s(key="translation") | execute_process.s(image_retriever_group.retain()))()
+        async_result = (execute_process.s(query, translate_retriever.retain()) | flatten_process_results.s(key="translation") | execute_process.s(image_retriever_group.retain()))()
         self.task = async_result.task_id
         self.save()
         return self.task
 
     def post_process(self, *args, **kwargs):
-
+        # fetch process and work with it!!
         self.results = [{
             "language": self.config.translate_to,
             "results": self.data.result

@@ -18,7 +18,7 @@ class Storage(models.Model):
     And a status indicating the state of the data when it got stored
     identifier and type are unique together to allow different classes to use the same identifier for their storage
     Apart from these fields their are a few flags on this model
-    hibernating indicates whether the storage happened in the context of hibernation
+    retained indicates whether the storage happened in the context of a process which needs the content
     cached indicates whether the storage happened for performance reasons
     """
     identifier = models.CharField(max_length=256)
@@ -88,13 +88,11 @@ class ConfigStorage(ConfigMixin, Storage):
     HIF_private = []
 
     def identity(self, *args):
-        arguments = str([str(arg) for arg in args])
-        configuration = str(self.config)
-        return "{} | {}".format(arguments, configuration)
+        return "{} | {}".format(args, self.config.dict(protected=True))
 
     def save(self, *args, **kwargs):
         if not self.configuration:
-            self.configuration = pickle.dumps(self.config.dict())
+            self.configuration = pickle.dumps(self.config.dict(protected=True, private=True))
         super(Storage, self).save(*args, **kwargs)
 
     class Meta:
@@ -111,9 +109,11 @@ class ProcessStorage(ConfigStorage):
     processes = models.ManyToManyField("ProcessStorage", blank=True, null=True)
 
     results = jsonfield.JSONField(null=True, blank=True)
-    args = jsonfield.JSONField(null=True, blank=True)
+    args = jsonfield.JSONField(default=(), blank=True)
 
     def retain(self, parent=None):
+        self.identifier = self.identity(*self.args)
+        self.save()
         # retain everything in text_set
         for text in self.text_set.all():
             text.retain()
@@ -146,6 +146,12 @@ class TextStorage(ConfigStorage):
     body = models.TextField()
 
     processes = models.ManyToManyField(ProcessStorage, related_name="text_set", blank=True, null=True)
+
+    def retain(self, process=None):
+        # retain parent as process where appropriate
+        if process:
+            self.processes.add(process)
+        return super(TextStorage, self).retain()
 
     class Meta:
         db_table = "HIF_textstorage"

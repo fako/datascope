@@ -19,11 +19,17 @@ class HttpLink(HttpStorage):
 
     # Interface
 
-    def success(self):
+    def success(self): # TODO: tests
         """
         Returns True if status is within HTTP success range
         """
         return bool(self.status >= 200 and self.status < 300)
+
+    @property
+    def url(self): # TODO: tests
+        if not self._url:
+            self.prepare_link()
+        return self._url
 
     # Main function.
     # Does a get to computed link
@@ -72,8 +78,7 @@ class HttpLink(HttpStorage):
                     value = value()
                 url += key + u'=' + unicode(value) + u'&'
             url = url[:-1] # strips '&' from the end
-        self.url = url
-
+        self._url = url
 
     def enable_auth(self):
         """
@@ -124,7 +129,9 @@ class HttpQueryLink(HttpLink):
     _query_parameter = ''
 
     def get(self, *args):
-        self._parameters[self._query_parameter] = args[0] # TODO: catch improper use here
+        print args
+        assert len(args) == 1, "Improper usage: QueryLinks should receive only one args parameter."
+        self._parameters[self._query_parameter] = args[0]
         super(HttpQueryLink, self).get()
 
     class Meta:
