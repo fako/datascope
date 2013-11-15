@@ -1,6 +1,6 @@
-import sys
 import pickle
 
+from HIF.helpers.enums import ProcessStatus
 
 def get_process_from_storage(process_tuple):
 
@@ -12,9 +12,11 @@ def get_process_from_storage(process_tuple):
     process.config(pickle.loads(process.configuration))
 
     # Finish processing where appropriate
-    if process.data and not process.results:
-        process.results = process.post_process()
-        process.retain()
+    if process.data and not process.status == ProcessStatus.DONE:
+        process.post_process()
+        if process.results is not None:
+            process.status = ProcessStatus.DONE
+            process.retain()
 
     # Return loaded object
     return process

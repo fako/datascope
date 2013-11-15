@@ -1,7 +1,6 @@
-from celery.result import AsyncResult, GroupResult
 from celery import group
 
-from HIF.processes.core import AsyncProcess, GroupProcess
+from HIF.processes.core import AsyncProcess, GroupProcess, Status
 from HIF.processes.retrieve import Retrieve
 from HIF.helpers.storage import get_process_from_storage
 from HIF.input.http.google import GoogleImage
@@ -17,7 +16,7 @@ class ImageTranslate(AsyncProcess):
 
     def process(self):
         # Get params
-        query = self.args[0]
+        query = self.args[0] # TODO: warn against improper usage
 
         # Setup retrievers
         translate_config = {"_link": self._translate_model}
@@ -40,10 +39,13 @@ class ImageTranslate(AsyncProcess):
     def post_process(self, *args, **kwargs):
         data = self.data
         subprocess = get_process_from_storage(data)
-        self.results = [{
-            "language": self.config.translate_to,
-            "results": subprocess.results
-        }]
+        results = None
+        if subprocess.status == Status.DONE:
+            results = [{
+                "language": self.config.translate_to,
+                "results": subprocess.results
+            }]
+        self.results = results
         return self.results
 
     class Meta:
@@ -54,30 +56,19 @@ class ImageTranslations(GroupProcess):
 
     def process(self):
 
-        # Set internal config
-        configuration = {
-            "_argument_key": "word",
-            "_result_key": "translations"
-        }
-        self.config(configuration)
-
         # Get params
-        arg = self.args[0]
+        arg = self.args[0] # TODO: warn against improper usage
         source_language = self.config.source_language
         supported_languages = self.config._supported_languages
         supported_languages.remove(source_language)
 
         processes = []
         for language in supported_languages:
-            # Skip the source language
-            if language == self.config.source_language: continue
             # Setup config per language
             configuration = self.config.dict(protected=True)
             configuration.update({"translate_to": language})
             # Add process to queue
             process = ImageTranslate(configuration)
-            if not isinstance(arg, list): # TODO: hide this detail
-                arg = [arg]
             processes.append((arg,process.retain(),))
 
         print "inside group process"
@@ -93,10 +84,15 @@ class ImageTranslations(GroupProcess):
         data = self.data # data should contain list with process retain tuples
         print "group post_process"
         print(data)
-        self.results = []
+        results = []
         for prc in data:
-             process = get_process_from_storage(prc)
-             self.results += process.results
+            process = get_process_from_storage(prc)
+            if process.status == Status.DONE:
+                results += process.results
+            else:
+                return None
+
+        self.results = results
         return self.results
 
     class Meta:

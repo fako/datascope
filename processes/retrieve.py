@@ -37,7 +37,7 @@ class Retrieve(Process):
         except HIFInputError as exception:
             self.handle_exception(exception)
         except HIFEndOfInput:
-            self.status = Status.DONE
+            pass
         finally:
             self.retain()
 

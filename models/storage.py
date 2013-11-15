@@ -109,7 +109,7 @@ class ProcessStorage(ConfigStorage):
     processes = models.ManyToManyField("ProcessStorage", blank=True, null=True)
 
     results = jsonfield.JSONField(null=True, blank=True)
-    args = jsonfield.JSONField(default=(), blank=True)
+    args = jsonfield.JSONField(default=tuple(), blank=True)
 
     def retain(self, parent=None):
         self.identifier = self.identity(*self.args)

@@ -1,21 +1,14 @@
-import json, pickle
-
 from celery import group
-from celery.result import AsyncResult, GroupResult
+from celery.result import AsyncResult
 
 from HIF.models.storage import ProcessStorage
 from HIF.exceptions import HIFCouldNotLoadFromStorage
 from HIF.tasks import execute_process
 from HIF.helpers.storage import get_process_from_storage
+from HIF.helpers.enums import ProcessStatus as Status
 
 
-class Status(object):
-    NONE = 0
-    DONE = 1
-    PROCESSING = -1
-    WAITING = -2
-    EXTERNAL_SERVER_ERROR = -3
-    EXTERNAL_REQUEST_ERROR = -4
+
 
 
 class Process(ProcessStorage):
@@ -57,21 +50,24 @@ class Process(ProcessStorage):
             pass
 
         # Process according to state
-        if self.data is None:
+        if self.data is None and self.status != Status.PROCESSING:
             print "Started processing"
             self.status = Status.PROCESSING
-            self.results = []
             self._data = self.process()
             assert self._data is not None, "Improper usage: a Process.process() returned None"
 
-        if self.data and not self.results: # processing done, store it
+        if self.data and self.status == Status.PROCESSING: # process data
             print "Processing done, post processing"
             self.results = self.post_process()
-            self.status = Status.DONE
+            if self.results is not None:
+                self.status = Status.DONE
+                self.retain()
+                return self.results
+        elif self.status == Status.DONE:
+            "Returning cached results"
             return self.results
-        else:
-            print "Returning cached or initial results"
-            return self.results
+
+        return None
 
     class Meta:
         proxy = True
@@ -121,7 +117,11 @@ class GroupProcess(AsyncProcess):
         if self._data:
             data = []
             for task_id, trash in self._data[1]: # second element of data contains array with task_ids
-                data.append(AsyncResult(task_id).result)
+                ar = AsyncResult(task_id)
+                if not ar.ready():
+                    return None
+                else:
+                    data.append(ar.result)
             self._data = data
             self.formatted = True
         return self._data
@@ -133,8 +133,6 @@ class GroupProcess(AsyncProcess):
         processes = []
         for arg in self.args:
             process = self.config._process(self.config.dict(protected=True))
-            if not isinstance(arg, list):
-                arg = [arg]
             processes.append((arg,process.retain(),))
 
         print "inside group process"
@@ -150,15 +148,20 @@ class GroupProcess(AsyncProcess):
         data = self.data # data should contain list with process retain tuples
         print "group post_process"
         print(data)
-        self.results = []
-        for arg, prc in zip(self.args, data):
 
-             process = get_process_from_storage(prc)
-             print arg, process.results
-             self.results.append({
-                 self.config._argument_key: arg,
-                 self.config._result_key: process.results
-             })
+        results = []
+        for arg, prc in zip(self.args, data):
+            process = get_process_from_storage(prc)
+            if process.status == Status.DONE:
+                print arg, process.results
+                results.append({
+                    self.config._argument_key: arg,
+                    self.config._result_key: process.results
+                })
+            else:
+                return None
+
+        self.results = results
         return self.results
 
     class Meta:
