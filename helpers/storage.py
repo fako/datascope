@@ -14,7 +14,7 @@ def get_process_from_storage(process_tuple):
     # Finish processing where appropriate
     if process.data and not process.results:
         process.results = process.post_process()
-        process.save()
+        process.retain()
 
     # Return loaded object
     return process

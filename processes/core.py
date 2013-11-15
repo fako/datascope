@@ -79,17 +79,20 @@ class Process(ProcessStorage):
 
 class AsyncProcess(Process):
 
+    formatted = False
+
     @property
     def data(self):
 
-        if self._data and self._data != self.task:
-            print "early return in data"
+        if self.formatted:
+            print "formatted return in data"
             return self._data
         if self.task:
             async_result = AsyncResult(self.task)
             if async_result.ready():
                 self._data = async_result.result
                 if async_result.successful():
+                    self.formatted = True
                     return self._data
                 else:
                     raise self._data
@@ -105,6 +108,23 @@ class AsyncProcess(Process):
 class GroupProcess(AsyncProcess):
 
     HIF_private = ["_process","_argument_key","_result_key"]
+
+    @property
+    def data(self):
+        # Early return when we already formatted the data
+        if self.formatted:
+            return self._data
+        # Get data as if it was coming from a normal process
+        self._data = super(GroupProcess, self).data
+        self.formatted = False
+        # Format GroupResult into list of results
+        if self._data:
+            data = []
+            for task_id, trash in self._data[1]: # second element of data contains array with task_ids
+                data.append(AsyncResult(task_id).result)
+            self._data = data
+            self.formatted = True
+        return self._data
 
     def process(self):
         # Construct keyword arguments collection
@@ -127,18 +147,18 @@ class GroupProcess(AsyncProcess):
         return self.task
 
     def post_process(self):
-        data = self.data[1] # data should contain a tuple with format (task_id, data)
+        data = self.data # data should contain list with process retain tuples
         print "group post_process"
-        print(self.data)
         print(data)
         self.results = []
-        for arg, task_id in zip(self.args, data):
-            rsl = AsyncResult(task_id).result
-            prc = get_process_from_storage(rsl)
-            self.results.append({
-                self.config._argument_key: arg,
-                self.config._result_key: prc.result
-            })
+        for arg, prc in zip(self.args, data):
+
+             process = get_process_from_storage(prc)
+             print arg, process.results
+             self.results.append({
+                 self.config._argument_key: arg,
+                 self.config._result_key: process.results
+             })
         return self.results
 
     class Meta:
