@@ -1,11 +1,11 @@
 import json, requests
 
 from HIF.exceptions import HIFCouldNotLoadFromStorage, HIFHttpError40X, HIFHttpError50X
-from HIF.models.storage import HttpStorage
+from HIF.models.storage import TextStorage
 from HIF.helpers.mixins import JsonDataMixin
 
 
-class HttpLink(HttpStorage):
+class HttpLink(TextStorage):
 
     # Class attributes
     auth_link = '' # TODO: rename to URL or something similar
@@ -35,6 +35,9 @@ class HttpLink(HttpStorage):
     # Does a get to computed link
     def get(self, refresh=False, *args):
 
+        # Set arguments
+        self.arguments = args
+
         # Early exit if response is already there and status within success range.
         if self.success() and not refresh:
             return self
@@ -47,7 +50,7 @@ class HttpLink(HttpStorage):
         if self.setup:
             self.prepare_link()
             self.enable_auth()
-            self.identifier = self.identity(self.auth_link)
+            self.identifier = self.identity()
 
         # Try a load from database just before making request
         try:

@@ -78,7 +78,7 @@ class DataMixin(object):
     """
 
     # class attributes
-    rsl = []
+    data = []
 
     # HIF interface vars
     _objective = {}
@@ -92,7 +92,7 @@ class DataMixin(object):
         return []
 
     @property
-    def results(self):
+    def results(self): # TODO: rename to data
         """
         Extracts results, translates them and filters them before returning it
         """
@@ -105,7 +105,7 @@ class DataMixin(object):
         The way this is done depends on the type of data in self.source
         This base class is not concerned with types of data and thus does nothing
         """
-        self.rsl = source
+        self.data = source
         return self
 
     def translate(self):
@@ -113,7 +113,7 @@ class DataMixin(object):
         Changes keys in all dicts under self.rsl to reflect keys in _translations
         """
         if self._translations:
-            for r in self.rsl:
+            for r in self.data:
                 for k,v in self._translations.iteritems():
                     if k in r: # if a key that needs translation is found
                         r[v] = r[k] # make a new pair in result with the translated key as key
@@ -136,5 +136,5 @@ class JsonDataMixin(DataMixin):
         Extracts results from source using _objective and puts it in self.rsl
         It uses HIF.helpers.json_extractor to get the job done
         """
-        self.rsl = json_extractor(source, self._objective)
+        self.data = json_extractor(source, self._objective)
         return self

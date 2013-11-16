@@ -21,3 +21,9 @@ class HIFEndOfInput(Exception):
 # PROCESS
 class HIFEndlessLoop(Exception):
     pass
+
+class HIFProcessingError(Exception):
+    pass
+
+class HIFProcessingAsync(Exception):
+    pass

@@ -6,7 +6,10 @@ from django.core.exceptions import ObjectDoesNotExist
 import jsonfield
 
 from HIF.helpers.mixins import ConfigMixin
+from HIF.helpers.storage import Content, ProcessContent
 from HIF.exceptions import HIFCouldNotLoadFromStorage
+
+
 
 
 class Storage(models.Model):
@@ -23,109 +26,162 @@ class Storage(models.Model):
     """
     identifier = models.CharField(max_length=256)
     type = models.CharField(max_length=256, blank=True)
-    status = models.IntegerField(default=0) # error or success code, 0 means Status.NONE
+    status = models.IntegerField(default=0) # error or success code, 0 is always an initial state
 
     retained = models.NullBooleanField()
     cached = models.NullBooleanField()
 
-    def load(self, identifier=None): # TODO: identifier= still used with new style identifiers? remove?
+
+    def identity(self):
+        return str(self.id)
+
+
+    def serialize(self):
+        return (self.__class__, self.id)
+
+
+    def load(self, id=0):
         """
         This function tries to load a stored version of self
 
         It will set type to the current class and gets the identifier from self or as an argument
         Then it will do a database get and copy all fields to self
         """
+
         # Set type
         self.type = self.__class__.__name__
         # Assure identifier
-        if identifier is None and not self.identifier:
-            raise HIFCouldNotLoadFromStorage("No storage identifier set or given")
-        elif identifier is not None:
-            self.identifier = identifier
+        self.identifier = self.identity()
 
         # Database lookup
         try:
-            model = self.__class__.objects.get(identifier=self.identifier,type=self.type)
+            if not id:
+                model = self.__class__.objects.get(identifier=self.identifier,type=self.type)
+            else:
+                model = self.__class__.objects.get(id=id)
         except ObjectDoesNotExist:
-            message = "Model with identifier={} and type={} does not exist"
-            raise HIFCouldNotLoadFromStorage(message.format(self.identifier, self.type))
+            if not id:
+                message = "Model with identifier={} and type={} does not exist"
+                raise HIFCouldNotLoadFromStorage(message.format(self.identifier, self.type))
+            else:
+                message = "Model with id={} does not exist"
+                raise HIFCouldNotLoadFromStorage(message.format(id))
+
         # Copy fields
         for field in model._meta.fields:
             if hasattr(self,field.name):
                 setattr(self,field.name, getattr(model,field.name))
+
         # Enable chaining
         return self
+
 
     def retain(self):
         self.retained = True
         self.save()
         return (self.__class__, self.id)
 
+
     def release(self):
         self.retained = False
         self.save()
         return self.id
 
+
     def __unicode__(self):
         return self.identifier + ' | ' + self.type
 
+
     def save(self, *args, **kwargs):
-        if not self.type:
+        if not self.type: # this shouldn't change in Admin
             self.type = self.__class__.__name__
+        self.identifier = self.identity()
         super(Storage, self).save(*args, **kwargs)
+
 
     class Meta:
         abstract = True
         unique_together = ('identifier','type',)
 
 
+
+
 class ConfigStorage(ConfigMixin, Storage):
 
-    configuration = models.TextField()
+    configuration = models.TextField(null=True, blank=True)
+    arguments = jsonfield.JSONField(default=tuple(), blank=True)
 
     # HIF vars
     HIF_namespace = "HIF"
     HIF_private = []
 
-    def identity(self, *args):
-        return "{} | {}".format(args, self.config.dict(protected=True))
+
+    def identity(self):
+        return "{} | {}".format(self.arguments, self.config.dict(protected=True))
+
 
     def save(self, *args, **kwargs):
-        if not self.configuration:
-            self.configuration = pickle.dumps(self.config.dict(protected=True, private=True))
+        self.configuration = pickle.dumps(self.config.dict(protected=True, private=True))
         super(Storage, self).save(*args, **kwargs)
+
+
+    def load(self, fetch=True, *args, **kwargs):
+        if fetch:
+            super(ConfigStorage, self).load(*args,**kwargs)
+        self.config(pickle.loads(self.configuration))
+        return self
+
 
     class Meta:
         abstract = True
 
 
+
+
 class ProcessStorage(ConfigStorage):
     """
-    A process stores a result and a Celery task_id
-    This model adds those fields to the database
-    ProcessStorage is a concrete model
+    ..............
     """
-    task = models.CharField(max_length=256)
-    processes = models.ManyToManyField("ProcessStorage", blank=True, null=True)
-
+    exception = models.TextField()
+    traceback = models.TextField()
+    task_id = models.CharField(max_length=256)
+    processes = models.TextField(null=True, blank=True)
+    prcs = ProcessContent()
+    texts = models.TextField(null=True, blank=True)
+    txts = Content()
+    subscribers = models.TextField(null=True, blank=True)
+    subs = []
     results = jsonfield.JSONField(null=True, blank=True)
-    args = jsonfield.JSONField(default=tuple(), blank=True)
+    rsl = None
 
-    def retain(self, parent=None):
-        self.identifier = self.identity(*self.args)
-        self.save()
-        # retain everything in text_set
-        for text in self.text_set.all():
-            text.retain()
-        # retain parent as process where appropriate
-        if parent:
-            self.processes.add(parent)
+
+    def retain(self):
+        print "Self: {}".format(self.serialize())
+        self.prcs.retain()
+        self.txts.retain()
         return super(ProcessStorage, self).retain()
 
+
     def release(self):
-        for text in self.text_set.all():
-            text.release()
+        self.prcs.release()
+        self.txts.release()
         return super(ProcessStorage, self).release()
+
+
+    def save(self, *args, **kwargs):
+        self.processes = pickle.dumps(self.prcs.dict())
+        self.texts = pickle.dumps(self.txts.dict())
+        self.subscribers = pickle.dumps(self.subs)
+        super(ProcessStorage, self).save(*args, **kwargs)
+
+
+    def load(self, *args, **kwargs):
+        super(ProcessStorage, self).load(*args,**kwargs)
+        self.prcs(pickle.loads(self.processes))
+        self.txts(pickle.loads(self.texts))
+        self.subs = pickle.loads(self.subscribers)
+        return self
+
 
     class Meta:
         db_table = "HIF_processstorage"
@@ -134,24 +190,41 @@ class ProcessStorage(ConfigStorage):
         verbose_name_plural = "Processes"
 
 
+
+
 class TextStorage(ConfigStorage):
     """
     Hyper text consists of a head and a body section typically
     This model adds those fields to the database
-    Text is seldom stored without the context of a process using the text
-    That's why we add a relation to HIFProcessStorage
-    TextStorage is a concrete model
+    .......
     """
     head = models.TextField()
     body = models.TextField()
 
-    processes = models.ManyToManyField(ProcessStorage, related_name="text_set", blank=True, null=True)
+    processes = models.TextField(null=True, blank=True)
+    prcs = Content()
 
-    def retain(self, process=None):
-        # retain parent as process where appropriate
-        if process:
-            self.processes.add(process)
+    def retain(self):
+        self.prcs.retain()
+        self.save()
         return super(TextStorage, self).retain()
+
+
+    def release(self):
+        self.prcs.release()
+        return super(TextStorage, self).release()
+
+
+    def save(self, *args, **kwargs):
+        self.processes = pickle.dumps(self.prcs.dict())
+        super(Storage, self).save(*args, **kwargs)
+
+
+    def load(self, *args, **kwargs):
+        super(ConfigStorage, self).load(*args,**kwargs)
+        self.prcs(pickle.loads(self.processes))
+        return self
+
 
     class Meta:
         db_table = "HIF_textstorage"
@@ -160,20 +233,6 @@ class TextStorage(ConfigStorage):
         verbose_name_plural = "Texts"
 
 
-class HttpStorage(TextStorage):
-    """
-    This class does nothing but allowing for its subclasses to add their methods without creating separate tables
-    """
-    class Meta:
-        proxy = True
-
-
-class EmailStorage(TextStorage):
-    """
-    This class does nothing but allowing for its subclasses to add their methods without creating separate tables
-    """
-    class Meta:
-        proxy = True
 
 
 class FileStorage():
