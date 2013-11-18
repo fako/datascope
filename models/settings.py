@@ -3,6 +3,7 @@
 class Domain(object):
 
     HIF__supported_languages = ['en','nl','pt','de','fr','es']
+    HIF_debug = True
 
     google_key = 'AIzaSyDf2Eop-euHJGF1oOalFz3cYYZtQkquU1o'
     google_cx = '004613812033868156538:5pcwbuudj1m'

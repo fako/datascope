@@ -97,7 +97,7 @@ class DataMixin(object):
         Extracts results, translates them and filters them before returning it
         """
         self.extract(self.source).translate()
-        return filter(self.cleaner, self.rsl)
+        return filter(self.cleaner, self.data)
 
     def extract(self, source):
         """

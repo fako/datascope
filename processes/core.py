@@ -43,7 +43,8 @@ class Process(ProcessStorage):
 
     def inform(self):
         for tprc in self.subs:
-            prc, prc_id = tprc
+            cls, prc_id = tprc
+            prc = cls()
             prc.load(prc_id)
             prc.execute()
         self.subs = []
@@ -86,7 +87,7 @@ class Process(ProcessStorage):
             self.config(**kwargs)
         # Set arguments as identifier an store
         if not self.arguments and args:
-            self.arguments = args
+            self.arguments = list(args)
         self.identifier = self.identity()
 
         print "Executing with {}".format(self.identifier)
@@ -199,7 +200,7 @@ class Retrieve(Process):
 
         # Make sure there is at least one argument to loop over
         if not self.arguments:
-            args = self.arguments + ('',)
+            args = self.arguments + ['']
         else:
             args = self.arguments
 
@@ -224,6 +225,7 @@ class Retrieve(Process):
             # Everything retrieved. We store it in results
             rsl = []
             for link in self.links:
+                if self.config.debug: self.txts.add(link.retain())
                 for obj in link.results:
                     rsl.append(obj)
             results.append({

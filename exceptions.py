@@ -2,6 +2,7 @@
 class HIFCouldNotLoadFromStorage(Exception):
     pass
 
+
 # INPUT
 class HIFInputError(Exception):
     pass
@@ -18,6 +19,7 @@ class HIFHttpLinkPending(HIFInputError):
 class HIFEndOfInput(Exception):
     pass
 
+
 # PROCESS
 class HIFEndlessLoop(Exception):
     pass
@@ -26,4 +28,9 @@ class HIFProcessingError(Exception):
     pass
 
 class HIFProcessingAsync(Exception):
+    pass
+
+
+# MIXINS
+class HIFContentError(Exception):
     pass

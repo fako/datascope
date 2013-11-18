@@ -6,7 +6,7 @@ from django.core.exceptions import ObjectDoesNotExist
 import jsonfield
 
 from HIF.helpers.mixins import ConfigMixin
-from HIF.helpers.storage import Content, ProcessContent
+from HIF.helpers.storage import ContentMixin
 from HIF.exceptions import HIFCouldNotLoadFromStorage
 
 
@@ -25,7 +25,7 @@ class Storage(models.Model):
     cached indicates whether the storage happened for performance reasons
     """
     identifier = models.CharField(max_length=256)
-    type = models.CharField(max_length=256, blank=True)
+    type = models.CharField(max_length=256)
     status = models.IntegerField(default=0) # error or success code, 0 is always an initial state
 
     retained = models.NullBooleanField()
@@ -77,7 +77,19 @@ class Storage(models.Model):
 
 
     def retain(self):
+        """
+        Retain is the save function for HIF models, which returns a retain tuple.
+        It manages the classes that get added as attributes in Storage subclasses
+        At this level we just indicate that the object is being retained,
+        we set the properties needed to load it later
+        and we call Django's save to store.
+
+        The returned tuple is meant as an indicator to which load function should get called
+        """
+        self.type = self.__class__.__name__
+        self.identifier = self.identity()
         self.retained = True
+
         self.save()
         return (self.__class__, self.id)
 
@@ -92,13 +104,6 @@ class Storage(models.Model):
         return self.identifier + ' | ' + self.type
 
 
-    def save(self, *args, **kwargs):
-        if not self.type: # this shouldn't change in Admin
-            self.type = self.__class__.__name__
-        self.identifier = self.identity()
-        super(Storage, self).save(*args, **kwargs)
-
-
     class Meta:
         abstract = True
         unique_together = ('identifier','type',)
@@ -109,7 +114,7 @@ class Storage(models.Model):
 class ConfigStorage(ConfigMixin, Storage):
 
     configuration = models.TextField(null=True, blank=True)
-    arguments = jsonfield.JSONField(default=tuple(), blank=True)
+    arguments = jsonfield.JSONField(default=list(), blank=True)
 
     # HIF vars
     HIF_namespace = "HIF"
@@ -120,13 +125,17 @@ class ConfigStorage(ConfigMixin, Storage):
         return "{} | {}".format(self.arguments, self.config.dict(protected=True))
 
 
-    def save(self, *args, **kwargs):
+    def retain(self):
+        """
+        On retain we dump the complete config in a pickle field
+        """
         self.configuration = pickle.dumps(self.config.dict(protected=True, private=True))
-        super(Storage, self).save(*args, **kwargs)
+        return super(ConfigStorage, self).retain()
 
 
     def load(self, fetch=True, *args, **kwargs):
-        if fetch:
+        print "Load call with fetch={}".format(fetch)
+        if fetch: # TODO: needed?
             super(ConfigStorage, self).load(*args,**kwargs)
         self.config(pickle.loads(self.configuration))
         return self
@@ -138,47 +147,66 @@ class ConfigStorage(ConfigMixin, Storage):
 
 
 
-class ProcessStorage(ConfigStorage):
-    """
-    ..............
-    """
-    exception = models.TextField()
-    traceback = models.TextField()
-    task_id = models.CharField(max_length=256)
+class ContentStorage(ContentMixin, ConfigStorage):
+
+    # Content
     processes = models.TextField(null=True, blank=True)
-    prcs = ProcessContent()
     texts = models.TextField(null=True, blank=True)
-    txts = Content()
-    subscribers = models.TextField(null=True, blank=True)
-    subs = []
-    results = jsonfield.JSONField(null=True, blank=True)
-    rsl = None
 
 
     def retain(self):
-        print "Self: {}".format(self.serialize())
+        # Manage content
         self.prcs.retain()
         self.txts.retain()
-        return super(ProcessStorage, self).retain()
+        # Save classes in fields
+        self.processes = pickle.dumps(self.prcs.dict())
+        self.texts = pickle.dumps(self.txts.dict())
+        return super(ContentStorage, self).retain()
 
 
     def release(self):
         self.prcs.release()
         self.txts.release()
-        return super(ProcessStorage, self).release()
+        return super(ContentStorage, self).release()
 
 
-    def save(self, *args, **kwargs):
-        self.processes = pickle.dumps(self.prcs.dict())
-        self.texts = pickle.dumps(self.txts.dict())
+    def load(self, *args, **kwargs):
+        super(ContentStorage, self).load(*args,**kwargs)
+        self.prcs(pickle.loads(self.processes))
+        self.txts(pickle.loads(self.texts))
+        return self
+
+
+    class Meta:
+        abstract = True
+
+
+
+
+class ProcessStorage(ContentStorage):
+    """
+    ..............
+    """
+
+    results = jsonfield.JSONField(null=True, blank=True)
+
+    # Errors
+    exception = models.TextField()
+    traceback = models.TextField()
+
+    # Async processing
+    task_id = models.CharField(max_length=256)
+    subscribers = models.TextField(null=True, blank=True)
+    subs = []
+
+
+    def retain(self):
         self.subscribers = pickle.dumps(self.subs)
-        super(ProcessStorage, self).save(*args, **kwargs)
+        return super(ProcessStorage, self).retain()
 
 
     def load(self, *args, **kwargs):
         super(ProcessStorage, self).load(*args,**kwargs)
-        self.prcs(pickle.loads(self.processes))
-        self.txts(pickle.loads(self.texts))
         self.subs = pickle.loads(self.subscribers)
         return self
 
@@ -192,7 +220,7 @@ class ProcessStorage(ConfigStorage):
 
 
 
-class TextStorage(ConfigStorage):
+class TextStorage(ContentStorage):
     """
     Hyper text consists of a head and a body section typically
     This model adds those fields to the database
@@ -200,30 +228,6 @@ class TextStorage(ConfigStorage):
     """
     head = models.TextField()
     body = models.TextField()
-
-    processes = models.TextField(null=True, blank=True)
-    prcs = Content()
-
-    def retain(self):
-        self.prcs.retain()
-        self.save()
-        return super(TextStorage, self).retain()
-
-
-    def release(self):
-        self.prcs.release()
-        return super(TextStorage, self).release()
-
-
-    def save(self, *args, **kwargs):
-        self.processes = pickle.dumps(self.prcs.dict())
-        super(Storage, self).save(*args, **kwargs)
-
-
-    def load(self, *args, **kwargs):
-        super(ConfigStorage, self).load(*args,**kwargs)
-        self.prcs(pickle.loads(self.processes))
-        return self
 
 
     class Meta:

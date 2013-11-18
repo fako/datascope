@@ -36,7 +36,7 @@ class HttpLink(TextStorage):
     def get(self, refresh=False, *args):
 
         # Set arguments
-        self.arguments = args
+        self.arguments = list(args)
 
         # Early exit if response is already there and status within success range.
         if self.success() and not refresh:
