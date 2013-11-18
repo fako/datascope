@@ -135,7 +135,7 @@ class HttpQueryLink(HttpLink):
         print args
         assert len(args) == 1, "Improper usage: QueryLinks should receive only one args parameter."
         self._parameters[self._query_parameter] = args[0]
-        super(HttpQueryLink, self).get()
+        super(HttpQueryLink, self).get(*args)
 
     class Meta:
         proxy = True
