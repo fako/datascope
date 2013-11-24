@@ -1,10 +1,12 @@
-import traceback
+import traceback, json
+
+from django.db.models.loading import get_model
 
 from celery import group
 from celery.result import AsyncResult
 
 from HIF.models.storage import ProcessStorage
-from HIF.exceptions import HIFCouldNotLoadFromStorage, HIFProcessingError, HIFProcessingAsync, HIFEndlessLoop, HIFEndOfInput, HIFInputError
+from HIF.exceptions import HIFProcessingError, HIFProcessingAsync, HIFEndlessLoop, HIFEndOfInput, HIFInputError
 from HIF.tasks import execute_process
 from HIF.helpers.enums import ProcessStatus as Status
 
@@ -15,7 +17,7 @@ class Process(ProcessStorage):
 
 
     def __iter__(self):
-        return iter(self.results)
+        return iter(self.rsl)
 
 
     def process(self):
@@ -35,19 +37,19 @@ class Process(ProcessStorage):
         pass
 
 
-    def subscribe(self, to):
-        if to not in self.subs:
-            self.subs.append(to)
-            self.retain()
-
-
-    def inform(self):
-        for tprc in self.subs:
-            cls, prc_id = tprc
-            prc = cls()
-            prc.load(prc_id)
-            prc.execute()
-        self.subs = []
+    #def subscribe(self, to):
+    #    if to not in self.subs:
+    #        self.subs.append(to)
+    #        self.retain()
+    #
+    #
+    #def inform(self):
+    #    for tprc in self.subs:
+    #        cls, prc_id = tprc
+    #        prc = cls()
+    #        prc.load(prc_id)
+    #        prc.execute()
+    #    self.subs = []
 
 
     @property
@@ -76,65 +78,63 @@ class Process(ProcessStorage):
         self.status = Status.WAITING
 
 
+    # TODO: subs does not split between texts and processes status. should it?
+    def subs_errors(self):
+        return self.subs.count({"status__in":[Status.ERROR, Status.WARNING]})
+
+    def subs_waiting(self):
+        return self.subs.count({"status__in":[Status.WAITING, Status.SUBSCRIBED, Status.READY]})
+
+
     def execute(self, *args, **kwargs):
         """
         ..............
         """
 
-        # INIT
-        # Update config with kwargs
-        if kwargs:
-            self.config(**kwargs)
-        # Set arguments as identifier an store
-        if not self.arguments and args:
-            self.arguments = list(args)
-        self.identifier = self.identity()
-
-        print "Executing with {}".format(self.identifier)
+        self.setup(*args, **kwargs)
 
         # START
         if self.status == Status.UNPROCESSED:
             try:
-                self.load()
-                print "Loaded from cache: {}".format(self.identifier)
-            except HIFCouldNotLoadFromStorage:
-                print "Starting initial processing"
-                try:
-                    self.retain()
-                    self.process()
-                except Exception as exception:
-                    self.exception = exception
-                    self.traceback = traceback.format_exc()
-                    self.status = Status.ERROR
+                self.retain()
+                self.process()
+            except Exception as exception:
+                self.exception = exception
+                self.traceback = traceback.format_exc()
+                self.status = Status.ERROR
 
         # ASYNC PROCESSING
         if self.status == Status.WAITING:
             ar = self.task
             if ar.successful():
+
                 # This part assumes that AsyncResults contains at least one Process
                 # A HIF task at the end of a chain should never return results directly,
                 # but always the Process(es) responsible
                 if ar.result[0] != self.task_id:
                     # We are dealing with a singleton
-                    tprc = ar.result
-                    self.prcs.add(tprc)
+                    ser_prc = ar.result
+                    self.subs.add(ser_prc)
                 else:
                     # We are dealing with a group
                     # Every result in a group should return a Process
                     # This single process could be a grouped process in turn
                     for task_id, trash in ar.result[1]: # second element of data contains array with task_ids
-                        tprc = AsyncResult(task_id).result
-                        self.prcs.add(tprc)
+                        ser_prc = AsyncResult(task_id).result
+                        self.subs.add(ser_prc)
+
                 # When there are waiting Processes we subscribe self to everything based on last added tprc
-                if self.prcs.waiting() != 0:
-                    prc, prc_id = tprc
-                    self.prcs.subscribe(prc, self.serialize())
+                if self.subs_waiting() != 0:
+                    #type, prc_id, obj_id = tprc
+                    #prc = ContentType.objects.get_for_id(self, prc_id).get_objects_for_this_type(id=obj_id)
+                    #self.prcs.subscribe(prc, self.serialize())  # TODO: needs a retain tuple probably
                     self.status = Status.SUBSCRIBED
-                elif self.prcs.waiting() == 0:
+                elif self.subs_waiting() == 0:
                     self.status = Status.READY
                 # If there are errors in child processes we go into warning mode
-                if self.prcs.errors() != 0:
+                if self.subs_errors() != 0:
                     self.status = Status.WARNING
+
             # In rare cases the task itself raised an exception
             # Process goes into error mode
             elif ar.failed():
@@ -143,9 +143,9 @@ class Process(ProcessStorage):
 
         # SUBSCRIBED
         if self.status == Status.SUBSCRIBED:
-            if self.prcs.errors() != 0:
+            if self.subs_errors() != 0:
                 self.status = Status.WARNING
-            if self.prcs.waiting() == 0:
+            if self.subs_waiting() == 0:
                 self.status = Status.READY
 
         # READY
@@ -153,7 +153,7 @@ class Process(ProcessStorage):
             try:
                 self.post_process()
                 self.retain()
-                self.inform()
+                #self.inform()
             except Exception as exception:
                 self.exception = exception
                 self.traceback = traceback.format_exc()
@@ -163,7 +163,6 @@ class Process(ProcessStorage):
 
     class Meta:
         proxy = True
-
 
 
 
@@ -178,7 +177,7 @@ class Retrieve(Process):
 
     def handle_exception(self, exception):
         for link in self.links:
-            self.txts.add(link.retain())
+            self.subs.add(link.retain())
         raise exception
 
 
@@ -199,20 +198,21 @@ class Retrieve(Process):
     def process(self):
 
         # Make sure there is at least one argument to loop over
-        if not self.arguments:
-            args = self.arguments + ['']
+        if not self.args:
+            args = self.args + ['']
         else:
-            args = self.arguments
+            args = self.args
 
+        link_model = get_model(app_label="HIF", model_name=self.config._link)
         results = []
         for arg in args:
 
             # Fetch link with continue links
             self.links = []
-            link = self.config._link(config=self.config.dict())
+            link = link_model()
             try:
                 for repetition in range(100):
-                    link.get(arg)
+                    link.get(arg, **self.config.dict())
                     self.links.append(link)
                     link = self.continue_link(link)
                 else:
@@ -225,19 +225,20 @@ class Retrieve(Process):
             # Everything retrieved. We store it in results
             rsl = []
             for link in self.links:
-                if self.config.debug: self.txts.add(link.retain())
-                for obj in link.results:
+                if self.config.debug:
+                    self.subs.add(link.retain())
+                for obj in link.data:
                     rsl.append(obj)
             results.append({
-                "query": arg, # may be empty when not dealing with QueryLinks
+                "query": arg,  # may be empty when not dealing with QueryLinks
                 "results": rsl
             })
 
         # After all arguments are fetched, we store everything in self.rsl and process becomes DONE
         self.rsl = results
 
-
     class Meta:
+        app_label = "HIF"
         proxy = True
 
 

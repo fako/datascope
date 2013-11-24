@@ -1,5 +1,6 @@
 from celery import task
 
+from HIF.exceptions import HIFProcessingError
 
 @task(name="HIF.execute_process")
 def execute_process(input, tprc):

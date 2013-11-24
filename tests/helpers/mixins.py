@@ -1,10 +1,10 @@
 from django.test import TestCase
-from HIF.helpers.mixins import DataMixin
+from HIF.helpers.mixins import DataMixin, ConfigMixin
 
 
 class MockDataMixin(DataMixin):
     @property
-    def source(self):
+    def data_source(self):
         return [{
             "key": "right",
             "test": "test"
@@ -38,28 +38,33 @@ class TestDataMixin(TestCase):
         self.mixin = MockDataMixin()
 
     def test_results(self):
-        results = self.mixin.results
-        self.assertIsInstance(results,list)
-        self.assertEqual(len(results),3)
-        for result in results:
-            self.assertIn("test",result)
-            self.assertNotIn("translated",result)
+        data = self.mixin.data
+        self.assertIsInstance(data,list)
+        self.assertEqual(len(data),3)
+        for obj in data:
+            self.assertIn("test",obj)
+            self.assertNotIn("translated",obj)
 
     def test_translate_results_method(self):
-        self.mixin._translations = self.translations
-        results = self.mixin.results
-        self.assertIsInstance(results,list)
-        self.assertEqual(len(results),3)
-        for result in results:
-            self.assertIn("translated",result)
-            self.assertNotIn("test",result)
+        self.mixin.HIF_translations = self.translations
+        data = self.mixin.data
+        self.assertIsInstance(data,list)
+        self.assertEqual(len(data),3)
+        for obj in data:
+            self.assertIn("translated",obj)
+            self.assertNotIn("test",obj)
 
     def test_cleaner_method(self):
         self.mixin.cleaner = test_cleaner
-        results = self.mixin.results
-        self.assertIsInstance(results,list)
-        self.assertEqual(len(results),2)
+        data = self.mixin.data
+        self.assertIsInstance(data,list)
+        self.assertEqual(len(data),2)
 
 
+class MockConfigMixin(ConfigMixin):
+    HIF_namespace = 'test'
+    HIF_private = ['_test']
 
+class TestConfigMixin(TestCase):
+    pass
 

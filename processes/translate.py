@@ -20,16 +20,16 @@ class ImageTranslate(Process, DataMixin):
 
 
     @property
-    def source(self): # TODO: rename to data_source
-        data = self.prcs[Retrieve][0] # TODO: may delete whatever is in prcs ...
-        data.load(fetch=False)
-        return data.results
+    def data_source(self):
+        source = self.prcs[Retrieve][0] # TODO: may delete whatever is in prcs ...
+        source.load(fetch=False)
+        return source.results
 
 
     def process(self):
         # Get params
         query = self.config.query
-        translate_to = self.arguments[0] or self.config.translate_to
+        translate_to = self.args[0] or self.config.translate_to
 
         # Setup translate retriever
         translate_config = {
@@ -48,8 +48,7 @@ class ImageTranslate(Process, DataMixin):
 
 
     def post_process(self):
-        self.extract(self.source).translate()  # TODO: redo with self.data from DataMixin
-        self.rsl = self.data
+        self.rsl = self.data # translates keys
 
 
     class Meta:

@@ -1,23 +1,27 @@
-import json, requests
+import requests
 
-from HIF.exceptions import HIFCouldNotLoadFromStorage, HIFHttpError40X, HIFHttpError50X
+from HIF.exceptions import HIFHttpError40X, HIFHttpError50X
 from HIF.models.storage import TextStorage
 from HIF.helpers.mixins import JsonDataMixin
 
 
 class HttpLink(TextStorage):
 
-    # Class attributes
-    auth_link = '' # TODO: rename to URL or something similar
-    cache = False
-    request_headers = {}
-    setup = True
-
     # HIF interface attributes
-    _parameters = {}
-    _link = ''
+    HIF_parameters = {}
+    HIF_link = ''
 
-    # Interface
+    # Class attributes
+    request_headers = {}
+
+
+    def __init__(self, *args, **kwargs):
+        super(HttpLink, self).__init__(*args, **kwargs)
+        self.refresh = False
+        self.prepare = True
+        self.session = None
+        self._link = ''
+
 
     def success(self): # TODO: tests
         """
@@ -27,39 +31,29 @@ class HttpLink(TextStorage):
 
     @property
     def url(self): # TODO: tests
-        if not self._url:
+        if not self._link:
             self.prepare_link()
-        return self._url
+        return self._link
+
 
     # Main function.
     # Does a get to computed link
-    def get(self, refresh=False, *args):
+    def get(self, *args, **kwargs):
 
-        # Set arguments
-        self.arguments = list(args)
+        self.setup(*args, **kwargs)
 
         # Early exit if response is already there and status within success range.
-        if self.success() and not refresh:
+        if self.success() and not self.refresh:
             return self
         else:
-            self.head = ""
+            self.head = {}
             self.body = ""
             self.status = 0
 
         # Prepare to do a get if necessary in context
-        if self.setup:
+        if self.prepare:
             self.prepare_link()
             self.enable_auth()
-            self.identifier = self.identity()
-
-        # Try a load from database just before making request
-        try:
-            self.load()
-            if self.success(): # early return when previously fetched with success
-                print "Returning link from storage"
-                return self
-        except HIFCouldNotLoadFromStorage:
-            pass
 
         # Make request and do basic response handling
         self.send_request()
@@ -73,30 +67,34 @@ class HttpLink(TextStorage):
         Turns _parameters dictionary into valid query string
         Will execute any callables in values of _parameters
         """
-        url = self._link
-        if self._parameters:
+        url = self.HIF_link
+        if self.HIF_parameters:
             url += u'?'
-            for key ,value in self._parameters.iteritems():
+            for key ,value in self.HIF_parameters.iteritems():
                 if callable(value):
                     value = value()
                 url += key + u'=' + unicode(value) + u'&'
             url = url[:-1] # strips '&' from the end
-        self._url = url
+        self._link = url
 
     def enable_auth(self):
         """
         Should do authentication and set auth_link to proper authenticated link.
         """
-        self.auth_link = self.url
+        self._link = self.url # equal to _link = _link except url fills _link if empty ... make explicit?
 
     def send_request(self):
         """
         Does a get on the computed link
         Will set storage fields to returned values
         """
-        print "Doing request"
-        response = requests.get(self.auth_link, headers=self.request_headers)
-        self.head = json.dumps(dict(response.headers), indent=4)
+        if self.session is None:
+            connection = requests
+        else:
+            connection = self.session
+        response = connection.get(self.url, headers=self.request_headers)
+
+        self.head = dict(response.headers)
         self.body = response.content
         self.status = response.status_code
 
@@ -104,7 +102,7 @@ class HttpLink(TextStorage):
         """
         Stores self if it needs to be cached or the retrieval failed (for debug purposes)
         """
-        if self.cache or not self.success():
+        if not self.success():
             self.save()
             return True
         return False
@@ -122,6 +120,7 @@ class HttpLink(TextStorage):
         else:
             return True
 
+
     class Meta:
         proxy = True
 
@@ -129,13 +128,12 @@ class HttpLink(TextStorage):
 class HttpQueryLink(HttpLink):
 
     # HIF attributes
-    _query_parameter = ''
+    HIF_query_parameter = ''
 
-    def get(self, *args):
-        print args
-        assert len(args) == 1, "Improper usage: QueryLinks should receive only one args parameter."
-        self._parameters[self._query_parameter] = args[0]
-        super(HttpQueryLink, self).get(*args)
+    def get(self, *args, **kwargs):
+        assert len(args) == 1, "HIFImproperUsage: QueryLinks should receive only one args parameter."
+        self.HIF_parameters[self.HIF_query_parameter] = args[0]
+        super(HttpQueryLink, self).get(*args, **kwargs)
 
     class Meta:
         proxy = True
@@ -147,8 +145,12 @@ class JsonQueryLink(HttpQueryLink, JsonDataMixin):
         "Content-Type": "application/json; charset=utf-8"
     }
 
+    def __init__(self, *args, **kwargs):
+        super(JsonQueryLink, self).__init__(*args, **kwargs)
+        JsonDataMixin.__init__(self)
+
     @property
-    def source(self):
+    def data_source(self):
         """
         This property should return the data that DataMixin's extract should work with
         """

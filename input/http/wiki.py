@@ -3,29 +3,30 @@ from HIF.input.http.core import JsonQueryLink
 
 class WikiTranslate(JsonQueryLink):
 
-    _link = 'http://{}.wiktionary.org/w/api.php' # updated at runtime
-    _parameters = {
+    HIF_link = 'http://{}.wiktionary.org/w/api.php' # updated at runtime
+    HIF_parameters = {
         'format':'json',
         'action':'query',
         'prop':'iwlinks',
         'iwurl':1,
         'iwprefix': None, # set at runtime
     }
-    _objective = {
+    HIF_objective = {
         "url": None,
         "*": None,
     }
-    _translations = {
+    HIF_translations = {
         "*": "translation"
     }
-    _query_parameter = 'titles'
+    HIF_query_parameter = 'titles'
 
     HIF_namespace = "wiki"
 
-    def prepare_link(self, *args, **kwargs):
-        self._link = self._link.format(self.config.source_language)
-        self._parameters['iwprefix'] = self.config.translate_to
-        super(WikiTranslate, self).prepare_link(*args, **kwargs)
+    def prepare_link(self):
+        self.HIF_link = self.HIF_link.format(self.config.source_language)
+        self.HIF_parameters['iwprefix'] = self.config.translate_to
+        super(WikiTranslate, self).prepare_link()
 
     class Meta:
+        app_label = "HIF"
         proxy = True

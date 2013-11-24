@@ -7,15 +7,15 @@ DOMAIN = Domain()
 class GoogleImage(JsonQueryLink):
 
     # HIF interface
-    _link = 'https://www.googleapis.com/customsearch/v1'
-    _parameters = {
+    HIF_link = 'https://www.googleapis.com/customsearch/v1'
+    HIF_parameters = {
         'searchType':'image',
     }
-    _objective = {
+    HIF_objective = {
         "contextLink": None,
         "thumbnailLink": None,
     }
-    _query_parameter = 'q'
+    HIF_query_parameter = 'q'
 
     # Class props
     HIF_namespace = "google"
@@ -24,7 +24,7 @@ class GoogleImage(JsonQueryLink):
         super(GoogleImage, self).enable_auth()
         key = self.config.key
         cx = self.config.cx
-        self.auth_link += unicode(('&key={}&cx={}'.format(key, cx)))
+        self._link = self.url + unicode(('&key={}&cx={}'.format(key, cx)))
 
     def handle_error(self):
         try:
@@ -36,4 +36,4 @@ class GoogleImage(JsonQueryLink):
                 raise exception
 
     class Meta:
-        proxy = True
+        abstract = True

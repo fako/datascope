@@ -1,6 +1,12 @@
+# General
+class HIFImproperUsage(Exception):
+    pass
+
 # Storage
 class HIFCouldNotLoadFromStorage(Exception):
     pass
+
+
 
 
 # INPUT
@@ -31,6 +37,6 @@ class HIFProcessingAsync(Exception):
     pass
 
 
-# MIXINS
-class HIFContentError(Exception):
+# SUBCLASSES
+class HIFContainerError(Exception):
     pass

@@ -133,8 +133,8 @@ class TestHttpLink(TestCase):
         And is valid
         """
         http_link = HttpLink(**self.init_dict)
-        http_link._link = self.test_url
-        http_link._parameters = self.parameters
+        http_link.HIF_link = self.test_url
+        http_link.HIF_parameters = self.parameters
         http_link.prepare_link()
         self.assertIn("?",http_link.url)
         self.assertIn("test-static=test",http_link.url)
@@ -150,9 +150,9 @@ class TestHttpLink(TestCase):
         Enable auth should set the link that send_request will use.
         """
         http_link = HttpLink(**self.init_dict)
-        http_link._url = self.test_url
+        http_link._link = self.test_url
         http_link.enable_auth()
-        self.assertEqual(self.test_url, http_link.auth_link)
+        self.assertEqual(self.test_url, http_link.url)
 
     def test_store_response_function(self):
         http_link = HttpLink(**self.init_dict)
