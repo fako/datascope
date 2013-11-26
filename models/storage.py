@@ -85,7 +85,6 @@ class Storage(models.Model):
             else:
                 model = self.__class__
                 instance = model.objects.get(identification=self.identification,type=self.type)
-                print instance.id
         except ObjectDoesNotExist:
             if serialization:
                 message = "{} with id={} does not exist"
@@ -107,13 +106,17 @@ class Storage(models.Model):
         """
 
         """
+        print "Setting up {} with {} and {}".format(self.__class__.__name__, args, kwargs)
+        identify = False
         if self.arguments is None:
             self.args = list(args)
+            identify = True
         else:
             self.args = self.arguments
         self.config = Config(self.HIF_namespace, self.HIF_private)
         if self.configuration is None:
             self.config(kwargs)
+            identify = True
         else:
             self.config(self.configuration)
         if self.substorage is None:
@@ -124,17 +127,22 @@ class Storage(models.Model):
         self.type = self.__class__.__name__
         if not self.identification:
             self.identification = self.identifier()
+            identify = False
             try:
                 self.load()
                 self.setup(*args, **kwargs)
             except HIFCouldNotLoadFromStorage:
                 pass
 
+        if identify:
+            self.identification = self.identifier()
+
 
     def retain(self, serialize=True):
-        self.arguments = self.args
-        self.configuration = self.config.dict(protected=True, private=True)
-        self.substorage = self.subs.dict()
+        self.arguments = self.args if self.args else None
+        self.configuration = self.config.dict(protected=True, private=True) if self.config.dict(protected=True) else None
+        self.substorage = self.subs.dict() if self.subs.dict() else None
+        print "Retaining with: {}, {} and {}".format(self.arguments, self.configuration, self.substorage)
         self.retained = True
         if serialize:
             return self.serialize()

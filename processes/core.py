@@ -6,7 +6,8 @@ from celery import group
 from celery.result import AsyncResult
 
 from HIF.models.storage import ProcessStorage
-from HIF.exceptions import HIFProcessingError, HIFProcessingAsync, HIFEndlessLoop, HIFEndOfInput, HIFInputError
+from HIF.exceptions import HIFProcessingError, HIFProcessingAsync, \
+    HIFEndlessLoop, HIFEndOfInput, HIFInputError, HIFImproperUsage
 from HIF.tasks import execute_process
 from HIF.helpers.enums import ProcessStatus as Status
 
@@ -143,7 +144,7 @@ class Process(ProcessStorage):
 
         # SUBSCRIBED
         if self.status == Status.SUBSCRIBED:
-            if self.subs_errors() != 0:
+            if self.subs_errors () != 0:
                 self.status = Status.WARNING
             if self.subs_waiting() == 0:
                 self.status = Status.READY
@@ -204,6 +205,9 @@ class Retrieve(Process):
             args = self.args
 
         link_model = get_model(app_label="HIF", model_name=self.config._link)
+        if link_model is None:
+            raise HIFImproperUsage("The specified link model does not exist or is not registered as Django model.")
+
         results = []
         for arg in args:
 

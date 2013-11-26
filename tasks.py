@@ -1,34 +1,38 @@
+from django.db.models.loading import get_model
+
 from celery import task
 
 from HIF.exceptions import HIFProcessingError
 
 @task(name="HIF.execute_process")
-def execute_process(input, tprc):
+def execute_process(inp, ser_prc):
     """
     Main task which executes a Process
     Input will be given as arguments for the Process
     """
-    cls, prc_id = tprc
+    name, obj_id = ser_prc
+    cls = get_model(app_label="HIF", model_name=name)
     prc = cls()
-    prc.load(id=prc_id)
-    if type(input) in [list, tuple]:
-        prc.execute(*input)
+    prc.load(serialization=ser_prc)
+    if type(inp) in [list, tuple]:
+        prc.execute(*inp)
     else:
-        prc.execute(input)
+        prc.execute(inp)
     return prc.retain()
 
 
 
 @task(name="HIF.flatten_process_results")
-def flatten_process_results(tprc, key):
+def flatten_process_results(ser_prc, key):
     """
     This task simplifies results from a Process.
     In order for other processes to use it as input
     Should not be at the end of a chain!
     """
-    cls, prc_id = tprc
+    name, prc_id = ser_prc
+    cls = get_model(app_label="HIF",model_name=name)
     prc = cls()
-    prc.load(id=prc_id)
+    prc.load(serialization=ser_prc)
     flat = []
     for results in prc.rsl:
         for rsl in results["results"]:

@@ -1,8 +1,6 @@
 from HIF.input.http.core import JsonQueryLink
-from HIF.models.settings import Domain
 from HIF.exceptions import HIFHttpError40X, HIFHttpLinkPending
 
-DOMAIN = Domain()
 
 class GoogleImage(JsonQueryLink):
 
@@ -36,4 +34,5 @@ class GoogleImage(JsonQueryLink):
                 raise exception
 
     class Meta:
-        abstract = True
+        app_label = "HIF"
+        proxy = True

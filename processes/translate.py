@@ -10,8 +10,8 @@ from HIF.helpers.mixins import DataMixin
 class ImageTranslate(Process, DataMixin):
 
     # HIF interface
-    HIF_translate_model = WikiTranslate
-    HIF_image_model = GoogleImage
+    HIF_translate_model = "WikiTranslate"
+    HIF_image_model = "GoogleImage"
 
     _translations = {
         "query": "word",
@@ -21,8 +21,8 @@ class ImageTranslate(Process, DataMixin):
 
     @property
     def data_source(self):
-        source = self.prcs[Retrieve][0] # TODO: may delete whatever is in prcs ...
-        source.load(fetch=False)
+        source = self.subs[Retrieve][0]  # TODO: may delete whatever is in prcs ...
+        source.setup()
         return source.results
 
 
@@ -37,10 +37,12 @@ class ImageTranslate(Process, DataMixin):
             "translate_to": translate_to
         }
         translate_config.update(self.config.dict())
-        translate_retriever = Retrieve(translate_config)
+        translate_retriever = Retrieve()
+        translate_retriever.setup(**translate_config)
         # Setup image retriever
         image_config = {"_link": self.HIF_image_model}
-        image_retriever = Retrieve(image_config)
+        image_retriever = Retrieve()
+        image_retriever.setup(**image_config)
 
         # Start Celery task
         task = (execute_process.s(query, translate_retriever.retain()) | flatten_process_results.s(key="translation") | execute_process.s(image_retriever.retain()))()
