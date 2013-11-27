@@ -1,4 +1,6 @@
-import traceback, json
+import traceback
+
+import requests
 
 from django.db.models.loading import get_model
 
@@ -208,12 +210,15 @@ class Retrieve(Process):
         if link_model is None:
             raise HIFImproperUsage("The specified link model does not exist or is not registered as Django model.")
 
+        session = requests.Session()
+
         results = []
         for arg in args:
 
             # Fetch link with continue links
             self.links = []
             link = link_model()
+            link.session = session
             try:
                 for repetition in range(100):
                     link.get(arg, **self.config.dict())

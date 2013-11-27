@@ -13,7 +13,7 @@ class ImageTranslate(Process, DataMixin):
     HIF_translate_model = "WikiTranslate"
     HIF_image_model = "GoogleImage"
 
-    _translations = {
+    HIF_translations = {
         "query": "word",
         "results": "images"
     }
@@ -21,7 +21,7 @@ class ImageTranslate(Process, DataMixin):
 
     @property
     def data_source(self):
-        source = self.subs[Retrieve][0]  # TODO: may delete whatever is in prcs ...
+        source = self.subs["Retrieve"][0]
         source.setup()
         return source.results
 
@@ -50,7 +50,7 @@ class ImageTranslate(Process, DataMixin):
 
 
     def post_process(self):
-        self.rsl = self.data # translates keys
+        self.rsl = self.data  # translates keys
 
 
     class Meta:
