@@ -23,7 +23,7 @@ class Config(object):  # TODO: tests
         super(Config, self).__init__()
         self._domain = Domain()
         self._namespace = namespace
-        self._private += private
+        self._private += [prv for prv in private if prv not in self._private]
 
     def __getattr__(self, item):
         if hasattr(self._domain, self._namespace + '_' + item):
@@ -57,20 +57,22 @@ class Container(object):
 
     def __init__(self, init={}, *args, **kwargs):
         super(Container, self).__init__(*args, **kwargs)
-        self._container = init
+        self._container = dict(init)
         self._updated = False
 
     def __getitem__(self, cls):  # TODO: return Q instead?
         if not cls in self._container:
             raise KeyError("Container does not hold instances of {}".format(cls))
         model = get_model(app_label="HIF", model_name=cls)
+        if model is None:
+            raise HIFImproperUsage("The specified model does not exist or is not registered as Django model with HIF label.")
         return model.objects.filter(id__in=self._container[cls])
 
     def dict(self):
         return self._container
 
     def __call__(self, dictionary):
-        self._container = dictionary
+        self._container = dict(dictionary)
 
 
     def add(self, ser):
@@ -91,10 +93,13 @@ class Container(object):
 
     def run(self, cls, method, *args, **kwargs):
         for obj in self[cls]:
+            obj.setup()
             getattr(obj, method)(*args, **kwargs)
 
     def query(self, cls, query_dict):
         model = get_model(app_label="HIF", model_name=cls)
+        if model is None:
+            raise HIFImproperUsage("The specified model does not exist or is not registered as Django model with HIF label.")
         return model.objects.filter(id__in=self._container[cls], **query_dict)
 
     def count(self, query_dict):

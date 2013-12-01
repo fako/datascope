@@ -1,8 +1,6 @@
 from celery import group
 
-from HIF.processes.core import Process, Retrieve
-from HIF.input.http.google import GoogleImage
-from HIF.input.http.wiki import WikiTranslate
+from HIF.processes.core import Process, Retrieve, GroupProcess
 from HIF.tasks import execute_process, flatten_process_results
 from HIF.helpers.mixins import DataMixin
 
@@ -10,13 +8,14 @@ from HIF.helpers.mixins import DataMixin
 class ImageTranslate(Process, DataMixin):
 
     # HIF interface
-    HIF_translate_model = "WikiTranslate"
-    HIF_image_model = "GoogleImage"
+    HIF_translate_model = "WikiTranslate"  # HIF.input.http.wiki
+    HIF_image_model = "GoogleImage"  # HIF.input.http.google
 
     HIF_translations = {
         "query": "word",
         "results": "images"
     }
+    HIF_child_process = 'Retrieve'
 
 
     @property
@@ -40,7 +39,7 @@ class ImageTranslate(Process, DataMixin):
         translate_retriever = Retrieve()
         translate_retriever.setup(**translate_config)
         # Setup image retriever
-        image_config = {"_link": self.HIF_image_model}
+        image_config = {"_link": self.HIF_image_model, "_context":"{}+{}".format(query, translate_to)}
         image_retriever = Retrieve()
         image_retriever.setup(**image_config)
 
@@ -54,51 +53,35 @@ class ImageTranslate(Process, DataMixin):
 
 
     class Meta:
+        app_label = "HIF"
         proxy = True
 
 
-#class ImageTranslations(GroupProcess):
-#
-#    def process(self):
-#
-#        # Get params
-#        arg = self.args[0] # TODO: warn against improper usage
-#        source_language = self.config.source_language
-#        supported_languages = self.config._supported_languages
-#        supported_languages.remove(source_language)
-#
-#        processes = []
-#        for language in supported_languages:
-#            # Setup config per language
-#            configuration = self.config.dict(protected=True)
-#            configuration.update({"translate_to": language})
-#            # Add process to queue
-#            process = ImageTranslate(configuration)
-#            processes.append((arg,process.retain(),))
-#
-#        print "inside group process"
-#        print processes
-#
-#        # Start a task that calls ImageTranslate processes with different translate_to config.
-#        grp = group(execute_process.s(input,process) for input, process in processes).delay()
-#        self.task = grp.id
-#        self.retain()
-#        return self.task
-#
-#    def post_process(self, *args, **kwargs):
-#        data = self.data # data should contain list with process retain tuples
-#        print "group post_process"
-#        print(data)
-#        results = []
-#        for prc in data:
-#            process = get_process_from_storage(prc)
-#            if process.status == Status.DONE:
-#                results += process.results
-#            else:
-#                return None
-#
-#        self.results = results
-#        return self.results
-#
-#    class Meta:
-#        proxy = True
+class ImageTranslations(GroupProcess):
+
+    HIF_child_process = 'ImageTranslate'
+
+    def setup(self, *args, **kwargs):
+        kwargs["_process"] = 'ImageTranslate'  # move to core?
+        super(ImageTranslations, self).setup(*args, **kwargs)
+        self.args = self.config._supported_languages
+        source_language = self.config.source_language
+        if source_language in self.args:
+            self.args.remove(source_language)
+        self.save()
+
+
+    def post_process(self, *args, **kwargs):
+        # TODO: This could also be done by translating the results from GroupProcess, no need to write it out every time ...
+        results = []
+        for language, data in zip(self.args, self.data):
+            results.append({
+                "language": language,
+                "translations": data
+            })
+        self.rsl = results
+
+
+    class Meta:
+        app_label = "HIF"
+        proxy = True

@@ -81,6 +81,8 @@ class Storage(models.Model):
             if serialization:
                 typ, id = deserialize(serialization)
                 model = get_model(app_label="HIF", model_name=typ)
+                if model is None:
+                    raise HIFImproperUsage("The specified model does not exist or is not registered as Django model with HIF label.")
                 instance = model.objects.get(id=id)
             else:
                 model = self.__class__
@@ -136,6 +138,8 @@ class Storage(models.Model):
 
         if identify:
             self.identification = self.identifier()
+
+        self.save()
 
 
     def retain(self, serialize=True):

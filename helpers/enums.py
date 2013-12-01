@@ -3,8 +3,8 @@ class ProcessStatus(object):
     UNPROCESSED = 0
     DONE = 1
 
-    WAITING = 2
-    SUBSCRIBED = 3
+    PROCESSING = 2
+    WAITING = 3
     READY = 4
 
     ERROR = -1
