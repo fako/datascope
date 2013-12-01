@@ -12,6 +12,7 @@ from HIF.exceptions import HIFProcessingError, HIFProcessingAsync, \
     HIFEndlessLoop, HIFEndOfInput, HIFInputError, HIFImproperUsage
 from HIF.tasks import execute_process
 from HIF.helpers.enums import ProcessStatus as Status
+from HIF.helpers.mixins import DataMixin
 
 
 
@@ -234,7 +235,7 @@ class Retrieve(Process):
 
 
 
-class GroupProcess(Process):
+class GroupProcess(Process, DataMixin):
 
     HIF_private = ["_process"]
 
@@ -252,22 +253,15 @@ class GroupProcess(Process):
 
 
     @property
-    def data(self):
-        return [prc.results for prc in self.subs[self.config._process]]
-
-        ## Early return when we already formatted the data
-        #if self.formatted:
-        #    return self._data
-        ## Get data as if it was coming from a normal process
-        #self._data = super(GroupProcess, self).data
-        #self.formatted = False
-        ## Format GroupResult into list of results
-        #if self._data:
-        #    data = []
-        #
-        #    self._data = data
-        #    self.formatted = True
-        #return self._data
+    def data_source(self):
+        source = []
+        results = [prc.results for prc in self.subs[self.config._process]]
+        for arg, rsl in zip(self.args, results):
+            source.append({
+                "member": arg,
+                "data": rsl
+            })
+        return source
 
     def extract_task(self):
         # Every result in a group should return a Process
@@ -291,26 +285,6 @@ class GroupProcess(Process):
         grp = group(execute_process.s(inp, ser_prc) for inp, ser_prc in processes).delay()
         self.task = grp
 
-
-    #def post_process(self):
-    #    data = self.data # data should contain list with process retain tuples
-    #    print "group post_process"
-    #    print(data)
-    #
-    #    results = []
-    #    for arg, prc in zip(self.args, data):
-    #        process = get_process_from_storage(prc)
-    #        if process.status == Status.DONE:
-    #            print arg, process.results
-    #            results.append({
-    #                self.config._argument_key: arg,
-    #                self.config._result_key: process.results
-    #            })
-    #        else:
-    #            return None
-    #
-    #    self.results = results
-    #    return self.results
 
     class Meta:
         proxy = True

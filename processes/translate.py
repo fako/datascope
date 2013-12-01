@@ -60,6 +60,10 @@ class ImageTranslate(Process, DataMixin):
 class ImageTranslations(GroupProcess):
 
     HIF_child_process = 'ImageTranslate'
+    HIF_translations = {
+        "member": "language",
+        "data": "translations"
+    }
 
     def setup(self, *args, **kwargs):
         kwargs["_process"] = 'ImageTranslate'  # move to core?
@@ -70,16 +74,9 @@ class ImageTranslations(GroupProcess):
             self.args.remove(source_language)
         self.save()
 
-
     def post_process(self, *args, **kwargs):
-        # TODO: This could also be done by translating the results from GroupProcess, no need to write it out every time ...
-        results = []
-        for language, data in zip(self.args, self.data):
-            results.append({
-                "language": language,
-                "translations": data
-            })
-        self.rsl = results
+        self.rsl = self.data  # translates keys
+
 
 
     class Meta:
