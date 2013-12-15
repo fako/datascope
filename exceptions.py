@@ -35,8 +35,3 @@ class HIFProcessingError(Exception):
 
 class HIFProcessingAsync(Exception):
     pass
-
-
-# SUBCLASSES
-class HIFContainerError(Exception):
-    pass

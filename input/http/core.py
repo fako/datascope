@@ -131,7 +131,7 @@ class HttpQueryLink(HttpLink):
     HIF_query_parameter = ''
 
     def get(self, *args, **kwargs):
-        assert len(args) == 1, "HIFImproperUsage: QueryLinks should receive only one args parameter."
+        assert len(args) == 1, "HIFImproperUsage: QueryLinks should receive only one input through args parameter."
         self.HIF_parameters[self.HIF_query_parameter] = args[0]
         super(HttpQueryLink, self).get(*args, **kwargs)
 

@@ -1,8 +1,20 @@
 from django.db.models.loading import get_model
 
-from HIF.helpers.enums import ProcessStatus
-from HIF.exceptions import HIFContainerError, HIFImproperUsage
-from HIF.models.settings import Domain
+from HIF.exceptions import HIFImproperUsage
+
+
+def get_hif_model(name):
+    model = get_model(app_label="HIF", model_name=name)
+    if model is None:
+        raise HIFImproperUsage("The specified model does not exist or is not registered as Django model with HIF label.")
+    return model
+
+        ## Load fail wrong model
+        #try:
+        #    instance.load(("DoesNotExist", 1,))
+        #    self.fail()
+        #except HIFImproperUsage as exception:
+        #    self.assertEqual(str(exception), "The specified model does not exist or is not registered as Django model with HIF label.")
 
 
 def deserialize(serialization):
@@ -15,50 +27,11 @@ def deserialize(serialization):
     return serialization[0], serialization[1]
 
 
-class Config(object):  # TODO: tests
-
-    _private = ["_private", "_domain", "_namespace"]
-
-    def __init__(self, namespace, private):
-        super(Config, self).__init__()
-        self._domain = Domain()
-        self._namespace = namespace
-        self._private += [prv for prv in private if prv not in self._private]
-
-    def __getattr__(self, item):
-        if hasattr(self._domain, self._namespace + '_' + item):
-            return getattr(self._domain, self._namespace + '_' + item)
-        else:
-            raise AttributeError("Tried to retrieve '{}' in config and namespace '{}', without results.".format(item, self._namespace))
-
-    def __call__(self, new):
-        for key, value in new.iteritems():
-            setattr(self, key, value)
-
-    def __str__(self):
-        return str(self.dict())
-
-    def dict(self, protected=False, private=False):
-        dictionary = dict()
-        for key, value in self.__dict__.iteritems():
-            if key == '_domain':
-                continue
-            if key.startswith('_'):
-                if (private and key in self._private) or (protected and key not in self._private):
-                    dictionary[key] = value
-            else:
-                dictionary[key] = value
-        return dictionary
-
-
-
-
 class Container(object):
 
     def __init__(self, init={}, *args, **kwargs):
         super(Container, self).__init__(*args, **kwargs)
         self._container = dict(init)
-        self._updated = False
 
     def __getitem__(self, cls):  # TODO: return Q instead?
         if not cls in self._container:
@@ -81,7 +54,6 @@ class Container(object):
             self._container[cls] = [obj_id]
         elif obj_id not in self._container[cls]:
             self._container[cls].append(obj_id)
-        self._updated = True
 
     def remove(self, ser):
         cls, obj_id = deserialize(ser)
@@ -110,36 +82,3 @@ class Container(object):
 
     def update(self, cls, update_dict):
         return self[cls].update(**update_dict)
-
-
-
-
-#class ProcessContent(Content):
-#
-#    def execute(self, process):
-#        for prc in self[process]:
-#            prc.execute()
-#
-#    def subscribe(self, process, to):
-#        for prc in self[process]:
-#            prc.subscribe(to)
-#
-#    def errors(self):
-#        count = 0
-#        for key, prc_ids in self._virtual.iteritems():
-#            typ, con_id = key
-#            con = ContentType.objects.get_for_id(con_id).model_class()
-#            count += con.objects.filter(id__in=prc_ids,status__in=[ProcessStatus.ERROR, ProcessStatus.WARNING]).count()
-#        return count
-#
-#    def waiting(self):
-#        count = 0
-#        for key, prc_ids in self._virtual.iteritems():
-#            typ, con_id = key
-#            con = ContentType.objects.get_for_id(con_id).model_class()
-#            count += con.objects.filter(id__in=prc_ids,
-#                status__in=[ProcessStatus.WAITING, ProcessStatus.SUBSCRIBED, ProcessStatus.READY]).count()
-#        return count
-
-
-

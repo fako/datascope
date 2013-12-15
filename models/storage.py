@@ -1,13 +1,12 @@
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models.loading import get_model
+
 
 import jsonfield
 
-from HIF.helpers.subclasses import Config, Container, deserialize
+from HIF.helpers import storage
+from HIF.helpers.configuration import Config
 from HIF.exceptions import HIFImproperUsage, HIFCouldNotLoadFromStorage
-
-
 
 
 class Storage(models.Model):
@@ -21,6 +20,12 @@ class Storage(models.Model):
     Apart from these fields their are a few flags on this model
     retained indicates whether the storage happened in the context of a process which needs the content
     cached indicates whether the storage happened for performance reasons
+    On top of that we have the exception and traceback fields which will get filled when errors occur
+
+    Last but not least we have three different jsonfields which are used to save storage state
+    Configuration stores the configuration arguments given to setup()
+    Arguments saves the positional arguments given to setup()
+    Substorage holds serialized storage objects for later use.
     """
 
     # Standard database fields
@@ -46,8 +51,17 @@ class Storage(models.Model):
     HIF_namespace = "HIF"
     HIF_private = []
 
+    #######################################################
+    # PYTHON + DJANGO OVERRIDES
+    #######################################################
 
     def __init__(self, *args, **kwargs):
+        """
+        This function sets three key variables on self to None
+        1) config will become a Config class instance holding configuration variables
+        2) args will become a list of input
+        3) subs will become a Container class instance holding related Storage instances
+        """
         super(Storage, self).__init__(*args, **kwargs)
         self.config = None
         self.args = None
@@ -59,30 +73,45 @@ class Storage(models.Model):
     class Meta:
         abstract = True
 
+    #######################################################
+    # GENERAL USE METHODS
+    #######################################################
+    # These methods are very simple functions
+    # Used by Python or Django overrides and the normal class methods
 
     def identifier(self):
+        """
+        Returns an identifier based on input (args) and configuration if possible or the pk.
+        Any private configuration does not count for the identity
+        """
         if self.args is not None and self.config is not None:
             return "{} | {}".format(self.args, self.config.dict(protected=True))
         else:
             return str(self.id) if self.id else "0"
 
     def serialize(self):
+        """
+        Returns a tuple with information to recreate the stored object
+        """
         self.save()
         return self.type, self.id
 
+    #######################################################
+    # STORAGE MAIN
+    #######################################################
+    # These methods are the core functionality of this class
 
     def load(self, serialization=None):
         """
-        This function tries to load a stored version of self
+        This method tries to load a stored version of self
         It either tries to deserialize a model
         or checks whether a model with same type and identification exists in db
+        If it finds anything it loads all db fields onto self
         """
         try:
             if serialization:
-                typ, id = deserialize(serialization)
-                model = get_model(app_label="HIF", model_name=typ)
-                if model is None:
-                    raise HIFImproperUsage("The specified model does not exist or is not registered as Django model with HIF label.")
+                name, id = storage.deserialize(serialization)
+                model = storage.get_hif_model(name)
                 instance = model.objects.get(id=id)
             else:
                 model = self.__class__
@@ -103,15 +132,17 @@ class Storage(models.Model):
         # Enable chaining
         return self
 
-
     def setup(self, *args, **kwargs):
         """
-
+        This function sets three key variables on self
+        1) config will become a Config class instance holding configuration variables based on kwargs
+        2) args will become a list of input based on args
+        3) subs will become a Container class instance holding related Storage instances when needed
         """
-        print "Setting up {} with {} and {}".format(self.__class__.__name__, args, kwargs)
+        # Set variables based on info coming from database or this functions parameters
         identify = False
         if self.arguments is None:
-            self.args = list(args)
+            self.args = [unicode(arg) for arg in args]
             identify = True
         else:
             self.args = self.arguments
@@ -122,31 +153,40 @@ class Storage(models.Model):
         else:
             self.config(self.configuration)
         if self.substorage is None:
-            self.subs = Container()
+            self.subs = storage.Container()
         else:
-            self.subs = Container(self.substorage)
+            self.subs = storage.Container(self.substorage)
 
+        # If no identification was set we try to load from db based on values now set by this function
         self.type = self.__class__.__name__
         if not self.identification:
             self.identification = self.identifier()
             identify = False
             try:
                 self.load()
-                self.setup(*args, **kwargs)
+                self.setup(*args, **kwargs)  # we recursively will set values again based on info coming from db
             except HIFCouldNotLoadFromStorage:
-                pass
+                pass  # apparently current setup is new
 
         if identify:
             self.identification = self.identifier()
 
         self.save()
 
+    #######################################################
+    # PERSISTANCE
+    #######################################################
+    # These functions properly (de)serialize the models into db
 
     def retain(self, serialize=True):
+        """
+        Will store arguments, configuration and substorage.
+        Sets retained flag to True and by default serializes the model
+        This last act will save the model
+        """
         self.arguments = self.args if self.args else None
         self.configuration = self.config.dict(protected=True, private=True) if self.config.dict(protected=True) else None
         self.substorage = self.subs.dict() if self.subs.dict() else None
-        print "Retaining with: {}, {} and {}".format(self.arguments, self.configuration, self.substorage)
         self.retained = True
         if serialize:
             return self.serialize()
@@ -156,8 +196,6 @@ class Storage(models.Model):
     def release(self):
         self.retained = False
         self.save()
-
-
 
 
 class ProcessStorage(Storage):
@@ -171,43 +209,12 @@ class ProcessStorage(Storage):
 
     # Async processing
     task_id = models.CharField(max_length=256, null=True, blank=True)
-    listeners = jsonfield.JSONField(null=True, blank=True)
-    #subscribers = PickledObjectField(null=True, blank=True)
-    #subs = []
-
-
-    #def __init__(self, *args, **kwargs):
-    #    super(ProcessStorage, self).__init__(*args, **kwargs)
-    #    self._results = None
-    #
-    #
-    #def retain(self):
-    #    self.subscribers = pickle.dumps(self.subs)
-    #    if self.results:
-    #        self.results = json.dumps(self._results)
-    #    #self.subscribers = self.subs
-    #    return super(ProcessStorage, self).retain()
-    #
-    #
-    #def load(self, *args, **kwargs):
-    #    super(ProcessStorage, self).load(*args,**kwargs)
-    #    #self.subs = pickle.loads(self.subscribers)
-    #    print "Load results: ".format(self.results)
-    #    if self.results:
-    #        self._results = json.loads(self.results)
-    #    else:
-    #        self._results = []
-    #    #self.subs = self.subscribers
-    #    return self
-
 
     class Meta:
         db_table = "HIF_processstorage"
         app_label = "HIF"
         verbose_name = "Process"
         verbose_name_plural = "Processes"
-
-
 
 
 class TextStorage(Storage):
@@ -227,141 +234,8 @@ class TextStorage(Storage):
         verbose_name_plural = "Texts"
 
 
-
-
-
-#    def retain(self):
-#        # Manage content
-#        self.prcs.retain()
-#        self.txts.retain()
-#        # Save classes in fields
-#        self.processes = pickle.dumps(self.prcs.dict())
-#        self.texts = pickle.dumps(self.txts.dict())
-#        return super(ContentStorage, self).retain()
-#
-#
-#    def release(self):
-#        self.prcs.release()
-#        self.txts.release()
-#        return super(ContentStorage, self).release()
-#
-#
-#    def load(self, *args, **kwargs):
-#        super(ContentStorage, self).load(*args,**kwargs)
-#        self.prcs(pickle.loads(self.processes))
-#        self.txts(pickle.loads(self.texts))
-#        return self
-#
-#
-#    class Meta:
-#        abstract = True
-#
-#
-#
-#
-#
-#
-#
-#
-#    def setup(self, *args, **kwargs):
-#        """
-#
-#        """
-#        assert isinstance(config,dict), "Setup is expecting to get a dictionary as argument."
-#        for key,value in config.iteritems():
-#            setattr(self.config,key,value)
-#        self.identification = self.identifier()
-#
-#
-#
-#
-#
-#    def retain(self):
-#        """
-#        On retain we dump the complete config in a pickle field
-#        """
-#        self.configuration = pickle.dumps(self.config.dict(protected=True, private=True))
-#        self.arguments = json.dumps(self.args)
-#        return super(ConfigStorage, self).retain()
-#
-#
-#    def load(self, fetch=True, *args, **kwargs):
-#        print "Load call with fetch={}".format(fetch)
-#        if fetch:
-#            super(ConfigStorage, self).load(*args,**kwargs)
-#        self.config(pickle.loads(self.configuration))
-#        if self.arguments:
-#            print "Args on load: {}".format(self.arguments)
-#            self.args = json.loads(self.arguments)
-#        else:
-#            self.args = []
-#        return self
-#
-#
-#    class Meta:
-#        abstract = True
-#
-#
-#    def __init__(self, *args, **kwargs):
-#        super(Storage, self).__init__(*args, **kwargs)
-#
-#        self.identification = self.identifier()
-#
-#
-#
-#
-#
-#
-#    def identifier(self):
-#
-#
-#
-#
-#
-#
-#    def retain(self):
-#        """
-#        Retain is the save function for HIF models, which returns a retain tuple.
-#        It manages the classes that get added as attributes in Storage subclasses
-#        At this level we just indicate that the object is being retained,
-#        we set the properties needed to load it later
-#        and we call Django's save to store.
-#
-#        The returned tuple is meant as an indicator to which load function should get called
-#        """
-#        self.identification = self.identifier()
-#        self.retained = True
-#
-#        self.save()
-#        content_type = ContentType.objects.get_for_model(self)
-#        return (self.type, content_type.id, self.id)
-#
-#
-#    def release(self):
-#        self.retained = False
-#        self.save()
-#        return self.id
-#
-#
-#
-#
-#
-#    class Meta:
-#        abstract = True
-#        unique_together = ('identification','type',)
-#
-#
-#
-#
-#
-#
-
-#
-#
-#
-#
-#class FileStorage():
-#    """
-#    To be implemented with FTP or HTTP file transfer
-#    """
-#    pass
+class FileStorage():
+    """
+    To be implemented with FTP or HTTP file transfer
+    """
+    pass

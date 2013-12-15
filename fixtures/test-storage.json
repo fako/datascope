@@ -3,13 +3,21 @@
     "pk": 1, 
     "model": "HIF.textstorage", 
     "fields": {
-        "status": 0, 
-        "body": "Test body", 
-        "head": "Test head",
-        "cached": null, 
-        "retained": null,
-        "identifier": "http://localhost:8000/test/", 
-        "type": "HttpLink"
+        "status": 0,
+        "body": "Test text 1",
+        "exception": null, 
+        "retained": true, 
+        "traceback": null, 
+        "head": { },
+        "identification": "[u'test'] | {'test': u'test'}",
+        "arguments": [
+            "test"
+        ], 
+        "substorage": null, 
+        "configuration": {
+            "test": "test"
+        }, 
+        "type": "TextStorage"
     }
 },
 {
@@ -17,12 +25,20 @@
     "model": "HIF.textstorage",
     "fields": {
         "status": 0,
-        "body": "Test query body",
-        "head": "Test query head",
-        "cached": null,
-        "retained": null,
-        "identifier": "http://localhost:8000/test/",
-        "type": "HttpQueryLink"
+        "body": "Test text 2",
+        "exception": null,
+        "retained": true,
+        "traceback": null,
+        "head": { },
+        "identification": "[u'test args'] | {'test': u'test'}",
+        "arguments": [
+            "test args"
+        ],
+        "substorage": null,
+        "configuration": {
+            "test": "test"
+        },
+        "type": "TextStorage"
     }
 },
 {
@@ -30,12 +46,20 @@
     "model": "HIF.textstorage",
     "fields": {
         "status": 0,
-        "body": "Test another body",
-        "head": "Test another head",
-        "cached": null,
-        "retained": null,
-        "identifier": "http://localhost:8000/test/test/",
-        "type": "HttpLink"
+        "body": "Test text 3",
+        "exception": null,
+        "retained": true,
+        "traceback": null,
+        "head": { },
+        "identification": "[u'test'] | {'test': u'test kwargs'}",
+        "arguments": [
+            "test"
+        ],
+        "substorage": null,
+        "configuration": {
+            "test": "test kwargs"
+        },
+        "type": "TextStorage"
     }
 }
 ]

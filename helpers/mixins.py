@@ -6,11 +6,6 @@ from HIF.helpers.extractors import json_extractor
 from HIF.models.settings import Domain
 
 
-
-
-
-
-
 class DataMixin(object):
     """
     This mixin adds a results property to the mother class
