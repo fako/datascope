@@ -1,15 +1,7 @@
 {% extends "base.html" %}
-{% load hif_tags %}
-
-{% block css %}
-    {{ block.super }}
-    <style>
-        body {
-            text-align: center;
-        }
-    </style>
-{% endblock %}
+{% load i18n hif_tags %}
 
 {% block header %}
+    <p>{% trans "Search for a single word and see the canonical images for that word in 5 different languages." %}</p>
     {% include "components/search.html" %}
 {% endblock %}

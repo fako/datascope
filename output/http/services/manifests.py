@@ -35,11 +35,15 @@ class ImageTranslationsService(ImageTranslationsStorage, Service):
         proxy = True
 
     def context(self, request):
+
+        # Input validation
         query = request.GET.get('q')
         if not query:
             raise HIFNoInput('No input provided')
         if query and len(query.split(' ')) > 1:
             raise HIFBadRequest("We're sorry, Image Translations can't take more than one word as a query. Please try with one word at a time.")
+
+        # Returning context
         return {
             "source_language": request.LANGUAGE_CODE,
             "query": query

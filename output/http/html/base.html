@@ -1,11 +1,12 @@
 {% load staticfiles %}
+<!DOCTYPE HTML>
 <html>
 <head>
     <title>{% block title %}Fako Berkers{% endblock %}</title>
 
     {% block css %}
         <link href="{% static "css/bootstrap.css" %}" rel="stylesheet" />
-{#        <link href="{% static "css/style.css" %}" rel="stylesheet" />#}
+        <link href="{% static "css/style.css" %}" rel="stylesheet" />
     {% endblock %}
 
     {% block head-js %}{% endblock %}

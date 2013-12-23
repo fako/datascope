@@ -15,5 +15,9 @@ def is_list(var):
     return isinstance(var, list)
 
 @register.filter()
+def is_url(var):
+    return var.startswith('http')
+
+@register.filter()
 def span(var):
     return 'span' + str(int(math.floor(12/len(var))))
