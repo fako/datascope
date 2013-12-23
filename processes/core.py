@@ -9,7 +9,7 @@ from celery.result import AsyncResult, GroupResult
 
 from HIF.models.storage import ProcessStorage
 from HIF.exceptions import HIFProcessingError, HIFProcessingAsync, \
-    HIFEndlessLoop, HIFEndOfInput, HIFInputError, HIFImproperUsage
+    HIFEndlessLoop, HIFEndOfInput, HIFInputError, HIFImproperUsage, HIFNoContent
 from HIF.tasks import execute_process
 from HIF.helpers.enums import ProcessStatus as Status
 from HIF.helpers.mixins import DataMixin
@@ -50,7 +50,10 @@ class Process(ProcessStorage):
     @property
     def rsl(self):
         if self.status == Status.DONE:
-            return self.results
+            if self.results:
+                return self.results
+            else:
+                raise HIFNoContent()
         elif self.status in [Status.ERROR, Status.WARNING]:
             raise HIFProcessingError()
         elif self.status in [Status.PROCESSING, Status.WAITING, Status.READY]:
@@ -78,9 +81,7 @@ class Process(ProcessStorage):
         return self.subs.count({"status__in":[Status.ERROR, Status.WARNING]})
 
     def subs_waiting(self):
-        x = self.subs.count({"status__in":[Status.PROCESSING, Status.WAITING, Status.READY]})
-        print x
-        return x
+        return self.subs.count({"status__in":[Status.PROCESSING, Status.WAITING, Status.READY]})
 
     def subs_state(self):
         # Wakeup child processes if they are there
@@ -220,10 +221,11 @@ class Retrieve(Process):
                     self.subs.add(link.retain())
                 for obj in link.data:
                     rsl.append(obj)
-            results.append({
-                "query": arg,  # may be empty when not dealing with QueryLinks
-                "results": rsl
-            })
+            if rsl:
+                results.append({
+                    "query": arg,  # may be empty when not dealing with QueryLinks
+                    "results": rsl
+                })
 
         # After all arguments are fetched, we store everything in self.rsl and process becomes DONE
         self.rsl = results
@@ -254,13 +256,8 @@ class GroupProcess(Process, DataMixin):
 
     @property
     def data_source(self):
-        source = []
         results = [prc.results for prc in self.subs[self.config._process]]
-        for arg, rsl in zip(self.args, results):
-            source.append({
-                "member": arg,
-                "data": rsl
-            })
+        source = [{"member": arg, "data": rsl} for arg, rsl in zip(self.args, results) if rsl]
         return source
 
     def extract_task(self):

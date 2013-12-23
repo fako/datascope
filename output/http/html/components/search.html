@@ -1,0 +1,8 @@
+{% load i18n %}
+
+<div id="search-container">
+    <form method="GET" action="{{ request.path }}">
+        <input type="text" name="q"/>
+        <input type="button" name="button" value="{% trans "search" %}" onclick="document.forms[0].submit()"/>
+    </form>
+</div>

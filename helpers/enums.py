@@ -9,3 +9,12 @@ class ProcessStatus(object):
 
     ERROR = -1
     WARNING = -2
+
+
+class ServiceTemplate(object):
+
+    INDEX = "index.html"
+    ACCEPTED = "accepted.html"
+    OK = "ok.html"
+    NO_CONTENT = "no-content.html"
+    BAD_REQUEST = "bad-request.html"

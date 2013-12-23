@@ -1,12 +1,11 @@
 from django.db import models
 from django.core.exceptions import ObjectDoesNotExist
 
-
 import jsonfield
 
 from HIF.helpers import storage
 from HIF.helpers.configuration import Config
-from HIF.exceptions import HIFImproperUsage, HIFCouldNotLoadFromStorage
+from HIF.exceptions import HIFCouldNotLoadFromStorage
 
 
 class Storage(models.Model):
@@ -200,7 +199,8 @@ class Storage(models.Model):
 
 class ProcessStorage(Storage):
     """
-    ..............
+    A hyper process currently stores meta information in dictionary form and results.
+    It can also store a Celery task_id when storing an async process
     """
 
     # Results
@@ -221,7 +221,6 @@ class TextStorage(Storage):
     """
     Hyper text consists of a head and a body section typically
     This model adds those fields to the database
-    .......
     """
 
     head = jsonfield.JSONField()

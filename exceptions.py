@@ -1,3 +1,7 @@
+from rest_framework.exceptions import APIException
+from rest_framework.status import HTTP_400_BAD_REQUEST
+
+
 # General
 class HIFImproperUsage(Exception):
     pass
@@ -35,3 +39,14 @@ class HIFProcessingError(Exception):
 
 class HIFProcessingAsync(Exception):
     pass
+
+class HIFNoInput(Exception):
+    pass
+
+class HIFNoContent(Exception):
+    pass
+
+class HIFBadRequest(APIException):
+    def __init__(self, detail):
+        self.status_code = HTTP_400_BAD_REQUEST
+        self.detail = detail

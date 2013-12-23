@@ -10,7 +10,7 @@ class GoogleImage(JsonQueryLink):
         'searchType':'image',
     }
     HIF_objective = {
-        "contextLink": None,
+        #"contextLink": None,
         "thumbnailLink": None,
     }
     HIF_query_parameter = 'q'

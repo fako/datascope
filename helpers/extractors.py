@@ -1,5 +1,6 @@
 import json
 
+
 def extractor(target, objective):
     """
     This function takes a data construct and a dictionary
@@ -13,7 +14,7 @@ def extractor(target, objective):
 
     def extract(target):
         # Recursively use this function when confronted with list
-        if isinstance(target,list):
+        if isinstance(target, list):
             for i in target:
                 extract(i)
         # Extract data when confronted with dict
@@ -41,9 +42,43 @@ def extractor(target, objective):
     extract(target)
     return results
 
+
 def json_extractor(json_string, objective):
     """
     This function turns a JSON string into python data and passes it to extractor()
     """
     target_dict = json.loads(json_string)
     return extractor(target_dict, objective)
+
+
+def flattener(target, sort_comparison=None):
+    """
+
+    """
+
+    def flatten(target):
+        if isinstance(target, list):
+            result = []
+            for i in target:
+                result.append(flatten(i))
+            if sort_comparison:
+                result.sort(sort_comparison)
+            return result if not len(result) == 1 else result[0]
+
+        elif isinstance(target, dict):
+            result = []
+            for k, v in target.iteritems():
+                result.append(flatten(v))
+            if sort_comparison:
+                result.sort(sort_comparison)
+            return result if not len(result) == 1 else result[0]
+
+        else:
+            return target
+
+    return flatten(target)
+
+
+def json_flattener(json_string):
+    target = json.loads(json_string)
+    return flattener(target)

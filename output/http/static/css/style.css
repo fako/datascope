@@ -1,0 +1,27 @@
+#search-container p {
+    text-align: center;
+    margin: 10px 0 0;
+}
+#search-container input[type=text] {
+    margin: 0;
+    height: 30px;
+}
+form {
+    margin: 0;
+}
+
+#results-container h2 {
+    margin: 30px 0;
+}
+
+.result-cell {
+    margin: 0 auto;
+    text-align: center;
+    padding: 5px;
+}
+.result-column {
+    border-left: 1px solid black;
+}
+.result-column:first-child {
+    border-left: none;
+}

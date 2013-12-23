@@ -2,7 +2,7 @@ from django.db.models.loading import get_model
 
 from celery import task
 
-from HIF.exceptions import HIFImproperUsage
+from HIF.exceptions import HIFImproperUsage, HIFNoContent
 
 
 @task(name="HIF.execute_process")
@@ -26,7 +26,7 @@ def execute_process(inp, ser_prc):
 
 
 @task(name="HIF.flatten_process_results")
-def flatten_process_results(ser_prc, key):
+def flatten_process_results(ser_prc, key):  # TODO: use flattener from helpers?
     """
     This task simplifies results from a Process.
     In order for other processes to use it as input
@@ -39,9 +39,12 @@ def flatten_process_results(ser_prc, key):
     prc = cls()
     prc.load(serialization=ser_prc)
     flat = []
-    for results in prc.rsl:
-        for rsl in results["results"]:
-            flat.append(rsl[key])
+    try:
+        for results in prc.rsl:
+            for rsl in results["results"]:
+                flat.append(rsl[key])
+    except HIFNoContent:
+        pass
     return flat
 
 
