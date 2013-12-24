@@ -8,45 +8,28 @@
 {% block body %}
 
     <div class="content-container">
-        {% for var in data %}
-            {% if var|is_list %}
-                {% for var_2 in var %}
-                    {% if var_2|is_list %}
-                        <div class="row-fluid">
-                            {% for var_3 in var_2 %}
-                                <div class="{{ var_2|span }}">
-                                    {% if var_3|is_list %}
-                                        <div class="row-fluid">
-                                            {% for var_4 in var_3 %}
-                                                {% if var_4|is_list %}
-                                                    {% for var_5 in var_4 %}
-                                                        <div class="span12">{% render_url var_5 "img" %}</div>
-                                                    {% endfor %}
-                                                {% else %}
-                                                    <div class="span12"><h3>{{ var_4 }}</h3></div>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </div>
-                                    {% else %}
-                                        <div class="row-fluid">
-                                            <div class="span12">{{ var_3 }}</div>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="row-fluid">
-                            <div class="span12"><h2>{{ var_2 }}</h2></div>
-                        </div>
-                    {% endif %}
+
+        {% for language in data %} {# data is the generic name for incoming information coming from the view #}
+
+            <div class="row-fluid">
+                <div class="span12"><h2>{{ language.language }}</h2></div>
+            </div>
+
+            <div class="row-fluid">
+                {% for translation in language.translations %}
+                    <div class="{{ language.translations|span }}">
+
+                        <h3>{{ translation.word }}</h3>
+                        {% for image in translation.images %}
+                            <p><img src="{{ image.thumbnailLink }}"/></p>
+                        {% endfor %}
+
+                    </div>
                 {% endfor %}
-            {% else %}
-                <div class="row-fluid">
-                    <div class="span12">{{ var }}</div>
-                </div>
-            {% endif %}
+            </div>
+
         {% endfor %}
+
     </div>
 
 {% endblock %}

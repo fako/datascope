@@ -7,8 +7,6 @@ from rest_framework.response import Response
 from rest_framework.status import HTTP_200_OK, HTTP_202_ACCEPTED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST
 
 from HIF.exceptions import HIFProcessingAsync, HIFNoContent, HIFBadRequest, HIFNoInput
-from HIF.helpers.extractors import flattener
-from HIF.helpers.utils import sort_on_list_len
 from HIF.helpers.enums import ServiceTemplate
 
 
@@ -46,18 +44,25 @@ class ProcessPlainView(View):
         service = Service()
         api_response = Service.HIF_main().get(request, Service)
 
+        template_context = {
+            'self_reverse': service.name + '-plain'
+        }
+        template_context.update(service.context(request))
+
         if api_response.status_code == 202:
-            return render_to_response(service.html_template(ServiceTemplate.ACCEPTED), {}, RequestContext(request))
+            return render_to_response(service.html_template(ServiceTemplate.ACCEPTED), template_context, RequestContext(request))
         elif api_response.status_code == 204:
-            return render_to_response(service.html_template(ServiceTemplate.NO_CONTENT), {}, RequestContext(request))
+            return render_to_response(service.html_template(ServiceTemplate.NO_CONTENT), template_context, RequestContext(request))
         elif api_response.status_code == 400:
-            return render_to_response(service.html_template(ServiceTemplate.BAD_REQUEST), api_response.data, RequestContext(request))
+            template_context.update(api_response.data)
+            return render_to_response(service.html_template(ServiceTemplate.BAD_REQUEST), template_context, RequestContext(request))
         else:
             if api_response.data:
-                return render_to_response(service.html_template(ServiceTemplate.OK), {'data': flattener(api_response.data, sort_on_list_len)},
+                template_context.update({'data': api_response.data })
+                return render_to_response(service.html_template(ServiceTemplate.OK), template_context,
                                   RequestContext(request))
             else:
-                return render_to_response(service.html_template(ServiceTemplate.INDEX), {}, RequestContext(request))
+                return render_to_response(service.html_template(ServiceTemplate.INDEX), template_context, RequestContext(request))
 
 
 

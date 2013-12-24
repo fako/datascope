@@ -1,16 +1,17 @@
 {% extends "base.html" %}
-
 {% load i18n %}
-{% get_available_languages as languages %}
-{% get_language_info for LANGUAGE_CODE as language_info %}
+
 
 {% block body %}
+    {% get_available_languages as languages %}
+    {% get_language_info for LANGUAGE_CODE as language_info %}
+
     <p>{% trans "No results found in" %} {{ language_info.name_local }}. {% trans "Did you mean to search in another language" %}?</p>
     <ul>
         {% for lang_code, lang_name in languages %}
             {% if language_info.code != lang_code %}
                 {% language lang_code %}
-                    <li><a href="{% url 'digitasenscia' %}?q={{ term }}">{{ lang_name }}</a></li>
+                    <li><a href="{% url self_reverse %}?q={{ query }}">{{ lang_name }}</a></li>
                 {% endlanguage %}
             {% endif %}
         {% endfor %}
@@ -18,5 +19,6 @@
 {% endblock %}
 
 {% block footer %}
+    <p>{% trans "Or search again for another word." %}</p>
     {% include "components/search.html" %}
 {% endblock %}

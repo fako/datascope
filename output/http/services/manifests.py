@@ -1,9 +1,13 @@
+from django.utils.translation import ugettext as _
+
 from HIF.models.output import ImageTranslationsStorage
 from HIF.output.http.views import ProcessAPIView, ProcessPlainView
 from HIF.exceptions import HIFBadRequest, HIFNoInput
 
 
 class Service(object):
+
+    HIF_grid_layout = []
 
     @property
     def name(self, word_separator='-'):
@@ -39,9 +43,9 @@ class ImageTranslationsService(ImageTranslationsStorage, Service):
         # Input validation
         query = request.GET.get('q')
         if not query:
-            raise HIFNoInput('No input provided')
+            raise HIFNoInput(_('No input provided'))
         if query and len(query.split(' ')) > 1:
-            raise HIFBadRequest("We're sorry, Image Translations can't take more than one word as a query. Please try with one word at a time.")
+            raise HIFBadRequest(_("We're sorry, we can't take more than one word as a query. Please try with one word at a time."))
 
         # Returning context
         return {
