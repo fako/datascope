@@ -47,7 +47,10 @@ class ProcessPlainView(View):
         template_context = {
             'self_reverse': service.name + '-plain'
         }
-        template_context.update(service.context(request))
+        try:
+            template_context.update(service.context(request))
+        except (HIFNoInput, HIFBadRequest):
+            pass  # No input and Bad Request have been handled by the API. We just can't get template_context here.
 
         if api_response.status_code == 202:
             return render_to_response(service.html_template(ServiceTemplate.ACCEPTED), template_context, RequestContext(request))
