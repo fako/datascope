@@ -20,8 +20,10 @@ def get_hif_model(name):
 def deserialize(serialization):
     try:
         assert isinstance(serialization, tuple), "HIFImproperUsage: serialization is not a tuple."
-        assert isinstance(serialization[0], unicode) or isinstance(serialization[0], str), "HIFImproperUsage: model name in serialization tuple is not an unicode."
-        assert isinstance(serialization[1],int), "HIFImproperUsage: object id in serialization is not an int."
+        assert isinstance(serialization[0], unicode) or isinstance(serialization[0], str), \
+            "HIFImproperUsage: model name in serialization tuple is not a string but a {}.".format(type(serialization[0]))
+        assert isinstance(serialization[1],int), \
+            "HIFImproperUsage: object id in serialization is not an int, but a {}.".format(type(serialization[1]))
     except IndexError:
         raise HIFImproperUsage("Serialization tuple is too short.")
     return serialization[0], serialization[1]
