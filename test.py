@@ -1,9 +1,9 @@
-## HELPERS
+# HELPERS
 from HIF.helpers.tests.configuration import *
-#from HIF.tests.helpers.extractors import *
-#from HIF.tests.helpers.mixins import *
-#
-## INPUT
+from HIF.helpers.tests.data import *
+from HIF.helpers.tests.mixins import *
+
+# INPUT
 #from HIF.tests.input.http.core import *
 
 # STORAGE

@@ -2,7 +2,7 @@ import json
 
 from django.db import models
 
-from HIF.helpers.extractors import json_extractor
+from HIF.helpers.data import json_extractor
 from HIF.models.settings import Domain
 
 

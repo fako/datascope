@@ -130,6 +130,7 @@ class TestStorage(TestCase):
     def test_retain(self):
         instance = TextStorage()
         instance.serialize = Mock(return_value=True)
+        instance.setup()
         # No args, config or subs given
         instance.retain()
         self.assertEqual(instance.arguments, None)
@@ -140,17 +141,18 @@ class TestStorage(TestCase):
         # Args, config and subs given
         instance.args = self.test_args
         instance.config(self.test_config)
-        instance.subs = self.test_subs
+        instance.subs(self.test_subs)
         instance.serialize = Mock(return_value=True)
         instance.retain()
         self.assertEqual(instance.arguments, self.test_args)
-        self.assertEqual(instance.configuration, self.test_config)
+        self.assertDictContainsSubset(self.test_config, instance.configuration)
         self.assertEqual(instance.substorage, self.test_subs)
         self.assertEqual(instance.retained, True)
         self.assertTrue(instance.serialize.called)
         # Retain without serialization
         instance = TextStorage()
         instance.serialize = Mock(return_value=True)
+        instance.setup()
         instance.retain(serialize=False)
         self.assertFalse(instance.serialize.called)
 

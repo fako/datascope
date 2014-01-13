@@ -9,13 +9,6 @@ def get_hif_model(name):
         raise HIFImproperUsage("The specified model does not exist or is not registered as Django model with HIF label.")
     return model
 
-        ## Load fail wrong model
-        #try:
-        #    instance.load(("DoesNotExist", 1,))
-        #    self.fail()
-        #except HIFImproperUsage as exception:
-        #    self.assertEqual(str(exception), "The specified model does not exist or is not registered as Django model with HIF label.")
-
 
 def deserialize(serialization):
     try:

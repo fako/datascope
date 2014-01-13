@@ -51,34 +51,46 @@ def json_extractor(json_string, objective):
     return extractor(target_dict, objective)
 
 
-def flattener(target, sort_comparison=None):
-    """
-
-    """
-
-    def flatten(target):
-        if isinstance(target, list):
-            result = []
-            for i in target:
-                result.append(flatten(i))
-            if sort_comparison:
-                result.sort(sort_comparison)
-            return result if not len(result) == 1 else result[0]
-
-        elif isinstance(target, dict):
-            result = []
-            for k, v in target.iteritems():
-                result.append(flatten(v))
-            if sort_comparison:
-                result.sort(sort_comparison)
-            return result if not len(result) == 1 else result[0]
-
-        else:
-            return target
-
-    return flatten(target)
 
 
-def json_flattener(json_string):
-    target = json.loads(json_string)
-    return flattener(target)
+# EVERYTHING IN THIS COMMENT IS CURRENTLY UNUSED
+# def flattener(target, sort_comparison=None):
+#     """
+#
+#     """
+#
+#     def flatten(target):
+#         if isinstance(target, list):
+#             result = []
+#             for i in target:
+#                 result.append(flatten(i))
+#             if sort_comparison:
+#                 result.sort(sort_comparison)
+#             return result if not len(result) == 1 else result[0]
+#
+#         elif isinstance(target, dict):
+#             result = []
+#             for k, v in target.iteritems():
+#                 result.append(flatten(v))
+#             if sort_comparison:
+#                 result.sort(sort_comparison)
+#             return result if not len(result) == 1 else result[0]
+#
+#         else:
+#             return target
+#
+#     return flatten(target)
+#
+# def json_flattener(json_string):
+#     target = json.loads(json_string)
+#     return flattener(target)
+#
+# def sort_on_list_len(first, second):
+#     first_len = len(first) if isinstance(first, list) else 0
+#     second_len = len(second) if isinstance(second, list) else 0
+#     if first_len < second_len:
+#         return -1
+#     elif first_len == second_len:
+#         return 0
+#     else:
+#         return 1

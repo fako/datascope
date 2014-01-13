@@ -1,5 +1,5 @@
 from unittest import TestCase
-from HIF.helpers.extractors import extractor
+from HIF.helpers.data import extractor
 
 
 class TestPythonExtractor(TestCase):

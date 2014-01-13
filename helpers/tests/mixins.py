@@ -1,5 +1,5 @@
 from django.test import TestCase
-from HIF.helpers.mixins import DataMixin, ConfigMixin
+from HIF.helpers.mixins import DataMixin
 
 
 class MockDataMixin(DataMixin):
@@ -59,12 +59,3 @@ class TestDataMixin(TestCase):
         data = self.mixin.data
         self.assertIsInstance(data,list)
         self.assertEqual(len(data),2)
-
-
-class MockConfigMixin(ConfigMixin):
-    HIF_namespace = 'test'
-    HIF_private = ['_test']
-
-class TestConfigMixin(TestCase):
-    pass
-
