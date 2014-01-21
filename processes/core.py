@@ -257,7 +257,7 @@ class GroupProcess(Process, DataMixin):
     @property
     def data_source(self):
         results = [prc.results for prc in self.subs[self.config._process]]
-        source = [{"member": arg, "data": rsl} for arg, rsl in zip(self.args, results) if rsl]
+        source = [{"member": rsl.args[0], "data": rsl} for rsl in results if rsl]  # TODO: naive self.args may not have same order as results
         return source
 
     def extract_task(self):
@@ -276,7 +276,7 @@ class GroupProcess(Process, DataMixin):
         for arg in self.args:
             process = process_model()
             process.setup(arg, **self.config.dict(protected=True))
-            processes.append((arg,process.retain(),))
+            processes.append((arg, process.retain(),))
 
         # Start a task that calls class_process in multiple different ways
         grp = group(execute_process.s(inp, ser_prc) for inp, ser_prc in processes).delay()
