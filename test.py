@@ -2,6 +2,7 @@
 from HIF.helpers.tests.configuration import *
 from HIF.helpers.tests.data import *
 from HIF.helpers.tests.mixins import *
+from HIF.helpers.tests.storage import *
 
 # INPUT
 #from HIF.tests.input.http.core import *
