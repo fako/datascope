@@ -41,7 +41,7 @@ class ImageTranslationsService(ImageTranslationsStorage, Service):
     def context(self, request):
 
         # Input validation
-        query = request.GET.get('q')
+        query = request.GET.get('q').lower()
         if not query:
             raise HIFNoInput(_('No input provided'))
         if query and len(query.split(' ')) > 1:
