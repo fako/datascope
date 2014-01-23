@@ -1,5 +1,17 @@
 import json
 
+def reach(key, data):
+    try:
+        for part in key.split('.'):
+            if part.isdigit():
+                data = data[int(part)]
+            else:
+                data = data[part]
+        else:
+            return data
+    except (IndexError, KeyError):
+        return data[key] if key in data else None
+
 
 def extractor(target, objective):
     """
