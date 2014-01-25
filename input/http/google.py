@@ -10,12 +10,15 @@ class GoogleImage(JsonQueryLink):
         'searchType':'image',
     }
     HIF_objective = {
-        #"contextLink": None,
-        "thumbnailLink": None,
+        "link": None,
+        "image.width": None,
+        "image.height": None,
+    }
+    HIF_translations = {
+        "image.width": "width",
+        "image.height": "height"
     }
     HIF_query_parameter = 'q'
-
-    # Class props
     HIF_namespace = "google"
 
     def enable_auth(self):

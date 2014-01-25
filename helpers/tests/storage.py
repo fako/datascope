@@ -1,11 +1,10 @@
 from django.test import TestCase
 from django.db.models.query import QuerySet
 
-from mock import Mock
-
 from HIF.exceptions import HIFImproperUsage
 from HIF.helpers.storage import get_hif_model, deserialize, Container
 from HIF.models.storage import TextStorage
+
 
 class TestHelperStorageFunctions(TestCase):
 
@@ -111,16 +110,30 @@ class TestContainer(TestCase):
         self.assertEqual(query_set.count(), 2)
 
     def test_add(self):
-        pass
+        instance = Container()
+        try:
+            instance.add(("DoesNotExist", 1,))
+            self.fail("Add didn't warn about a non-existing model")
+        except Exception:
+            pass
+        instance.add(("TextStorage", 1,))
+        instance.add(("TextStorage", 3,))
+        self.assertEqual(instance._container, self.valid)
 
     def test_remove(self):
-        pass
+        instance = Container(init=self.valid)
+        instance.remove(("DoesNotExist", 1))
+        self.assertEqual(instance._container, self.valid)
+        instance.remove(("TextStorage", 3))
+        self.assertEqual(instance._container, {"TextStorage": [1]})
+        instance.remove(("TextStorage", 1))
+        self.assertEqual(instance._container, {})
 
     def test_run(self):
-        pass
+        self.fail("continue here")
 
     def test_query(self):
-        pass
+        self.fail("continue here")
 
     def test_count(self):
-        pass
+        self.fail("continue here")

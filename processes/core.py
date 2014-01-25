@@ -256,8 +256,9 @@ class GroupProcess(Process, DataMixin):
 
     @property
     def data_source(self):
+        # TODO: the way we retrieve the original arguments here seems naieve.
         results = [(prc.arguments[0], prc.results,) for prc in self.subs[self.config._process]]
-        source = [{"member": arg, "data": rsl} for arg, rsl in results if rsl]  # TODO: naive self.args may not have same order as results
+        source = [{"member": arg, "data": rsl} for arg, rsl in results if rsl]
         return source
 
     def extract_task(self):

@@ -2,6 +2,21 @@ from unittest import TestCase
 from HIF.helpers.data import extractor
 
 
+class TestPythonReach(TestCase):
+
+    def test_key_path(self):
+        self.fail("continue here")
+
+    def test_index_path(self):
+        self.fail("continue here")
+
+    def test_key_with_dots(self):
+        self.fail("continue here")
+
+    def test_invalid_path(self):
+        self.fail("continue here")
+
+
 class TestPythonExtractor(TestCase):
 
     @classmethod
@@ -80,3 +95,12 @@ class TestPythonExtractor(TestCase):
         self.assertIsInstance(results, list)
         self.assertEqual(len(results), 2)
         self.check_result(result)
+
+    def test_nested_dict(self):
+        self.fail("continue here")
+
+    def test_nested_list(self):
+        self.fail("continue here")
+
+    def test_non_trigger_paths(self):
+        self.fail("continue here")

@@ -91,8 +91,7 @@ class Container(object):
     def add(self, ser):
         """
         Deserialize a serialization tuple
-        Add class as a key if it doesn't exist
-        Or add id of object to list of ids
+        Add class as a key if it doesn't exist or add id of object to list of ids
         """
         cls, obj_id = deserialize(ser)
         if cls not in self._container:
@@ -102,12 +101,15 @@ class Container(object):
             self._container[cls].append(obj_id)
 
     def remove(self, ser):
+        """
+        Deserialize a serialization tuple
+        Delete id from list and delete key if the list is empty.
+        """
         cls, obj_id = deserialize(ser)
         if cls in self._container and obj_id in self._container[cls]:
             self._container[cls].remove(obj_id)
             if not self._container[cls]:
                 del self._container[cls]
-
 
     def run(self, cls, method, *args, **kwargs):
         for obj in self[cls]:
