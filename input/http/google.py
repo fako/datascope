@@ -60,13 +60,15 @@ class YouTubeSearch(GoogleLink):
     HIF_link = 'https://www.googleapis.com/youtube/v3/search'
     HIF_parameters = {
         'type':'video',
-        'part':'id'
+        'part':'id,snippet'
     }
     HIF_objective = {
         "id.videoId": None,
+        "snippet.thumbnails.medium.url": None
     }
     HIF_translations = {
         "id.videoId": "vid",
+        "snippet.thumbnails.medium.url": "thumbnail"
     }
 
     class Meta:

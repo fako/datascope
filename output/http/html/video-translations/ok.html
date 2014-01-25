@@ -22,10 +22,9 @@
 
                         <h3>{{ translation.word }}</h3>
                         {% for video in translation.videos %}
-                            <iframe id="player" type="text/html" width="640" height="390"
-                                src="http://www.youtube.com/embed/{{ video.vid }}?enablejsapi=0"
-                                frameborder="0">
-                            </iframe>
+                            <p><a target="_blank" href="http://www.youtube.com/watch?v={{ video.vid }}">
+                                <img src="{{ video.thumbnail }}"/>
+                            </a></p>
                         {% endfor %}
 
                     </div>
