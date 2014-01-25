@@ -20,6 +20,10 @@ class ServiceStorage(models.Model):
     class Meta:
         abstract = True
 
+
 class ImageTranslationsStorage(ServiceStorage):
     pass
 
+
+class VideoTranslationsStorage(ServiceStorage):
+    pass

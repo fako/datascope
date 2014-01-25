@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext as _
 
-from HIF.models.output import ImageTranslationsStorage
+from HIF.models.output import ImageTranslationsStorage, VideoTranslationsStorage
 from HIF.output.http.views import ProcessAPIView, ProcessPlainView
 from HIF.exceptions import HIFBadRequest, HIFNoInput
 
@@ -53,3 +53,28 @@ class ImageTranslationsService(ImageTranslationsStorage, Service):
             "query": query
         }
 
+
+class VideoTranslationsService(VideoTranslationsStorage, Service):
+
+    HIF_process = "VideoTranslations"
+
+    HIF_main = ProcessAPIView
+    HIF_plain = ProcessPlainView
+
+    class Meta:
+        proxy = True
+
+    def context(self, request):
+
+        # Input validation
+        query = request.GET.get('q').lower()
+        if not query:
+            raise HIFNoInput(_('No input provided'))
+        if query and len(query.split(' ')) > 1:
+            raise HIFBadRequest(_("We're sorry, we can't take more than one word as a query. Please try with one word at a time."))
+
+        # Returning context
+        return {
+            "source_language": request.LANGUAGE_CODE,
+            "query": query
+        }
