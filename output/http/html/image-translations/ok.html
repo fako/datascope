@@ -22,7 +22,7 @@
 
                         <h3>{{ translation.word }}</h3>
                         {% for image in translation.images %}
-                            <p><img src="{{ image.thumbnailLink }}"/></p>
+                            <p><a href="{{ image.link }}"><img src="{{ image.thumbnailLink }}"/></a></p>
                         {% endfor %}
 
                     </div>

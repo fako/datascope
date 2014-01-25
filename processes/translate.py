@@ -77,7 +77,82 @@ class ImageTranslations(GroupProcess):
     def post_process(self, *args, **kwargs):
         self.rsl = self.data  # translates keys
 
+    class Meta:
+        app_label = "HIF"
+        proxy = True
 
+
+class VideoTranslate(Process, DataMixin):
+
+    # HIF interface
+    HIF_translate_model = "WikiTranslate"  # HIF.input.http.wiki
+    HIF_video_model = "YouTubeSearch"  # HIF.input.http.google
+
+    HIF_translations = {
+        "query": "word",
+        "results": "videos"
+    }
+    HIF_child_process = 'Retrieve'
+
+
+    @property
+    def data_source(self):
+        source = self.subs["Retrieve"][0]
+        source.setup()
+        return source.results
+
+
+    def process(self):
+        # Get params
+        query = self.config.query
+        translate_to = self.args[0] or self.config.translate_to
+
+        # Setup translate retriever
+        translate_config = {
+            "_link": self.HIF_translate_model,
+            "translate_to": translate_to
+        }
+        translate_config.update(self.config.dict())
+        translate_retriever = Retrieve()
+        translate_retriever.setup(**translate_config)
+        # Setup video retriever
+        video_config = {"_link": self.HIF_video_model, "_context":"{}+{}".format(query, translate_to)}
+        video_retriever = Retrieve()
+        video_retriever.setup(**video_config)
+
+        # Start Celery task
+        task = (execute_process.s(query, translate_retriever.retain()) | flatten_process_results.s(key="translation") | execute_process.s(video_retriever.retain()))()
+        self.task = task
+
+
+    def post_process(self):
+        self.rsl = self.data  # translates keys
+
+
+    class Meta:
+        app_label = "HIF"
+        proxy = True
+
+
+class VideoTranslations(GroupProcess):
+
+    HIF_child_process = 'VideoTranslate'
+    HIF_translations = {
+        "member": "language",
+        "data": "translations"
+    }
+
+    def setup(self, *args, **kwargs):
+        kwargs["_process"] = 'VideoTranslate'  # move to core?
+        super(VideoTranslations, self).setup(*args, **kwargs)
+        self.args = self.config._supported_languages
+        source_language = self.config.source_language
+        if source_language in self.args:
+            self.args.remove(source_language)
+        self.save()
+
+    def post_process(self, *args, **kwargs):
+        self.rsl = self.data  # translates keys
 
     class Meta:
         app_label = "HIF"
