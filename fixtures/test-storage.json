@@ -3,7 +3,7 @@
     "pk": 1, 
     "model": "HIF.textstorage", 
     "fields": {
-        "status": 0,
+        "status": 1,
         "body": "Test text 1",
         "exception": null, 
         "retained": true, 
@@ -24,7 +24,7 @@
     "pk": 2,
     "model": "HIF.textstorage",
     "fields": {
-        "status": 0,
+        "status": 1,
         "body": "Test text 2",
         "exception": null,
         "retained": true,
@@ -60,6 +60,33 @@
             "test": "test kwargs"
         },
         "type": "TextStorage"
+    }
+},
+    {
+    "pk": 1,
+    "model": "HIF.processstorage",
+    "fields": {
+        "status": 1,
+        "exception": null,
+        "retained": true,
+        "task_id": null,
+        "traceback": null,
+        "results": [
+            {
+                "query": "test",
+                "results": ["test0", "test1"]
+            }
+        ],
+        "meta": null,
+        "identification": "[u'test'] | {'test': u'test'}",
+        "arguments": [
+            "test"
+        ],
+        "substorage": { },
+        "configuration": {
+            "test": "test"
+        },
+        "type": "ProcessStorage"
     }
 }
 ]

@@ -112,20 +112,28 @@ class Container(object):
                 del self._container[cls]
 
     def run(self, cls, method, *args, **kwargs):
+        """
+        Calls specified method on all instances of cls saved in Container.
+        It doesn't do a valid arguments check, not even an attribute check.
+        """
         for obj in self[cls]:
             obj.setup()
             getattr(obj, method)(*args, **kwargs)
 
     def query(self, cls, query_dict):
+        """
+        Gets a query set with all models who's ids are in ids list.
+        And applies the additional query_dict filters on that query set in an AND fashion.
+        """
         model = get_hif_model(cls)
         return model.objects.filter(id__in=self._container[cls], **query_dict)
 
     def count(self, query_dict):
+        """
+        Counts all objects of all models that are somehow stored in this Container
+        and who also match the query_dict parameters
+        """
         count = 0
         for cls in self._container.iterkeys():
             count += self.query(cls, query_dict).count()
         return count
-
-    # TODO: can you update query sets like this??
-    def update(self, cls, update_dict):
-        return self[cls].update(**update_dict)

@@ -50,18 +50,19 @@ class TestContainer(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        cls.valid = {
-            "TextStorage": [1,3]
+        pass
+
+    def setUp(self):
+        self.valid = {
+            "TextStorage": [1,3],
+            "ProcessStorage": [1]
         }
-        cls.invalid_keys = {
+        self.invalid_keys = {
             "DoesNotExist": [1,2,3]
         }
-        cls.invalid_values = {
+        self.invalid_values = {
             "TextStorage": "error"
         }
-    #
-    # def setUp(self):
-    #     self.mixin = MockDataMixin()
 
     def test_init(self):
         instance = Container({})
@@ -110,7 +111,7 @@ class TestContainer(TestCase):
         self.assertEqual(query_set.count(), 2)
 
     def test_add(self):
-        instance = Container()
+        instance = Container({"ProcessStorage": [1]})
         try:
             instance.add(("DoesNotExist", 1,))
             self.fail("Add didn't warn about a non-existing model")
@@ -125,15 +126,34 @@ class TestContainer(TestCase):
         instance.remove(("DoesNotExist", 1))
         self.assertEqual(instance._container, self.valid)
         instance.remove(("TextStorage", 3))
-        self.assertEqual(instance._container, {"TextStorage": [1]})
+        self.assertEqual(instance._container, {"ProcessStorage": [1], "TextStorage": [1]})
         instance.remove(("TextStorage", 1))
-        self.assertEqual(instance._container, {})
+        self.assertEqual(instance._container, {"ProcessStorage": [1]})
 
     def test_run(self):
-        self.fail("continue here")
+        instance = Container(init=self.valid)
+        instance.run("TextStorage", "release")
+        self.assertEqual(TextStorage.objects.filter(retained=False).count(), 2)
+        instance.run("TextStorage", "retain", serialize=False)
+        self.assertEqual(TextStorage.objects.filter(retained=False).count(), 2)
+        try:
+            instance.run("TextStorage", "not_a_method")
+            self.fail("Run did not throw an AttributeError when given an invalid method")
+        except AttributeError:
+            pass
 
     def test_query(self):
-        self.fail("continue here")
+        """
+        There is only one TextStorage in test fixture and in container with status=1
+        A query for it should exclude TextStorage #3 and show only #1
+        """
+        instance = Container(init=self.valid)
+        self.assertEqual(instance.query("TextStorage", {"status":1}).count(), 1)
 
     def test_count(self):
-        self.fail("continue here")
+        """
+        Apart from the TextStorage with status=1 there is also one ProcessStorage with status=1
+        A count for {"status": 1} should return one TextStorage and one ProcessStorage.
+        """
+        instance = Container(init=self.valid)
+        self.assertEqual(instance.count({"status": 1}), 2)
