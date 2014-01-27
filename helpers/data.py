@@ -6,7 +6,7 @@ def reach(path, data):
     Reach takes a data structure and a path. It will return the value belonging to the path,
     the value under a key containing dots mistaken for a path or None if nothing can be found.
 
-    Paths are essentially multiple keys or indexes separated by .
+    Paths are essentially multiple keys or indexes separated by '.'
     Each part of a path is another level in the structure given.
     For instance with a structure like
     {
@@ -16,6 +16,15 @@ def reach(path, data):
     "test.test" as path would return "second level test"
     while "test.1" as path would return "test1"
     """
+
+    # First we check whether we really get a structure we can use
+    if not isinstance(data, dict):
+        raise TypeError("Reach needs dict as input, got {} instead".format(type(data)))
+
+    # We make a copy of the input for later reference
+    root = dict(data)
+
+    # We split the path and see how far we get with using it as key/index
     try:
         for part in path.split('.'):
             if part.isdigit():
@@ -23,8 +32,10 @@ def reach(path, data):
             else:
                 data = data[part]
         return data
-    except (IndexError, KeyError):
-        return data[path] if path in data else None
+
+    # When anything goes wrong we try the path as key or return None.
+    except (IndexError, KeyError, TypeError):
+        return root[path] if path in root else None
 
 
 def extractor(target, objective):
@@ -65,11 +76,14 @@ def extractor(target, objective):
                 # and reach for all paths in paths to fill result.
                 if key in triggers:
                     result = dict(defaults)
+                    updated = False
                     for path in paths:
                         reached = reach(path, target)
                         if reached is not None:
                             result[path] = reached
-                    results.append(result)
+                            updated = True
+                    if updated:
+                        results.append(result)
                     break
                 # Recursively use self when confronted with something else than a trigger
                 else:

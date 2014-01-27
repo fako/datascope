@@ -1,59 +1,83 @@
 from unittest import TestCase
-from HIF.helpers.data import extractor
+from HIF.helpers.data import extractor, reach
 
 
 class TestPythonReach(TestCase):
 
-    def test_key_path(self):
-        self.fail("continue here")
+    def setUp(self):
+        self.test_dict = {
+            "dict": {
+                "test": "nested value",
+                "list": ["nested value 0", "nested value 1", "nested value 2"],
+                "dict": {"test": "test"}
+            },
+            "list": ["value 0", "value 1", "value 2"],
+            "dotted.key": "another value"
+        }
 
-    def test_index_path(self):
-        self.fail("continue here")
-
-    def test_key_with_dots(self):
-        self.fail("continue here")
-
-    def test_invalid_path(self):
-        self.fail("continue here")
-
+    def test_reach(self):
+        # Dict access
+        self.assertEqual(reach("dict.test", self.test_dict), self.test_dict["dict"]["test"])
+        self.assertEqual(reach("dict.dict", self.test_dict), self.test_dict["dict"]["dict"])
+        self.assertEqual(reach("dict.list", self.test_dict), self.test_dict["dict"]["list"])
+        # List access
+        self.assertEqual(reach("list.0", self.test_dict), self.test_dict["list"][0])
+        self.assertEqual(reach("dict.list.0", self.test_dict), self.test_dict["dict"]["list"][0])
+        # Key with dots
+        self.assertEqual(reach("dotted.key", self.test_dict), self.test_dict["dotted.key"])
+        # Invalid key
+        self.assertEqual(reach("does.not.exist", self.test_dict), None)
+        # Invalid data
+        try:
+            reach("irrelevant","invalid-input")
+            self.fail("Reach did not throw a TypeError after getting invalid input")
+        except TypeError as exception:
+            self.assertEqual(str(exception), "Reach needs dict as input, got <type 'str'> instead")
 
 class TestPythonExtractor(TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        cls.fixture_list = [
+    def setUp(self):
+        self.fixture_list = [
             1,
             2,
             3,
             "skip",
             "skip"
         ]
-        cls.fixture_dict = {
+        self.fixture_dict = {
             "include": "include",
             "skip": "skip",
             "include2": "include2"
         }
-        cls.fixture_list_of_dicts = [
-            cls.fixture_dict,
-            cls.fixture_dict,
-            cls.fixture_dict
+        self.fixture_list_of_dicts = [
+            self.fixture_dict,
+            self.fixture_dict,
+            self.fixture_dict
         ]
-        cls.fixture_dict_with_lists_of_dicts = {
-            "list of dicts": cls.fixture_list_of_dicts,
-            "skip": cls.fixture_list,
-            "list of dicts 2": cls.fixture_list_of_dicts
+        self.fixture_dict_with_lists_of_dicts = {
+            "list of dicts": self.fixture_list_of_dicts,
+            "skip": self.fixture_list,
+            "list of dicts 2": self.fixture_list_of_dicts
         }
-        cls.fixture_dict_with_dicts = {
-            "dict": cls.fixture_dict,
-            "skip": cls.fixture_list,
+        self.fixture_dict_with_dicts = {
+            "dict 1": self.fixture_dict,
+            "skip": self.fixture_list,
             "skip 2": "skip",
-            "dict 2": cls.fixture_dict
+            "dict 2": self.fixture_dict
+        }
+        self.fixture_reach = {
+            "dict": {
+                "dict": True
+            },
+            "list": [False, False, True]
         }
 
-        cls.objective = {
+        self.objective = {
             "include": None,
             "include2": None,
-            "include3": True
+            "include3": True,
+            "dict.dict": None,
+            "list.2": None
         }
 
     def check_result(self, result):
@@ -61,6 +85,8 @@ class TestPythonExtractor(TestCase):
         self.assertIn("include", result)
         self.assertIn("include2", result)
         self.assertIn("include3", result)
+        self.assertIn("dict.dict", result)
+        self.assertIn("list.2", result)
         self.assertTrue(result["include3"])
 
     def test_dict(self):
@@ -96,11 +122,18 @@ class TestPythonExtractor(TestCase):
         self.assertEqual(len(results), 2)
         self.check_result(result)
 
-    def test_nested_dict(self):
-        self.fail("continue here")
-
-    def test_nested_list(self):
-        self.fail("continue here")
-
-    def test_non_trigger_paths(self):
-        self.fail("continue here")
+    def test_reach(self):
+        # check reach results
+        results = extractor(self.fixture_reach, self.objective)
+        result = results[0]
+        self.assertIsInstance(results, list)
+        self.assertEqual(len(results), 1)
+        self.check_result(result)
+        self.assertTrue(result["dict.dict"])
+        self.assertTrue(result["list.2"])
+        # invalid triggers shouldn't create any objects
+        self.fixture_reach["dict"] = False
+        self.fixture_reach["list"] = False
+        results = extractor(self.fixture_reach, self.objective)
+        self.assertIsInstance(results, list)
+        self.assertEqual(len(results), 0)
