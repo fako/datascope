@@ -9,7 +9,7 @@ class WikiTranslate(JsonQueryLink):
         'action':'query',
         'prop':'iwlinks',
         'iwurl':1,
-        'iwprefix': None, # set at runtime
+        'iwprefix': None,  # set at runtime
     }
     HIF_objective = {
         "url": None,
@@ -23,9 +23,18 @@ class WikiTranslate(JsonQueryLink):
     HIF_namespace = "wiki"
 
     def prepare_link(self):
+        """
+        .........
+        """
         self.HIF_link = self.HIF_link.format(self.config.source_language)
+        return super(WikiTranslate, self).prepare_link()
+
+    def prepare_params(self):
+        """
+        .........
+        """
         self.HIF_parameters['iwprefix'] = self.config.translate_to
-        super(WikiTranslate, self).prepare_link()
+        return super(WikiTranslate, self).prepare_params()
 
     class Meta:
         app_label = "HIF"

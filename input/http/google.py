@@ -8,9 +8,7 @@ class GoogleLink(JsonQueryLink):
     HIF_namespace = "google"
 
     def enable_auth(self):
-        super(GoogleLink, self).enable_auth()
-        key = self.config.key
-        self._link += unicode(('&key={}'.format(key)))
+        return u'key={}'.format(self.config.key)
 
     def handle_error(self):
         try:
@@ -45,9 +43,9 @@ class GoogleImage(GoogleLink):
     }
 
     def enable_auth(self):
-        super(GoogleImage, self).enable_auth()
-        cx = self.config.cx
-        self._link += unicode(('&cx={}'.format(cx)))
+        params = super(GoogleImage, self).enable_auth()
+        params += u'&cx={}'.format(self.config.cx)
+        return params
 
     class Meta:
         app_label = "HIF"

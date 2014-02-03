@@ -1,11 +1,28 @@
 import requests
 
-from HIF.exceptions import HIFHttpError40X, HIFHttpError50X
+from HIF.exceptions import HIFHttpError40X, HIFHttpError50X, HIFImproperUsage
 from HIF.models.storage import TextStorage
 from HIF.helpers.mixins import JsonDataMixin
 
 
 class HttpLink(TextStorage):
+    """
+    This class is responsible for fetching an external resource over HTTP
+    And make the data available through the body and head property.
+    It uses TextStorage to save data to a generic location if needed.
+
+    This class provides only one truly public method namely get()
+    Classes can use this class to fetch the data from indicated source.
+    This class provides a lot of methods that can be overriden
+    All these methods tweak the way that the class will connect to the external resource
+    A list of all methods intended to be overriden:
+    - prepare_link
+    - enable_auth
+    - send_request
+    - store_response
+    - handle_error
+    This base class
+    """
 
     # HIF interface attributes
     HIF_parameters = {}
@@ -14,46 +31,82 @@ class HttpLink(TextStorage):
     # Class attributes
     request_headers = {}
 
+    #######################################################
+    # BASIC (DJANGO) FUNCTIONALITY
+    #######################################################
+    # Init methods and other basics
 
     def __init__(self, *args, **kwargs):
+        """
+        This functions sets some properties that are not intended for direct use
+        or that allow for configuration
+        Sometimes you want control about public methods based on context and here defaults are set.
+        """
         super(HttpLink, self).__init__(*args, **kwargs)
-        self.refresh = False
-        self.prepare = True
-        self.session = None
+        self.refresh = False  # on second call we'll return results of first call
+        self.session = None  # an optional requests session object to be used
         self._link = ''
 
+    class Meta:
+        proxy = True
 
-    def success(self): # TODO: tests
+    #######################################################
+    # PUBLIC PROPERTIES
+    #######################################################
+    # Properties that are intended for other classes
+    # and used internally as well
+
+    @property
+    def success(self):
         """
         Returns True if status is within HTTP success range
         """
         return bool(self.status >= 200 and self.status < 300)
 
     @property
-    def url(self): # TODO: tests
+    def url(self):
+        """
+        When asked for the URL and the cached _link is not there,
+        this getter will create the correct URL out of self.HIF_link by calling prepare_link
+        After that prepare_params and enable_auth are called who can add parameters to the link.
+        """
         if not self._link:
-            self.prepare_link()
+            self._link = self.prepare_link()  # sets self._link
+            params = [params for params in [self.prepare_params(), self.enable_auth()] if params]
+            if params:
+                self._link += u'?' + u'&'.join(params)
         return self._link
+    @url.setter
+    def url(self, value):
+        """
+        When somebody sets this property. It is presumed you have special reasons to over ride standard behavior,
+        in your context.
+        If you do not know what you're doing please set self.HIF_link on class level and over ride prepare_link,
+        prepare_params or prepare_auth.
+        """
+        self._link = value
 
+    #######################################################
+    # PUBLIC METHODS
+    #######################################################
+    # These methods are for use by other classes
+    # They act upon the external resource
 
-    # Main function.
-    # Does a get to computed link
     def get(self, *args, **kwargs):
+        """
+        Main function.
+        Does a get to computed link
+        """
 
         self.setup(*args, **kwargs)
 
         # Early exit if response is already there and status within success range.
-        if self.success() and not self.refresh:
+        if self.success and not self.refresh:
             return self
         else:
             self.head = {}
             self.body = ""
             self.status = 0
-
-        # Prepare to do a get if necessary in context
-        if self.prepare:
-            self.prepare_link()
-            self.enable_auth()
 
         # Make request and do basic response handling
         self.send_request()
@@ -62,26 +115,50 @@ class HttpLink(TextStorage):
 
         return self
 
+    #######################################################
+    # URL METHODS
+    #######################################################
+    # These methods together construct the URL that will be used.
+    # They are the most important functions to override and change behavior
+    # on a link to link basis
+
     def prepare_link(self):
         """
-        Turns _parameters dictionary into valid query string
-        Will execute any callables in values of _parameters
+        Returns what the link is that this class should use.
+        By default that is the HIF_link attribute, but some cases may need some processing (like Wiki).
         """
-        url = self.HIF_link
+        return self.HIF_link
+
+    def prepare_params(self):
+        """
+        Turns HIF_parameters dictionary into valid query string
+        Will execute any callables in values of HIF_parameters
+        Returns parameters as an unicode
+        """
+        params = u''
         if self.HIF_parameters:
-            url += u'?'
             for key ,value in self.HIF_parameters.iteritems():
                 if callable(value):
                     value = value()
-                url += key + u'=' + unicode(value) + u'&'
-            url = url[:-1] # strips '&' from the end
-        self._link = url
+                params += key + u'=' + unicode(value) + u'&'
+
+            params = params[:-1] # strips '&' from the end
+        return params
 
     def enable_auth(self):
         """
-        Should do authentication and set auth_link to proper authenticated link.
+        When authentication is needed,
+        this function should set class properties and/or return GET params that provide authentication
+        By default there is no authentication.
         """
-        self._link = self.url # equal to _link = _link except url fills _link if empty ... make explicit?
+        return u''
+
+    #######################################################
+    # OTHER PROTECTED METHODS
+    #######################################################
+    # It will be less common to override these methods.
+    # They change the behaviour of the public interface on a level,
+    # that you probably want the same for every link in the system
 
     def send_request(self):
         """
@@ -100,9 +177,9 @@ class HttpLink(TextStorage):
 
     def store_response(self):
         """
-        Stores self if it needs to be cached or the retrieval failed (for debug purposes)
+        Stores self if an error occurred (for debug purposes)
         """
-        if not self.success():
+        if not self.success:
             self.save()
             return True
         return False
@@ -121,17 +198,25 @@ class HttpLink(TextStorage):
             return True
 
 
-    class Meta:
-        proxy = True
-
-
 class HttpQueryLink(HttpLink):
+    """
+    Makes the link class suitable for having a single input.
+    This input will be considered the query for the resource.
+    Queries will get included through the GET parameters
+    """
 
-    # HIF attributes
     HIF_query_parameter = ''
 
     def get(self, *args, **kwargs):
-        assert len(args) == 1, "HIFImproperUsage: QueryLinks should receive only one input through args parameter."
+        """
+        The get method does some checks on the arguments
+        After that it fills HIF_parameters with the first argument
+        Setting the key to HIF_query_parameter which will differ from link to link
+        """
+        if not len(args) == 1:
+            raise HIFImproperUsage(
+                "QueryLinks should receive one input through args parameter it received {}.".format(len(args))
+            )
         self.HIF_parameters[self.HIF_query_parameter] = args[0]
         super(HttpQueryLink, self).get(*args, **kwargs)
 
@@ -140,6 +225,9 @@ class HttpQueryLink(HttpLink):
 
 
 class JsonQueryLink(HttpQueryLink, JsonDataMixin):
+    """
+    This class is the same as HttpQueryLink with some additional functionality to process JSON data.
+    """
 
     request_headers = {
         "Content-Type": "application/json; charset=utf-8"
