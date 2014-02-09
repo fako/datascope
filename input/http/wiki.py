@@ -5,10 +5,10 @@ class WikiTranslate(JsonQueryLink):
 
     HIF_link = 'http://{}.wiktionary.org/w/api.php' # updated at runtime
     HIF_parameters = {
-        'format':'json',
-        'action':'query',
-        'prop':'iwlinks',
-        'iwurl':1,
+        'format': 'json',
+        'action': 'query',
+        'prop': 'iwlinks',
+        'iwurl': 1,
         'iwprefix': None,  # set at runtime
     }
     HIF_objective = {

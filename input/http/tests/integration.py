@@ -1,41 +1,83 @@
 import unittest
 
-from django.test import TestCase
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+
+from HIF.models.settings import Domain
+from HIF.models.tests.integrity import TestModelIntegrity
 
 
-class TestExternalResourceIntegration(TestCase):
-    """
-    Class should look into Domain() to see whether integration testing is wanted
-    The test looks at most often over ridden methods and checks input
+class TestExternalResourceIntegration(TestModelIntegrity):
 
-    Perhaps we need to sublass for Query and JsonQuery
-    """
+    # Helper methods to assist in testing
 
-    HIF_model = ""
+    @staticmethod
+    def split_param_keys_and_values(params):
+        keys = []
+        values = []
+        items = params.split('&')
+        for item in items:
+            key, value = item.split('=')
+            keys.append(key)
+            values.append(value)
+        return keys, values
 
-    @unittest.skip("a skipping test")
-    def test_integration_get_model(self):
-        # Use get_hif_model to see whether it really exists
-        pass
+    def get_translated_objective(self):
+        objective = dict(self.instance.HIF_objective)
+        for key, value in self.instance.HIF_translations.iteritems():
+            if key in objective:
+                objective[value] = objective[key]
+                del(objective[key])
+        return objective
+
+    # Checks that will get used by several tests or reused in different ways
+
+    def check_response_validity(self):
+        self.assertEqual(self.instance.status, 200)
+        self.assertTrue(self.instance.body)
+        self.assertTrue(self.instance.head)
+
+    def check_data_validity(self):
+        self.assertGreaterEqual(self.instance.data, 1)
+        self.assertEqual(self.instance.data[0].keys(), self.get_translated_objective().keys())
+
+    # Actual tests
 
     def test_integration_prepare_link(self):
-        # Should return valid URL in unicode!
-        pass
+        link = self.instance.prepare_link()
+        self.assertIsInstance(link, unicode)
+        try:
+            URLValidator(link)
+        except ValidationError:
+            self.fail()
 
     def test_integration_prepare_params(self):
-        # Should return valid params string or empty string
-        # Should return string
-        # Look at HIF_parameters
-        # Return unicode!
-        pass
+        # Most basic checks
+        params = self.instance.prepare_params()
+        self.assertIsInstance(params, unicode)
+        # Additional checks if there are parameters
+        if params:
+            keys, values = self.split_param_keys_and_values(params)
+            for key, value in self.instance.HIF_parameters.iteritems():
+                if callable(value):
+                    value = value()
+                if key not in keys:
+                    self.fail("Parameter key '{}' not found in prepare_params output".format(key))
+                if value and unicode(value) not in values:
+                    self.fail("Parameter value '{}' not found in prepare_params output".format(value))
 
     def test_integration_enable_auth(self):
-        # Should return valid params string or empty string
-        # Should return string
-        # Return unicode!
-        pass
+        params = self.instance.prepare_params()
+        self.assertIsInstance(params, unicode)
 
+    @unittest.skipIf(Domain().TEST_skip_external_resource_integration, "because the Domain refuses integration tests")
     def test_integration_get(self):
-        # Should return at least one valid object
-        pass
+        """
+        The only type of get() we're testing here is the get() found on JsonQueryLinks.
+        At some point in the future this function may have an if-else structure where it will run tests
+        according to the type of object being tested
+        """
+        self.instance.get(Domain().TEST_query)
+        self.check_response_validity()
+        self.check_data_validity()
 

@@ -127,7 +127,7 @@ class HttpLink(TextStorage):
         Returns what the link is that this class should use.
         By default that is the HIF_link attribute, but some cases may need some processing (like Wiki).
         """
-        return self.HIF_link
+        return unicode(self.HIF_link)
 
     def prepare_params(self):
         """
