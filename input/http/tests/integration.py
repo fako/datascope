@@ -8,6 +8,10 @@ from HIF.models.tests.integrity import TestModelIntegrity
 
 
 class TestExternalResourceIntegration(TestModelIntegrity):
+    """
+    The test looks at most often over ridden methods and checks input.
+    It also uses get() and sees whether we get expected results.
+    """
 
     # Helper methods to assist in testing
 
