@@ -15,7 +15,7 @@ class GoogleLink(JsonQueryLink):
             return super(GoogleLink, self).handle_error()
         except HIFHttpError40X, exception:
             if self.status == 403:
-                raise HIFHttpLinkPending(exception.message)
+                raise HIFHttpLinkPending(str(exception))
             else:
                 raise exception
 

@@ -14,6 +14,7 @@ class TestModelIntegrity(TestCase):
 
     def setUp(self):
         self.instance = self.HIF_model()
+        self.instance.setup()
 
     def test_integrity_model(self):
         # See whether the model can be retrieved by get_hif_model
