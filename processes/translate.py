@@ -44,7 +44,11 @@ class ImageTranslate(Process, DataMixin):
         image_retriever.setup(**image_config)
 
         # Start Celery task
-        task = (execute_process.s(query, translate_retriever.retain()) | flatten_process_results.s(key="translation") | execute_process.s(image_retriever.retain()))()
+        task = (
+            execute_process.s(query, translate_retriever.retain()) |
+            flatten_process_results.s(key="translation") |
+            execute_process.s(image_retriever.retain())
+        )()
         self.task = task
 
 
@@ -121,7 +125,11 @@ class VideoTranslate(Process, DataMixin):
         video_retriever.setup(**video_config)
 
         # Start Celery task
-        task = (execute_process.s(query, translate_retriever.retain()) | flatten_process_results.s(key="translation") | execute_process.s(video_retriever.retain()))()
+        task = (
+            execute_process.s(query, translate_retriever.retain()) |
+            flatten_process_results.s(key="translation") |
+            execute_process.s(video_retriever.retain())
+        )()
         self.task = task
 
 

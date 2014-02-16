@@ -213,7 +213,7 @@ class HttpQueryLink(HttpLink):
         After that it fills HIF_parameters with the first argument
         Setting the key to HIF_query_parameter which will differ from link to link
         """
-        if not len(args) == 1:
+        if not len(args) == 1:  # TODO: this still allows for a Falsy value
             raise HIFImproperUsage(
                 "QueryLinks should receive one input through args parameter it received {}.".format(len(args))
             )

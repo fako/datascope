@@ -1,5 +1,4 @@
 import traceback
-
 import requests
 
 from django.db.models.loading import get_model
@@ -196,7 +195,7 @@ class Retrieve(Process):
         session = requests.Session()
 
         results = []
-        for arg in args:
+        for arg in args:  # TODO: this still allows for Falsy values, check also QueryLink
 
             # Fetch link with continue links
             self.links = []
@@ -208,7 +207,7 @@ class Retrieve(Process):
                     self.links.append(link)
                     link = self.continue_link(link)
                 else:
-                    raise HIFEndlessLoop("HIF stopped retrieving links after fetching 100 links. Does extract_continuation_url ever return an empty string?")
+                    raise HIFEndlessLoop("HIF stopped retrieving links after fetching 100 links. Does extract_continue_url ever return an empty string?")
             except HIFInputError as exception:
                 self.handle_exception(exception)
             except HIFEndOfInput:
