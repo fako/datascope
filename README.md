@@ -1,14 +1,22 @@
 HIF
 ===
 
-Het door mij ontworpen Hyper Information Framework (HIF) is innovatieve software bedoeld om iedereen, via diverse media, complexe zoekopdrachten te laten uitvoeren. Denk bijvoorbeeld aan opdrachten als: “welke websites benoemen minstens 3 experts uit vakgebied X”, “welke historische gebeurtenissen vonden plaats op datum X”, “wat zijn iconische afbeeldingen voor X in cultuur A, B & C” en “welke personen staan bekend om soortelijke redenen als persoon X”. Zonder HIF zijn dergelijke zoekopdrachten bijna niet uit te voeren. 
+The Hyper Information Framework is innovative software meant to empower everybody to execute complex search queries through divers media. Think about search queries like: “which websites name at least three experts from field X”, “which historical events took place at date X”, “what are iconical images for X in culture A, B & C” and “which people are known for similar reasons that person X is known for”. Without HIF such queries are almost impossible to do.
 
 
-Innovatie
+Innovation
 ===
 
-HIF verschilt radicaal van huidige zoekoplossingen op drie manieren. Ten eerste gebeurt het zoeken via HIF semi-automatisch, waardoor men verschillende bronnen op het web kan combineren. Dergelijke mashups zijn met name veelbelovend als ze slim gebruik maken van crowd sourced informatie, zoals informatie op Wikipedia. HIF is hierdoor in staat om verassende resultaten te leveren. De huidige zoekmachines proberen daarentegen aan te sluiten bij wat gebruikers verwachten te vinden. Ten tweede breekt HIF met de trend bij zoekmachines om resultaten impliciet te verbeteren, door het online gedrag van gebruikers te volgen. De overtuiging die achter HIF ligt is dat het “geavanceerd zoeken” scherm mee moet gaan met zijn tijd. Daarom stelt HIF gebruikers in staat om zelf expliciet alle zoekinstellingen te wijzigen, in plaats van dat sommige instellingen zich automatisch aanpassen achter de rug van de gebruiker om. Daarmee krijgen gebruikers niet alleen meer controle, maar wordt de privacy van gebruikers ook beter beschermd, want surveillance is niet meer nodig om te gokken hoe de gebruiker zijn instellingen wilt hebben. Tot slot is HIF vernieuwend, omdat het beoogt publiekelijk eigendom te worden, die vrijelijk is aan te passen, te delen en te gebruiken. Online gemeenschappen en bedrijven moeten naar mijn idee de kans krijgen om hun zoektechnologie naar hun hand te zetten, zodat er toegesneden zoektoepassingen kunnen komen voor hun leden en werknemers. De status quo in zoekmachineland is een one-size-fits-all benadering met software die angstvallig geheimgehouden en juridisch beschermd wordt, waardoor aanpassingen lastig of onmogelijk zijn. HIF brengt door een fundamenteel andere kijk op zoeken een aantal innovaties met zich mee op het gebied van zoek software, die de huidige multinationals niet ontwikkelen, omdat de ideeën achter HIF niet passen binnen hun (advertentie) businessmodel en monopoly ambities.
+HIF divers radically from current search solutions in three ways. First of all the search happens semi-automatic, which enables users to combine different sources on the web. These mashups of information are most interesting when they make smart use of crowd sourced information, like information from Wikipedia. HIF delivers surprising results in this way. The current search engines deliver only the things that people expect to find.
 
-Ontwikkeling
+Secondly HIF breaks with the trend to improve results implicitly by tracking online user behavior. The conviction behind HIF is that the “advanced search” screen should respond to the times. That's why HIF enables users to set search preferences explicitly. This not only gives more control to the user, but also improves privacy.
+
+HIF is also innovative because it aims to become public property that people can freely use, modify and distribute. Online communities and companies should get the opportunity to modify their search technology as they see fit. The status-quo in search is a one-size-fits-all approach
+
+
+Development
 ===
-Momenteel is HIF nog volop in ontwikkeling. De modellen en "input" van het systeem zijn grotendeels af. De onderdelen "processes" en "output" moeten verbeterd, gerefactord en getest (unit tests) worden. Volgende stap is om een frontend op HIF te schrijven om de werking ervan beter aan te tonen.
+
+Currently HIF is in development. The models and “input” part of the system is more or less finished. The “processes” and “output” part of the system need improvements, refactoring and (unit)tests. Also HIF is currently written as a Django module, while it should probably be a project in itself with a Django client.
+
+The next step is to write a frontend on the visual-translations “service” to demonstrate the use of the Hyper Information Framework.
