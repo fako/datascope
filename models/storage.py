@@ -29,7 +29,7 @@ class Storage(models.Model):
 
     # Standard database fields
 
-    identification = models.CharField(max_length=256)  # used to find storage in db
+    identification = models.CharField(max_length=1024)  # used to find storage in db, 1 Kb to allow long unicode's
     type = models.CharField(max_length=256)  # storage is a container table of different types
     status = models.IntegerField(default=0)  # error or success code, 0 is always an initial state
     retained = models.NullBooleanField()  # to prevent huge amount of rows we collect garbage
