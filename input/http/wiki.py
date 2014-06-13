@@ -43,22 +43,33 @@ class WikiTranslate(JsonQueryLink):
 
 class WikiGeoSearch(JsonQueryLink):
 
-
     HIF_link = 'http://api.wikilocation.org/?lat=51.507222&lng=0.1275&type=landmark&radius=20000'
     HIF_parameters = {
         "type": "city",  # landmark
         "radius": 20000,
     }
 
+    HIF_objective = {
+        "lat": 0.0,
+        "lng": 0.0,
+        "title": "",
+        "url": "",
+        "distance": ""
+    }
+
     HIF_query_parameter = "coords"
 
     def prepare_params(self):
         params = super(WikiGeoSearch, self).prepare_params()
-        import ipdb; ipdb.set_trace()
         # We could filter out the coords parameter from params here
         # For now leaving it as a hack
         params += "lat={}&lng={}".format(*self.HIF_parameters["coords"].split('+'))
 
+    # TODO: write a cleaner to filter lists
+    # TODO: write a retrieve that can continue queries
+
     class Meta:
         app_label = "HIF"
         proxy = True
+
+
