@@ -1,3 +1,5 @@
+import json
+
 from HIF.input.http.core import JsonQueryLink, HttpQueryLink
 
 
@@ -43,10 +45,10 @@ class WikiTranslate(JsonQueryLink):
 
 class WikiGeoSearch(JsonQueryLink):
 
-    HIF_link = 'http://api.wikilocation.org/?lat=51.507222&lng=0.1275&type=landmark&radius=20000'
+    HIF_link = 'http://api.wikilocation.org/'
     HIF_parameters = {
-        "type": "city",  # landmark
-        "radius": 20000,
+        "type": "landmark",  # landmark
+        "radius": 2000,
     }
 
     HIF_objective = {
@@ -58,19 +60,24 @@ class WikiGeoSearch(JsonQueryLink):
     }
 
     HIF_query_parameter = "coords"
+    HIF_next_parameter = "offset"
+    HIF_next_benchmark = 0
 
     def prepare_params(self):
         params = super(WikiGeoSearch, self).prepare_params()
         # We could filter out the coords parameter from params here
         # For now leaving it as a hack
-        params += u"lat={}&lng={}".format(*self.HIF_parameters["coords"].split('+'))
-        # TODO: strange bug, would expect I need to return params here, but I shouldn't :(
-        #return params
+        params += u"&lat={}&lng={}".format(*self.HIF_parameters["coords"].split('+'))
+        return params
 
     def cleaner(self,result_instance):
         return not result_instance["title"].startswith('List')
 
-    # TODO: write a retrieve that can continue queries
+    def prepare_next(self):
+        data = json.loads(self.body)
+        length = len(data["articles"])
+        self.next_value = self.next_value + length if length else None
+        super(WikiGeoSearch, self).prepare_next()
 
     class Meta:
         app_label = "HIF"
@@ -110,6 +117,12 @@ class WikiBacklinks(JsonQueryLink):
         proxy = True
 
 
+
+
+
+
+# Throw away from here?
+
 import re
 
 class WikiLondenDeath(JsonQueryLink):
@@ -125,7 +138,11 @@ class WikiLondenDeath(JsonQueryLink):
     def data(self):
         match = re.search(r'death_place\s*=\s*(?P<value>.*)',self.body)
         if match:
-            return match.groups()[0]
+            possible_match = match.groups()[0]
+            if len(possible_match.strip(' ')) > 3:
+                return possible_match
+            else:
+                return ""
         else:
             return ""
 

@@ -172,6 +172,15 @@ class Storage(models.Model):
 
         self.save()
 
+    def reset(self):
+        """
+        TODO: Comment here
+        TODO: Tests
+        """
+        self.configuration = None
+        self.arguments = None
+        self.status = 0
+
     #######################################################
     # PERSISTANCE
     #######################################################
