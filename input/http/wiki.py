@@ -63,8 +63,9 @@ class WikiGeoSearch(JsonQueryLink):
         params = super(WikiGeoSearch, self).prepare_params()
         # We could filter out the coords parameter from params here
         # For now leaving it as a hack
-        params += "lat={}&lng={}".format(*self.HIF_parameters["coords"].split('+'))
-
+        params += u"lat={}&lng={}".format(*self.HIF_parameters["coords"].split('+'))
+        return params
+    
     # TODO: write a cleaner to filter lists
     # TODO: write a retrieve that can continue queries
 
@@ -73,3 +74,19 @@ class WikiGeoSearch(JsonQueryLink):
         proxy = True
 
 
+class WikiBacklinks(JsonQueryLink):
+
+    HIF_link = "http://en.wikipedia.org/w/api.php"
+    HIF_parameters = {
+        "action": "query",
+        "generator": "backlinks",
+        "prop": "info",
+        "format": "json",
+        "gbllimit": 500
+    }
+
+    HIF_query_parameter = "gbltitle"
+
+    class Meta:
+        app_label = "HIF"
+        proxy = True
