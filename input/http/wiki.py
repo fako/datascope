@@ -65,8 +65,10 @@ class WikiGeoSearch(JsonQueryLink):
         # For now leaving it as a hack
         params += u"lat={}&lng={}".format(*self.HIF_parameters["coords"].split('+'))
         return params
-    
-    # TODO: write a cleaner to filter lists
+
+    def cleaner(self,result_instance):
+        return not result_instance["title"].startswith('List')
+
     # TODO: write a retrieve that can continue queries
 
     class Meta:
@@ -86,6 +88,21 @@ class WikiBacklinks(JsonQueryLink):
     }
 
     HIF_query_parameter = "gbltitle"
+
+    HIF_objective = {
+        "pageid": 0,
+        "ns": None,
+        "title": ""
+    }
+
+    def cleaner(self,result_instance):
+
+        if result_instance["title"].startswith('List'):
+            return False
+        elif result_instance["ns"] != 0:
+            return False
+
+        return True
 
     class Meta:
         app_label = "HIF"
