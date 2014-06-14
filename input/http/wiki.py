@@ -64,7 +64,8 @@ class WikiGeoSearch(JsonQueryLink):
         # We could filter out the coords parameter from params here
         # For now leaving it as a hack
         params += u"lat={}&lng={}".format(*self.HIF_parameters["coords"].split('+'))
-        return params
+        # TODO: strange bug, would expect I need to return params here, but I shouldn't :(
+        #return params
 
     def cleaner(self,result_instance):
         return not result_instance["title"].startswith('List')
