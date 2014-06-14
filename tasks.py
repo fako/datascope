@@ -5,6 +5,9 @@ from celery import task
 from HIF.exceptions import HIFImproperUsage, HIFNoContent
 
 
+# TODO: create an extend_result task
+
+
 @task(name="HIF.execute_process")
 def execute_process(inp, ser_prc):
     """

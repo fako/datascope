@@ -119,8 +119,6 @@ class HttpLink(TextStorage):
             self.body = ""
             self.status = 0
 
-        print "past setup"
-
         # Make request and do basic response handling
         self.send_request()
         self.store_response()

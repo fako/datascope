@@ -48,7 +48,7 @@ class WikiGeoSearch(JsonQueryLink):
     HIF_link = 'http://api.wikilocation.org/'
     HIF_parameters = {
         "type": "landmark",  # landmark
-        "radius": 2000,
+        "radius": 10000,
     }
 
     HIF_objective = {
