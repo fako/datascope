@@ -1,4 +1,4 @@
-from HIF.input.http.core import JsonQueryLink
+from HIF.input.http.core import JsonQueryLink, HttpQueryLink
 
 
 class WikiTranslate(JsonQueryLink):
@@ -104,6 +104,30 @@ class WikiBacklinks(JsonQueryLink):
             return False
 
         return True
+
+    class Meta:
+        app_label = "HIF"
+        proxy = True
+
+
+import re
+
+class WikiLondenDeath(JsonQueryLink):
+
+    HIF_link = "http://en.wikipedia.org/w/index.php"
+    HIF_parameters = {
+        "action": "raw",
+    }
+
+    HIF_query_parameter = "title"
+
+    @property
+    def data(self):
+        match = re.search(r'death_place\s*=\s*(?P<value>.*)',self.body)
+        if match:
+            return "London" in match.groups()[0]
+        else:
+            return False
 
     class Meta:
         app_label = "HIF"
