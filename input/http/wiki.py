@@ -125,9 +125,9 @@ class WikiLondenDeath(JsonQueryLink):
     def data(self):
         match = re.search(r'death_place\s*=\s*(?P<value>.*)',self.body)
         if match:
-            return "London" in match.groups()[0]
+            return match.groups()[0]
         else:
-            return False
+            return ""
 
     class Meta:
         app_label = "HIF"
