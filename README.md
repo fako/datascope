@@ -9,7 +9,7 @@ Innovation
 
 HIF divers radically from current search solutions in three ways. First of all the search happens semi-automatic, which enables users to combine different sources on the web. These mashups of information are most interesting when they make smart use of crowd sourced information, like information from Wikipedia. HIF delivers surprising results in this way. The current search engines deliver only the things that people expect to find.
 
-Secondly HIF breaks with the trend to improve results implicitly by tracking online user behavior. The conviction behind HIF is that the “advanced search” screen should respond to the times. That's why HIF enables users to set search preferences explicitly. This not only gives more control to the user, but also improves privacy.
+Secondly HIF breaks with the trend to improve results implicitly by tracking online user behavior. The belief behind HIF is that the “advanced search” screen should respond to the times. That's why HIF enables users to set search preferences explicitly. This not only gives more control to the user, but also improves privacy.
 
 HIF is also innovative because it aims to become public property that people can freely use, modify and distribute. Online communities and companies should get the opportunity to modify their search technology as they see fit. The status-quo in search is a one-size-fits-all approach
 
