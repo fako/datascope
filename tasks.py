@@ -6,6 +6,11 @@ from HIF.exceptions import HIFImproperUsage, HIFNoContent
 
 
 # TODO: create an extend_result task
+# This task receives a previous process and an extending process
+# Through standards (with ExtendMixin?) the results of the previous process are copied to extending process.
+# The extending process then executes and extends previous results
+# The extending process is responsible for chaining or grouping when dealing with extending array's
+# IT IS POSSIBLY ONLY POSSIBLE TO CHAIN CHORDS
 
 
 @task(name="HIF.execute_process")

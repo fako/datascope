@@ -271,3 +271,14 @@ class GroupProcess(Process, DataMixin):
 
     class Meta:
         proxy = True
+
+
+class ExtendProcess(Process, DataMixin):
+
+    HIF_extending = ''
+    HIF_extender = ''
+    HIF_source_key_path = ''
+    HIF_expectation = None
+
+    def process(self):
+        pass

@@ -61,7 +61,7 @@ class WikiGeoSearch(JsonQueryLink):
 
     HIF_query_parameter = "coords"
     HIF_next_parameter = "offset"
-    HIF_next_benchmark = 0
+    HIF_next_benchmark = 1  # TODO: weird, ask question about this
 
     def prepare_params(self):
         params = super(WikiGeoSearch, self).prepare_params()
@@ -74,7 +74,7 @@ class WikiGeoSearch(JsonQueryLink):
         return not result_instance["title"].startswith('List')
 
     def prepare_next(self):
-        data = json.loads(self.body)
+        data = json.loads(self.body)  # important to load "unclean" data for correct offset
         length = len(data["articles"])
         self.next_value = self.next_value + length if length else None
         super(WikiGeoSearch, self).prepare_next()
@@ -83,7 +83,7 @@ class WikiGeoSearch(JsonQueryLink):
         app_label = "HIF"
         proxy = True
 
-
+# TODO: create a HttpLink generator for Wiki generators
 class WikiBacklinks(JsonQueryLink):
 
     HIF_link = "http://en.wikipedia.org/w/api.php"
@@ -122,6 +122,7 @@ class WikiBacklinks(JsonQueryLink):
 
 
 # Throw away from here?
+# TODO: It would be interesting to have a "raw" parser somehow.
 
 import re
 
