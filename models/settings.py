@@ -7,6 +7,10 @@ class Domain(object):
     #HIF__supported_languages = ['en','nl','pt','de','fr','es']
     HIF__supported_languages = ['zh','ru','pt']
     HIF_debug = True
+    HIF_allowed_origins = [
+        'http://localhost:9000',
+        'http://127.0.0.1:9000',
+    ]
 
     TEST_skip_external_resource_integration = settings.HIF_SKIP_EXTERNAL_RESOURCE_INTEGRATION_TESTS
     TEST_query = "cow"
