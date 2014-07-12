@@ -15,7 +15,7 @@ class Domain(object):
     TEST_skip_external_resource_integration = settings.HIF_SKIP_EXTERNAL_RESOURCE_INTEGRATION_TESTS
     TEST_query = "cow"
 
-    google_key = 'AIzaSyDf2Eop-euHJGF1oOalFz3cYYZtQkquU1o'
+    google_key = settings.GOOGLE_API_KEY
     google_cx = '004613812033868156538:5pcwbuudj1m'
 
     wiki_source_language = 'en'
