@@ -124,7 +124,7 @@ class Process(ProcessStorage):
             # In rare cases the task itself raised an exception
             # Process goes into error mode
             if self.task.failed():
-                self.exception = self.task.result
+                self.exception = self.task.result  # TODO: fix for groups
                 self.status = Status.ERROR
 
         # WAITING

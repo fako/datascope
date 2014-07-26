@@ -20,13 +20,14 @@ def deserialize(serialization):
     """
     This function will check whether a serialization tuple has the correct format
     and returns the values in the tuple
-    A valid tuple has the form ("ModelName", 0,) where 0 is the id of the object.
+    A valid serialization has the form ("ModelName", 0,) or ["ModelName", 0,] where 0 is the id of the object.
+    TODO: remove tuple, since it is not Celery safe and unsupported.
     """
     try:
-        if not isinstance(serialization, tuple):
-            raise HIFImproperUsage("Serialization is not a tuple.")
+        if not isinstance(serialization, tuple) and not isinstance(serialization, list):
+            raise HIFImproperUsage("Serialization is not a list or tuple.")
         if not isinstance(serialization[0], (unicode, str)):
-            raise HIFImproperUsage("Model in serialization tuple is not stringish but {}.".format(
+            raise HIFImproperUsage("Model in serialization sequence is not stringish but {}.".format(
                 type(serialization[0])))
         if not isinstance(serialization[1], (int, long, float, complex)):
             raise HIFImproperUsage("Object id in serialization is not an numberish, but {}.".format(
