@@ -12,7 +12,7 @@ class ServiceStorage(models.Model):
 
     identification = models.CharField(max_length=256)  # TODO: rename consistently to identity (and identify())
     views = models.IntegerField()
-    content = jsonfield.JSONField()
+    content = jsonfield.JSONField(default=None)
 
     def save(self, *args, **kwargs):
         super(ServiceStorage, self).save(*args, **kwargs)

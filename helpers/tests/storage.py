@@ -26,7 +26,7 @@ class TestHelperStorageFunctions(TestCase):
             deserialize((1, 1,))
             self.fail("deserialize excepts an int as first element in tuple")
         except HIFImproperUsage as exception:
-            self.assertEqual(str(exception), "Model in serialization tuple is not stringish but <type 'int'>.")
+            self.assertEqual(str(exception), "Model in serialization sequence is not stringish but <type 'int'>.")
         try:
             deserialize(("TextStorage", "0",))
             self.fail("deserialize excepts a string as second element in tuple")
@@ -39,7 +39,7 @@ class TestHelperStorageFunctions(TestCase):
             self.assertEqual(str(exception), "Serialization tuple is too short.")
         try:
             deserialize(["TextStorage", 0])
-            self.fail("deserialize excepts an array as argument")
+            self.fail("deserialize excepts a list as argument")
         except HIFImproperUsage as exception:
             self.assertEqual(str(exception), "Serialization is not a tuple.")
 

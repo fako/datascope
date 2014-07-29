@@ -41,9 +41,9 @@ class Storage(models.Model):
 
     # JSON storage
 
-    configuration = jsonfield.JSONField(null=True, blank=True)
-    arguments = jsonfield.JSONField(null=True, blank=True)
-    substorage = jsonfield.JSONField(null=True, blank=True)
+    configuration = jsonfield.JSONField(null=True, blank=True, default=None)
+    arguments = jsonfield.JSONField(null=True, blank=True, default=None)
+    substorage = jsonfield.JSONField(null=True, blank=True, default=None)
 
     # HIF vars
 
@@ -204,8 +204,8 @@ class ProcessStorage(Storage):
     """
 
     # Results
-    meta = jsonfield.JSONField(null=True, blank=True)
-    results = jsonfield.JSONField(null=True, blank=True, max_length=1048576*10)  # 10Mb
+    meta = jsonfield.JSONField(null=True, blank=True, default=None)
+    results = jsonfield.JSONField(null=True, blank=True, max_length=1048576*10, default=None)  # 10Mb
 
     # Async processing
     task_id = models.CharField(max_length=256, null=True, blank=True)
@@ -223,7 +223,7 @@ class TextStorage(Storage):
     This model adds those fields to the database
     """
 
-    head = jsonfield.JSONField()
+    head = jsonfield.JSONField(default=None)
     body = models.TextField()
 
     class Meta:
