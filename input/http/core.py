@@ -1,6 +1,6 @@
-import requests
+import requests, re
 
-from HIF.exceptions import HIFHttpError40X, HIFHttpError50X, HIFImproperUsage
+from HIF.exceptions import HIFHttpError40X, HIFHttpError50X, HIFImproperUsage, HIFEndOfInput
 from HIF.models.storage import TextStorage
 from HIF.helpers.mixins import JsonDataMixin
 
@@ -28,6 +28,9 @@ class HttpLink(TextStorage):
     HIF_parameters = {}
     HIF_link = ''
 
+    HIF_next_parameter = ''
+    HIF_next_benchmark = None
+
     # Class attributes
     request_headers = {}
 
@@ -46,6 +49,7 @@ class HttpLink(TextStorage):
         self.refresh = False  # on second call we'll return results of first call
         self.session = None  # an optional requests session object to be used
         self._link = ''
+        self.next_value = self.HIF_next_benchmark
 
     class Meta:
         proxy = True
@@ -85,6 +89,13 @@ class HttpLink(TextStorage):
         prepare_params or prepare_auth.
         """
         self._link = value
+
+    @property
+    def next_params(self):
+        if self.next_value:
+            return {self.HIF_next_parameter: self.next_value}
+        else:
+            return {}
 
     #######################################################
     # PUBLIC METHODS
@@ -196,6 +207,25 @@ class HttpLink(TextStorage):
             raise HIFHttpError40X(message)
         else:
             return True
+
+    def prepare_next(self):
+        """
+        TODO: test!
+        Should prepare this class for the next get call
+        By default will prevent Retrieve processes from continuing
+        """
+        if self.next_value is None:
+            raise HIFEndOfInput
+        elif self.HIF_next_parameter not in self.url:
+            connect_char = '&' if self.HIF_parameters else '?'
+            self.url += u"{}{}={}".format(connect_char, self.HIF_next_parameter, self.next_value)
+        else:
+            pattern = "{}=[^&]*".format(self.HIF_next_parameter)
+            replacement = "{}={}".format(self.HIF_next_parameter, self.next_value)
+            self.url = re.sub(pattern, replacement, self.url)
+
+        # We reset self to allow database storage.
+        self.reset()
 
 
 class HttpQueryLink(HttpLink):

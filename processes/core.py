@@ -1,5 +1,6 @@
 import traceback
 import requests
+from copy import deepcopy
 
 from django.db.models.loading import get_model
 
@@ -155,30 +156,10 @@ class Retrieve(Process):
 
     links = []
 
-
-    def extract_continue_url(self, link):
-        return ''
-
-
     def handle_exception(self, exception):
         for link in self.links:
             self.subs.add(link.retain())
         raise exception
-
-
-    def continue_link(self, link):
-
-        continue_url = self.extract_continue_url(link)
-        if continue_url:
-            pass # TODO: implement properly and write tests
-            #continuation = self.config.class_link(config=self.kwargs)
-            #continuation.identifier = continue_url
-            #continuation.auth_link = continue_url
-            #continuation.setup = False
-            #return continuation
-        else:
-            raise HIFEndOfInput
-
 
     def process(self):
 
@@ -203,9 +184,14 @@ class Retrieve(Process):
             link.session = session
             try:
                 for repetition in range(100):
-                    link.get(arg, **self.config.dict())
-                    self.links.append(link)
-                    link = self.continue_link(link)
+                    # TODO: what is necessary
+                    self.config(link.next_params)
+                    link.get(arg, **self.config.dict())  # TODO: problems with calling setup too often here
+                    link.retain()  # TODO: will need some testing to assure quality
+                    old = deepcopy(link)
+                    self.links.append(old)
+                    link.pk = None
+                    link.prepare_next()
                 else:
                     raise HIFEndlessLoop("HIF stopped retrieving links after fetching 100 links. Does extract_continue_url ever return an empty string?")
             except HIFInputError as exception:
@@ -285,3 +271,14 @@ class GroupProcess(Process, DataMixin):
 
     class Meta:
         proxy = True
+
+
+class ExtendProcess(Process, DataMixin):
+
+    HIF_extending = ''
+    HIF_extender = ''
+    HIF_source_key_path = ''
+    HIF_expectation = None
+
+    def process(self):
+        pass
