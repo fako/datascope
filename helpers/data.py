@@ -101,7 +101,13 @@ def json_extractor(json_string, objective):
     """
     This function turns a JSON string into python data and passes it to extractor()
     """
-    target_dict = json.loads(json_string)
+    try:
+        target_dict = json.loads(json_string)
+    except ValueError:
+        # TODO: emit warning
+        # No JSON could be decoded
+        # We're unable to extract from that, so returning empty list
+        return []
     return extractor(target_dict, objective)
 
 

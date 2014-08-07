@@ -1,5 +1,5 @@
 from rest_framework.exceptions import APIException
-from rest_framework.status import HTTP_400_BAD_REQUEST
+from rest_framework.status import HTTP_400_BAD_REQUEST, HTTP_300_MULTIPLE_CHOICES
 
 
 # General
@@ -9,8 +9,6 @@ class HIFImproperUsage(Exception):
 # Storage
 class HIFCouldNotLoadFromStorage(Exception):
     pass
-
-
 
 
 # INPUT
@@ -23,10 +21,18 @@ class HIFHttpError50X(HIFInputError):
 class HIFHttpError40X(HIFInputError):
     pass
 
+class HIFHttpWarning300(HIFInputError):
+    def __init__(self, detail):
+        self.status_code = HTTP_300_MULTIPLE_CHOICES
+        self.detail = detail
+
 class HIFHttpLinkPending(HIFInputError):
     pass
 
 class HIFEndOfInput(Exception):
+    pass
+
+class HIFUnexpectedInput(HIFInputError):
     pass
 
 

@@ -1,6 +1,9 @@
+# TODO: split up into separate files
+
 import json
 
-from HIF.input.http.core import JsonQueryLink, HttpQueryLink
+from HIF.input.http.core import JsonQueryLink
+from HIF.exceptions import HIFUnexpectedInput, HIFHttpError40X, HIFHttpWarning300
 
 
 class WikiTranslate(JsonQueryLink):  # TODO: make this use the WikiBase
@@ -41,6 +44,11 @@ class WikiTranslate(JsonQueryLink):  # TODO: make this use the WikiBase
     class Meta:
         app_label = "HIF"
         proxy = True
+
+
+##############################
+# http://wikilocation.org
+##############################
 
 
 class WikiLocationSearch(JsonQueryLink):
@@ -84,6 +92,85 @@ class WikiLocationSearch(JsonQueryLink):
         proxy = True
 
 
+##############################
+# PROPER STYLE WIKI LINKS
+##############################
+
+
+class WikiBaseQuery(JsonQueryLink):
+
+    HIF_link = 'http://{}.wikipedia.org/w/api.php'  # updated at runtime
+    HIF_query_parameter = 'titles'
+    HIF_namespace = "wiki"
+
+    HIF_parameters = {
+        "action": "query",
+        "prop": "info|pageprops",  # we fetch a lot here and filter with objectives for simplicity sake
+        "format": "json",
+    }
+
+    HIF_objective = {
+        "pageid": 0,
+        "ns": None,
+        "title": "",
+        "pageprops.wikibase_item": ""
+    }
+    HIF_translations = {
+        "pageprops.wikibase_item": "wikidata"
+    }
+
+    def prepare_link(self):
+        """
+        Prepare link does some pre formatting by including the source_language as a sub domain.
+        """
+        self.HIF_link = self.HIF_link.format(self.config.source_language)
+        return super(WikiBaseQuery, self).prepare_link()
+
+    def handle_error(self):
+        """
+        Handles missing pages and ambiguity errors
+        """
+        super(WikiBaseQuery,self).handle_error()
+
+        body = json.loads(self.body)
+        # Check general response
+        if "query" not in body or "pages" not in body['query']:
+            raise HIFUnexpectedInput('Wrongly formatted Wikipedia response, missing "query" or "pages"')
+
+        # We force a 404 on missing pages
+        if "-1" in body["query"]["pages"] and "missing" in body["query"]["pages"]["-1"]:
+            self.status = 404
+            message = "{} > {} \n\n {}".format(self.type, self.status, self.body)
+            raise HIFHttpError40X(message)
+
+        # Look for ambiguity
+        for page_id, page in body["query"]["pages"].iteritems():
+            try:
+                if "disambiguation" in page['pageprops']:
+                    raise HIFHttpWarning300(page_id)
+            except KeyError:
+                raise HIFUnexpectedInput('Wrongly formatted Wikipedia response, missing "pageprops"')
+
+    class Meta:
+        proxy = True
+
+
+class WikiSearch(WikiBaseQuery):
+
+    @property
+    def data(self):
+        """
+        When we use WikiSearch we expect a single item not a list
+        So we take the first item from the list that data returns here
+        """
+        data = super(WikiSearch, self).data
+        return data[0] if len(data) else {}
+
+    class Meta:
+        app_label = "HIF"
+        proxy = True
+
+
 # TODO: create a HttpLink generator for Wiki generators
 class WikiBacklinks(JsonQueryLink):
 
@@ -116,61 +203,3 @@ class WikiBacklinks(JsonQueryLink):
     class Meta:
         app_label = "HIF"
         proxy = True
-
-
-class WikiDataItemLookup(JsonQueryLink):
-
-    HIF_link = "http://en.wikipedia.org/w/api.php"
-    HIF_parameters = {
-        "action": "query",
-        "format": "json",
-        "prop": "pageprops",
-        "ppprop": "wikibase_item",
-    }
-
-    HIF_query_parameter = "titles"
-
-    HIF_objective = {
-        "pageid": 0,
-        "ns": None,
-        "title": "",
-        "pageprops.wikibase_item": ""
-    }
-    HIF_translations = {
-        "pageprops.wikibase_item": "item"
-    }
-
-    class Meta:
-        app_label = "HIF"
-        proxy = True
-
-
-# Throw away from here?
-# TODO: It would be interesting to have a "raw" parser somehow.
-#
-# import re
-#
-# class WikiLondenDeath(JsonQueryLink):
-#
-#     HIF_link = "http://en.wikipedia.org/w/index.php"
-#     HIF_parameters = {
-#         "action": "raw",
-#     }
-#
-#     HIF_query_parameter = "title"
-#
-#     @property
-#     def data(self):
-#         match = re.search(r'death_place\s*=\s*(?P<value>.*)',self.body)
-#         if match:
-#             possible_match = match.groups()[0]
-#             if len(possible_match.strip(' ')) > 3:
-#                 return possible_match
-#             else:
-#                 return ""
-#         else:
-#             return ""
-#
-#     class Meta:
-#         app_label = "HIF"
-#         proxy = True
