@@ -3,7 +3,7 @@ import json
 from HIF.input.http.core import JsonQueryLink, HttpQueryLink
 
 
-class WikiTranslate(JsonQueryLink):
+class WikiTranslate(JsonQueryLink):  # TODO: make this use the WikiBase
 
     HIF_link = 'http://{}.wiktionary.org/w/api.php' # updated at runtime
     HIF_parameters = {
@@ -43,11 +43,11 @@ class WikiTranslate(JsonQueryLink):
         proxy = True
 
 
-class WikiGeoSearch(JsonQueryLink):
+class WikiLocationSearch(JsonQueryLink):
 
     HIF_link = 'http://api.wikilocation.org/'
     HIF_parameters = {
-        "type": "landmark",  # landmark
+        "type": "landmark",
         "radius": 10000,
     }
 
@@ -118,36 +118,59 @@ class WikiBacklinks(JsonQueryLink):
         proxy = True
 
 
+class WikiDataItemLookup(JsonQueryLink):
 
-
-
-
-# Throw away from here?
-# TODO: It would be interesting to have a "raw" parser somehow.
-
-import re
-
-class WikiLondenDeath(JsonQueryLink):
-
-    HIF_link = "http://en.wikipedia.org/w/index.php"
+    HIF_link = "http://en.wikipedia.org/w/api.php"
     HIF_parameters = {
-        "action": "raw",
+        "action": "query",
+        "format": "json",
+        "prop": "pageprops",
+        "ppprop": "wikibase_item",
     }
 
-    HIF_query_parameter = "title"
+    HIF_query_parameter = "titles"
 
-    @property
-    def data(self):
-        match = re.search(r'death_place\s*=\s*(?P<value>.*)',self.body)
-        if match:
-            possible_match = match.groups()[0]
-            if len(possible_match.strip(' ')) > 3:
-                return possible_match
-            else:
-                return ""
-        else:
-            return ""
+    HIF_objective = {
+        "pageid": 0,
+        "ns": None,
+        "title": "",
+        "pageprops.wikibase_item": ""
+    }
+    HIF_translations = {
+        "pageprops.wikibase_item": "item"
+    }
 
     class Meta:
         app_label = "HIF"
         proxy = True
+
+
+# Throw away from here?
+# TODO: It would be interesting to have a "raw" parser somehow.
+#
+# import re
+#
+# class WikiLondenDeath(JsonQueryLink):
+#
+#     HIF_link = "http://en.wikipedia.org/w/index.php"
+#     HIF_parameters = {
+#         "action": "raw",
+#     }
+#
+#     HIF_query_parameter = "title"
+#
+#     @property
+#     def data(self):
+#         match = re.search(r'death_place\s*=\s*(?P<value>.*)',self.body)
+#         if match:
+#             possible_match = match.groups()[0]
+#             if len(possible_match.strip(' ')) > 3:
+#                 return possible_match
+#             else:
+#                 return ""
+#         else:
+#             return ""
+#
+#     class Meta:
+#         app_label = "HIF"
+#         proxy = True
