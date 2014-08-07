@@ -75,7 +75,7 @@ class HttpLink(TextStorage):
         After that prepare_params and enable_auth are called who can add parameters to the link.
         """
         if not self._link:
-            self._link = self.prepare_link()  # sets self._link
+            self._link = self.prepare_link()
             params = [params for params in [self.prepare_params(), self.enable_auth()] if params]
             if params:
                 self._link += u'?' + u'&'.join(params)
@@ -254,25 +254,28 @@ class HttpQueryLink(HttpLink):
         proxy = True
 
 
-class JsonQueryLink(HttpQueryLink, JsonDataMixin):
+class JsonLinkMixin(JsonDataMixin):
     """
-    This class is the same as HttpQueryLink with some additional functionality to process JSON data.
+    Turns a HttpLink into a link that expects JSON inside self.body
+    WARNING: you'll need to call __init__ of JsonLinkMixin when using this mixin inside of __init__ of classes that uses this mixin!
     """
-
     request_headers = {
         "Content-Type": "application/json; charset=utf-8"
     }
 
-    def __init__(self, *args, **kwargs):
-        super(JsonQueryLink, self).__init__(*args, **kwargs)
-        JsonDataMixin.__init__(self)
-
     @property
     def data_source(self):
-        """
-        This property should return the data that DataMixin's extract should work with
-        """
         return self.body
+
+
+class JsonQueryLink(HttpQueryLink, JsonLinkMixin):
+    """
+    This class is the same as HttpQueryLink with some additional functionality to process JSON data.
+    """
+
+    def __init__(self, *args, **kwargs):
+        super(JsonQueryLink, self).__init__(*args, **kwargs)
+        JsonLinkMixin.__init__(self)
 
     class Meta:
         proxy = True

@@ -1,9 +1,9 @@
 # TODO: split up into separate files
 
-import json
+import json, copy
 
-from HIF.input.http.core import JsonQueryLink
-from HIF.exceptions import HIFUnexpectedInput, HIFHttpError40X, HIFHttpWarning300
+from HIF.input.http.core import JsonQueryLink, JsonLinkMixin, HttpLink
+from HIF.exceptions import HIFUnexpectedInput, HIFHttpError40X, HIFHttpWarning300, HIFImproperUsage
 
 
 class WikiTranslate(JsonQueryLink):  # TODO: make this use the WikiBase
@@ -31,8 +31,8 @@ class WikiTranslate(JsonQueryLink):  # TODO: make this use the WikiBase
         """
         Prepare link does some pre formatting by including the source_language as a sub domain.
         """
-        self.HIF_link = self.HIF_link.format(self.config.source_language)
-        return super(WikiTranslate, self).prepare_link()
+        link = copy.copy(super(WikiTranslate, self).prepare_link())
+        return link.format(self.config.source_language)
 
     def prepare_params(self):
         """
@@ -118,13 +118,21 @@ class WikiBaseQuery(JsonQueryLink):
     HIF_translations = {
         "pageprops.wikibase_item": "wikidata"
     }
+    # Because there already is an objective and child classes may want to add those
+    # And it is impossible to inherit attributes in a normal way
+    # There is this syntax that could be used
+    # TODO: remove when used in real life
+    # TODO: Add a helper to do this and improve syntax looks?
+    # HIF_parameters = dict(WikiBaseQuery.HIF_parameters.copy(), **{
+    #    "test": "test"
+    # })
 
     def prepare_link(self):
         """
         Prepare link does some pre formatting by including the source_language as a sub domain.
         """
-        self.HIF_link = self.HIF_link.format(self.config.source_language)
-        return super(WikiBaseQuery, self).prepare_link()
+        link = copy.copy(super(WikiBaseQuery, self).prepare_link())
+        return link.format(self.config.source_language)
 
     def handle_error(self):
         """
@@ -157,10 +165,6 @@ class WikiBaseQuery(JsonQueryLink):
 
 class WikiSearch(WikiBaseQuery):
 
-    HIF_parameters = dict(WikiBaseQuery.HIF_parameters.copy(), **{
-        "test": "test"
-    })
-
     @property
     def data(self):
         """
@@ -173,6 +177,62 @@ class WikiSearch(WikiBaseQuery):
     class Meta:
         app_label = "HIF"
         proxy = True
+
+
+class WikiDataClaims(HttpLink, JsonLinkMixin):
+
+    HIF_link = "https://www.wikidata.org/wiki/Special:EntityData/{}.json"  # updated at runtime
+
+    HIF_objective = {
+        "property": "",
+        "datavalue.value.numeric-id": 0
+    }
+    HIF_translations = {
+        "datavalue.value.numeric-id": "item"
+    }
+
+    def __init__(self, *args, **kwargs):
+        super(WikiDataClaims, self).__init__(*args, **kwargs)
+        JsonLinkMixin.__init__(self)
+        self.entity = ''
+
+    def get(self, *args, **kwargs):
+        """
+
+        """
+        # TODO: move get check logic like this to helper function?
+        if not len(args) == 1:  # TODO: this still allows for a Falsy value
+            raise HIFImproperUsage(
+                "WikiDataClaims should receive one input through args parameter it received {}.".format(len(args))
+            )
+        self.entity = args[0]  # TODO: additional checks on format?
+        super(WikiDataClaims, self).get(*args, **kwargs)
+
+    def prepare_link(self):
+        link = copy.copy(super(WikiDataClaims, self).prepare_link())
+        return link.format(self.entity)
+
+    def cleaner(self, result_instance):
+        return result_instance['item']
+
+    # @property
+    # def data(self):
+    #     data = super(WikiDataClaims, self).data
+    #     if "claims" in data[0]:
+    #         return list(data[0]["claims"])
+    #     else:
+    #         return []
+
+    class Meta:
+        app_label = "HIF"
+        proxy = True
+
+
+class WikiDataClaimers(HttpLink, JsonLinkMixin):
+
+    def __init__(self, *args, **kwargs):
+        super(WikiDataClaimers, self).__init__(*args, **kwargs)
+        JsonLinkMixin.__init__(self)
 
 
 # TODO: create a HttpLink generator for Wiki generators

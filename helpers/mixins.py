@@ -68,7 +68,7 @@ class JsonDataMixin(DataMixin):
     """
     def extract(self, source):
         """
-        Extracts results from source using _objective and puts it in self.rsl
+        Extracts results from source using _objective and puts it in self.data
         It uses HIF.helpers.json_extractor to get the job done
         """
         self._data = json_extractor(source, self.HIF_objective)
