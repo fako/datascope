@@ -157,6 +157,10 @@ class WikiBaseQuery(JsonQueryLink):
 
 class WikiSearch(WikiBaseQuery):
 
+    HIF_parameters = dict(WikiBaseQuery.HIF_parameters.copy(), **{
+        "test": "test"
+    })
+
     @property
     def data(self):
         """
