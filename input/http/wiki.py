@@ -64,7 +64,7 @@ class WikiGeoSearch(JsonQueryLink):
     HIF_next_benchmark = 1  # TODO: weird, ask question about this
 
     def prepare_params(self):
-        params = super(WikiGeoSearch, self).prepare_params()
+        params = super(WikiLocationSearch, self).prepare_params()
         # We could filter out the coords parameter from params here
         # For now leaving it as a hack
         params += u"&lat={}&lng={}".format(*self.HIF_parameters["coords"].split('+'))
@@ -77,11 +77,12 @@ class WikiGeoSearch(JsonQueryLink):
         data = json.loads(self.body)  # important to load "unclean" data for correct offset
         length = len(data["articles"])
         self.next_value = self.next_value + length if length else None
-        super(WikiGeoSearch, self).prepare_next()
+        super(WikiLocationSearch, self).prepare_next()
 
     class Meta:
         app_label = "HIF"
         proxy = True
+
 
 # TODO: create a HttpLink generator for Wiki generators
 class WikiBacklinks(JsonQueryLink):

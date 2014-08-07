@@ -6,7 +6,7 @@ from HIF.exceptions import HIFInputError
 class LocateHistoricalDeaths(Process): #, DataMixin): ?????
 
     # HIF interface
-    HIF_geolocate_model = "WikiGeoSearch"  # HIF.input.http.wiki
+    HIF_geolocate_model = "WikiLocationSearch"  # HIF.input.http.wiki
     HIF_backlinks_model = "WikiBacklinks"  # HIF.input.http.wiki
 
     HIF_child_process = 'Retrieve'
