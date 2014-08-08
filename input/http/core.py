@@ -1,8 +1,9 @@
-import requests, re
+import requests, re, copy
 
 from HIF.exceptions import HIFHttpError40X, HIFHttpError50X, HIFImproperUsage, HIFEndOfInput
 from HIF.models.storage import TextStorage
 from HIF.helpers.mixins import JsonDataMixin
+from HIF.input.helpers import sanitize_single_trueish_input
 
 
 class HttpLink(TextStorage):
@@ -16,6 +17,7 @@ class HttpLink(TextStorage):
     This class provides a lot of methods that can be overriden
     All these methods tweak the way that the class will connect to the external resource
     A list of all methods intended to be overriden:
+    TODO: update
     - prepare_link
     - enable_auth
     - send_request
@@ -50,6 +52,7 @@ class HttpLink(TextStorage):
         self.session = None  # an optional requests session object to be used
         self._link = ''
         self.next_value = self.HIF_next_benchmark
+        self.sanitized = None
 
     class Meta:
         proxy = True
@@ -109,6 +112,15 @@ class HttpLink(TextStorage):
         Does a get to computed link
         """
 
+        # A mechanism to sanitize input
+        # You need to override sanitize_input to sanitize input
+        # WARNING: by default no sanitation is done!
+        valid, out = self.sanitize_input(*args)
+        if not valid:
+            raise HIFImproperUsage(out)
+        else:
+            self.input = out  # out is likely the *args that are put in, unless sanitize_input gets overridden!
+
         self.setup(*args, **kwargs)
 
         # Early exit if response is already there and status within success range.
@@ -133,12 +145,26 @@ class HttpLink(TextStorage):
     # They are the most important functions to override and change behavior
     # on a link to link basis
 
+    def sanitize_input(self, to_check):
+        """
+        This method is responsible for validating and/or sanitizing input.
+        It should return a tuple with two values
+        0)  A boolean which indicates whether the input was valid or not
+        1)  Either the sanitized/valid input or a reason why it is not valid and can't be sanitized
+
+        By default the input is valid and sanitized
+        This is to be out of the way during development/experimentation
+        """
+        return True, to_check
+
     def prepare_link(self):
         """
         Returns what the link is that this class should use.
         By default that is the HIF_link attribute, but some cases may need some processing (like Wiki).
+
+        We're making a copy of the class attribute to allow subclasses to manipulate it safely
         """
-        return unicode(self.HIF_link)
+        return copy.copy(unicode(self.HIF_link))  # TODO: test the copy!
 
     def prepare_params(self):
         """
@@ -228,7 +254,13 @@ class HttpLink(TextStorage):
         self.reset()
 
 
-class HttpQueryLink(HttpLink):
+############################
+# MIXINS
+# TODO: move to own file
+############################
+
+
+class HttpQueryMixin(object):
     """
     Makes the link class suitable for having a single input.
     This input will be considered the query for the resource.
@@ -237,24 +269,18 @@ class HttpQueryLink(HttpLink):
 
     HIF_query_parameter = ''
 
-    def get(self, *args, **kwargs):
-        """
-        The get method does some checks on the arguments
-        After that it fills HIF_parameters with the first argument
-        Setting the key to HIF_query_parameter which will differ from link to link
-        """
-        if not len(args) == 1:  # TODO: this still allows for a Falsy value
-            raise HIFImproperUsage(
-                "QueryLinks should receive one input through args parameter it received {}.".format(len(args))
-            )
-        self.HIF_parameters[self.HIF_query_parameter] = args[0]
-        super(HttpQueryLink, self).get(*args, **kwargs)
+    def sanitize_input(self, to_check):
+        return sanitize_single_trueish_input(to_check)
+
+    def prepare_link(self):
+        self.HIF_parameters[self.HIF_query_parameter] = self.input
+        return super(HttpQueryMixin, self).prepare_link()
 
     class Meta:
         proxy = True
 
 
-class JsonLinkMixin(JsonDataMixin):
+class HttpJsonMixin(JsonDataMixin):
     """
     Turns a HttpLink into a link that expects JSON inside self.body
     WARNING: you'll need to call __init__ of JsonLinkMixin when using this mixin inside of __init__ of classes that uses this mixin!
@@ -268,14 +294,14 @@ class JsonLinkMixin(JsonDataMixin):
         return self.body
 
 
-class JsonQueryLink(HttpQueryLink, JsonLinkMixin):
+class JsonQueryLink(HttpQueryMixin, HttpLink, HttpJsonMixin):  # TODO: legacy, use mixins directly instead
     """
-    This class is the same as HttpQueryLink with some additional functionality to process JSON data.
+    This class is the same as HttpLink with some additional functionality to process JSON data from a query.
     """
 
     def __init__(self, *args, **kwargs):
         super(JsonQueryLink, self).__init__(*args, **kwargs)
-        JsonLinkMixin.__init__(self)
+        HttpJsonMixin.__init__(self)
 
     class Meta:
         proxy = True

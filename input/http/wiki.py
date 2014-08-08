@@ -1,8 +1,9 @@
 # TODO: split up into separate files
 
-import json, copy
+import json
 
-from HIF.input.http.core import JsonQueryLink, JsonLinkMixin, HttpLink
+from HIF.input.http.core import JsonQueryLink, HttpJsonMixin, HttpLink
+from HIF.input.helpers import sanitize_single_trueish_input
 from HIF.exceptions import HIFUnexpectedInput, HIFHttpError40X, HIFHttpWarning300, HIFImproperUsage
 
 
@@ -31,7 +32,7 @@ class WikiTranslate(JsonQueryLink):  # TODO: make this use the WikiBase
         """
         Prepare link does some pre formatting by including the source_language as a sub domain.
         """
-        link = copy.copy(super(WikiTranslate, self).prepare_link())
+        link = super(WikiTranslate, self).prepare_link()
         return link.format(self.config.source_language)
 
     def prepare_params(self):
@@ -131,12 +132,13 @@ class WikiBaseQuery(JsonQueryLink):
         """
         Prepare link does some pre formatting by including the source_language as a sub domain.
         """
-        link = copy.copy(super(WikiBaseQuery, self).prepare_link())
+        link = super(WikiBaseQuery, self).prepare_link()
         return link.format(self.config.source_language)
 
     def handle_error(self):
         """
         Handles missing pages and ambiguity errors
+        You can only handle these errors by parsing body :(
         """
         super(WikiBaseQuery,self).handle_error()
 
@@ -179,7 +181,7 @@ class WikiSearch(WikiBaseQuery):
         proxy = True
 
 
-class WikiDataClaims(HttpLink, JsonLinkMixin):
+class WikiDataClaims(HttpLink, HttpJsonMixin):
 
     HIF_link = "https://www.wikidata.org/wiki/Special:EntityData/{}.json"  # updated at runtime
 
@@ -193,24 +195,14 @@ class WikiDataClaims(HttpLink, JsonLinkMixin):
 
     def __init__(self, *args, **kwargs):
         super(WikiDataClaims, self).__init__(*args, **kwargs)
-        JsonLinkMixin.__init__(self)
-        self.entity = ''
+        HttpJsonMixin.__init__(self)
 
-    def get(self, *args, **kwargs):
-        """
-
-        """
-        # TODO: move get check logic like this to helper function?
-        if not len(args) == 1:  # TODO: this still allows for a Falsy value
-            raise HIFImproperUsage(
-                "WikiDataClaims should receive one input through args parameter it received {}.".format(len(args))
-            )
-        self.entity = args[0]  # TODO: additional checks on format?
-        super(WikiDataClaims, self).get(*args, **kwargs)
+    def sanitize_input(self, to_check):
+        return sanitize_single_trueish_input(to_check, class_name=self.__class__.__name__)
 
     def prepare_link(self):
-        link = copy.copy(super(WikiDataClaims, self).prepare_link())
-        return link.format(self.entity)
+        link = super(WikiDataClaims, self).prepare_link()
+        return link.format(self.input)
 
     def cleaner(self, result_instance):
         return result_instance['item']
@@ -228,11 +220,23 @@ class WikiDataClaims(HttpLink, JsonLinkMixin):
         proxy = True
 
 
-class WikiDataClaimers(HttpLink, JsonLinkMixin):
+class WikiDataClaimers(HttpLink, HttpJsonMixin):
+
+    HIF_link = "http://wdq.wmflabs.org/api?q={}"
 
     def __init__(self, *args, **kwargs):
         super(WikiDataClaimers, self).__init__(*args, **kwargs)
-        JsonLinkMixin.__init__(self)
+        HttpJsonMixin.__init__(self)
+
+    # def sanitize_input(self, to_check):
+    #     if not isinstance(to_check, (list, tuple,)):
+    #         return False, "WikiDataClaimers is expects a list or tuple"
+
+    # def prepare_link(self):
+    #     link = super(WikiDataClaims, self).prepare_link()
+    #     query = "CLAIMS[{}:{}]".format(self.input['property'], self.input['item'])
+
+
 
 
 # TODO: create a HttpLink generator for Wiki generators
