@@ -115,7 +115,7 @@ class HttpLink(TextStorage):
         # A mechanism to sanitize input
         # You need to override sanitize_input to sanitize input
         # WARNING: by default no sanitation is done!
-        valid, out = self.sanitize_input(*args)
+        valid, out = self.sanitize_input(args)
         if not valid:
             raise HIFImproperUsage(out)
         else:

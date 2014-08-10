@@ -222,21 +222,45 @@ class WikiDataClaims(HttpLink, HttpJsonMixin):
 
 class WikiDataClaimers(HttpLink, HttpJsonMixin):
 
+    # TODO: add an exact operator to reach() to solve issue with similarly named keys
+
     HIF_link = "http://wdq.wmflabs.org/api?q={}"
+    HIF_objective = {
+        "status": {},  # TODO: make the items keypath more specific and omit the status objective
+        "items": []
+    }
 
     def __init__(self, *args, **kwargs):
         super(WikiDataClaimers, self).__init__(*args, **kwargs)
         HttpJsonMixin.__init__(self)
 
-    # def sanitize_input(self, to_check):
-    #     if not isinstance(to_check, (list, tuple,)):
-    #         return False, "WikiDataClaimers is expects a list or tuple"
+    def sanitize_input(self, to_check):
+        if not isinstance(to_check, (list, tuple,)):
+            return False, "WikiDataClaimers is expects a list or tuple"
+        # TODO write a sanitize function that checks for existence of keys
+        for claim_input in to_check:
+            if not "property" in claim_input or not "item" in claim_input:
+                return False, "Found input without 'property' and 'item' keys: {}".format(to_check)
+        return True, to_check
 
-    # def prepare_link(self):
-    #     link = super(WikiDataClaims, self).prepare_link()
-    #     query = "CLAIMS[{}:{}]".format(self.input['property'], self.input['item'])
+    def prepare_link(self):
 
+        query_expression = "CLAIM[{}:{}] AND "
+        query = ''
+        for claim in self.input:
+            query += query_expression.format(claim['property'], claim['item'])
 
+        link = super(WikiDataClaimers, self).prepare_link()
+        return link.format(query)[:-5]  # strips last AND
+
+    @property
+    def data(self):
+        data = super(WikiDataClaimers, self).data
+        return data[0]['items']
+
+    class Meta:
+        app_label = "HIF"
+        proxy = True
 
 
 # TODO: create a HttpLink generator for Wiki generators
