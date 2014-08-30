@@ -235,9 +235,8 @@ class HttpLink(TextStorage):
         else:
             return True
 
-    def prepare_next(self):
+    def prepare_next(self):  # TODO: test!
         """
-        TODO: test!
         Should prepare this class for the next get call
         By default will prevent Retrieve processes from continuing
         """

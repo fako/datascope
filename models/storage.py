@@ -172,10 +172,9 @@ class Storage(models.Model):
 
         self.save()
 
-    def reset(self):
+    def reset(self):  # TODO: test and comment
         """
-        TODO: Comment here
-        TODO: Tests
+        .........
         """
         self.configuration = None
         self.arguments = None
