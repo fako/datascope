@@ -3,14 +3,8 @@ from django.db.models.loading import get_model
 from celery import task
 
 from HIF.exceptions import HIFImproperUsage, HIFNoContent
-
-
-# TODO: create an extend_result task
-# This task receives a previous process and an extending process
-# Through standards (with ExtendMixin?) the results of the previous process are copied to extending process.
-# The extending process then executes and extends previous results
-# The extending process is responsible for chaining or grouping when dealing with extending array's
-# IT IS POSSIBLY ONLY POSSIBLE TO CHAIN CHORDS
+from HIF.helpers.storage import get_hif_model
+from HIF.helpers.data import reach
 
 
 @task(name="HIF.execute_process")
@@ -19,22 +13,36 @@ def execute_process(inp, ser_prc):
     Main task which executes a Process
     Input will be given as arguments for the Process
     """
-    name, obj_id = ser_prc
-    cls = get_model(app_label="HIF", model_name=name)
-    if cls is None:
-        raise HIFImproperUsage("The specified model does not exist or is not registered as Django model with HIF label.")
-    prc = cls()
-    prc.load(serialization=ser_prc)
+    Process = get_hif_model(ser_prc)
+    process = Process().load(serialization=ser_prc)
+
     if type(inp) in [list, tuple]:
-        prc.execute(*inp)
+        process.execute(*inp)
     else:
-        prc.execute(inp)
-    return prc.retain()
+        process.execute(inp)
+
+    return process.retain()
 
 
+@task(name="HIF.extend_process")
+def extend_process(ser_extendee, ser_extender, source_path=''):
+    """
+    Will extend data of the extendee by using the extender.
+    """
+    Extender = get_hif_model(ser_extender)
+    extender = Extender().load(serialization=ser_extender)
+    extendee = extender.extend(ser_extendee, source_path=source_path)  # TODO: try block with a return
 
+    extender.execute()
+    extender.retain()
+
+    return extendee.retain()
+
+
+# TODO: rewrite what is using this to use extend_process instead
+# TODO: remove this code as it is outdated and inferior
 @task(name="HIF.flatten_process_results")
-def flatten_process_results(ser_prc, key):  # TODO: use flattener from helpers?
+def flatten_process_results(ser_prc, key):
     """
     This task simplifies results from a Process.
     In order for other processes to use it as input
@@ -43,7 +51,7 @@ def flatten_process_results(ser_prc, key):  # TODO: use flattener from helpers?
     name, prc_id = ser_prc
     cls = get_model(app_label="HIF",model_name=name)
     if cls is None:
-            raise HIFImproperUsage("The specified model does not exist or is not registered as Django model with HIF label.")
+        raise HIFImproperUsage("The specified model does not exist or is not registered as Django model with HIF label.")
     prc = cls()
     prc.load(serialization=ser_prc)
     flat = []
@@ -54,5 +62,3 @@ def flatten_process_results(ser_prc, key):  # TODO: use flattener from helpers?
     except HIFNoContent:
         pass
     return flat
-
-

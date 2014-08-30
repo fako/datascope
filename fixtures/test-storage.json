@@ -62,7 +62,7 @@
         "type": "TextStorage"
     }
 },
-    {
+{
     "pk": 1,
     "model": "HIF.processstorage",
     "fields": {

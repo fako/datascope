@@ -53,6 +53,7 @@ class HttpLink(TextStorage):
         self._link = ''
         self.next_value = self.HIF_next_benchmark
         self.sanitized = None
+        self.input = None  # TODO: correct place for input attribute? perhaps QueryMixin better?
 
     class Meta:
         proxy = True

@@ -3,30 +3,17 @@ from django.db.models.loading import get_model
 from HIF.exceptions import HIFImproperUsage
 
 
-def get_hif_model(name):
-    """
-    Returns the class of a model with specified name.
-    It fails if the model is not registered with HIF as app_label
-    It also fails if the model is not imported in models folder/file
-    """
-    model = get_model(app_label="HIF", model_name=name)
-    if model is None:
-        raise HIFImproperUsage("The specified model does not exist, is not imported in models " +
-                               "or is not registered as Django model with HIF label.")
-    return model
-
-
 def deserialize(serialization):
     """
     This function will check whether a serialization tuple has the correct format
     and returns the values in the tuple
     A valid serialization has the form ("ModelName", 0,) or ["ModelName", 0,] where 0 is the id of the object.
-    TODO: remove tuple, since it is not Celery safe and unsupported.
     """
+    # TODO: remove tuple, since it is not Celery safe and unsupported.
     try:
-        if not isinstance(serialization, tuple) and not isinstance(serialization, list):
+        if not isinstance(serialization, (tuple, list)):
             raise HIFImproperUsage("Serialization is not a list or tuple.")
-        if not isinstance(serialization[0], (unicode, str)):
+        if not isinstance(serialization[0], basestring):
             raise HIFImproperUsage("Model in serialization sequence is not stringish but {}.".format(
                 type(serialization[0])))
         if not isinstance(serialization[1], (int, long, float, complex)):
@@ -35,6 +22,26 @@ def deserialize(serialization):
     except IndexError:
         raise HIFImproperUsage("Serialization tuple is too short.")
     return serialization[0], serialization[1]
+
+
+def get_hif_model(inp):
+    """
+    Returns the class of a model with specified name.
+    Takes a serialized process or a model name as input
+
+    It fails if the model is not registered with HIF as app_label
+    It also fails if the model is not imported in models folder/file
+    """
+    if not isinstance(inp, basestring):
+        name, prc_id = deserialize(inp)
+    else:
+        name = inp
+
+    model = get_model(app_label="HIF", model_name=name)
+    if model is None:
+        raise HIFImproperUsage("The specified model does not exist, is not imported in models " +
+                               "or is not registered as Django model with HIF label.")
+    return model
 
 
 class Container(object):

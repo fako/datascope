@@ -21,6 +21,9 @@ class Process(ProcessStorage):
 
     HIF_child_process = ''
 
+    HIF_extension_key_path = ''  # indicates where to find the extension data in rsl when process is done
+    HIF_extension_statusses = [200]  # TODO: sane default
+
     def __iter__(self):
         return iter(self.rsl)
 
@@ -44,7 +47,6 @@ class Process(ProcessStorage):
     def extract_task(self):
         ser_prc = self.task.result
         self.subs.add(ser_prc)
-
 
 
     @property
@@ -76,6 +78,35 @@ class Process(ProcessStorage):
         self.status = Status.PROCESSING
 
 
+    def extend(self, ser_extendee, source_path=''):
+        """
+        Method to customize how extending should effect the process
+        It could alter existing configuration or set arguments
+        It basically functions as setup for extension processes
+
+        The source_path is assumed to be present in extendee results if it is set
+        The data at that path should be the leading in changing the process
+        If it is not set the entire extendee results is assumed to be extended
+
+        This method adds an entry called extend to the meta field
+        That entry specifies how the results should be merged by extendee
+        meta = {
+            "extend": {
+                "source_path": None
+                "extension_path": None
+            }
+        }
+        It also sets extends field for database filtering
+
+        Should make self a sub of extendee
+        Should check statusses are in correct range
+
+        This method returns an instance of extendee
+        Or raises exceptions if extendee can't be worked with
+        """
+        pass
+
+
     # TODO: subs does not split between texts and processes status. should it?
     def subs_errors(self):
         return self.subs.count({"status__in":[Status.ERROR, Status.WARNING]})
@@ -83,9 +114,9 @@ class Process(ProcessStorage):
     def subs_waiting(self):
         return self.subs.count({"status__in":[Status.PROCESSING, Status.WAITING, Status.READY]})
 
-    def subs_state(self):
+    def subs_state(self):  # TODO: terrible naming! make it subs_update instead
         # Wakeup child processes if they are there
-        if self.status == Status.WAITING and self.HIF_child_process:
+        if self.status == Status.WAITING and self.HIF_child_process:  # TODO: this locks a process to one other process
             self.subs.run(self.HIF_child_process, 'execute')
         # Recheck the state of subcontent
         if self.subs_waiting() != 0:
@@ -95,6 +126,13 @@ class Process(ProcessStorage):
         # If there are errors in child processes we go into warning mode
         if self.subs_errors() != 0:
             self.status = Status.WARNING
+
+    def subs_extend(self):
+        """
+        Should filter for all subs with an extends field set to this class
+
+        """
+        pass
 
 
     def execute(self, *args, **kwargs):
@@ -271,14 +309,3 @@ class GroupProcess(Process, DataMixin):
 
     class Meta:
         proxy = True
-
-
-class ExtendProcess(Process, DataMixin):
-
-    HIF_extending = ''
-    HIF_extender = ''
-    HIF_source_key_path = ''
-    HIF_expectation = None
-
-    def process(self):
-        pass

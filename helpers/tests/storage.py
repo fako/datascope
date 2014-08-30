@@ -11,12 +11,20 @@ class TestHelperStorageFunctions(TestCase):
     def test_get_hif_model(self):
         model = get_hif_model("TextStorage")
         self.assertIs(model, TextStorage)
+        model = get_hif_model(("TextStorage", 0,))
+        self.assertIs(model, TextStorage)
         try:
            get_hif_model("DoesNotExist")
            self.fail("get_hif_model returned DoesNotExist as a HIF model")
         except HIFImproperUsage as exception:
            self.assertEqual(str(exception), "The specified model does not exist, is not imported in models " +
                                             "or is not registered as Django model with HIF label.")
+        try:
+            get_hif_model(("DoesNotExist", 0,))
+            self.fail("get_hif_model returned DoesNotExist as a HIF model")
+        except HIFImproperUsage as exception:
+            self.assertEqual(str(exception), "The specified model does not exist, is not imported in models " +
+                             "or is not registered as Django model with HIF label.")
 
     def test_deserialize(self):
         model, id = deserialize(("TextStorage", 0,))
@@ -37,11 +45,6 @@ class TestHelperStorageFunctions(TestCase):
             self.fail("deserialize excepts a tuple that is too short")
         except HIFImproperUsage as exception:
             self.assertEqual(str(exception), "Serialization tuple is too short.")
-        try:
-            deserialize(["TextStorage", 0])
-            self.fail("deserialize excepts a list as argument")
-        except HIFImproperUsage as exception:
-            self.assertEqual(str(exception), "Serialization is not a tuple.")
 
 
 class TestContainer(TestCase):
@@ -118,6 +121,7 @@ class TestContainer(TestCase):
         except Exception:
             pass
         instance.add(("TextStorage", 1,))
+        instance.add(("TextStorage", 1,))  # should not get added twice
         instance.add(("TextStorage", 3,))
         self.assertEqual(instance._container, self.valid)
 

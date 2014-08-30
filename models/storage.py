@@ -215,6 +215,7 @@ class ProcessStorage(Storage):
     # Results
     meta = jsonfield.JSONField(null=True, blank=True, default=None)
     results = jsonfield.JSONField(null=True, blank=True, max_length=1048576*10, default=None)  # 10Mb
+    extends = models.CharField(max_length=256, null=True, blank=True, db_index=True)
 
     # Async processing
     task_id = models.CharField(max_length=256, null=True, blank=True)
