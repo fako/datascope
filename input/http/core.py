@@ -298,7 +298,7 @@ class HttpJsonMixin(JsonDataMixin):
         return self.body
 
     @property
-    def rsl(self):
+    def rsl(self):  # TODO: this way of working seems very error prone
         return self.data
 
 
