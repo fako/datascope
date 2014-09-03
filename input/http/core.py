@@ -253,6 +253,10 @@ class HttpLink(TextStorage):
         # We reset self to allow database storage.
         self.reset()
 
+    @property
+    def rsl(self):
+        return self.body
+
 
 ############################
 # MIXINS
@@ -293,6 +297,10 @@ class HttpJsonMixin(JsonDataMixin):
     def data_source(self):
         return self.body
 
+    @property
+    def rsl(self):
+        return self.data
+
 
 class JsonQueryLink(HttpQueryMixin, HttpLink, HttpJsonMixin):  # TODO: legacy, use mixins directly instead
     """
@@ -302,6 +310,10 @@ class JsonQueryLink(HttpQueryMixin, HttpLink, HttpJsonMixin):  # TODO: legacy, u
     def __init__(self, *args, **kwargs):
         super(JsonQueryLink, self).__init__(*args, **kwargs)
         HttpJsonMixin.__init__(self)
+
+    @property
+    def rsl(self):
+        return self.data
 
     class Meta:
         proxy = True

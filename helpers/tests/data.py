@@ -14,6 +14,9 @@ class TestPythonReach(TestCase):
             "list": ["value 0", "value 1", "value 2"],
             "dotted.key": "another value"
         }
+        self.test_list = [
+            {"test": "dict in list"}
+        ]
 
     def test_reach(self):
         # Dict access
@@ -23,13 +26,17 @@ class TestPythonReach(TestCase):
         # List access
         self.assertEqual(reach("list.0", self.test_dict), self.test_dict["list"][0])
         self.assertEqual(reach("dict.list.0", self.test_dict), self.test_dict["dict"]["list"][0])
+        self.assertEqual(reach("0.test", self.test_list), self.test_list[0]["test"])
         # Key with dots
         self.assertEqual(reach("dotted.key", self.test_dict), self.test_dict["dotted.key"])
         # Invalid key
         self.assertEqual(reach("does.not.exist", self.test_dict), None)
+        # None key
+        self.assertEqual(reach(None, self.test_dict), self.test_dict)
+        self.assertEqual(reach(None, self.test_list), self.test_list)
         # Invalid data
         try:
-            reach("irrelevant","invalid-input")
+            reach("irrelevant", "invalid-input")
             self.fail("Reach did not throw a TypeError after getting invalid input")
         except TypeError as exception:
             self.assertEqual(str(exception), "Reach needs dict as input, got <type 'str'> instead")

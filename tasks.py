@@ -25,18 +25,20 @@ def execute_process(inp, ser_prc):
 
 
 @task(name="HIF.extend_process")
-def extend_process(ser_extendee, ser_extender, source_path=''):
+def extend_process(ser_extendee, ser_extender):
     """
     Will extend data of the extendee by using the extender.
     """
     Extender = get_hif_model(ser_extender)
     extender = Extender().load(serialization=ser_extender)
-    extendee = extender.extend(ser_extendee, source_path=source_path)  # TODO: try block with a return
+
+    extender.setup()
+    extender.extend(ser_extendee)  # TODO: try block with a return
 
     extender.execute()
     extender.retain()
 
-    return extendee.retain()
+    return ser_extendee
 
 
 # TODO: rewrite what is using this to use extend_process instead

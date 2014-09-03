@@ -207,13 +207,9 @@ class WikiDataClaims(HttpLink, HttpJsonMixin):
     def cleaner(self, result_instance):
         return result_instance['item']
 
-    # @property
-    # def data(self):
-    #     data = super(WikiDataClaims, self).data
-    #     if "claims" in data[0]:
-    #         return list(data[0]["claims"])
-    #     else:
-    #         return []
+    @property
+    def rsl(self):
+        return self.data
 
     class Meta:
         app_label = "HIF"

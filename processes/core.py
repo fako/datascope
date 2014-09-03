@@ -13,15 +13,14 @@ from HIF.exceptions import HIFProcessingError, HIFProcessingAsync, \
 from HIF.tasks import execute_process
 from HIF.helpers.enums import ProcessStatus as Status
 from HIF.helpers.mixins import DataMixin
-
-
+from HIF.helpers.data import reach
+from HIF.helpers.storage import get_hif_model
 
 
 class Process(ProcessStorage):
 
     HIF_child_process = ''
 
-    HIF_extension_key_path = ''  # indicates where to find the extension data in rsl when process is done
     HIF_extension_statusses = [200]  # TODO: sane default
 
     def __iter__(self):
@@ -78,43 +77,76 @@ class Process(ProcessStorage):
         self.status = Status.PROCESSING
 
 
-    def extend(self, ser_extendee, source_path=''):
+    def extend(self, ser_extendee):
         """
-        Method to customize how extending should effect the process
-        It could alter existing configuration or set arguments
-        It basically functions as setup for extension processes
+        This method looks at extend configuration and adjusts arguments and configuration of process based on that.
 
-        The source_path is assumed to be present in extendee results if it is set
-        The data at that path should be the leading in changing the process
-        If it is not set the entire extendee results is assumed to be extended
 
-        This method adds an entry called extend to the meta field
+        This method adds an entry called extending to the meta field
         That entry specifies how the results should be merged by extendee
         meta = {
-            "extend": {
-                "source_path": None
-                "extension_path": None
-            }
+            "extending": OriginalDict
         }
         It also sets extends field for database filtering
 
-        Should make self a sub of extendee
         Should check statusses are in correct range
 
-        This method returns an instance of extendee
-        Or raises exceptions if extendee can't be worked with
+        This method returns raises exceptions if extendee can't be worked with
         """
-        pass
+        Extendee = get_hif_model(ser_extendee)
+        extendee = Extendee().load(serialization=ser_extendee)  # TODO: write test that makes sure this function does not change extendee
 
+        # TODO: make status checks possible by registering later
+        #if extendee.status not in self.HIF_extension_statusses:
+        #    self.status = Status.CANCELLED
+        #    raise Exception('status is wrong!')
+
+        if 'keypath' not in self.config._extend:
+            self.status = Status.ERROR
+            raise HIFImproperUsage('Keypath is not present in extend config during extending')
+
+        self.extends = self.__class__.__name__  # TODO: check that this works
+
+        source = reach(self.config._extend['keypath'], extendee.rsl)
+        self.meta = {'extending': source}
+
+        # Pad self.arguments with args from extend config
+        if 'args' in self.config._extend:
+            args = self.arguments or []
+            for keypath in self.config._extend['args']:
+                arg = reach(keypath, source)
+                if arg not in args:
+                    args.append(arg)
+            self.arguments = args
+
+        # Pad config with extend kwargs
+        if 'kwargs' in self.config._extend:
+            kwargs = {}
+            for kw, keypath in self.config._extend['kwargs'].iteritems():
+                kwargs[kw] = reach(keypath, source)
+            self.config(kwargs)
+
+
+
+
+    @property
+    def extension(self):
+        """
+        Returns the keypath that is supposed to be replaced and the extended object
+        """
+        extension = self.meta['extending']
+        extension[self.config._extend["extension"]] = self.rsl
+        return self.config._extend["keypath"], extension
 
     # TODO: subs does not split between texts and processes status. should it?
+    # TODO: subs should work with ManyToMany not with dictionary
     def subs_errors(self):
         return self.subs.count({"status__in":[Status.ERROR, Status.WARNING]})
 
     def subs_waiting(self):
         return self.subs.count({"status__in":[Status.PROCESSING, Status.WAITING, Status.READY]})
 
-    def subs_state(self):  # TODO: terrible naming! make it subs_update instead
+    def subs_update(self):
         # Wakeup child processes if they are there
         if self.status == Status.WAITING and self.HIF_child_process:  # TODO: this locks a process to one other process
             self.subs.run(self.HIF_child_process, 'execute')
@@ -158,7 +190,7 @@ class Process(ProcessStorage):
                 # Fetch results from Celery
                 self.extract_task()
                 # Set state based on async results in substorage
-                self.subs_state()
+                self.subs_update()
 
             # In rare cases the task itself raised an exception
             # Process goes into error mode
@@ -170,7 +202,7 @@ class Process(ProcessStorage):
         if self.status == Status.WAITING:
             # Reset state based on content of substorage
             # GroupProcess will execute all its subprocesses
-            self.subs_state()
+            self.subs_update()
 
         # READY
         if self.status == Status.READY:
@@ -213,7 +245,6 @@ class Retrieve(Process):
 
         session = requests.Session()
 
-        results = []
         for arg in args:  # TODO: this still allows for Falsy values, check also QueryLink
 
             # Fetch link with continue links
@@ -238,17 +269,24 @@ class Retrieve(Process):
                 pass
 
             # Everything retrieved. We store it in results
-            rsl = []
-            for link in self.links:
+            # link.rsl will yield either response body or the data
+            # specify link.rsl behavior (and what results will be) in the link class
+            if len(self.links) == 0:
+                results = None
+            elif len(self.links) == 1:
+                link = self.links[0]
                 if self.config.debug:
                     self.subs.add(link.retain())
-                for obj in link.data:
-                    rsl.append(obj)
-            if rsl:
-                results.append({
-                    "query": arg,  # may be empty when not dealing with QueryLinks
-                    "results": rsl
-                })
+                results = link.rsl
+            else:
+                results = []
+                for link in self.links:
+                    if self.config.debug:
+                        self.subs.add(link.retain())
+                    if isinstance(link.rsl, dict):
+                        results.append(link.rsl)
+                    else:  # presuming list
+                        results + link.rsl
 
         # After all arguments are fetched, we store everything in self.rsl and process becomes DONE
         self.rsl = results

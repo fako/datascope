@@ -1,4 +1,4 @@
-import json
+import json, copy
 
 
 def reach(path, data):
@@ -18,11 +18,13 @@ def reach(path, data):
     """
 
     # First we check whether we really get a structure we can use
-    if not isinstance(data, dict):
-        raise TypeError("Reach needs dict as input, got {} instead".format(type(data)))
+    if path is None:
+        return data
+    if not isinstance(data, (dict, list, tuple)):
+       raise TypeError("Reach needs dict as input, got {} instead".format(type(data)))
 
     # We make a copy of the input for later reference
-    root = dict(data)
+    root = copy.deepcopy(data)
 
     # We split the path and see how far we get with using it as key/index
     try:
@@ -31,11 +33,15 @@ def reach(path, data):
                 data = data[int(part)]
             else:
                 data = data[part]
-        return data
+        else:
+            return data
 
-    # When anything goes wrong we try the path as key or return None.
     except (IndexError, KeyError, TypeError):
-        return root[path] if path in root else None
+        pass
+
+    # We try the path as key/index or return None.
+    path = int(path) if path.isdigit() else path
+    return root[path] if path in root else None
 
 
 def extractor(target, objective):

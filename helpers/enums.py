@@ -9,6 +9,7 @@ class ProcessStatus(object):
 
     ERROR = -1
     WARNING = -2
+    CANCELLED = -3
 
 
 class ServiceTemplate(object):
