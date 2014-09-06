@@ -15,7 +15,7 @@ class ExtensionContainer(RegisterContainer):  # TODO: tests!
         """
         Should filter for all subs with an extends field set to this class
         """
-        pass
+        return self.attr("extension", cls=self._processes)
 
 
 class Extend(models.Model):
@@ -51,7 +51,7 @@ class Extend(models.Model):
         }
 
         Should check statusses are in correct range
-        This method returns raises exceptions if extendee can't be worked with
+        This method raises exceptions if extendee can't be worked with
         """
         Extendee = get_hif_model(ser_extendee)
         extendee = Extendee().load(serialization=ser_extendee)  # TODO: write test that makes sure this function does not change extendee
@@ -65,6 +65,7 @@ class Extend(models.Model):
             self.status = Status.ERROR
             raise HIFImproperUsage('Keypath is not present in extend config during extending')
 
+        # Setting the meta field with extending key will make extension property return other then None
         source = reach(self.config._extend['keypath'], extendee.rsl)
         self.meta = {'extending': source}
 
@@ -100,4 +101,6 @@ class Extend(models.Model):
         """
 
         """
-        pass
+        for extension, keypath in self.ext.extensions():
+            target = reach(keypath, self.rsl)
+            target.update(extension)

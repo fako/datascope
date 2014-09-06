@@ -18,7 +18,7 @@ def reach(path, data):
     """
 
     # First we check whether we really get a structure we can use
-    if path is None:
+    if path is None:  # TODO: write a test for this behavior
         return data
     if not isinstance(data, (dict, list, tuple)):
        raise TypeError("Reach needs dict as input, got {} instead".format(type(data)))

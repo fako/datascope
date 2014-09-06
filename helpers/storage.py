@@ -120,21 +120,33 @@ class Container(object):
                 del self._container[cls]
         return cls  # TODO: keep? add to tests!
 
-    def run(self, method, cls=None, *args, **kwargs):
+    def run(self, method, cls=None, *args, **kwargs):  # TODO: test new flexible cls argument
         """
         Calls specified method on all instances of cls saved in Container.
         It doesn't do a valid arguments check, not even an attribute check.
         """
-        # TODO: test new flexible cls argument
+        methods = self.attr(method, cls=cls)
+        for method in methods:
+            method(*args, **kwargs)
+
+    def attr(self, attr, cls=None):  # TODO: tests!
+        """
+
+        """
         if cls is not None:
             classes = [cls] if not isinstance(cls, (tuple, list)) else cls
         else:
             classes = list(self.dict())
 
+        attrs = []
         for cls in classes:
             for obj in self[cls]:
                 obj.setup()
-                getattr(obj, method)(*args, **kwargs)
+                obj_attr = getattr(obj, attr)
+                if obj_attr is not None:
+                    attrs.append(obj_attr)
+
+        return attrs
 
     def query(self, cls, query_dict):
         """

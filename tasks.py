@@ -38,18 +38,17 @@ def extend_process(ser_extendee, ser_extender, register=True, finish=True):
 
     if register:
         extendee.rgs.add(ser_extender)
-        extendee.ext.add(ser_extender)
+        extendee.ext.add(ser_extender)  # Maybe make Containers push to X number of fields?
+        extendee.retain()
 
     extender.extend(ser_extendee)  # TODO: try block with a return
     extender.execute()
 
     if finish:
         extendee.merge_extensions()
-
-    extender.retain()
-    if register or finish:
         extendee.retain()
 
+    extender.retain()
     return ser_extendee
 
 
