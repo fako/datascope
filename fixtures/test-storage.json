@@ -13,7 +13,6 @@
         "arguments": [
             "test"
         ], 
-        "substorage": null, 
         "configuration": {
             "test": "test"
         }, 
@@ -34,7 +33,6 @@
         "arguments": [
             "test args"
         ],
-        "substorage": null,
         "configuration": {
             "test": "test"
         },
@@ -55,7 +53,6 @@
         "arguments": [
             "test"
         ],
-        "substorage": null,
         "configuration": {
             "test": "test kwargs"
         },
@@ -82,11 +79,13 @@
         "arguments": [
             "test"
         ],
-        "substorage": { },
         "configuration": {
             "test": "test"
         },
+        "register": null,
+        "extensions": null,
         "type": "ProcessStorage"
+
     }
 }
 ]

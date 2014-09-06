@@ -136,12 +136,12 @@ class TestContainer(TestCase):
 
     def test_run(self):
         instance = Container(init=self.valid)
-        instance.run("TextStorage", "release")
+        instance.run("release", cls="TextStorage")
         self.assertEqual(TextStorage.objects.filter(retained=False).count(), 2)
-        instance.run("TextStorage", "retain", serialize=False)
+        instance.run("retain", cls="TextStorage", serialize=False)
         self.assertEqual(TextStorage.objects.filter(retained=False).count(), 2)
         try:
-            instance.run("TextStorage", "not_a_method")
+            instance.run("not_a_method", cls="TextStorage")
             self.fail("Run did not throw an AttributeError when given an invalid method")
         except AttributeError:
             pass

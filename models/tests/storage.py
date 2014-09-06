@@ -15,7 +15,7 @@ class TestStorage(TestCase):
     def setUpClass(cls):
         cls.test_args = [u'test']
         cls.test_config = {'test': u'test'}
-        cls.test_subs = {'TextStorage': [1, 2, 3]}
+        ###cls.test_subs = {'TextStorage': [1, 2, 3]}
 
     def test_storage_init(self):
         """
@@ -86,8 +86,8 @@ class TestStorage(TestCase):
     def test_setup(self):
         args = self.test_args
         config = self.test_config
-        subs = self.test_subs
-        filled_instance = TextStorage(arguments=args, configuration=config, substorage=subs)
+        ###subs = self.test_subs
+        filled_instance = TextStorage(arguments=args, configuration=config) ###, substorage=subs)
         filled_instance.identification = "0"
         # Setup does nothing when arguments and/or config are set
         # It doesn't try to load instances from the db if identification is set, leaving body field empty
@@ -102,9 +102,9 @@ class TestStorage(TestCase):
         self.assertEqual(filled_instance.configuration, config)
         self.assertEqual(filled_instance.config.dict(), config)
         self.assertEqual(filled_instance.config.test, "test")
-        self.assertIsInstance(filled_instance.subs, Container)
-        self.assertEqual(filled_instance.substorage, subs)
-        self.assertEqual(filled_instance.subs.dict(), subs)
+        ### self.assertIsInstance(filled_instance.subs, Container)
+        ### self.assertEqual(filled_instance.substorage, subs)
+        ### self.assertEqual(filled_instance.subs.dict(), subs)
         self.assertEqual(filled_instance.identification, "0")
         self.assertEqual(filled_instance.body, "")
         # Setup sets vars if instance is empty
@@ -121,9 +121,9 @@ class TestStorage(TestCase):
         self.assertEqual(empty_instance.configuration, config)
         self.assertEqual(empty_instance.config.dict(), config)
         self.assertEqual(empty_instance.config.test, "test")
-        self.assertIsInstance(empty_instance.subs, Container)
-        self.assertEqual(empty_instance.substorage, None)
-        self.assertEqual(empty_instance.subs.dict(), {})
+        #self.assertIsInstance(empty_instance.subs, Container)
+        #self.assertEqual(empty_instance.substorage, None)
+        #self.assertEqual(empty_instance.subs.dict(), {})
         self.assertEqual(empty_instance.identification, "{} | {}".format(args, config))
         self.assertEqual(empty_instance.body, "Test text 1")
 
@@ -135,18 +135,18 @@ class TestStorage(TestCase):
         instance.retain()
         self.assertEqual(instance.arguments, None)
         self.assertEqual(instance.configuration, None)
-        self.assertEqual(instance.substorage, None)
+        ### self.assertEqual(instance.substorage, None)
         self.assertEqual(instance.retained, True)
         self.assertTrue(instance.serialize.called)
         # Args, config and subs given
         instance.args = self.test_args
         instance.config(self.test_config)
-        instance.subs(self.test_subs)
+        ###instance.subs(self.test_subs)
         instance.serialize = Mock(return_value=True)
         instance.retain()
         self.assertEqual(instance.arguments, self.test_args)
         self.assertDictContainsSubset(self.test_config, instance.configuration)
-        self.assertEqual(instance.substorage, self.test_subs)
+        ###self.assertEqual(instance.substorage, self.test_subs)
         self.assertEqual(instance.retained, True)
         self.assertTrue(instance.serialize.called)
         # Retain without serialization
