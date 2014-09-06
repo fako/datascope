@@ -11,7 +11,7 @@ from HIF.helpers.enums import ProcessStatus as Status
 
 class ExtensionContainer(RegisterContainer):  # TODO: tests!
 
-    def extend(self):
+    def extensions(self):
         """
         Should filter for all subs with an extends field set to this class
         """
@@ -44,16 +44,13 @@ class Extend(models.Model):
         """
         This method looks at extend configuration and adjusts arguments and configuration of process based on that.
 
-
         This method adds an entry called extending to the meta field
         That entry specifies how the results should be merged by extendee
         meta = {
             "extending": OriginalDict
         }
-        It also sets extends field for database filtering
 
         Should check statusses are in correct range
-
         This method returns raises exceptions if extendee can't be worked with
         """
         Extendee = get_hif_model(ser_extendee)
@@ -92,6 +89,15 @@ class Extend(models.Model):
         """
         Returns the keypath that is supposed to be replaced and the extended object
         """
-        extension = self.meta['extending']
+        extension = self.meta.get('extending')
+        if extension is None:
+            return None
+
         extension[self.config._extend["extension"]] = self.rsl
-        return self.config._extend["keypath"], extension
+        return extension, self.config._extend["keypath"]
+
+    def merge_extensions(self):
+        """
+
+        """
+        pass
