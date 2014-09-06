@@ -38,7 +38,7 @@ class PeopleSuggestion(Process):
 
         # Register processes
         # TODO: Substorage should be ManyToMany based, in order to handle registration automatically
-        person_lookup_retriever.subs.add(person_claims_retriever.retain())
+        person_lookup_retriever.ext.add(person_claims_retriever.retain())
 
         # Start Celery task
         task = (

@@ -6,7 +6,8 @@ import jsonfield
 from HIF.helpers import storage
 from HIF.helpers.configuration import Config
 from HIF.exceptions import HIFCouldNotLoadFromStorage
-
+from HIF.processes.register import Register
+from HIF.processes.extend import Extend
 
 class Storage(models.Model):
     """
@@ -43,7 +44,6 @@ class Storage(models.Model):
 
     configuration = jsonfield.JSONField(null=True, blank=True, default=None)
     arguments = jsonfield.JSONField(null=True, blank=True, default=None)
-    substorage = jsonfield.JSONField(null=True, blank=True, default=None)
 
     # HIF vars
 
@@ -64,7 +64,6 @@ class Storage(models.Model):
         super(Storage, self).__init__(*args, **kwargs)
         self.config = None
         self.args = None
-        self.subs = None
 
     def __unicode__(self):
         return self.identification + ' | ' + self.type
@@ -131,14 +130,10 @@ class Storage(models.Model):
         # Enable chaining
         return self
 
-    def setup(self, *args, **kwargs):
+    def setup_fields(self, *args, **kwargs):  # TODO: tests!
         """
-        This function sets three key variables on self
-        1) config will become a Config class instance holding configuration variables based on kwargs
-        2) args will become a list of input based on args
-        3) subs will become a Container class instance holding related Storage instances when needed
+        Set variables based on info coming from database or this functions parameters
         """
-        # Set variables based on info coming from database or this functions parameters
         identify = False
         if self.arguments is None:
             self.args = [unicode(arg) for arg in args]
@@ -151,10 +146,16 @@ class Storage(models.Model):
             identify = True
         else:
             self.config(self.configuration)
-        if self.substorage is None:
-            self.subs = storage.Container()
-        else:
-            self.subs = storage.Container(self.substorage)
+        return identify
+
+    def setup(self, *args, **kwargs):
+        """
+        This function sets three key variables on self
+        1) config will become a Config class instance holding configuration variables based on kwargs
+        2) args will become a list of input based on args
+        3) subs will become a Container class instance holding related Storage instances when needed
+        """
+        identify = self.setup_fields(*args, **kwargs)
 
         # If no identification was set we try to load from db based on values now set by this function
         self.type = self.__class__.__name__
@@ -185,15 +186,18 @@ class Storage(models.Model):
     #######################################################
     # These functions properly (de)serialize the models into db
 
+    def retain_fields(self):
+        self.arguments = self.args if self.args else None
+        self.configuration = self.config.dict(protected=True, private=True) if self.config.dict(protected=True) else None
+
     def retain(self, serialize=True):
         """
         Will store arguments, configuration and substorage.
         Sets retained flag to True and by default serializes the model
         This last act will save the model
         """
-        self.arguments = self.args if self.args else None
-        self.configuration = self.config.dict(protected=True, private=True) if self.config.dict(protected=True) else None
-        self.substorage = self.subs.dict() if self.subs.dict() else None
+        self.retain_fields()
+
         self.retained = True
         if serialize:
             return self.serialize()
@@ -205,7 +209,7 @@ class Storage(models.Model):
         self.save()
 
 
-class ProcessStorage(Storage):
+class ProcessStorage(Extend, Register, Storage):
     """
     A hyper process currently stores meta information in dictionary form and results.
     It can also store a Celery task_id when storing an async process
@@ -217,7 +221,6 @@ class ProcessStorage(Storage):
 
     # Async processing
     task_id = models.CharField(max_length=256, null=True, blank=True)
-    extends = models.CharField(max_length=256, null=True, blank=True, db_index=True)  # TODO: comment this
 
     class Meta:
         db_table = "HIF_processstorage"

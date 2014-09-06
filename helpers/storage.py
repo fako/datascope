@@ -55,7 +55,6 @@ class Container(object):
         super(Container, self).__init__(*args, **kwargs)
         self._container = {}
         self(init)
-        #self._container = dict(init)  # TODO: naive to set like this, check existence of keys
 
     def __call__(self, dictionary):
         """
@@ -107,6 +106,7 @@ class Container(object):
             self._container[cls] = [obj_id]
         elif obj_id not in self._container[cls]:
             self._container[cls].append(obj_id)
+        return cls  # TODO: keep? add to tests!
 
     def remove(self, ser):
         """
@@ -118,15 +118,23 @@ class Container(object):
             self._container[cls].remove(obj_id)
             if not self._container[cls]:
                 del self._container[cls]
+        return cls  # TODO: keep? add to tests!
 
-    def run(self, cls, method, *args, **kwargs):
+    def run(self, method, cls=None, *args, **kwargs):
         """
         Calls specified method on all instances of cls saved in Container.
         It doesn't do a valid arguments check, not even an attribute check.
         """
-        for obj in self[cls]:
-            obj.setup()
-            getattr(obj, method)(*args, **kwargs)
+        # TODO: test new flexible cls argument
+        if cls is not None:
+            classes = [cls] if not isinstance(cls, (tuple, list)) else cls
+        else:
+            classes = list(self.dict())
+
+        for cls in classes:
+            for obj in self[cls]:
+                obj.setup()
+                getattr(obj, method)(*args, **kwargs)
 
     def query(self, cls, query_dict):
         """

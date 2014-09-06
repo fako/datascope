@@ -13,7 +13,6 @@ from HIF.exceptions import HIFProcessingError, HIFProcessingAsync, \
 from HIF.tasks import execute_process
 from HIF.helpers.enums import ProcessStatus as Status
 from HIF.helpers.mixins import DataMixin
-from HIF.helpers.data import reach
 from HIF.helpers.storage import get_hif_model
 
 
@@ -45,7 +44,7 @@ class Process(ProcessStorage):
 
     def extract_task(self):
         ser_prc = self.task.result
-        self.subs.add(ser_prc)
+        self.rgs.add(ser_prc)
 
 
     @property
@@ -77,94 +76,6 @@ class Process(ProcessStorage):
         self.status = Status.PROCESSING
 
 
-    def extend(self, ser_extendee):
-        """
-        This method looks at extend configuration and adjusts arguments and configuration of process based on that.
-
-
-        This method adds an entry called extending to the meta field
-        That entry specifies how the results should be merged by extendee
-        meta = {
-            "extending": OriginalDict
-        }
-        It also sets extends field for database filtering
-
-        Should check statusses are in correct range
-
-        This method returns raises exceptions if extendee can't be worked with
-        """
-        Extendee = get_hif_model(ser_extendee)
-        extendee = Extendee().load(serialization=ser_extendee)  # TODO: write test that makes sure this function does not change extendee
-
-        # TODO: make status checks possible by registering later
-        #if extendee.status not in self.HIF_extension_statusses:
-        #    self.status = Status.CANCELLED
-        #    raise Exception('status is wrong!')
-
-        if 'keypath' not in self.config._extend:
-            self.status = Status.ERROR
-            raise HIFImproperUsage('Keypath is not present in extend config during extending')
-
-        self.extends = self.__class__.__name__  # TODO: check that this works
-
-        source = reach(self.config._extend['keypath'], extendee.rsl)
-        self.meta = {'extending': source}
-
-        # Pad self.arguments with args from extend config
-        if 'args' in self.config._extend:
-            args = self.arguments or []
-            for keypath in self.config._extend['args']:
-                arg = reach(keypath, source)
-                if arg not in args:
-                    args.append(arg)
-            self.arguments = args
-
-        # Pad config with extend kwargs
-        if 'kwargs' in self.config._extend:
-            kwargs = {}
-            for kw, keypath in self.config._extend['kwargs'].iteritems():
-                kwargs[kw] = reach(keypath, source)
-            self.config(kwargs)
-
-
-
-
-    @property
-    def extension(self):
-        """
-        Returns the keypath that is supposed to be replaced and the extended object
-        """
-        extension = self.meta['extending']
-        extension[self.config._extend["extension"]] = self.rsl
-        return self.config._extend["keypath"], extension
-
-    # TODO: subs does not split between texts and processes status. should it?
-    # TODO: subs should work with ManyToMany not with dictionary
-    def subs_errors(self):
-        return self.subs.count({"status__in":[Status.ERROR, Status.WARNING]})
-
-    def subs_waiting(self):
-        return self.subs.count({"status__in":[Status.PROCESSING, Status.WAITING, Status.READY]})
-
-    def subs_update(self):
-        # Wakeup child processes if they are there
-        if self.status == Status.WAITING and self.HIF_child_process:  # TODO: this locks a process to one other process
-            self.subs.run(self.HIF_child_process, 'execute')
-        # Recheck the state of subcontent
-        if self.subs_waiting() != 0:
-            self.status = Status.WAITING
-        elif self.subs_waiting() == 0:
-            self.status = Status.READY
-        # If there are errors in child processes we go into warning mode
-        if self.subs_errors() != 0:
-            self.status = Status.WARNING
-
-    def subs_extend(self):
-        """
-        Should filter for all subs with an extends field set to this class
-
-        """
-        pass
 
 
     def execute(self, *args, **kwargs):
@@ -190,7 +101,7 @@ class Process(ProcessStorage):
                 # Fetch results from Celery
                 self.extract_task()
                 # Set state based on async results in substorage
-                self.subs_update()
+                self.update_status()
 
             # In rare cases the task itself raised an exception
             # Process goes into error mode
@@ -202,7 +113,7 @@ class Process(ProcessStorage):
         if self.status == Status.WAITING:
             # Reset state based on content of substorage
             # GroupProcess will execute all its subprocesses
-            self.subs_update()
+            self.update_status()
 
         # READY
         if self.status == Status.READY:
@@ -228,7 +139,7 @@ class Retrieve(Process):
 
     def handle_exception(self, exception):
         for link in self.links:
-            self.subs.add(link.retain())
+            self.rgs.add(link.retain())
         raise exception
 
     def process(self):
@@ -276,13 +187,13 @@ class Retrieve(Process):
             elif len(self.links) == 1:
                 link = self.links[0]
                 if self.config.debug:
-                    self.subs.add(link.retain())
+                    self.rgs.add(link.retain())
                 results = link.rsl
             else:
                 results = []
                 for link in self.links:
                     if self.config.debug:
-                        self.subs.add(link.retain())
+                        self.rgs.add(link.retain())
                     if isinstance(link.rsl, dict):
                         results.append(link.rsl)
                     else:  # presuming list
@@ -318,7 +229,7 @@ class GroupProcess(Process, DataMixin):
     @property
     def data_source(self):
         # TODO: the way we retrieve the original arguments here seems naive.
-        results = [(prc.arguments[0], prc.results,) for prc in self.subs[self.config._process]]
+        results = [(prc.arguments[0], prc.results,) for prc in self.rgs[self.config._process]]
         source = [{"member": arg, "data": rsl} for arg, rsl in results if rsl]
         return source
 
@@ -327,7 +238,7 @@ class GroupProcess(Process, DataMixin):
         # This single process could be a grouped process in turn
         for ar in self.task.results:
             ser_prc = ar.result
-            self.subs.add(ser_prc)
+            self.rgs.add(ser_prc)
 
 
     def process(self):

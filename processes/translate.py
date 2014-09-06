@@ -20,7 +20,7 @@ class ImageTranslate(Process, DataMixin):
 
     @property
     def data_source(self):
-        source = self.subs["Retrieve"][0]
+        source = self.rgs["Retrieve"][0]
         source.setup()
         return source.results
 
@@ -101,7 +101,7 @@ class VideoTranslate(Process, DataMixin):
 
     @property
     def data_source(self):
-        source = self.subs["Retrieve"][0]
+        source = self.rgs["Retrieve"][0]
         source.setup()
         return source.results
 

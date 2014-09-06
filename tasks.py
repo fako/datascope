@@ -58,9 +58,8 @@ def flatten_process_results(ser_prc, key):
     prc.load(serialization=ser_prc)
     flat = []
     try:
-        for results in prc.rsl:
-            for rsl in results["results"]:
-                flat.append(rsl[key])
+        for rsl in prc.rsl:
+            flat.append(rsl[key])
     except HIFNoContent:
         pass
     return flat
