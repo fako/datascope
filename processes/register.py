@@ -41,6 +41,11 @@ class RegisterContainer(Container):  # TODO: tests!
         self._processes.remove(cls)
         self._texts.remove(cls)
 
+    def empty(self):
+        super(RegisterContainer, self).empty()
+        self._processes = []
+        self._texts = []
+
     def errors(self):
         return self.count({"status__in": [Status.ERROR, Status.WARNING]})
 

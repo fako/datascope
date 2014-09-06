@@ -165,3 +165,6 @@ class Container(object):
         for cls in self._container.iterkeys():
             count += self.query(cls, query_dict).count()
         return count
+
+    def empty(self):
+        self._container = {}

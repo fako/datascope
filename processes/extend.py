@@ -104,3 +104,4 @@ class Extend(models.Model):
         for extension, keypath in self.ext.extensions():
             target = reach(keypath, self.rsl)
             target.update(extension)
+        self.ext.empty()
