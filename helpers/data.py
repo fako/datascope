@@ -120,8 +120,9 @@ def json_extractor(json_string, objective):
 
 
 def count_2d_list(data, d1_id=None, d2_list=None, d2_id=None, weight=None):  # TODO: test!
+    """
 
-    # TODO: d1_id and weight implemented when weighing lists in results
+    """
 
     if not isinstance(data, (list, tuple)):
         raise TypeError('count_2d_list expects to get a list as input.')
