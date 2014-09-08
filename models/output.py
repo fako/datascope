@@ -27,3 +27,7 @@ class ImageTranslationsStorage(ServiceStorage):
 
 class VideoTranslationsStorage(ServiceStorage):
     pass
+
+
+class PeopleSuggestionsStorage(ServiceStorage):
+    pass

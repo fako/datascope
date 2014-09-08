@@ -1,8 +1,11 @@
 from HIF.processes.core import Process, Retrieve
-from HIF.tasks import execute_process, extend_process, extend_chord
+from HIF.tasks import execute_process, extend_process
+from HIF.helpers.storage import get_hif_model
+from HIF.helpers.data import count_2d_list
 
 
-class PeopleSuggestion(Process):
+
+class PeopleSuggestions(Process):
 
     HIF_person_lookup = 'WikiSearch'
     HIF_person_claims = 'WikiDataClaims'
@@ -56,8 +59,8 @@ class PeopleSuggestion(Process):
         self.task = task
 
     def post_process(self):
-        # self.task.result (serialization)
-        pass
+        person_data = Retrieve().load(serialization=self.task.result).rsl
+        self.rsl = count_2d_list(person_data['claims'], d2_list='claimers').most_common(11)[1:]  # takes 10, but strips query person
 
     class Meta:
         app_label = "HIF"

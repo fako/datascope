@@ -18,7 +18,7 @@ class ProcessAPIView(APIView):
         service = Service()
 
         # Prepare the process
-        Process = get_model(app_label='HIF', model_name=service.HIF_process)
+        Process = get_model(app_label='HIF', model_name=service.HIF_process)  # TODO: update with get_hif_model
         prc = Process()
 
         # Execute and read results
@@ -66,8 +66,3 @@ class ProcessPlainView(View):
                                   RequestContext(request))
             else:
                 return render_to_response(service.html_template(ServiceTemplate.INDEX), template_context, RequestContext(request))
-
-
-
-
-

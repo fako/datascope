@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block body %}
+
+    <div class="content-container">
+
+            <div class="row-fluid">
+                <div class="span12">
+                    <h3>{% trans "People similar to:" %} {{ query }}</h3>
+                    <p>Click the links to visit the Wikipedia pages of the people similar to {{ query }}</p>
+                    <ul>
+                        {% for item, freq in data %} {# data is the generic name for incoming information coming from the view #}
+                            <li><a target="_blank" href="http://www.wikidata.org/wiki/Special:GoToLinkedPage?site=en&itemid=Q{{ item }}">Q{{ item }}</a> ({{ freq }} {% if freq != 1 %}things{% else %}thing{% endif %} in common)</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+    </div>
+
+{% endblock %}
+
+{% block footer %}
+    <p>{% trans "Search for a person known on Wikipedia to find people similar to this person." %}</p>
+    {% include "components/search.html" %}
+{% endblock %}

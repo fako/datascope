@@ -2,7 +2,7 @@ from django.conf.urls import patterns, url
 from django.views.generic import RedirectView
 from django.core.urlresolvers import reverse_lazy
 
-from HIF.output.http.services.manifests import ImageTranslationsService, VideoTranslationsService
+from HIF.output.http.services.manifests import ImageTranslationsService, VideoTranslationsService, PeopleSuggestionsService
 
 urlpatterns = patterns('HIF.views',
     url(r'^image-translations/$', ImageTranslationsService.HIF_main.as_view(), {"Service": ImageTranslationsService}, name='image-translations'),
@@ -12,4 +12,7 @@ urlpatterns = patterns('HIF.views',
 
     url(r'^global-image-translations/plain/$', RedirectView.as_view(url=reverse_lazy('image-translations-plain'))),
     url(r'^global-video-translations/plain/$', RedirectView.as_view(url=reverse_lazy('video-translations-plain'))),
+
+    url(r'^people-suggestions/$', PeopleSuggestionsService.HIF_main.as_view(), {"Service": PeopleSuggestionsService}, name='people-suggestions'),
+    url(r'^people-suggestions/plain/$', PeopleSuggestionsService.HIF_plain.as_view(), {"Service": PeopleSuggestionsService}, name='people-suggestions-plain'),
 )

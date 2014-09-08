@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext as _
 
-from HIF.models.output import ImageTranslationsStorage, VideoTranslationsStorage
+from HIF.models.output import ImageTranslationsStorage, VideoTranslationsStorage, PeopleSuggestionsStorage
 from HIF.output.http.views import ProcessAPIView, ProcessPlainView
 from HIF.exceptions import HIFBadRequest, HIFNoInput
 
@@ -41,7 +41,7 @@ class ImageTranslationsService(ImageTranslationsStorage, Service):
     def context(self, request):
 
         # Input validation
-        query = request.GET.get('q','').lower()
+        query = request.GET.get('q', '').lower()
         if not query:
             raise HIFNoInput(_('No input provided'))
         if query and len(query.split(' ')) > 1:
@@ -67,7 +67,7 @@ class VideoTranslationsService(VideoTranslationsStorage, Service):
     def context(self, request):
 
         # Input validation
-        query = request.GET.get('q','').lower()
+        query = request.GET.get('q', '').lower()
         if not query:
             raise HIFNoInput(_('No input provided'))
         if query and len(query.split(' ')) > 1:
@@ -76,5 +76,28 @@ class VideoTranslationsService(VideoTranslationsStorage, Service):
         # Returning context
         return {
             "source_language": request.LANGUAGE_CODE,
+            "query": query
+        }
+
+
+class PeopleSuggestionsService(PeopleSuggestionsStorage, Service):
+
+    HIF_process = "PeopleSuggestions"
+
+    HIF_main = ProcessAPIView
+    HIF_plain = ProcessPlainView
+
+    class Meta:
+        proxy = True
+
+    def context(self, request):
+
+        # Input validation
+        query = request.GET.get('q', '')
+        if not query:
+            raise HIFNoInput(_('No input provided'))
+
+        # Returning context
+        return {
             "query": query
         }
