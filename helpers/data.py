@@ -1,4 +1,5 @@
-import json, copy
+import json
+import copy
 
 
 def reach(path, data):

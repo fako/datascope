@@ -4,7 +4,7 @@ import jsonfield
 
 from HIF.processes.register import RegisterContainer
 from HIF.helpers.storage import get_hif_model
-from HIF.exceptions import HIFImproperUsage
+from HIF.exceptions import HIFImproperUsage, HIFNoContent
 from HIF.helpers.data import reach
 from HIF.helpers.enums import ProcessStatus as Status
 
@@ -93,8 +93,10 @@ class Extend(models.Model):
         extension = self.meta.get('extending')
         if extension is None:
             return None
-
-        extension[self.config._extend["extension"]] = self.rsl
+        try:
+            extension[self.config._extend["extension"]] = self.rsl
+        except HIFNoContent:
+            return None
         return extension, self.config._extend["keypath"]
 
     def merge_extensions(self):

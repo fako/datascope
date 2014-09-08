@@ -20,4 +20,12 @@ class Domain(object):
 
     wiki_source_language = 'en'
     wiki_translate_to = 'pt'
+    wiki_excluded_properties = [  # should be wiki namespace!
+        'P31',  # instance of
+        'P21',  # sex or gender
+        'P27',  # country of citizenship
+        'P143',  # imported from
+        'P248',  # claim stated in
+        'P910',  # topic's main category
+    ]
 

@@ -24,7 +24,7 @@ def deserialize(serialization):
     return serialization[0], serialization[1]
 
 
-def get_hif_model(inp):
+def get_hif_model(inp):  # TODO: tests!
     """
     Returns the class of a model with specified name.
     Takes a serialized process or a model name as input

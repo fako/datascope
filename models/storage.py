@@ -180,6 +180,7 @@ class Storage(models.Model):
         self.configuration = None
         self.arguments = None
         self.status = 0
+        return self
 
     #######################################################
     # PERSISTANCE

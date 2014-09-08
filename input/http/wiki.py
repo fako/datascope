@@ -187,6 +187,7 @@ class WikiSearch(WikiBaseQuery):
 class WikiDataClaims(HttpLink, HttpJsonMixin):
 
     HIF_link = "https://www.wikidata.org/wiki/Special:EntityData/{}.json"  # updated at runtime
+    HIF_namespace = 'wiki'
 
     HIF_objective = {
         "property": "",
@@ -208,7 +209,7 @@ class WikiDataClaims(HttpLink, HttpJsonMixin):
         return link.format(self.input)
 
     def cleaner(self, result_instance):
-        return result_instance['item']
+        return result_instance['item'] and result_instance['property'] not in self.config.excluded_properties
 
     @property
     def rsl(self):
@@ -247,7 +248,9 @@ class WikiDataClaimers(HttpLink, HttpJsonMixin):
         query_expression = "CLAIM[{}:{}] AND "
         query = ''
         for claim in self.input:
-            query += query_expression.format(claim['property'], claim['item'])
+            property = claim['property'][1:]  # strips 'P'
+            item = claim['item']
+            query += query_expression.format(property, item)
 
         link = super(WikiDataClaimers, self).prepare_link()
         return link.format(query)[:-5]  # strips last AND
@@ -256,6 +259,10 @@ class WikiDataClaimers(HttpLink, HttpJsonMixin):
     def data(self):
         data = super(WikiDataClaimers, self).data
         return data[0]['items']
+
+    @property  # TODO: how to implement these things correctly with mixins instead of having to add it all the time
+    def rsl(self):
+        return self.data
 
     class Meta:
         app_label = "HIF"
