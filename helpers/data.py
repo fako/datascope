@@ -1,5 +1,6 @@
 import json
 import copy
+from collections import Counter
 
 
 def reach(path, data):
@@ -116,3 +117,28 @@ def json_extractor(json_string, objective):
         # We're unable to extract from that, so returning empty list
         return []
     return extractor(target_dict, objective)
+
+
+def count_2d_list(data, d1_id=None, d2_list=None, d2_id=None, weight=None):  # TODO: test!
+
+    # TODO: d1_id and weight implemented when weighing lists in results
+
+    if not isinstance(data, (list, tuple)):
+        raise TypeError('count_2d_list expects to get a list as input.')
+
+    results = Counter()
+
+    for d1_row in data:
+
+        d2_data = reach(d2_list, d1_row)
+
+        if d2_data is not None and not isinstance(d2_data, (list, tuple)):
+            raise TypeError(
+                'count_2d_list expects the d2_list keypath to yield a list or tuple got {} instead.'.format(
+                    type(d2_data)
+                )
+            )
+
+        results += Counter(d2_data)  # TODO: add weight of lists with something like: weight[d1_id] * d2_data
+
+    return results
