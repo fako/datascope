@@ -226,7 +226,7 @@ class WikiDataClaimers(HttpLink, HttpJsonMixin):
 
     HIF_link = "http://wdq.wmflabs.org/api?q={}"
     HIF_objective = {
-        "status": {},  # TODO: make the items keypath more specific and omit the status objective
+        "status.items": 0,
         "items": []
     }
 
