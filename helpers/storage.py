@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from django.db.models.loading import get_model
 
 from HIF.exceptions import HIFImproperUsage
@@ -42,6 +44,17 @@ def get_hif_model(inp):  # TODO: tests!
         raise HIFImproperUsage("The specified model does not exist, is not imported in models " +
                                "or is not registered as Django model with HIF label.")
     return model
+
+
+def copy_hif_model(model):  # TODO: tests!
+    """
+
+    """
+    cpy = deepcopy(model)  # TODO: necessary?
+    cpy.pk = None
+    cpy.id = None
+    cpy.save()
+    return cpy
 
 
 class Container(object):

@@ -1,8 +1,6 @@
 from HIF.processes.core import Process, Retrieve
 from HIF.tasks import execute_process, extend_process
-from HIF.helpers.storage import get_hif_model
 from HIF.helpers.data import count_2d_list
-
 
 
 class PeopleSuggestions(Process):
@@ -27,6 +25,7 @@ class PeopleSuggestions(Process):
         # Setup data retriever
         person_claims_config = {
             "_link": self.HIF_person_claims,
+            "_context": query,  # here only to distinct inter-query retriever configs from each other
             "_extend": {
                 "keypath": None,
                 "args": ["wikidata"],
@@ -40,6 +39,7 @@ class PeopleSuggestions(Process):
         # Setup claimers finder
         claimers_config = {
             "_link": self.HIF_claimers,
+            "_context": query,  # here only to distinct inter-query retriever configs from each other
             "_extend": {
                 "keypath": "claims",
                 "args": [None],  # entire dict at keypath will become args

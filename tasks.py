@@ -1,11 +1,9 @@
-from copy import deepcopy
-
 from django.db.models.loading import get_model
 
-from celery import task, chord
+from celery import task
 
 from HIF.exceptions import HIFImproperUsage, HIFNoContent
-from HIF.helpers.storage import get_hif_model
+from HIF.helpers.storage import get_hif_model, copy_hif_model
 from HIF.helpers.data import reach
 
 
@@ -37,20 +35,21 @@ def extend_process(ser_extendee, ser_extender, multi=False, register=True, finis
     Extendee = get_hif_model(ser_extendee)
     extendee = Extendee().load(serialization=ser_extendee)
     extendee.setup()
+    # TODO: should set status to 2, correct, or maybe a special extending status?
 
     extenders = []
     if not multi:
         extenders.append(extender)
     else:
-        base_config = extender.config.dict(protected=True)
-        base_keypath = base_config['_extend']['keypath']
+        base_keypath = extender.config._extend['keypath']
         input_list = reach(base_keypath, extendee.rsl)
         for ind, inp in enumerate(input_list):
+            # TODO: below can be done nicer probably
+            extndr = copy_hif_model(extender)
             keypath = "{}.{}".format(base_keypath, ind) if base_keypath is not None else unicode(ind)
-            cnf = deepcopy(base_config)
-            cnf['_extend']['keypath'] = unicode(keypath)
-            extndr = Extender()
-            extndr.setup(**cnf)
+            extndr.config._extend["keypath"] = keypath
+            extndr.setup()
+            extndr.identification = extndr.identifier()
             extndr.retain()
             extenders.append(extndr)
         # Make sure we can garbage collect the base extend class correctly
@@ -80,35 +79,6 @@ def finish_extend(extendee_list):
     extendee = extendee_list[0]
     extendee.merge_extensions()
     return extendee.retain()
-
-
-def extend_chord(ser_extendee, cls_extender, cnf_extender):
-    """
-
-    """
-    Extendee = get_hif_model(ser_extendee)
-    extendee = Extendee().load(serialization=ser_extendee)
-    extendee.setup()
-    Extender = get_hif_model(cls_extender)
-
-    base_keypath = cnf_extender['_extend']['keypath']
-    input_list = reach(base_keypath, extendee.rsl)
-
-    tasks = []
-    for ind, inp in enumerate(input_list):
-        keypath = "{}.{}".format(base_keypath, ind) if base_keypath is not None else unicode(ind)
-        cnf = dict(cnf_extender)
-        cnf['_extend']['keypath'] = keypath
-        extender = Extender()
-        extender.setup(**cnf)
-        ser_extender = extender.retain()
-        extendee.rgs.add(ser_extender)
-        extendee.ext.add(ser_extender)
-        extendee.retain()
-        tasks.append(extend_process.s(ser_extendee, ser_extender, register=False, finish=False))
-
-    return chord(tasks)(finish_extend.s())
-
 
 
 # TODO: rewrite what is using this to use extend_process instead
