@@ -14,10 +14,10 @@ class Storage(models.Model):
     """
     This is an abstract base class meant to standardize storage in the Hyper Information Framework.
 
-    Each stored entity will have an identifier for retrieval
+    Each stored entity will have an identify for retrieval
     A type indicating the class used to do the storing
     And a status indicating the state of the data when it got stored
-    identifier and type are unique together to allow different classes to use the same identifier for their storage
+    identify and type are unique together to allow different classes to use the same identify for their storage
     Apart from these fields their are a few flags on this model
     retained indicates whether the storage happened in the context of a process which needs the content
     cached indicates whether the storage happened for performance reasons
@@ -75,9 +75,9 @@ class Storage(models.Model):
     # These methods are very simple functions
     # Used by Python or Django overrides and the normal class methods
 
-    def identifier(self):
+    def identify(self):
         """
-        Returns an identifier based on input (args) and configuration if possible or the pk.
+        Returns an identify based on input (args) and configuration if possible or the pk.
         Any private configuration does not count for the identity
         """
         if self.args is not None and self.config is not None:
@@ -117,7 +117,7 @@ class Storage(models.Model):
                 message = "{} with id={} does not exist"
                 raise HIFCouldNotLoadFromStorage(message.format(model, id))
             else:
-                message = "{} with identifier={} and type={} does not exist"
+                message = "{} with identify={} and type={} does not exist"
                 raise HIFCouldNotLoadFromStorage(message.format(model, self.identity, self.type))
 
         # Copy fields
@@ -158,7 +158,7 @@ class Storage(models.Model):
         # If no identity was set we try to load from db based on values now set by this function
         self.type = self.__class__.__name__
         if not self.identity:
-            self.identity = self.identifier()
+            self.identity = self.identify()
             identify = False
             try:
                 self.load()
@@ -167,7 +167,7 @@ class Storage(models.Model):
                 pass  # apparently current setup is new
 
         if identify:
-            self.identity = self.identifier()
+            self.identity = self.identify()
 
         self.save()
 

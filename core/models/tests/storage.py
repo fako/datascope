@@ -26,16 +26,16 @@ class TestStorage(TestCase):
         self.assertEqual(instance.arguments, None)
         ###self.assertEqual(instance.subs, None)
 
-    def test_identifier(self):
+    def test_identify(self):
         instance = TextStorage()
-        identity = instance.identifier()
+        identity = instance.identify()
         self.assertEqual(identity, "0")
         instance.id = 1
-        identity = instance.identifier()
+        identity = instance.identify()
         self.assertEqual(identity, "1")
         instance.args = []
         instance.config = Config(namespace='TEST',private=[])
-        identity = instance.identifier()
+        identity = instance.identify()
         self.assertEqual(identity, "[] | {}")
 
     def test_serialize(self):
@@ -61,7 +61,7 @@ class TestStorage(TestCase):
             instance.load()
             self.fail()
         except HIFCouldNotLoadFromStorage as exception:
-            self.assertEqual(str(exception), "{} with identifier={} and type={} does not exist".format(instance.__class__, instance.identity, instance.type))
+            self.assertEqual(str(exception), "{} with identify={} and type={} does not exist".format(instance.__class__, instance.identity, instance.type))
         self.assertEqual(instance.body, "Unloaded")
         # Load success
         instance.identity = "[u'test'] | {'test': u'test'}"
