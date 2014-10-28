@@ -29,3 +29,5 @@ class Domain(object):
         'P910',  # topic's main category
     ]
 
+    translate_media = 'videos,images'  # can't be plural yet
+

@@ -8,41 +8,52 @@ class VisualTranslation(Process):
     HIF_translate_model = "WikiTranslate"  # core.input.http.wiki
     HIF_image_model = "GoogleImage"  # core.input.http.google
     HIF_video_model = "YouTubeSearch"  # core.input.http.google
+    HIF_namespace = 'translate'
 
-    def process(self):
-        # Get params
-        query = self.config.query
-        translate_to = self.config.translate_to
+    def get_translate_retriever(self):
+        """
 
-        # Setup translate retriever
+        :return:
+        """
         translate_config = {
             "_link": self.HIF_translate_model,
-            "translate_to": translate_to
+            "translate_to": self.config.translate_to
         }
         translate_config.update(self.config.dict())
         translate_retriever = Retrieve()
         translate_retriever.setup(**translate_config)
+        return translate_retriever
 
-        # Setup image retriever
+    def get_visual_retriever(self, medium):
+        """
+
+        :param medium:
+        :return:
+        """
+        model = self.HIF_image_model if medium == 'images' else self.HIF_video_model
         image_config = {
-            "_link": self.HIF_image_model,
-            "_context": "{}+{}".format(query, translate_to),
+            "_link": model,
+            "_context": "{}+{}+{}".format(self.config.query, self.config.translate_to, medium),
             "_extend": {
                 "keypath": None,
                 "args": ["translation"],
                 "kwargs": {},
-                "extension": "images"
+                "extension": medium
             }
         }
-        image_retriever = Retrieve()
-        image_retriever.setup(**image_config)
+        visual_retriever = Retrieve()
+        visual_retriever.setup(**image_config)
+        return visual_retriever
 
-        # Start Celery task
-        task = (
-            execute_process.s(query, translate_retriever.retain()) |
-            extend_process.s(image_retriever.retain(), multi=True)
-        )()
-        self.task = task
+    def process(self):
+        translate_retriever = self.get_translate_retriever()
+        task = execute_process.s(self.config.query, translate_retriever.retain())
+
+        for medium in self.config.media.split(','):
+            retriever = self.get_visual_retriever(medium)
+            task |= extend_process.s(retriever.retain(), multi=True)
+
+        self.task = task()
 
     def post_process(self):
         self.rsl = Retrieve().load(serialization=self.task.result).rsl
