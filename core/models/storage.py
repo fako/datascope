@@ -9,6 +9,7 @@ from core.exceptions import HIFCouldNotLoadFromStorage
 from core.processes.register import Register
 from core.processes.extend import Extend
 
+
 class Storage(models.Model):
     """
     This is an abstract base class meant to standardize storage in the Hyper Information Framework.
@@ -28,25 +29,22 @@ class Storage(models.Model):
     Substorage holds serialized storage objects for later use.
     """
 
-    # Standard database fields
-
-    identification = models.CharField(max_length=1024)  # used to find storage in db, 1 Kb to allow long unicode's
-    type = models.CharField(max_length=256)  # storage is a container table of different types
-    status = models.IntegerField(default=0)  # error or success code, 0 is always an initial state
-    retained = models.NullBooleanField()  # to prevent huge amount of rows we collect garbage
-
-    # Errors
-
-    exception = models.TextField(null=True, blank=True)
-    traceback = models.TextField(null=True, blank=True)
-
-    # JSON storage
-
+    # Fields for lookup and/or configuration
+    identification = models.CharField(db_index=True, max_length=1024)  # used to find storage in db, 1 Kb to allow long unicode's
+    type = models.CharField(db_index=True, max_length=256)  # storage is a container table of different types
     configuration = jsonfield.JSONField(null=True, blank=True, default=None)
     arguments = jsonfield.JSONField(null=True, blank=True, default=None)
 
-    # HIF vars
+    # Archiving fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    purge_at = models.DateTimeField(null=True, blank=True)
 
+    # Fields that hold the state
+    status = models.IntegerField(default=0)  # error or success code, 0 is always an initial state
+    retained = models.NullBooleanField()  # to prevent huge amount of rows we collect garbage
+
+    # HIF vars
     HIF_namespace = "HIF"
     HIF_private = []
 
@@ -219,6 +217,10 @@ class ProcessStorage(Extend, Register, Storage):
     # Results
     meta = jsonfield.JSONField(null=True, blank=True, default=None)
     results = jsonfield.JSONField(null=True, blank=True, max_length=1048576*10, default=None)  # 10Mb
+
+    # Errors
+    exception = models.TextField(null=True, blank=True)
+    traceback = models.TextField(null=True, blank=True)
 
     # Async processing
     task_id = models.CharField(max_length=256, null=True, blank=True)
