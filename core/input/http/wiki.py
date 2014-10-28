@@ -14,15 +14,17 @@ class WikiTranslate(JsonQueryLink):  # TODO: make this use the WikiBase
         'format': 'json',
         'action': 'query',
         'prop': 'iwlinks',
-        'iwurl': 1,
+        'iwprop': 'url',
         'iwprefix': None,  # set at runtime
     }
     HIF_objective = {
         "url": None,
         "*": None,
+        "prefix": None
     }
     HIF_translations = {
-        "*": "translation"
+        "*": "translation",
+        "prefix": "language"
     }
     HIF_query_parameter = 'titles'
 
@@ -41,9 +43,6 @@ class WikiTranslate(JsonQueryLink):  # TODO: make this use the WikiBase
         """
         self.HIF_parameters['iwprefix'] = self.config.translate_to
         return super(WikiTranslate, self).prepare_params()
-
-    def cleaner(self,result_instance):
-        return result_instance['url'] is not None  # TODO: iwlinks deprecated, use iwprop=url instead
 
     class Meta:
         app_label = "core"
