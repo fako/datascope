@@ -1,4 +1,13 @@
-*.log
-*.pot
+.idea
+.DS_store
+
 *.pyc
-local_settings.py
+*.db
+
+fixtures/
+logs/
+
+secrets.py
+server.py
+
+#HIF/
