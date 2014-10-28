@@ -10,7 +10,7 @@ class ServiceStorage(models.Model):
     completed_at = models.DateTimeField()
     purge_at = models.DateTimeField()
 
-    identification = models.CharField(max_length=256)  # TODO: rename consistently to identity (and identify())
+    identity = models.CharField(max_length=256)  # TODO: rename consistently to identity (and identify())
     views = models.IntegerField()
     content = jsonfield.JSONField(default=None)
 

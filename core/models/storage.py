@@ -30,7 +30,7 @@ class Storage(models.Model):
     """
 
     # Fields for lookup and/or configuration
-    identification = models.CharField(db_index=True, max_length=1024)  # used to find storage in db, 1 Kb to allow long unicode's
+    identity = models.CharField(db_index=True, max_length=1024)  # used to find storage in db, 1 Kb to allow long unicode's
     type = models.CharField(db_index=True, max_length=256)  # storage is a container table of different types
     configuration = jsonfield.JSONField(null=True, blank=True, default=None)
     arguments = jsonfield.JSONField(null=True, blank=True, default=None)
@@ -64,7 +64,7 @@ class Storage(models.Model):
         self.args = None
 
     def __unicode__(self):
-        return self.identification + ' | ' + self.type
+        return self.identity + ' | ' + self.type
 
     class Meta:
         abstract = True
@@ -101,7 +101,7 @@ class Storage(models.Model):
         """
         This method tries to load a stored version of self
         It either tries to deserialize a model
-        or checks whether a model with same type and identification exists in db
+        or checks whether a model with same type and identity exists in db
         If it finds anything it loads all db fields onto self
         """
         try:
@@ -111,14 +111,14 @@ class Storage(models.Model):
                 instance = model.objects.get(id=id)
             else:
                 model = self.__class__
-                instance = model.objects.get(identification=self.identification,type=self.type)
+                instance = model.objects.get(identity=self.identity,type=self.type)
         except ObjectDoesNotExist:
             if serialization:
                 message = "{} with id={} does not exist"
                 raise HIFCouldNotLoadFromStorage(message.format(model, id))
             else:
                 message = "{} with identifier={} and type={} does not exist"
-                raise HIFCouldNotLoadFromStorage(message.format(model, self.identification, self.type))
+                raise HIFCouldNotLoadFromStorage(message.format(model, self.identity, self.type))
 
         # Copy fields
         for field in instance._meta.fields:
@@ -155,10 +155,10 @@ class Storage(models.Model):
         """
         identify = self.setup_fields(*args, **kwargs)
 
-        # If no identification was set we try to load from db based on values now set by this function
+        # If no identity was set we try to load from db based on values now set by this function
         self.type = self.__class__.__name__
-        if not self.identification:
-            self.identification = self.identifier()
+        if not self.identity:
+            self.identity = self.identifier()
             identify = False
             try:
                 self.load()
@@ -167,7 +167,7 @@ class Storage(models.Model):
                 pass  # apparently current setup is new
 
         if identify:
-            self.identification = self.identifier()
+            self.identity = self.identifier()
 
         self.save()
 

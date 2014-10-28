@@ -34,7 +34,7 @@ class TestHttpLink(TestCase):
             "status": 0,
             "retained": False,
             "type": "HttpLink",
-            "identification": "test identity",
+            "identity": "test identity",
         }
         self.methods_get_uses = ['setup','send_request','handle_error', "store_response"]
         self.test_url = "http://localhost:8000/test/"

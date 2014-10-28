@@ -7,7 +7,7 @@
         "body": "Test text 1",
         "retained": true,
         "head": { },
-        "identification": "[u'test'] | {'test': u'test'}",
+        "identity": "[u'test'] | {'test': u'test'}",
         "arguments": [
             "test"
         ], 
@@ -28,7 +28,7 @@
         "body": "Test text 2",
         "retained": true,
         "head": { },
-        "identification": "[u'test args'] | {'test': u'test'}",
+        "identity": "[u'test args'] | {'test': u'test'}",
         "arguments": [
             "test args"
         ],
@@ -49,7 +49,7 @@
         "body": "Test text 3",
         "retained": true,
         "head": { },
-        "identification": "[u'test'] | {'test': u'test kwargs'}",
+        "identity": "[u'test'] | {'test': u'test kwargs'}",
         "arguments": [
             "test"
         ],
@@ -76,7 +76,7 @@
             }
         ],
         "meta": null,
-        "identification": "[u'test'] | {'test': u'test'}",
+        "identity": "[u'test'] | {'test': u'test'}",
         "arguments": [
             "test"
         ],

@@ -49,7 +49,7 @@ def extend_process(ser_extendee, ser_extender, multi=False, register=True, finis
             keypath = "{}.{}".format(base_keypath, ind) if base_keypath is not None else unicode(ind)
             extndr.config._extend["keypath"] = keypath
             extndr.setup()
-            extndr.identification = extndr.identifier()
+            extndr.identity = extndr.identifier()
             extndr.retain()
             extenders.append(extndr)
         # Make sure we can garbage collect the base extend class correctly

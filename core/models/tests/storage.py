@@ -28,15 +28,15 @@ class TestStorage(TestCase):
 
     def test_identifier(self):
         instance = TextStorage()
-        identification = instance.identifier()
-        self.assertEqual(identification, "0")
+        identity = instance.identifier()
+        self.assertEqual(identity, "0")
         instance.id = 1
-        identification = instance.identifier()
-        self.assertEqual(identification, "1")
+        identity = instance.identifier()
+        self.assertEqual(identity, "1")
         instance.args = []
         instance.config = Config(namespace='TEST',private=[])
-        identification = instance.identifier()
-        self.assertEqual(identification, "[] | {}")
+        identity = instance.identifier()
+        self.assertEqual(identity, "[] | {}")
 
     def test_serialize(self):
         """
@@ -61,10 +61,10 @@ class TestStorage(TestCase):
             instance.load()
             self.fail()
         except HIFCouldNotLoadFromStorage as exception:
-            self.assertEqual(str(exception), "{} with identifier={} and type={} does not exist".format(instance.__class__, instance.identification, instance.type))
+            self.assertEqual(str(exception), "{} with identifier={} and type={} does not exist".format(instance.__class__, instance.identity, instance.type))
         self.assertEqual(instance.body, "Unloaded")
         # Load success
-        instance.identification = "[u'test'] | {'test': u'test'}"
+        instance.identity = "[u'test'] | {'test': u'test'}"
         instance.type = "TextStorage"
         instance.load()
         self.assertEqual(instance.body, "Test text 1")
@@ -88,9 +88,9 @@ class TestStorage(TestCase):
         config = self.test_config
         ###subs = self.test_subs
         filled_instance = TextStorage(arguments=args, configuration=config) ###, substorage=subs)
-        filled_instance.identification = "0"
+        filled_instance.identity = "0"
         # Setup does nothing when arguments and/or config are set
-        # It doesn't try to load instances from the db if identification is set, leaving body field empty
+        # It doesn't try to load instances from the db if identity is set, leaving body field empty
         # It should however setup substorage properly
         ignored_args = ['ignored']
         ignored_config = {'ignored':'ignored'}
@@ -105,10 +105,10 @@ class TestStorage(TestCase):
         ### self.assertIsInstance(filled_instance.subs, Container)
         ### self.assertEqual(filled_instance.substorage, subs)
         ### self.assertEqual(filled_instance.subs.dict(), subs)
-        self.assertEqual(filled_instance.identification, "0")
+        self.assertEqual(filled_instance.identity, "0")
         self.assertEqual(filled_instance.body, "")
         # Setup sets vars if instance is empty
-        # It should also call load and set body field since identification is not set
+        # It should also call load and set body field since identity is not set
         # Substorage can't be passed to setup and setup should make it an empty container
         s_args = ['test']  # using strings to test unicode transformations
         s_config = {'test': 'test'}
@@ -124,7 +124,7 @@ class TestStorage(TestCase):
         #self.assertIsInstance(empty_instance.subs, Container)
         #self.assertEqual(empty_instance.substorage, None)
         #self.assertEqual(empty_instance.subs.dict(), {})
-        self.assertEqual(empty_instance.identification, "{} | {}".format(args, config))
+        self.assertEqual(empty_instance.identity, "{} | {}".format(args, config))
         self.assertEqual(empty_instance.body, "Test text 1")
 
     def test_retain(self):
