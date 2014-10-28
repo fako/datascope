@@ -125,7 +125,7 @@ MIDDLEWARE_CLASSES = (
     'core.middleware.AllowOriginMiddleware',
 )
 
-ROOT_URLCONF = 'core.urls'
+ROOT_URLCONF = 'datascope.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'datascope.wsgi.application'
