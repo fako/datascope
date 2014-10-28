@@ -79,28 +79,3 @@ def finish_extend(extendee_list):
     extendee = extendee_list[0]
     extendee.merge_extensions()
     return extendee.retain()
-
-
-# TODO: rewrite what is using this to use extend_process instead
-# TODO: remove this code as it is outdated and inferior
-@task(name="core.flatten_process_results")
-def flatten_process_results(ser_prc, key):
-    """
-    This task simplifies results from a Process.
-    In order for other processes to use it as input
-    Should not be at the end of a chain!
-    """
-    name, prc_id = ser_prc
-    cls = get_model(app_label="core",model_name=name)
-    if cls is None:
-        raise HIFImproperUsage("The specified model does not exist or is not registered as Django model with core label.")
-    prc = cls()
-    prc.load(serialization=ser_prc)
-    flat = []
-    try:
-        for rsl in prc.rsl:
-            flat.append(rsl[key])
-    except HIFNoContent:
-        pass
-    return flat
-
