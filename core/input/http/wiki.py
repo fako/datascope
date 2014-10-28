@@ -2,7 +2,7 @@
 
 import json
 
-from HIF.input.http.core import JsonQueryLink, HttpJsonMixin, HttpLink
+from HIF.input.http.base import JsonQueryLink, HttpJsonMixin, HttpLink
 from HIF.input.helpers import sanitize_single_trueish_input
 from HIF.exceptions import HIFUnexpectedInput, HIFHttpError40X, HIFHttpWarning300, HIFImproperUsage
 

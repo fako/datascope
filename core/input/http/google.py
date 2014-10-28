@@ -1,4 +1,4 @@
-from HIF.input.http.core import JsonQueryLink
+from HIF.input.http.base import JsonQueryLink
 from HIF.exceptions import HIFHttpError40X, HIFHttpLinkPending
 
 

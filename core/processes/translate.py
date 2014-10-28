@@ -1,6 +1,6 @@
 from celery import group
 
-from HIF.processes.core import Process, Retrieve, GroupProcess
+from HIF.processes.base import Process, Retrieve, GroupProcess
 from HIF.tasks import execute_process, flatten_process_results
 from HIF.helpers.mixins import DataMixin
 

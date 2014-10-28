@@ -1,4 +1,4 @@
-from HIF.processes.core import Process, Retrieve
+from HIF.processes.base import Process, Retrieve
 from HIF.tasks import execute_process, extend_process
 from HIF.helpers.data import count_2d_list
 
