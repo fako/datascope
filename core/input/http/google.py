@@ -48,7 +48,7 @@ class GoogleImage(GoogleLink):
         return params
 
     class Meta:
-        app_label = "HIF"
+        app_label = "core"
         proxy = True
 
 
@@ -70,5 +70,5 @@ class YouTubeSearch(GoogleLink):
     }
 
     class Meta:
-        app_label = "HIF"
+        app_label = "core"
         proxy = True

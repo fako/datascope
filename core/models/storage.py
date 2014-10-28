@@ -224,8 +224,8 @@ class ProcessStorage(Extend, Register, Storage):
     task_id = models.CharField(max_length=256, null=True, blank=True)
 
     class Meta:
-        db_table = "HIF_processstorage"
-        app_label = "HIF"
+        db_table = "core_processstorage"
+        app_label = "core"
         verbose_name = "Process"
         verbose_name_plural = "Processes"
 
@@ -240,8 +240,8 @@ class TextStorage(Storage):
     body = models.TextField()
 
     class Meta:
-        db_table = "HIF_textstorage"
-        app_label = "HIF"
+        db_table = "core_textstorage"
+        app_label = "core"
         verbose_name = "Text"
         verbose_name_plural = "Texts"
 

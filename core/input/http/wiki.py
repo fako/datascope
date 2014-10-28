@@ -46,7 +46,7 @@ class WikiTranslate(JsonQueryLink):  # TODO: make this use the WikiBase
         return result_instance['url'] is not None  # TODO: iwlinks deprecated, use iwprop=url instead
 
     class Meta:
-        app_label = "HIF"
+        app_label = "core"
         proxy = True
 
 
@@ -92,7 +92,7 @@ class WikiLocationSearch(JsonQueryLink):
         super(WikiLocationSearch, self).prepare_next()
 
     class Meta:
-        app_label = "HIF"
+        app_label = "core"
         proxy = True
 
 
@@ -180,7 +180,7 @@ class WikiSearch(WikiBaseQuery):
         return data[0] if len(data) else {}
 
     class Meta:
-        app_label = "HIF"
+        app_label = "core"
         proxy = True
 
 
@@ -216,7 +216,7 @@ class WikiDataClaims(HttpLink, HttpJsonMixin):
         return self.data
 
     class Meta:
-        app_label = "HIF"
+        app_label = "core"
         proxy = True
 
 
@@ -265,7 +265,7 @@ class WikiDataClaimers(HttpLink, HttpJsonMixin):
         return self.data
 
     class Meta:
-        app_label = "HIF"
+        app_label = "core"
         proxy = True
 
 
@@ -299,5 +299,5 @@ class WikiBacklinks(JsonQueryLink):
         return True
 
     class Meta:
-        app_label = "HIF"
+        app_label = "core"
         proxy = True

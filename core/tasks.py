@@ -91,9 +91,9 @@ def flatten_process_results(ser_prc, key):
     Should not be at the end of a chain!
     """
     name, prc_id = ser_prc
-    cls = get_model(app_label="HIF",model_name=name)
+    cls = get_model(app_label="core",model_name=name)
     if cls is None:
-        raise HIFImproperUsage("The specified model does not exist or is not registered as Django model with HIF label.")
+        raise HIFImproperUsage("The specified model does not exist or is not registered as Django model with core label.")
     prc = cls()
     prc.load(serialization=ser_prc)
     flat = []

@@ -57,7 +57,7 @@ class ImageTranslate(Process, DataMixin):
 
 
     class Meta:
-        app_label = "HIF"
+        app_label = "core"
         proxy = True
 
 
@@ -82,7 +82,7 @@ class ImageTranslations(GroupProcess):
         self.rsl = self.data  # translates keys
 
     class Meta:
-        app_label = "HIF"
+        app_label = "core"
         proxy = True
 
 
@@ -138,7 +138,7 @@ class VideoTranslate(Process, DataMixin):
 
 
     class Meta:
-        app_label = "HIF"
+        app_label = "core"
         proxy = True
 
 
@@ -163,5 +163,5 @@ class VideoTranslations(GroupProcess):
         self.rsl = self.data  # translates keys
 
     class Meta:
-        app_label = "HIF"
+        app_label = "core"
         proxy = True

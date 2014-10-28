@@ -18,7 +18,7 @@ class ProcessAPIView(APIView):
         service = Service()
 
         # Prepare the process
-        Process = get_model(app_label='HIF', model_name=service.HIF_process)  # TODO: update with get_hif_model
+        Process = get_model(app_label='core', model_name=service.HIF_process)  # TODO: update with get_hif_model
         prc = Process()
 
         # Execute and read results

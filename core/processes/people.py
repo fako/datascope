@@ -63,5 +63,5 @@ class PeopleSuggestions(Process):
         self.rsl = count_2d_list(person_data['claims'], d2_list='claimers').most_common(11)[1:]  # takes 10, but strips query person
 
     class Meta:
-        app_label = "HIF"
+        app_label = "core"
         proxy = True

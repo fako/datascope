@@ -20,7 +20,7 @@ class TestModelIntegrity(TestCase):
         # See whether the model can be retrieved by get_hif_model
         model_name = self.instance.__class__.__name__
         model = get_hif_model(model_name)
-        self.assertNotEquals(model, None, "{} can't be retrieved as model by Django. Does it exist, is it placed under models and does it have the HIF app_label?".format(model_name))
+        self.assertNotEquals(model, None, "{} can't be retrieved as model by Django. Does it exist, is it placed under models and does it have the core app_label?".format(model_name))
         # See if the model uses a correct ORM
         mro = model.mro()
         self.assertIn(Storage, mro, "{} does not inherit from Storage class.".format(model_name))

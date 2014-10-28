@@ -150,7 +150,7 @@ class Retrieve(Process):
         else:
             args = self.args
 
-        link_model = get_model(app_label="HIF", model_name=self.config._link)
+        link_model = get_model(app_label="core", model_name=self.config._link)
         if link_model is None:
             raise HIFImproperUsage("The specified link model does not exist or is not registered as Django model with HIF label.")
 
@@ -203,7 +203,7 @@ class Retrieve(Process):
         self.rsl = results
 
     class Meta:
-        app_label = "HIF"
+        app_label = "core"
         proxy = True
 
 
@@ -243,7 +243,7 @@ class GroupProcess(Process, DataMixin):
 
     def process(self):
         # Construct keyword arguments collection
-        process_model = get_model(app_label="HIF", model_name=self.config._process)
+        process_model = get_model(app_label="core", model_name=self.config._process)
 
         processes = []
         for arg in self.args:
