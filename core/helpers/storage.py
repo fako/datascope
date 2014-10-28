@@ -2,7 +2,7 @@ from copy import deepcopy
 
 from django.db.models.loading import get_model
 
-from HIF.exceptions import HIFImproperUsage
+from core.exceptions import HIFImproperUsage
 
 
 def deserialize(serialization):

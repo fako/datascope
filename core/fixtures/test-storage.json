@@ -1,7 +1,7 @@
 [
 {
     "pk": 1, 
-    "model": "HIF.textstorage", 
+    "model": "core.textstorage",
     "fields": {
         "status": 1,
         "body": "Test text 1",
@@ -21,7 +21,7 @@
 },
 {
     "pk": 2,
-    "model": "HIF.textstorage",
+    "model": "core.textstorage",
     "fields": {
         "status": 1,
         "body": "Test text 2",
@@ -41,7 +41,7 @@
 },
 {
     "pk": 3,
-    "model": "HIF.textstorage",
+    "model": "core.textstorage",
     "fields": {
         "status": 0,
         "body": "Test text 3",
@@ -61,7 +61,7 @@
 },
 {
     "pk": 1,
-    "model": "HIF.processstorage",
+    "model": "core.processstorage",
     "fields": {
         "status": 1,
         "exception": null,

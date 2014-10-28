@@ -3,8 +3,8 @@ import unittest
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 
-from HIF.models.settings import Domain
-from HIF.models.tests.integrity import TestModelIntegrity
+from core.models.settings import Domain
+from core.models.tests.integrity import TestModelIntegrity
 
 
 class TestExternalResourceIntegration(TestModelIntegrity):

@@ -6,8 +6,8 @@ from django.core.exceptions import ValidationError
 
 from mock import Mock
 
-from HIF.input.http.base import HttpLink #, HttpQueryLink
-from HIF.exceptions import HIFHttpError40X, HIFHttpError50X, HIFImproperUsage
+from core.input.http.base import HttpLink #, HttpQueryLink
+from core.exceptions import HIFHttpError40X, HIFHttpError50X, HIFImproperUsage
 
 
 class TestHttpLink(TestCase):

@@ -2,12 +2,12 @@ from django.db.models.loading import get_model
 
 from celery import task
 
-from HIF.exceptions import HIFImproperUsage, HIFNoContent
-from HIF.helpers.storage import get_hif_model, copy_hif_model
-from HIF.helpers.data import reach
+from core.exceptions import HIFImproperUsage, HIFNoContent
+from core.helpers.storage import get_hif_model, copy_hif_model
+from core.helpers.data import reach
 
 
-@task(name="HIF.execute_process")
+@task(name="core.execute_process")
 def execute_process(inp, ser_prc):
     """
     Main task which executes a Process
@@ -24,7 +24,7 @@ def execute_process(inp, ser_prc):
     return process.retain()
 
 
-@task(name="HIF.extend_process")
+@task(name="core.extend_process")
 def extend_process(ser_extendee, ser_extender, multi=False, register=True, finish=True):
     """
     Will extend data of the extendee by using the extender.
@@ -74,7 +74,7 @@ def extend_process(ser_extendee, ser_extender, multi=False, register=True, finis
     return ser_extendee
 
 
-@task(name="HIF.finish_extend")
+@task(name="core.finish_extend")
 def finish_extend(extendee_list):
     extendee = extendee_list[0]
     extendee.merge_extensions()
@@ -83,7 +83,7 @@ def finish_extend(extendee_list):
 
 # TODO: rewrite what is using this to use extend_process instead
 # TODO: remove this code as it is outdated and inferior
-@task(name="HIF.flatten_process_results")
+@task(name="core.flatten_process_results")
 def flatten_process_results(ser_prc, key):
     """
     This task simplifies results from a Process.

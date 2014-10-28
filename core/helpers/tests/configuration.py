@@ -2,10 +2,10 @@ from django.test import TestCase
 
 from mock import Mock
 
-from HIF.models.storage import Storage, TextStorage
-from HIF.helpers.configuration import Config, Domain
-from HIF.helpers.storage import Container
-from HIF.exceptions import HIFCouldNotLoadFromStorage
+from core.models.storage import Storage, TextStorage
+from core.helpers.configuration import Config, Domain
+from core.helpers.storage import Container
+from core.exceptions import HIFCouldNotLoadFromStorage
 
 class MockDomain(object):
     TEST_namespacing = "namespace"

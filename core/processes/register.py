@@ -2,8 +2,8 @@ from django.db import models
 
 import jsonfield
 
-from HIF.helpers.storage import Container, get_hif_model
-from HIF.helpers.enums import ProcessStatus as Status
+from core.helpers.storage import Container, get_hif_model
+from core.helpers.enums import ProcessStatus as Status
 
 
 class RegisterContainer(Container):  # TODO: tests!

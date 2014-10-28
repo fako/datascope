@@ -1,6 +1,6 @@
-from HIF.processes.base import Process, Retrieve
-from HIF.tasks import execute_process, extend_process
-from HIF.helpers.data import count_2d_list
+from core.processes.base import Process, Retrieve
+from core.tasks import execute_process, extend_process
+from core.helpers.data import count_2d_list
 
 
 class PeopleSuggestions(Process):

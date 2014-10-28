@@ -2,11 +2,11 @@ from django.db import models
 
 import jsonfield
 
-from HIF.processes.register import RegisterContainer
-from HIF.helpers.storage import get_hif_model
-from HIF.exceptions import HIFImproperUsage, HIFNoContent
-from HIF.helpers.data import reach
-from HIF.helpers.enums import ProcessStatus as Status
+from core.processes.register import RegisterContainer
+from core.helpers.storage import get_hif_model
+from core.exceptions import HIFImproperUsage, HIFNoContent
+from core.helpers.data import reach
+from core.helpers.enums import ProcessStatus as Status
 
 
 class ExtensionContainer(RegisterContainer):  # TODO: tests!

@@ -1,4 +1,4 @@
-from HIF.processes.base import Retrieve
+from core.processes.base import Retrieve
 
-from HIF.processes.translate import ImageTranslate, ImageTranslations, VideoTranslate, VideoTranslations
-from HIF.processes.people import PeopleSuggestions
+from core.processes.translate import ImageTranslate, ImageTranslations, VideoTranslate, VideoTranslations
+from core.processes.people import PeopleSuggestions

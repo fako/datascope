@@ -3,11 +3,11 @@ from django.core.exceptions import ObjectDoesNotExist
 
 import jsonfield
 
-from HIF.helpers import storage
-from HIF.helpers.configuration import Config
-from HIF.exceptions import HIFCouldNotLoadFromStorage
-from HIF.processes.register import Register
-from HIF.processes.extend import Extend
+from core.helpers import storage
+from core.helpers.configuration import Config
+from core.exceptions import HIFCouldNotLoadFromStorage
+from core.processes.register import Register
+from core.processes.extend import Extend
 
 class Storage(models.Model):
     """

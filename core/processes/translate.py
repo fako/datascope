@@ -1,15 +1,15 @@
 from celery import group
 
-from HIF.processes.base import Process, Retrieve, GroupProcess
-from HIF.tasks import execute_process, flatten_process_results
-from HIF.helpers.mixins import DataMixin
+from core.processes.base import Process, Retrieve, GroupProcess
+from core.tasks import execute_process, flatten_process_results
+from core.helpers.mixins import DataMixin
 
 
 class ImageTranslate(Process, DataMixin):
 
     # HIF interface
-    HIF_translate_model = "WikiTranslate"  # HIF.input.http.wiki
-    HIF_image_model = "GoogleImage"  # HIF.input.http.google
+    HIF_translate_model = "WikiTranslate"  # core.input.http.wiki
+    HIF_image_model = "GoogleImage"  # core.input.http.google
 
     HIF_translations = {
         "query": "word",
@@ -89,8 +89,8 @@ class ImageTranslations(GroupProcess):
 class VideoTranslate(Process, DataMixin):
 
     # HIF interface
-    HIF_translate_model = "WikiTranslate"  # HIF.input.http.wiki
-    HIF_video_model = "YouTubeSearch"  # HIF.input.http.google
+    HIF_translate_model = "WikiTranslate"  # core.input.http.wiki
+    HIF_video_model = "YouTubeSearch"  # core.input.http.google
 
     HIF_translations = {
         "query": "word",

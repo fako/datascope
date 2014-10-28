@@ -7,13 +7,13 @@ from django.db.models.loading import get_model
 from celery import group
 from celery.result import AsyncResult, GroupResult
 
-from HIF.models.storage import ProcessStorage
-from HIF.exceptions import HIFProcessingError, HIFProcessingAsync, \
+from core.models.storage import ProcessStorage
+from core.exceptions import HIFProcessingError, HIFProcessingAsync, \
     HIFEndlessLoop, HIFEndOfInput, HIFInputError, HIFImproperUsage, HIFNoContent
-from HIF.tasks import execute_process
-from HIF.helpers.enums import ProcessStatus as Status
-from HIF.helpers.mixins import DataMixin
-from HIF.helpers.storage import get_hif_model
+from core.tasks import execute_process
+from core.helpers.enums import ProcessStatus as Status
+from core.helpers.mixins import DataMixin
+from core.helpers.storage import get_hif_model
 
 
 class Process(ProcessStorage):

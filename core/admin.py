@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from HIF.models import TextStorage, ProcessStorage
+from core.models import TextStorage, ProcessStorage
 
 
 class TextStorageAdmin(admin.ModelAdmin):

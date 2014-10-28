@@ -1,8 +1,8 @@
 from django.utils.translation import ugettext as _
 
-from HIF.models.output import ImageTranslationsStorage, VideoTranslationsStorage, PeopleSuggestionsStorage
-from HIF.output.http.views import ProcessAPIView, ProcessPlainView
-from HIF.exceptions import HIFBadRequest, HIFNoInput
+from core.models.output import ImageTranslationsStorage, VideoTranslationsStorage, PeopleSuggestionsStorage
+from core.output.http.views import ProcessAPIView, ProcessPlainView
+from core.exceptions import HIFBadRequest, HIFNoInput
 
 
 class Service(object):

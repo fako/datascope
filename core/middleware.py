@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from HIF.models.settings import Domain
+from core.models.settings import Domain
 
 
 class AllowOriginMiddleware(object):

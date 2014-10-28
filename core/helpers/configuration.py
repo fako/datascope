@@ -1,4 +1,4 @@
-from HIF.models.settings import Domain
+from core.models.settings import Domain
 
 
 class Config(object):

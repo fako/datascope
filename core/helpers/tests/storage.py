@@ -1,9 +1,9 @@
 from django.test import TestCase
 from django.db.models.query import QuerySet
 
-from HIF.exceptions import HIFImproperUsage
-from HIF.helpers.storage import get_hif_model, deserialize, Container
-from HIF.models.storage import TextStorage
+from core.exceptions import HIFImproperUsage
+from core.helpers.storage import get_hif_model, deserialize, Container
+from core.models.storage import TextStorage
 
 
 class TestHelperStorageFunctions(TestCase):

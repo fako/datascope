@@ -1,9 +1,9 @@
 import requests, re, copy
 
-from HIF.exceptions import HIFHttpError40X, HIFHttpError50X, HIFImproperUsage, HIFEndOfInput
-from HIF.models.storage import TextStorage
-from HIF.helpers.mixins import JsonDataMixin
-from HIF.input.helpers import sanitize_single_trueish_input
+from core.exceptions import HIFHttpError40X, HIFHttpError50X, HIFImproperUsage, HIFEndOfInput
+from core.models.storage import TextStorage
+from core.helpers.mixins import JsonDataMixin
+from core.input.helpers import sanitize_single_trueish_input
 
 
 class HttpLink(TextStorage):

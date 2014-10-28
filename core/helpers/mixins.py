@@ -2,8 +2,8 @@ import json
 
 from django.db import models
 
-from HIF.helpers.data import json_extractor
-from HIF.models.settings import Domain
+from core.helpers.data import json_extractor
+from core.models.settings import Domain
 
 
 class DataMixin(object):
@@ -69,7 +69,7 @@ class JsonDataMixin(DataMixin):
     def extract(self, source):
         """
         Extracts results from source using _objective and puts it in self.data
-        It uses HIF.helpers.json_extractor to get the job done
+        It uses core.helpers.json_extractor to get the job done
         """
         self._data = json_extractor(source, self.HIF_objective)
         return self

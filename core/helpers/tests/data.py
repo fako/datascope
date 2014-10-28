@@ -1,5 +1,5 @@
 from unittest import TestCase
-from HIF.helpers.data import extractor, reach
+from core.helpers.data import extractor, reach
 
 
 class TestPythonReach(TestCase):

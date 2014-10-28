@@ -2,8 +2,8 @@ import integration  # do not import TestCase classes directly, or they will get 
 
 from django.test import TestCase
 
-from HIF.input.http.google import GoogleLink, GoogleImage
-from HIF.exceptions import HIFHttpError40X, HIFHttpLinkPending
+from core.input.http.google import GoogleLink, GoogleImage
+from core.exceptions import HIFHttpError40X, HIFHttpLinkPending
 
 
 class TestGoogleLink(TestCase):

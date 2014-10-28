@@ -1,5 +1,5 @@
-from HIF.input.http.base import JsonQueryLink
-from HIF.exceptions import HIFHttpError40X, HIFHttpLinkPending
+from core.input.http.base import JsonQueryLink
+from core.exceptions import HIFHttpError40X, HIFHttpLinkPending
 
 
 class GoogleLink(JsonQueryLink):

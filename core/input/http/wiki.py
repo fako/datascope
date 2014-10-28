@@ -2,9 +2,9 @@
 
 import json
 
-from HIF.input.http.base import JsonQueryLink, HttpJsonMixin, HttpLink
-from HIF.input.helpers import sanitize_single_trueish_input
-from HIF.exceptions import HIFUnexpectedInput, HIFHttpError40X, HIFHttpWarning300, HIFImproperUsage
+from core.input.http.base import JsonQueryLink, HttpJsonMixin, HttpLink
+from core.input.helpers import sanitize_single_trueish_input
+from core.exceptions import HIFUnexpectedInput, HIFHttpError40X, HIFHttpWarning300, HIFImproperUsage
 
 
 class WikiTranslate(JsonQueryLink):  # TODO: make this use the WikiBase

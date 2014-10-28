@@ -1,5 +1,5 @@
 from django.test import TestCase
-from HIF.helpers.mixins import DataMixin
+from core.helpers.mixins import DataMixin
 
 
 class MockDataMixin(DataMixin):

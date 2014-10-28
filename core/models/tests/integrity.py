@@ -1,7 +1,7 @@
 from django.test import TestCase
 
-from HIF.helpers.storage import get_hif_model
-from HIF.models.storage import Storage, TextStorage, ProcessStorage
+from core.helpers.storage import get_hif_model
+from core.models.storage import Storage, TextStorage, ProcessStorage
 
 
 class TestModelIntegrity(TestCase):

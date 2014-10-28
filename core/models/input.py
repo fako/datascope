@@ -1,2 +1,2 @@
-from HIF.input.http.wiki import WikiTranslate, WikiLocationSearch, WikiBacklinks
-from HIF.input.http.google import GoogleImage, YouTubeSearch
+from core.input.http.wiki import WikiTranslate, WikiLocationSearch, WikiBacklinks
+from core.input.http.google import GoogleImage, YouTubeSearch

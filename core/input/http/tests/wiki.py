@@ -2,7 +2,7 @@ import integration  # do not import TestCase classes directly, or they will get 
 
 from django.test import TestCase
 
-from HIF.input.http.wiki import WikiTranslate
+from core.input.http.wiki import WikiTranslate
 
 
 # class TestWikiLink(TestCase):
