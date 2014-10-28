@@ -7,48 +7,6 @@ from core.input.helpers import sanitize_single_trueish_input
 from core.exceptions import HIFUnexpectedInput, HIFHttpError40X, HIFHttpWarning300, HIFImproperUsage
 
 
-class WikiTranslate(JsonQueryLink):  # TODO: make this use the WikiBase
-
-    HIF_link = 'http://{}.wiktionary.org/w/api.php' # updated at runtime
-    HIF_parameters = {
-        'format': 'json',
-        'action': 'query',
-        'prop': 'iwlinks',
-        'iwprop': 'url',
-        'iwprefix': None,  # set at runtime
-    }
-    HIF_objective = {
-        "url": None,
-        "*": None,
-        "prefix": None
-    }
-    HIF_translations = {
-        "*": "translation",
-        "prefix": "language"
-    }
-    HIF_query_parameter = 'titles'
-
-    HIF_namespace = "wiki"
-
-    def prepare_link(self):
-        """
-        Prepare link does some pre formatting by including the source_language as a sub domain.
-        """
-        link = super(WikiTranslate, self).prepare_link()
-        return link.format(self.config.source_language)
-
-    def prepare_params(self):
-        """
-        Prepare params sets the inter wiki prefix as a parameter depending on the language to translate to.
-        """
-        self.HIF_parameters['iwprefix'] = self.config.translate_to
-        return super(WikiTranslate, self).prepare_params()
-
-    class Meta:
-        app_label = "core"
-        proxy = True
-
-
 ##############################
 # http://wikilocation.org
 ##############################
@@ -121,14 +79,6 @@ class WikiBaseQuery(JsonQueryLink):
     HIF_translations = {
         "pageprops.wikibase_item": "wikidata"
     }
-    # Because there already is an objective and child classes may want to add those
-    # And it is impossible to inherit attributes in a normal way
-    # There is this syntax that could be used
-    # TODO: remove when used in real life
-    # TODO: Add a helper to do this and improve syntax looks?
-    # HIF_parameters = dict(WikiBaseQuery.HIF_parameters.copy(), **{
-    #    "test": "test"
-    # })
 
     def prepare_link(self):
         """
@@ -177,6 +127,39 @@ class WikiSearch(WikiBaseQuery):
         """
         data = super(WikiSearch, self).data
         return data[0] if len(data) else {}
+
+    class Meta:
+        app_label = "core"
+        proxy = True
+
+
+class WikiTranslate(WikiBaseQuery):
+
+    HIF_link = 'http://{}.wiktionary.org/w/api.php'  # updated at runtime
+
+    # TODO: Add a helper to do this and improve syntax looks?
+    HIF_parameters = dict(WikiBaseQuery.HIF_parameters.copy(), **{
+        'prop': 'iwlinks',
+        'iwprop': 'url',
+        'iwprefix': None,  # set at runtime
+    })
+
+    HIF_objective = {
+        "url": None,
+        "*": None,
+        "prefix": None
+    }
+    HIF_translations = {
+        "*": "translation",
+        "prefix": "language"
+    }
+
+    def prepare_params(self):
+        """
+        Prepare params sets the inter wiki prefix as a parameter depending on the language to translate to.
+        """
+        self.HIF_parameters['iwprefix'] = self.config.translate_to
+        return super(WikiTranslate, self).prepare_params()
 
     class Meta:
         app_label = "core"
