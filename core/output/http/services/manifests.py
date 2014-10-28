@@ -49,7 +49,7 @@ class ImageTranslationsService(ImageTranslationsStorage, Service):
 
         # Returning context
         return {
-            "source_language": request.LANGUAGE_CODE,
+            "source_language": 'en',
             "query": query
         }
 
@@ -75,7 +75,7 @@ class VideoTranslationsService(VideoTranslationsStorage, Service):
 
         # Returning context
         return {
-            "source_language": request.LANGUAGE_CODE,
+            "source_language": 'en',
             "query": query
         }
 
