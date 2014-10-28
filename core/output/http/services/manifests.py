@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext as _
 
-from core.models.output import ImageTranslationsStorage, VideoTranslationsStorage, PeopleSuggestionsStorage
+from core.models.output import VisualTranslationsStorage, PeopleSuggestionsStorage
 from core.output.http.views import ProcessAPIView, ProcessPlainView
 from core.exceptions import HIFBadRequest, HIFNoInput
 
@@ -28,35 +28,9 @@ class Service(object):
         return {}
 
 
-class ImageTranslationsService(ImageTranslationsStorage, Service):
+class VisualTranslationsService(VisualTranslationsStorage, Service):
 
-    HIF_process = "ImageTranslations"
-
-    HIF_main = ProcessAPIView
-    HIF_plain = ProcessPlainView
-
-    class Meta:
-        proxy = True
-
-    def context(self, request):
-
-        # Input validation
-        query = request.GET.get('q', '').lower()
-        if not query:
-            raise HIFNoInput(_('No input provided'))
-        if query and len(query.split(' ')) > 1:
-            raise HIFBadRequest(_("We're sorry, we can't take more than one word as a query. Please try with one word at a time."))
-
-        # Returning context
-        return {
-            "source_language": 'en',
-            "query": query
-        }
-
-
-class VideoTranslationsService(VideoTranslationsStorage, Service):
-
-    HIF_process = "VideoTranslations"
+    HIF_process = "VisualTranslations"
 
     HIF_main = ProcessAPIView
     HIF_plain = ProcessPlainView

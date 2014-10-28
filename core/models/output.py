@@ -2,15 +2,12 @@ from django.db import models
 
 import jsonfield
 
+from core.models.storage import Storage
 
-class ServiceStorage(models.Model):
 
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField()
+class ServiceStorage(Storage):
+
     completed_at = models.DateTimeField()
-    purge_at = models.DateTimeField()
-
-    identity = models.CharField(max_length=256)  # TODO: rename consistently to identity (and identify())
     views = models.IntegerField()
     content = jsonfield.JSONField(default=None)
 
@@ -21,12 +18,9 @@ class ServiceStorage(models.Model):
         abstract = True
 
 
-class ImageTranslationsStorage(ServiceStorage):
-    pass
-
-
-class VideoTranslationsStorage(ServiceStorage):
-    pass
+class VisualTranslationsStorage(ServiceStorage):
+    class Meta:
+        app_label = "core"
 
 
 class PeopleSuggestionsStorage(ServiceStorage):

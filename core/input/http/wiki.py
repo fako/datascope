@@ -139,7 +139,7 @@ class WikiTranslate(WikiBaseQuery):
 
     # TODO: Add a helper to do this and improve syntax looks?
     HIF_parameters = dict(WikiBaseQuery.HIF_parameters.copy(), **{
-        'prop': 'iwlinks',
+        'prop': 'info|pageprops|iwlinks',
         'iwprop': 'url',
         'iwprefix': None,  # set at runtime
     })

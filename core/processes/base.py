@@ -18,8 +18,6 @@ from core.helpers.storage import get_hif_model
 
 class Process(ProcessStorage):
 
-    HIF_child_process = ''
-
     HIF_extension_statusses = [200]  # TODO: sane default
 
     def __iter__(self):
@@ -152,7 +150,7 @@ class Retrieve(Process):
 
         link_model = get_model(app_label="core", model_name=self.config._link)
         if link_model is None:
-            raise HIFImproperUsage("The specified link model does not exist or is not registered as Django model with HIF label.")
+            raise HIFImproperUsage("The specified link model does not exist or is not registered as Django model with core label.")
 
         session = requests.Session()
 
@@ -179,25 +177,25 @@ class Retrieve(Process):
             except HIFEndOfInput:
                 pass
 
-            # Everything retrieved. We store it in results
-            # link.rsl will yield either response body or the data
-            # specify link.rsl behavior (and what results will be) in the link class
-            if len(self.links) == 0:
-                results = None
-            elif len(self.links) == 1:
-                link = self.links[0]
+        # Everything retrieved. We store it in results
+        # link.rsl will yield either response body or the data
+        # specify link.rsl behavior (and what results will be) in the link class
+        if len(self.links) == 0:
+            results = None
+        elif len(self.links) == 1:
+            link = self.links[0]
+            if self.config.debug:
+                self.rgs.add(link.retain())
+            results = link.rsl
+        else:
+            results = []
+            for link in self.links:
                 if self.config.debug:
                     self.rgs.add(link.retain())
-                results = link.rsl
-            else:
-                results = []
-                for link in self.links:
-                    if self.config.debug:
-                        self.rgs.add(link.retain())
-                    if isinstance(link.rsl, dict):
-                        results.append(link.rsl)
-                    else:  # presuming list
-                        results + link.rsl
+                if isinstance(link.rsl, dict):
+                    results.append(link.rsl)
+                else:  # presuming list
+                    results = results + link.rsl
 
         # After all arguments are fetched, we store everything in self.rsl and process becomes DONE
         self.rsl = results
