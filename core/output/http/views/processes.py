@@ -41,7 +41,7 @@ class ProcessAPIView(APIView):
         except HIFProcessingAsync:
             return Response(data=[], status=HTTP_202_ACCEPTED)
         except HIFProcessingError as exception:
-            return Response(data={'detail': exception.detail}, status=HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response(data={'detail': str(exception)}, status=HTTP_500_INTERNAL_SERVER_ERROR)
         except HIFProcessingWarning as exception:
             return Response(data=exception.data, status=exception.status)
         except HIFNoContent:

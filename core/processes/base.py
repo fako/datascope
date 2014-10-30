@@ -49,7 +49,7 @@ class Process(ProcessStorage):
             else:
                 raise HIFNoContent()
         elif self.status == Status.ERROR:
-            raise HIFProcessingError()
+            raise HIFProcessingError(self.exception)
         elif self.status == Status.WARNING:
             return self.results  # outside determines if results are valid.
         elif self.status in [Status.PROCESSING, Status.WAITING, Status.READY]:
@@ -112,7 +112,7 @@ class Process(ProcessStorage):
             # In rare cases the task itself raised an exception
             # Process goes into error mode
             if self.task.failed():
-                self.exception = self.task.result  # TODO: fix for groups
+                self.exception = getattr(self.task, 'result', "Group background task failed.")  # async or group result
                 self.status = Status.ERROR
 
         # WAITING
@@ -130,6 +130,7 @@ class Process(ProcessStorage):
             except Exception as exception:
                 self.exception = exception
                 self.traceback = traceback.format_exc()
+                self.meta = getattr(exception, 'report', None)
                 self.status = Status.ERROR
 
         self.retain()
