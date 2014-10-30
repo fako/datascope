@@ -2,9 +2,11 @@
 
 import json
 
-from core.input.http.base import JsonQueryLink, HttpJsonMixin, HttpLink
+from core.input.http.base import JsonQueryLink, HttpJsonMixin, HttpLink, HttpQueryMixin
 from core.input.helpers import sanitize_single_trueish_input
-from core.exceptions import HIFUnexpectedInput, HIFHttpError40X, HIFHttpWarning300, HIFImproperUsage
+from core.helpers.mixins import DataMixin
+from core.helpers.data import extractor
+from core.exceptions import HIFUnexpectedInput, HIFHttpError40X, HIFHttpWarning300
 
 
 ##############################
@@ -112,6 +114,19 @@ class WikiBaseQuery(JsonQueryLink):
                     raise HIFHttpWarning300(page_id)
             except KeyError:
                 raise HIFUnexpectedInput('Wrongly formatted Wikipedia response, missing "pageprops"')
+
+    def extract(self, source):
+        """
+        We override the extract to filter out Wiki warnings that mess up clean extraction.
+        :param source:
+        :return:
+        """
+        data = json.loads(source)
+        if "warnings" in data:
+            del(data["warnings"])
+
+        self._data = extractor(data, self.HIF_objective)
+        return self
 
     class Meta:
         proxy = True

@@ -1,9 +1,4 @@
-import json
-
-from django.db import models
-
 from core.helpers.data import json_extractor
-from core.models.settings import Domain
 
 
 class DataMixin(object):
