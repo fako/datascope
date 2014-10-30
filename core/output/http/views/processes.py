@@ -31,8 +31,8 @@ class ProcessAPIView(APIView):
 
             if prc.status == status.WARNING:
                 service.handle_warnings(prc.reports, results)
-                exception = HIFProcessingError()
-                exception.detail = 'Unhandled warnings: {}'.format(prc.reports)
+                exception = HIFProcessingError('Unhandled error')
+                raise exception
 
             return Response(data=results, status=HTTP_200_OK)
 

@@ -61,7 +61,7 @@ class RegisterContainer(Container):  # TODO: tests!
         reports = []
         for cls in self._processes:
             rprts = self.query(cls, {"status": Status.ERROR}).values_list('meta', flat=True)
-            reports += [json.loads(rprt) for rprt in rprts]
+            reports += [json.loads(rprt) for rprt in rprts if rprt]
         return reports
 
     def execute(self):
