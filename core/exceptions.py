@@ -46,6 +46,9 @@ class HIFProcessingError(Exception):
 class HIFProcessingAsync(Exception):
     pass
 
+class HIFProcessingWarning(Exception):
+    pass
+
 class HIFNoInput(Exception):
     pass
 

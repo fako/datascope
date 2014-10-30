@@ -21,6 +21,7 @@ class ExtensionContainer(RegisterContainer):  # TODO: tests!
 class Extend(models.Model):
 
     extensions = jsonfield.JSONField(null=True, blank=True, default=None)
+    HIF_extension_statusses = [Status.DONE]
 
     def __init__(self, *args, **kwargs):
         super(Extend, self).__init__(*args, **kwargs)
@@ -56,10 +57,7 @@ class Extend(models.Model):
         Extendee = get_hif_model(ser_extendee)
         extendee = Extendee().load(serialization=ser_extendee)  # TODO: write test that makes sure this function does not change extendee
 
-        # TODO: make status checks possible by registering later
-        #if extendee.status not in self.HIF_extension_statusses:
-        #    self.status = Status.CANCELLED
-        #    raise Exception('status is wrong!')
+
 
         if 'keypath' not in self.config._extend:
             self.status = Status.ERROR

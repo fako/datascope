@@ -6,8 +6,7 @@ from celery import group
 from celery.result import AsyncResult, GroupResult
 
 from core.models.storage import ProcessStorage
-from core.exceptions import (HIFProcessingError, HIFProcessingAsync, HIFInputError, HIFNoContent,
-                             HIFProcessingCancelled)
+from core.exceptions import (HIFProcessingError, HIFProcessingAsync, HIFInputError, HIFNoContent)
 from core.tasks import execute_process
 from core.helpers.enums import ProcessStatus as Status
 from core.helpers.mixins import DataMixin
@@ -16,7 +15,6 @@ from core.helpers.storage import get_hif_model
 
 class Process(ProcessStorage):
 
-    HIF_extension_statusses = [200]  # TODO: sane default
 
     def __iter__(self):
         return iter(self.rsl)
@@ -50,14 +48,25 @@ class Process(ProcessStorage):
                 return self.results
             else:
                 raise HIFNoContent()
-        elif self.status in [Status.ERROR, Status.WARNING]:
+        elif self.status == Status.ERROR:
             raise HIFProcessingError()
+        elif self.status == Status.WARNING:
+            return self.results  # outside determines if results are valid.
         elif self.status in [Status.PROCESSING, Status.WAITING, Status.READY]:
             raise HIFProcessingAsync()
     @rsl.setter
     def rsl(self, results):
         self.results = results
         self.status = Status.DONE
+
+    @property
+    def reports(self):
+        reports = self.rgs.reports()
+        reports = list(reports) if reports is not None else []
+        for rprts in self.rgs.attr('reports', cls=self.rgs._processes):
+            if rprts is not None:
+                reports += list(rprts)
+        return reports
 
 
     @property
@@ -89,6 +98,7 @@ class Process(ProcessStorage):
             except Exception as exception:
                 self.exception = exception
                 self.traceback = traceback.format_exc()
+                self.meta = getattr(exception, 'report', None)
                 self.status = Status.ERROR
 
         # ASYNC PROCESSING
@@ -133,9 +143,20 @@ class Retrieve(Process):
 
     links = []
 
-    def handle_exception(self, exception):
+    def handle_exception(self, exception, error_link):
+        # Save data from erroneous link
+        self.rgs.add(error_link.retain())
+
+        # Save links so far
         for link in self.links:
             self.rgs.add(link.retain())
+
+        exception.report = {
+            "type": error_link.type,
+            "status": error_link.status,
+            "message": str(exception),
+            "url": error_link.url,
+        }
         raise exception
 
     def process(self):
@@ -168,11 +189,11 @@ class Retrieve(Process):
                 try:
                     link.get(arg, **link_context)
                 except HIFInputError as exception:
-                    self.handle_exception(exception)
+                    self.handle_exception(exception, link)
 
-                link.retain()
                 # Save retrieved
                 retrieved_link = deepcopy(link)
+                retrieved_link.retain()
                 self.links.append(retrieved_link)
                 # Prepare next
                 link.pk = None

@@ -1,3 +1,5 @@
+import json
+
 from django.db import models
 
 import jsonfield
@@ -51,6 +53,16 @@ class RegisterContainer(Container):  # TODO: tests!
 
     def waiting(self):
         return self.count({"status__in": [Status.PROCESSING, Status.WAITING, Status.READY]})
+
+    def cancelled(self):
+        return self.count({"status": Status.CANCELLED})
+
+    def reports(self):
+        reports = []
+        for cls in self._processes:
+            rprts = self.query(cls, {"status": Status.ERROR}).values_list('meta', flat=True)
+            reports += [json.loads(rprt) for rprt in rprts]
+        return reports
 
     def execute(self):
         if self._processes:

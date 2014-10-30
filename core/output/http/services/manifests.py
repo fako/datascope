@@ -2,10 +2,13 @@ from django.utils.translation import ugettext as _
 
 from core.models.output import VisualTranslationsStorage, PeopleSuggestionsStorage
 from core.output.http.views import ProcessAPIView, ProcessPlainView
+from core.output.http.handlers.warnings import handler_results_or_404
 from core.exceptions import HIFBadRequest, HIFNoInput
 
 
 class Service(object):
+
+    HIF_warning_handlers = []
 
     @property
     def name(self, word_separator='-'):
@@ -25,6 +28,11 @@ class Service(object):
     def context(self, request):
         return {}
 
+    def handle_warnings(self, warnings, results):
+        for handler in self.HIF_warning_handlers:
+            for warning in warnings:
+                handler(warning,results)
+
 
 class VisualTranslationsService(VisualTranslationsStorage, Service):
 
@@ -32,6 +40,10 @@ class VisualTranslationsService(VisualTranslationsStorage, Service):
 
     HIF_main = ProcessAPIView
     HIF_plain = ProcessPlainView
+
+    HIF_warning_handlers = [
+        handler_results_or_404("WikiTranslate|404|message")
+    ]
 
     class Meta:
         proxy = True

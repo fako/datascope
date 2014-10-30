@@ -102,7 +102,7 @@ class WikiBaseQuery(JsonQueryLink):
         # We force a 404 on missing pages
         if "-1" in body["query"]["pages"] and "missing" in body["query"]["pages"]["-1"]:
             self.status = 404
-            message = "{} > {} \n\n {}".format(self.type, self.status, self.body)
+            message = "We did not find the page you were looking for. Perhaps you should create it?"
             raise HIFHttpError40X(message)
 
         # Look for ambiguity

@@ -1,10 +1,8 @@
-from django.db.models.loading import get_model
-
 from celery import task
 
-from core.exceptions import HIFImproperUsage, HIFNoContent
 from core.helpers.storage import get_hif_model, copy_hif_model
 from core.helpers.data import reach
+from core.helpers.enums import ProcessStatus as statusses
 
 
 @task(name="core.execute_process")
@@ -37,7 +35,11 @@ def extend_process(ser_extendee, ser_extender, multi=False, register=True, finis
     Extendee = get_hif_model(ser_extendee)
     extendee = Extendee().load(serialization=ser_extendee)
     extendee.setup()
-    # TODO: should set status to 2, correct, or maybe a special extending status?
+
+    if extendee.status not in extender.HIF_extension_statusses:
+        extender.status = statusses.CANCELLED
+        extender.retain()
+        return extendee.retain()
 
     extenders = []
     if not multi:
