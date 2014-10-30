@@ -120,7 +120,7 @@ class HttpLink(TextStorage):
         if not valid:
             raise HIFImproperUsage(out)
         else:
-            self.input = out  # out is likely the *args that are put in, unless sanitize_input gets overridden!
+            self.input = out  # out is likely the *args that are put in, unless sanitize_input gets overridden.
 
         self.setup(*args, **kwargs)
 

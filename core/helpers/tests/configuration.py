@@ -27,6 +27,11 @@ class TestConfiguration(TestCase):
         instance = Config(namespace="TEST",private=["_namespace", "_test"])
         self.assertEqual(instance._private, Config._private_defaults + ["_test"])
 
+    def test_config_call(self):
+        # Should test that calling config adds or updates, but doesn't delete
+        # TODO: write this test
+        pass
+
     def test_config_access(self):
         instance = Config(namespace="TEST",private=[])
         instance({"test": "test"})

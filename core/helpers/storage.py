@@ -181,3 +181,9 @@ class Container(object):
 
     def empty(self):
         self._container = {}
+
+
+def delete_models(*args):
+    for arg in args:
+        model = get_hif_model(arg)
+        model.objects.delete()

@@ -6,7 +6,6 @@ class ProcessStatus(object):
     PROCESSING = 2
     WAITING = 3
     READY = 4
-    STUB = 5  # TODO: check that stubs are equal to DONE
 
     ERROR = -1
     WARNING = -2

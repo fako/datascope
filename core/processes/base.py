@@ -205,8 +205,6 @@ class Retrieve(Process):
         proxy = True
 
 
-
-
 class GroupProcess(Process, DataMixin):
 
     HIF_group_process = ''
@@ -230,7 +228,6 @@ class GroupProcess(Process, DataMixin):
         for ar in self.task.results:
             ser_prc = ar.result
             self.rgs.add(ser_prc)
-
 
     def process(self):
         # Construct keyword arguments collection
