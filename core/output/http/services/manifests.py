@@ -7,8 +7,6 @@ from core.exceptions import HIFBadRequest, HIFNoInput
 
 class Service(object):
 
-    HIF_grid_layout = []
-
     @property
     def name(self, word_separator='-'):
         class_name = self.__class__.__name__
@@ -42,6 +40,7 @@ class VisualTranslationsService(VisualTranslationsStorage, Service):
 
         # Input validation
         query = request.GET.get('q', '').lower()
+        media = request.GET.get('media', 'videos')
         if not query:
             raise HIFNoInput(_('No input provided'))
         if query and len(query.split(' ')) > 1:
@@ -50,7 +49,8 @@ class VisualTranslationsService(VisualTranslationsStorage, Service):
         # Returning context
         return {
             "source_language": 'en',
-            "query": query
+            "query": query,
+            "media": media
         }
 
 

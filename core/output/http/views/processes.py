@@ -1,4 +1,3 @@
-from django.db.models.loading import get_model
 from django.views.generic import View
 from django.shortcuts import render_to_response, RequestContext
 
@@ -8,6 +7,7 @@ from rest_framework.status import HTTP_200_OK, HTTP_202_ACCEPTED, HTTP_204_NO_CO
 
 from core.exceptions import HIFProcessingAsync, HIFNoContent, HIFBadRequest, HIFNoInput
 from core.helpers.enums import ServiceTemplate
+from core.helpers.storage import get_hif_model
 
 
 class ProcessAPIView(APIView):
@@ -18,7 +18,7 @@ class ProcessAPIView(APIView):
         service = Service()
 
         # Prepare the process
-        Process = get_model(app_label='core', model_name=service.HIF_process)  # TODO: update with get_hif_model
+        Process = get_hif_model(service.HIF_process)
         prc = Process()
 
         # Execute and read results
