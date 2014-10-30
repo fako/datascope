@@ -18,8 +18,10 @@ def execute_process(inp, ser_prc):
 
     if type(inp) in [list, tuple]:
         process.execute(*inp)
-    else:
+    elif inp:
         process.execute(inp)
+    else:
+        process.execute()
 
     return process.retain()
 

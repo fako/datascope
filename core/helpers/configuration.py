@@ -36,6 +36,8 @@ class Config(object):
         """
         if hasattr(self._domain, self._namespace + '_' + item):
             return getattr(self._domain, self._namespace + '_' + item)
+        elif hasattr(self._domain, 'HIF_' + item):  # TODO: test getting default from HIF
+            return getattr(self._domain, 'HIF_' + item)
         else:
             raise AttributeError("Tried to retrieve '{}' in config and namespace '{}', without results.".
                 format(item, self._namespace))

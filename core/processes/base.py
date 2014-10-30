@@ -209,7 +209,8 @@ class Retrieve(Process):
 
 class GroupProcess(Process, DataMixin):
 
-    HIF_private = ["_process"]
+    HIF_group_process = ''
+    HIF_group_vary = ''
 
     @property
     def task(self):
@@ -223,14 +224,6 @@ class GroupProcess(Process, DataMixin):
         self.task_id = task.id
         self.status = Status.PROCESSING
 
-
-    @property
-    def data_source(self):
-        # TODO: the way we retrieve the original arguments here seems naive.
-        results = [(prc.arguments[0], prc.results,) for prc in self.rgs[self.config._process]]
-        source = [{"member": arg, "data": rsl} for arg, rsl in results if rsl]
-        return source
-
     def extract_task(self):
         # Every result in a group should return a Process
         # This single process could be a grouped process in turn
@@ -241,18 +234,29 @@ class GroupProcess(Process, DataMixin):
 
     def process(self):
         # Construct keyword arguments collection
-        process_model = get_model(app_label="core", model_name=self.config._process)
+        process_model = get_hif_model(self.HIF_group_process)
 
         processes = []
         for arg in self.args:
             process = process_model()
-            process.setup(arg, **self.config.dict(protected=True))
-            processes.append((arg, process.retain(),))
+            config = self.config.dict(protected=True)
+            config[self.HIF_group_vary] = arg
+            process.setup(**config)
+            processes.append(process.retain())
 
         # Start a task that calls class_process in multiple different ways
-        grp = group(execute_process.s(inp, ser_prc) for inp, ser_prc in processes).delay()
+        grp = group(execute_process.s(False, ser_prc) for ser_prc in processes).delay()
         self.task = grp
 
+    def post_process(self):
+        rsls = self.rgs.attr('rsl', self.HIF_group_process)
+        results = []
+        for rsl in rsls:
+            if isinstance(results, (list, tuple,)):
+                results += rsl
+            else:
+                results.append(rsl)
+        self.rsl = results
 
     class Meta:
         proxy = True

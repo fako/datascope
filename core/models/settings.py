@@ -11,6 +11,7 @@ class Domain(object):
         'http://localhost:9000',
         'http://127.0.0.1:9000',
     ]
+    HIF_source_language = 'en'
 
     TEST_skip_external_resource_integration = settings.HIF_SKIP_EXTERNAL_RESOURCE_INTEGRATION_TESTS
     TEST_query = "cow"
@@ -18,7 +19,6 @@ class Domain(object):
     google_key = settings.GOOGLE_API_KEY
     google_cx = '004613812033868156538:5pcwbuudj1m'
 
-    wiki_source_language = 'en'
     wiki_translate_to = 'pt'
     wiki_excluded_properties = [  # should be wiki namespace!
         'P31',  # instance of

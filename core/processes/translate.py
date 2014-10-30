@@ -65,22 +65,16 @@ class VisualTranslation(Process):
 
 class VisualTranslations(GroupProcess):
 
-    HIF_translations = {
-        "member": "language",
-        "data": "translations"
-    }
+    HIF_group_process = 'VisualTranslation'
+    HIF_group_vary = 'translate_to'
 
-    def setup(self, *args, **kwargs):
-        kwargs["_process"] = 'ImageTranslate'  # move to core?
-        super(VisualTranslations, self).setup(*args, **kwargs)
-        self.args = self.config._supported_languages
-        source_language = self.config.source_language
-        if source_language in self.args:
-            self.args.remove(source_language)
-        self.save()
-
-    def post_process(self, *args, **kwargs):
-        self.rsl = self.data  # translates keys
+    def process(self):
+        if not self.args:
+            self.args = self.config._supported_languages
+            source_language = self.config.source_language
+            if source_language in self.args:
+                self.args.remove(source_language)
+        super(VisualTranslations, self).process()
 
     class Meta:
         app_label = "core"
