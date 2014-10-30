@@ -2,14 +2,12 @@ import traceback
 import requests
 from copy import deepcopy
 
-from django.db.models.loading import get_model
-
 from celery import group
 from celery.result import AsyncResult, GroupResult
 
 from core.models.storage import ProcessStorage
-from core.exceptions import HIFProcessingError, HIFProcessingAsync, \
-    HIFEndlessLoop, HIFEndOfInput, HIFInputError, HIFImproperUsage, HIFNoContent
+from core.exceptions import (HIFProcessingError, HIFProcessingAsync, HIFInputError, HIFNoContent,
+                             HIFProcessingCancelled)
 from core.tasks import execute_process
 from core.helpers.enums import ProcessStatus as Status
 from core.helpers.mixins import DataMixin
@@ -141,41 +139,44 @@ class Retrieve(Process):
         raise exception
 
     def process(self):
+        """
+
+        :return:
+        """
 
         # Make sure there is at least one argument to loop over
         if not self.args:
-            args = self.args + ['']
+            args = ['']
         else:
             args = self.args
 
-        link_model = get_model(app_label="core", model_name=self.config._link)
-        if link_model is None:
-            raise HIFImproperUsage("The specified link model does not exist or is not registered as Django model with core label.")
-
+        # Prepare some vars
         session = requests.Session()
+        link_model = get_hif_model(self.config._link)
+        link_context = self.config.dict()
 
-        for arg in args:  # TODO: this still allows for Falsy values, check also QueryLink
+        self.links = []
 
-            # Fetch link with continue links
-            self.links = []
+        for arg in args:
+
             link = link_model()
             link.session = session
-            try:
-                for repetition in range(100):
-                    # TODO: what is necessary
-                    self.config(link.next_params)
-                    link.get(arg, **self.config.dict())  # TODO: problems with calling setup too often here
-                    link.retain()  # TODO: will need some testing to assure quality
-                    old = deepcopy(link)
-                    self.links.append(old)
-                    link.pk = None
-                    link.prepare_next()
-                else:
-                    raise HIFEndlessLoop("HIF stopped retrieving links after fetching 100 links. Does extract_continue_url ever return an empty string?")
-            except HIFInputError as exception:
-                self.handle_exception(exception)
-            except HIFEndOfInput:
-                pass
+            link_context.update(link.next_params)  # separates calls to some link type but different continuation
+
+            next_link = True
+            while next_link:
+                try:
+                    link.get(arg, **link_context)
+                except HIFInputError as exception:
+                    self.handle_exception(exception)
+
+                link.retain()
+                # Save retrieved
+                retrieved_link = deepcopy(link)
+                self.links.append(retrieved_link)
+                # Prepare next
+                link.pk = None
+                next_link = link.prepare_next()
 
         # Everything retrieved. We store it in results
         # link.rsl will yield either response body or the data

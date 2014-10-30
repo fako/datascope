@@ -241,8 +241,9 @@ class HttpLink(TextStorage):
         By default will prevent Retrieve processes from continuing
         """
         if self.next_value is None:
-            raise HIFEndOfInput
-        elif self.HIF_next_parameter not in self.url:
+            return False
+
+        if self.HIF_next_parameter not in self.url:
             connect_char = '&' if self.HIF_parameters else '?'
             self.url += u"{}{}={}".format(connect_char, self.HIF_next_parameter, self.next_value)
         else:
@@ -252,6 +253,7 @@ class HttpLink(TextStorage):
 
         # We reset self to allow database storage.
         self.reset()
+        return True
 
     @property
     def rsl(self):

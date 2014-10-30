@@ -46,7 +46,7 @@ class WikiLocationSearch(JsonQueryLink):
         data = json.loads(self.body)  # important to load "unclean" data for correct offset
         length = len(data["articles"])
         self.next_value = self.next_value + length if length else None
-        super(WikiLocationSearch, self).prepare_next()
+        return super(WikiLocationSearch, self).prepare_next()
 
     class Meta:
         app_label = "core"
