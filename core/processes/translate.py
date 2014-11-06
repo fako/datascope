@@ -30,7 +30,12 @@ class VisualTranslation(Process):
         :param medium:
         :return:
         """
-        model = self.HIF_image_model if medium == 'images' else self.HIF_video_model
+        if medium == 'images':
+            model = self.HIF_image_model
+        else:
+            model = self.HIF_video_model
+            medium = 'videos'
+
         image_config = {
             "_link": model,
             "_context": "{}+{}+{}".format(self.config.query, self.config.translate_to, medium),
