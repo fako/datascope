@@ -10,6 +10,8 @@ class Domain(object):
     HIF_allowed_origins = [
         'http://localhost:9000',
         'http://127.0.0.1:9000',
+        'http://data-scope.com',
+        'http://data-scope.org',
         'http://globe-scope.com',
         'http://globe-scope.org',
     ]
