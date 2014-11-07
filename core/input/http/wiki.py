@@ -113,7 +113,7 @@ class WikiBaseQuery(JsonQueryLink):
                 if "disambiguation" in page['pageprops']:
                     raise HIFHttpWarning300(page_id)
             except KeyError:
-                raise HIFUnexpectedInput('Wrongly formatted Wikipedia response, missing "pageprops"')
+                pass
 
     def extract(self, source):
         """
