@@ -16,8 +16,6 @@ def handler_results_or_404(condition):
 
         cls, status, key = condition.split('|')
         status = int(status)
-        print key
-        print warning
         if warning['type'] == cls and warning['status'] == status:
             exception = HIFProcessingWarning()
             message = warning.get(key, 'No details provided (key={}).'.format(key))

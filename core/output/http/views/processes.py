@@ -1,7 +1,10 @@
+import json
+
 from django.views.generic import View
 from django.shortcuts import render_to_response, RequestContext
+from django.core.mail import mail_admins
 
-from rest_framework.views import APIView
+from rest_framework.views import APIView, exception_handler
 from rest_framework.response import Response
 from rest_framework.status import (HTTP_200_OK, HTTP_202_ACCEPTED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST,
                                    HTTP_500_INTERNAL_SERVER_ERROR)
@@ -41,7 +44,9 @@ class ProcessAPIView(APIView):
         except HIFProcessingAsync:
             return Response(data=[], status=HTTP_202_ACCEPTED)
         except HIFProcessingError as exception:
-            return Response(data={'detail': str(exception)}, status=HTTP_500_INTERNAL_SERVER_ERROR)
+            response = exception_handler(exception)
+            mail_admins("Error: {}".format(str(exception)), json.dumps(response.data))
+            return response #Response(data={'detail': str(exception)}, status=HTTP_500_INTERNAL_SERVER_ERROR)
         except HIFProcessingWarning as exception:
             return Response(data=exception.data, status=exception.status)
         except HIFNoContent:
