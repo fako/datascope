@@ -52,9 +52,6 @@ class HIFProcessingWarning(Exception):
 class HIFNoInput(Exception):
     pass
 
-class HIFNoContent(Exception):
-    pass
-
 class HIFBadRequest(APIException):
     def __init__(self, detail):
         self.status_code = HTTP_400_BAD_REQUEST

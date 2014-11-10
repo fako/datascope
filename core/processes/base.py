@@ -6,7 +6,7 @@ from celery import group
 from celery.result import AsyncResult, GroupResult
 
 from core.models.storage import ProcessStorage
-from core.exceptions import (HIFProcessingError, HIFProcessingAsync, HIFInputError, HIFNoContent)
+from core.exceptions import (HIFProcessingError, HIFProcessingAsync, HIFInputError)
 from core.tasks import execute_process
 from core.helpers.enums import ProcessStatus as Status
 from core.helpers.mixins import DataMixin
@@ -44,16 +44,13 @@ class Process(ProcessStorage):
     @property
     def rsl(self):
         if self.status == Status.DONE:
-            if self.results:
-                return self.results
-            else:
-                raise HIFNoContent()
+            return self.results
         elif self.status == Status.ERROR:
             raise HIFProcessingError(self.exception)
         elif self.status == Status.WARNING:
             return self.results  # outside determines if results are valid.
         elif self.status in [Status.PROCESSING, Status.WAITING, Status.READY]:
-            raise HIFProcessingAsync()
+            raise HIFProcessingAsync("Tried to access rsl while processing was not done.")
     @rsl.setter
     def rsl(self, results):
         self.results = results

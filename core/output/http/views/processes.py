@@ -1,15 +1,11 @@
-import json
-
 from django.views.generic import View
 from django.shortcuts import render_to_response, RequestContext
-from django.core.mail import mail_admins
 
-from rest_framework.views import APIView, exception_handler
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.status import (HTTP_200_OK, HTTP_202_ACCEPTED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST,
-                                   HTTP_500_INTERNAL_SERVER_ERROR)
+from rest_framework.status import (HTTP_200_OK, HTTP_202_ACCEPTED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST)
 
-from core.exceptions import (HIFProcessingAsync, HIFProcessingError, HIFProcessingWarning, HIFNoContent, HIFBadRequest,
+from core.exceptions import (HIFProcessingAsync, HIFProcessingError, HIFProcessingWarning, HIFBadRequest,
                              HIFNoInput)
 from core.helpers.enums import ServiceTemplate, ProcessStatus as status
 from core.helpers.storage import get_hif_model
@@ -37,6 +33,9 @@ class ProcessAPIView(APIView):
                 exception = HIFProcessingError('Unhandled error')
                 raise exception
 
+            if not results:
+                return Response(data=results, status=HTTP_204_NO_CONTENT)
+
             return Response(data=results, status=HTTP_200_OK)
 
         except HIFNoInput:
@@ -45,8 +44,6 @@ class ProcessAPIView(APIView):
             return Response(data=[], status=HTTP_202_ACCEPTED)
         except HIFProcessingWarning as exception:
             return Response(data=exception.data, status=exception.status)
-        except HIFNoContent:
-            return Response(data=[], status=HTTP_204_NO_CONTENT)
         except HIFBadRequest as exception:
             return Response(data={"detail": exception.detail}, status=HTTP_400_BAD_REQUEST)
 
