@@ -9,7 +9,10 @@
         <link href="{% static "css/style.css" %}" rel="stylesheet" />
     {% endblock %}
 
-    {% block head-js %}{% endblock %}
+    {% block head-js %}
+        <script src="{% static "js/jquery-1.11.1.min.js" %}"></script>
+        <script src="{% static "js/uri.js" %}"></script>
+    {% endblock %}
 
 </head>
 
