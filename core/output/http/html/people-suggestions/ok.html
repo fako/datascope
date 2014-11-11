@@ -13,6 +13,7 @@
             <div class="row-fluid">
                 <div class="span12">
                     <h3>{% trans "People similar to:" %} {{ query }}</h3>
+                    <h4 id="loading-names-message">(still loading names)</h4>
                     <p>Click the links to visit the Wikipedia pages of the people similar to {{ query }}</p>
                     <ul id="results-list">
                         {% for item, freq in data %} {# data is the generic name for incoming information coming from the view #}
@@ -36,9 +37,13 @@
         $(function(){
             wikidata = new WikiData();
             var params = {
+                max_depth: 0,
                 loaded: function(q) {
                     var id = '#' + q;
                     $(id+' a').text(wikidata.getItem(q).getLabel('en'))
+                },
+                finished: function() {
+                    $('#loading-names-message').hide();
                 }
             };
             wikidata.loadItems([
