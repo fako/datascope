@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n staticfiles %}
+
+{% block body %}
+
+    <div class="content-container">
+
+            <div class="row-fluid">
+                <div class="span12">
+                    <h3>{% trans "Disambiguation for:" %} {{ query }}</h3>
+                    <p>Click the link of which {{ query }} you exactly mean.</p>
+                    <ul id="results-list">
+                        {% for page in data %} {# data is the generic name for incoming information coming from the view #}
+                            <li>
+                                <a href="{% url self_reverse %}?q={{ page.title }}">{{ page.title }}</a></li>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+
+    </div>
+
+{% endblock %}
+
+{% block footer %}
+    <p>{% trans "Search for a person known on Wikipedia to find people similar to this person." %}</p>
+    {% include "components/search.html" %}
+{% endblock %}

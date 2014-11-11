@@ -112,7 +112,8 @@ class WikiBaseQuery(JsonQueryLink):
         for page_id, page in body["query"]["pages"].iteritems():
             try:
                 if "disambiguation" in page['pageprops']:
-                    raise HIFHttpWarning300(page_id)
+                    self.status = 300
+                    raise HIFHttpWarning300(page["title"])
             except KeyError:
                 pass
 
@@ -294,6 +295,39 @@ class WikiBacklinks(JsonQueryLink):
         if result_instance["title"].startswith('List'):
             return False
         elif result_instance["ns"] != 0:
+            return False
+
+        return True
+
+    class Meta:
+        app_label = "core"
+        proxy = True
+
+
+# TODO: create a HttpLink generator for Wiki generators
+class WikiLinks(JsonQueryLink):
+
+    HIF_link = "http://en.wikipedia.org/w/api.php"
+    HIF_parameters = {
+        "action": "query",
+        "generator": "links",
+        "prop": "info",
+        "format": "json",
+        "gpllimit": 500,
+        "gplnamespace": 0
+    }
+
+    HIF_query_parameter = "titles"
+
+    HIF_objective = {
+        "pageid": 0,
+        "ns": None,
+        "title": ""
+    }
+
+    def cleaner(self,result_instance):
+
+        if result_instance["title"].startswith('List'):
             return False
 
         return True

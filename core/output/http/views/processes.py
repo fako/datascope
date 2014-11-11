@@ -68,6 +68,9 @@ class ProcessPlainView(View):
             return render_to_response(service.html_template(ServiceTemplate.ACCEPTED), template_context, RequestContext(request))
         elif api_response.status_code in [204, 404]:
             return render_to_response(service.html_template(ServiceTemplate.NO_CONTENT), template_context, RequestContext(request))
+        elif api_response.status_code == 300:
+            template_context.update({'data': api_response.data})
+            return render_to_response(service.html_template(ServiceTemplate.MULTIPLE_CHOICES), template_context, RequestContext(request))
         elif api_response.status_code == 400:
             template_context.update(api_response.data)
             return render_to_response(service.html_template(ServiceTemplate.BAD_REQUEST), template_context, RequestContext(request))

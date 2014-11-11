@@ -22,9 +22,7 @@ class HIFHttpError40X(HIFInputError):
     pass
 
 class HIFHttpWarning300(HIFInputError):
-    def __init__(self, detail):
-        self.status_code = HTTP_300_MULTIPLE_CHOICES
-        self.detail = detail
+    pass
 
 class HIFHttpLinkPending(HIFInputError):
     pass

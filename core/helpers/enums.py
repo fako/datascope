@@ -19,3 +19,4 @@ class ServiceTemplate(object):
     OK = "ok.html"
     NO_CONTENT = "no-content.html"
     BAD_REQUEST = "bad-request.html"
+    MULTIPLE_CHOICES = "multiple-choices.html"

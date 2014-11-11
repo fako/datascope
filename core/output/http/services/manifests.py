@@ -4,7 +4,7 @@ from django.utils.translation import ugettext as _
 
 from core.models.output import VisualTranslationsStorage, PeopleSuggestionsStorage
 from core.output.http.views import ProcessAPIView, ProcessPlainView
-from core.output.http.handlers.warnings import handler_results_or_404
+from core.output.http.handlers.warnings import handler_results_or_404, handler_wikipedia_disambiguation_300
 from core.exceptions import HIFBadRequest, HIFNoInput
 
 
@@ -85,7 +85,8 @@ class PeopleSuggestionsService(PeopleSuggestionsStorage, Service):
     HIF_plain = ProcessPlainView
 
     HIF_warning_handlers = [
-        handler_results_or_404("WikiSearch|404|message")
+        handler_wikipedia_disambiguation_300("WikiSearch|300|message"),
+        handler_results_or_404("WikiSearch|404|message"),
     ]
 
     class Meta:
