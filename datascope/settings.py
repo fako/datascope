@@ -132,7 +132,7 @@ ROOT_URLCONF = 'datascope.urls'
 WSGI_APPLICATION = 'datascope.wsgi.application'
 
 TEMPLATE_DIRS = (
-    PATH_TO_PROJECT + "src/HIF/output/http/html",
+    PATH_TO_PROJECT + "core/output/http/html",
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.

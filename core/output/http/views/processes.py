@@ -66,15 +66,15 @@ class ProcessPlainView(View):
 
         if api_response.status_code == 202:
             return render_to_response(service.html_template(ServiceTemplate.ACCEPTED), template_context, RequestContext(request))
-        elif api_response.status_code == 204:
+        elif api_response.status_code in [204, 404]:
             return render_to_response(service.html_template(ServiceTemplate.NO_CONTENT), template_context, RequestContext(request))
         elif api_response.status_code == 400:
             template_context.update(api_response.data)
             return render_to_response(service.html_template(ServiceTemplate.BAD_REQUEST), template_context, RequestContext(request))
+
+        if api_response.data:
+            template_context.update({'data': service.plain_view_preprocess(api_response.data)})
+            return render_to_response(service.html_template(ServiceTemplate.OK), template_context,
+                              RequestContext(request))
         else:
-            if api_response.data:
-                template_context.update({'data': api_response.data })
-                return render_to_response(service.html_template(ServiceTemplate.OK), template_context,
-                                  RequestContext(request))
-            else:
-                return render_to_response(service.html_template(ServiceTemplate.INDEX), template_context, RequestContext(request))
+            return render_to_response(service.html_template(ServiceTemplate.INDEX), template_context, RequestContext(request))

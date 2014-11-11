@@ -1,3 +1,5 @@
+from itertools import groupby
+
 from django.utils.translation import ugettext as _
 
 from core.models.output import VisualTranslationsStorage, PeopleSuggestionsStorage
@@ -27,6 +29,9 @@ class Service(object):
 
     def context(self, request):
         return {}
+
+    def plain_view_preprocess(self, data):
+        return data
 
     def handle_warnings(self, warnings, results):
         for handler in self.HIF_warning_handlers:
@@ -64,6 +69,12 @@ class VisualTranslationsService(VisualTranslationsStorage, Service):
             "query": query,
             "media": media
         }
+
+    def plain_view_preprocess(self, data):
+        langkey = lambda obj: obj["language"]
+        data.sort(key=langkey)
+        return [(lang, list(words),) for lang, words in groupby(data, langkey)]
+
 
 
 class PeopleSuggestionsService(PeopleSuggestionsStorage, Service):
