@@ -88,7 +88,7 @@ class Extend(models.Model):
         """
         Returns the keypath that is supposed to be replaced and the extended object
         """
-        extension = self.meta.get('extending')
+        extension = self.meta.get('extending') if self.meta is not None else None
         if extension is None:
             return None
         extension[self.config._extend["extension"]] = self.rsl

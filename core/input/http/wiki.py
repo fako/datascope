@@ -210,7 +210,9 @@ class WikiDataClaims(HttpLink, HttpJsonMixin):
 
     @property
     def rsl(self):
-        return self.data
+        claims = self.data
+        unique_claims = {"{}:{}".format(claim['property'], claim['item']): claim for claim in claims}.values()
+        return unique_claims
 
     class Meta:
         app_label = "core"

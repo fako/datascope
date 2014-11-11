@@ -13,11 +13,14 @@
             <div class="row-fluid">
                 <div class="span12">
                     <h3>{% trans "People similar to:" %} {{ query }}</h3>
-                    <h4 id="loading-names-message">(still loading names)</h4>
                     <p>Click the links to visit the Wikipedia pages of the people similar to {{ query }}</p>
                     <ul id="results-list">
-                        {% for item, freq in data %} {# data is the generic name for incoming information coming from the view #}
-                            <li id="Q{{ item }}"><a target="_blank" href="http://www.wikidata.org/wiki/Special:GoToLinkedPage?site=en&itemid=Q{{ item }}">Q{{ item }}</a> ({{ freq }} {% if freq != 1 %}things{% else %}thing{% endif %} in common)</li>
+                        {% for claimer in data %} {# data is the generic name for incoming information coming from the view #}
+                            <li class="people-suggestions-result">
+                                <span class="wait-message-Q{{ claimer.item }}">... loading please wait ... </span></br>
+                                <a target="_blank" href="http://www.wikidata.org/wiki/Special:GoToLinkedPage?site=en&itemid=Q{{ claimer.item }}"><span class="Q{{ claimer.item }}">unknown name</span></a></br>
+                                ({% for item in claimer.items %}<span class="Q{{ item }}">Q{{ item }}</span>{% if not forloop.last %}, {% endif %}{% endfor %} in common)
+                            </li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -36,21 +39,25 @@
     <script>
         $(function(){
             wikidata = new WikiData();
+
+            // Load names
             var params = {
                 max_depth: 0,
                 loaded: function(q) {
-                    var id = '#' + q;
-                    $(id+' a').text(wikidata.getItem(q).getLabel('en'))
-                },
-                finished: function() {
-                    $('#loading-names-message').hide();
+                    $('.' + q).text(wikidata.getItem(q).getLabel('en'));
+                    $('.wait-message-'+ q).hide();
                 }
             };
             wikidata.loadItems([
-                {% for item, freq in data %}
-                    {{ item }},
+                {% for claimer in data %}
+                    {{ claimer.item }},
+                    {% for item in claimer.items %}
+                        {{ item }},
+                    {% endfor %}
                 {% endfor %}
             ], params);
+
+            // Load common items
         });
     </script>
 {% endblock %}

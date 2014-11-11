@@ -59,8 +59,28 @@ class PeopleSuggestions(Process):
         self.task = task
 
     def post_process(self):
+
         person_data = Retrieve().load(serialization=self.task.result).rsl
-        self.rsl = count_2d_list(person_data['claims'], d2_list='claimers').most_common(11)[1:]  # takes 10, but strips query person
+        people_raw = count_2d_list(person_data['claims'], d2_list='claimers').most_common(11)[1:]  # takes 10, but strips query person
+
+        people = []
+        for person_raw in people_raw:
+
+            person = {
+                "item": person_raw[0],
+                "matches": person_raw[1],
+                "properties": [],
+                "items": []
+            }
+
+            for claim in person_data['claims']:
+                if person['item'] in claim['claimers']:
+                    person['properties'].append(claim['property'])
+                    person['items'].append(claim['item'])
+                    
+            people.append(person)
+
+        self.rsl = people
 
     class Meta:
         app_label = "core"

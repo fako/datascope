@@ -12,3 +12,6 @@ form {
 #results-list {
     list-style: none;
 }
+.people-suggestions-result {
+    margin-bottom: 15px;
+}
