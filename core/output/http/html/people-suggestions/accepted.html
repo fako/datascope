@@ -19,7 +19,7 @@
             });
 
         });
-        
+
         $(function handleAjaxErrors() {
 
             $(document).ajaxError(function( event, jqxhr, settings, thrownError ) {
@@ -31,5 +31,6 @@
 {% endblock %}
 
 {% block body %}
-    <p id="wait-text">{% trans "Your query is being processed. Please wait." %}</p>
+    <p>{% trans "Your query is being processed. Please wait." %}</p>
+    <p id="wait-text">...</p>
 {% endblock %}
