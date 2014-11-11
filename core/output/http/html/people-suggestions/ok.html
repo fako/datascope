@@ -1,5 +1,10 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load i18n staticfiles %}
+
+{% block head-js %}
+    {{ block.super }}
+    <script src="{% static "js/wikidata.js" %}"></script>
+{% endblock %}
 
 {% block body %}
 
@@ -9,9 +14,9 @@
                 <div class="span12">
                     <h3>{% trans "People similar to:" %} {{ query }}</h3>
                     <p>Click the links to visit the Wikipedia pages of the people similar to {{ query }}</p>
-                    <ul>
+                    <ul id="results-list">
                         {% for item, freq in data %} {# data is the generic name for incoming information coming from the view #}
-                            <li><a target="_blank" href="http://www.wikidata.org/wiki/Special:GoToLinkedPage?site=en&itemid=Q{{ item }}">Q{{ item }}</a> ({{ freq }} {% if freq != 1 %}things{% else %}thing{% endif %} in common)</li>
+                            <li id="Q{{ item }}"><a target="_blank" href="http://www.wikidata.org/wiki/Special:GoToLinkedPage?site=en&itemid=Q{{ item }}">Q{{ item }}</a> ({{ freq }} {% if freq != 1 %}things{% else %}thing{% endif %} in common)</li>
                         {% endfor %}
                     </ul>
                 </div>
@@ -24,4 +29,23 @@
 {% block footer %}
     <p>{% trans "Search for a person known on Wikipedia to find people similar to this person." %}</p>
     {% include "components/search.html" %}
+{% endblock %}
+
+{% block body-js %}
+    <script>
+        $(function(){
+            wikidata = new WikiData();
+            var params = {
+                loaded: function(q) {
+                    var id = '#' + q;
+                    $(id+' a').text(wikidata.getItem(q).getLabel('en'))
+                }
+            };
+            wikidata.loadItems([
+                {% for item, freq in data %}
+                    {{ item }},
+                {% endfor %}
+            ], params);
+        });
+    </script>
 {% endblock %}

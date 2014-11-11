@@ -9,3 +9,6 @@ body {
 form {
     margin: 0;
 }
+#results-list {
+    list-style: none;
+}
