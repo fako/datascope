@@ -77,7 +77,7 @@ class PeopleSuggestions(Process):
                 if person['item'] in claim['claimers']:
                     person['properties'].append(claim['property'])
                     person['items'].append(claim['item'])
-                    
+
             people.append(person)
 
         self.rsl = people

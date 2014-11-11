@@ -84,6 +84,10 @@ class PeopleSuggestionsService(PeopleSuggestionsStorage, Service):
     HIF_main = ProcessAPIView
     HIF_plain = ProcessPlainView
 
+    HIF_warning_handlers = [
+        handler_results_or_404("WikiSearch|404|message")
+    ]
+
     class Meta:
         proxy = True
 

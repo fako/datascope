@@ -11,6 +11,7 @@ form {
 }
 #results-list {
     list-style: none;
+    margin-bottom: 40px;
 }
 .people-suggestions-result {
     margin-bottom: 15px;

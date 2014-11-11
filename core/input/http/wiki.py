@@ -70,6 +70,7 @@ class WikiBaseQuery(JsonQueryLink):
         "action": "query",
         "prop": "info|pageprops",  # we fetch a lot here and filter with objectives for simplicity sake
         "format": "json",
+        "redirects": "1"
     }
 
     HIF_objective = {
