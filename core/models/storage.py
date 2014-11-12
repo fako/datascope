@@ -134,7 +134,7 @@ class Storage(models.Model):
         """
         identify = False
         if self.arguments is None:
-            self.args = [unicode(arg) for arg in args]
+            self.args = [unicode(arg) if isinstance(arg, str) else arg for arg in args]
             identify = True
         else:
             self.args = self.arguments
