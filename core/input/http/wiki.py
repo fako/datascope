@@ -2,9 +2,9 @@
 
 import json
 
-from core.input.http.base import JsonQueryLink, HttpJsonMixin, HttpLink, HttpQueryMixin
+from core.input.http.base import JsonQueryLink, HttpJsonMixin, HttpLink
 from core.input.helpers import sanitize_single_trueish_input
-from core.helpers.mixins import DataMixin
+from core.helpers.override import override_dict
 from core.helpers.data import extractor
 from core.exceptions import HIFUnexpectedInput, HIFHttpError40X, HIFHttpWarning300
 
@@ -155,7 +155,7 @@ class WikiTranslate(WikiBaseQuery):
     HIF_link = 'http://{}.wiktionary.org/w/api.php'  # updated at runtime
 
     # TODO: Add a helper to do this and improve syntax looks?
-    HIF_parameters = dict(WikiBaseQuery.HIF_parameters.copy(), **{
+    HIF_parameters = override_dict(WikiBaseQuery.HIF_parameters, {
         'prop': 'info|pageprops|iwlinks',
         'iwprop': 'url',
         'iwprefix': None,  # set at runtime
@@ -305,31 +305,17 @@ class WikiBacklinks(JsonQueryLink):
 
 
 # TODO: create a HttpLink generator for Wiki generators
-class WikiLinks(JsonQueryLink):
+class WikiLinks(WikiBaseQuery):
 
-    HIF_link = "http://en.wikipedia.org/w/api.php"
-    HIF_parameters = {
-        "action": "query",
+    HIF_parameters = override_dict(WikiBaseQuery.HIF_parameters, {
         "generator": "links",
-        "prop": "info",
-        "format": "json",
         "gpllimit": 500,
         "gplnamespace": 0
-    }
-
-    HIF_query_parameter = "titles"
-
-    HIF_objective = {
-        "pageid": 0,
-        "ns": None,
-        "title": ""
-    }
+    })
 
     def cleaner(self,result_instance):
-
         if result_instance["title"].startswith('List'):
             return False
-
         return True
 
     class Meta:
