@@ -99,23 +99,31 @@ class WikiBaseQuery(JsonQueryLink):
 
         body = json.loads(self.body)
         # Check general response
-        if "query" not in body or "pages" not in body['query']:
-            raise HIFUnexpectedInput('Wrongly formatted Wikipedia response, missing "query" or "pages"')
+        if "query" not in body:
+            raise HIFUnexpectedInput('Wrongly formatted Wikipedia response, missing "query"')
+        response = body['query'].values()[0]  # Wiki has response hidden under single keyed dicts :(
+
 
         # We force a 404 on missing pages
-        if "-1" in body["query"]["pages"] and "missing" in body["query"]["pages"]["-1"]:
+        message = "We did not find the page you were looking for. Perhaps you should create it?"
+        # When searching for pages a dictionary gets returned
+        if isinstance(response, dict) and "-1" in response and "missing" in response["-1"]:
             self.status = 404
-            message = "We did not find the page you were looking for. Perhaps you should create it?"
+            raise HIFHttpError40X(message)
+        # When making lists a list is returned
+        elif isinstance(response, list) and not response:
+            self.status = 404
             raise HIFHttpError40X(message)
 
-        # Look for ambiguity
-        for page_id, page in body["query"]["pages"].iteritems():
-            try:
-                if "disambiguation" in page['pageprops']:
-                    self.status = 300
-                    raise HIFHttpWarning300(page["title"])
-            except KeyError:
-                pass
+        # Look for ambiguity when dealing with pages search
+        if isinstance(response, dict):
+            for page_id, page in response.iteritems():
+                try:
+                    if "disambiguation" in page['pageprops']:
+                        self.status = 300
+                        raise HIFHttpWarning300(page["title"])
+                except KeyError:
+                    pass
 
     def extract(self, source):
         """
@@ -129,6 +137,32 @@ class WikiBaseQuery(JsonQueryLink):
 
         self._data = extractor(data, self.HIF_objective)
         return self
+
+    class Meta:
+        proxy = True
+
+
+class WikiGenerator(WikiBaseQuery):
+
+    def cleaner(self, result_instance):
+        """
+        We're filtering out all list pages when using generators to avoid complications.
+        :param result_instance:
+        :return:
+        """
+        if result_instance["title"].startswith('List'):
+            return False
+        return True
+
+    def handle_error(self):
+        """
+        Generators have a habit of leaving out the query parameter if the query returns nothing :(
+        :return:
+        """
+        try:
+            super(WikiGenerator, self).handle_error()
+        except HIFUnexpectedInput:
+            raise HIFHttpError40X("We did not find the page you were looking for. Perhaps you should create it?")
 
     class Meta:
         proxy = True
@@ -270,34 +304,17 @@ class WikiDataClaimers(HttpLink, HttpJsonMixin):
         proxy = True
 
 
-# TODO: create a HttpLink generator for Wiki generators
-class WikiBacklinks(JsonQueryLink):
+class WikiBacklinks(WikiGenerator):
 
-    HIF_link = "http://en.wikipedia.org/w/api.php"
-    HIF_parameters = {
+    HIF_parameters = override_dict(WikiGenerator.HIF_parameters, {
         "action": "query",
         "generator": "backlinks",
-        "prop": "info",
-        "format": "json",
-        "gbllimit": 500
-    }
+        "gbllimit": 500,
+        "gbltitle": "",
+        "gblnamespace": 0
+    })
 
     HIF_query_parameter = "gbltitle"
-
-    HIF_objective = {
-        "pageid": 0,
-        "ns": None,
-        "title": ""
-    }
-
-    def cleaner(self,result_instance):
-
-        if result_instance["title"].startswith('List'):
-            return False
-        elif result_instance["ns"] != 0:
-            return False
-
-        return True
 
     class Meta:
         app_label = "core"
@@ -305,13 +322,40 @@ class WikiBacklinks(JsonQueryLink):
 
 
 # TODO: create a HttpLink generator for Wiki generators
-class WikiLinks(WikiBaseQuery):
+class WikiLinks(WikiGenerator):
 
-    HIF_parameters = override_dict(WikiBaseQuery.HIF_parameters, {
+    HIF_parameters = override_dict(WikiGenerator.HIF_parameters, {
         "generator": "links",
         "gpllimit": 500,
         "gplnamespace": 0
     })
+
+    class Meta:
+        app_label = "core"
+        proxy = True
+
+
+class WikiGeo(WikiBaseQuery):
+
+    HIF_parameters = override_dict(WikiBaseQuery.HIF_parameters, {
+        "list": "geosearch",
+        "gscoord": "",
+        "gsradius": 5000,
+        "gslimit": 500,
+        "gsnamespace": 0,
+        "gsprop": "type|dim",
+    })
+
+    HIF_objective = {
+        "lat": 0,
+        "lon": 0,
+        "type": None,
+        "dim": None,
+        "title": "",
+        "dist": 0,
+    }
+
+    HIF_query_parameter = "gscoord"
 
     def cleaner(self,result_instance):
         if result_instance["title"].startswith('List'):
