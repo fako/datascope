@@ -5,12 +5,12 @@ from core.models import TextStorage, ProcessStorage, VisualTranslationsStorage, 
 
 class TextStorageAdmin(admin.ModelAdmin):
     list_display = ['__unicode__', 'status', 'head', 'body', 'created_at']
-    search_fields = ['identity', 'arguments', 'configuration']
+    search_fields = ['identity', 'arguments', 'configuration', 'type']
 
 
 class ProcessStorageAdmin(admin.ModelAdmin):
     list_display = ['__unicode__', 'status', 'results', 'exception', 'traceback', 'created_at', 'modified_at']
-    search_fields = ['identity', 'arguments', 'configuration']
+    search_fields = ['identity', 'arguments', 'configuration', 'type']
 
 
 admin.site.register(TextStorage, TextStorageAdmin)
