@@ -170,6 +170,7 @@ class Storage(models.Model):
             self.identity = self.identify()
 
         self.save()
+        return self  # TODO: test and start using the chaining
 
     def reset(self):  # TODO: test and comment
         """
