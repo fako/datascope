@@ -13,10 +13,8 @@ from core.helpers.storage import get_hif_model
 
 class ProcessAPIView(APIView):
 
-    def get(self, request, Service):
-
-        # Fire up the manifest
-        service = Service()
+    @staticmethod
+    def response_from_process(service, request):
 
         # Prepare the process
         Process = get_hif_model(service.HIF_process)
@@ -47,10 +45,32 @@ class ProcessAPIView(APIView):
         except HIFBadRequest as exception:
             return Response(data={"detail": exception.detail}, status=HTTP_400_BAD_REQUEST)
 
+    @staticmethod
+    def get(request, Service):
+
+        # Fire up the manifest
+        service = Service()
+        service.setup(service.context(request))
+
+        if service.status in service.HIF_success_statusses:
+            service.views += 1
+            service.save()
+            return Response(data=service.content, status=HTTP_200_OK)
+
+        response = ProcessAPIView.response_from_process(service, request)
+
+        if response.status_code in service.HIF_success_statusses:
+            service.status = response.status_code
+            service.content = response.data
+            service.save()
+
+        return response
+
 
 class ProcessPlainView(View):
 
-    def get(self, request, Service):
+    @staticmethod
+    def get(request, Service):
 
         # Fire up the manifest
         service = Service()
