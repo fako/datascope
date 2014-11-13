@@ -335,6 +335,37 @@ class WikiLinks(WikiGenerator):
         proxy = True
 
 
+# TODO: create a HttpLink generator for Wiki generators
+class WikiCategories(WikiGenerator):
+
+    HIF_parameters = override_dict(WikiGenerator.HIF_parameters, {
+        "generator": "categories",
+        "gcllimit": 500,
+        "gclshow": "!hidden"
+    })
+
+    class Meta:
+        app_label = "core"
+        proxy = True
+
+
+# TODO: create a HttpLink generator for Wiki generators
+class WikiCategoryMembers(WikiGenerator):
+
+    HIF_parameters = override_dict(WikiGenerator.HIF_parameters, {
+        "gcmtitle": "",
+        "generator": "categorymembers",
+        "gcmlimit": 500,
+        "gcmnamespace": 0
+    })
+
+    HIF_query_parameter = "gcmtitle"
+
+    class Meta:
+        app_label = "core"
+        proxy = True
+
+
 class WikiGeo(WikiBaseQuery):
 
     HIF_parameters = override_dict(WikiBaseQuery.HIF_parameters, {
