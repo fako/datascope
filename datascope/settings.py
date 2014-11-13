@@ -40,9 +40,10 @@ USE_I18N = False
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale.
 USE_L10N = False
+DATETIME_FORMAT = 'd-m-y H:i:s/u'  # default would get overridden by L18N
 
 # If you set this to False, Django will not use timezone-aware datetimes.
-USE_TZ = True
+USE_TZ = False
 
 # Available languages for all projects
 ugettext = lambda s: s # a dummy ugettext to prevent circular import

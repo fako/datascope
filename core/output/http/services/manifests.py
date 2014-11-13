@@ -2,7 +2,7 @@ from itertools import groupby
 
 from django.utils.translation import ugettext as _
 
-from core.models.output import VisualTranslationsStorage, PeopleSuggestionsStorage
+from core.models.output import VisualTranslationsStorage, PeopleSuggestionsStorage, CityCelebritiesStorage
 from core.output.http.views import ProcessAPIView, ProcessPlainView
 from core.output.http.handlers.warnings import handler_results_or_404, handler_wikipedia_disambiguation_300
 from core.exceptions import HIFBadRequest, HIFNoInput
@@ -88,6 +88,27 @@ class PeopleSuggestionsService(PeopleSuggestionsStorage, Service):
         handler_wikipedia_disambiguation_300("WikiSearch|300|message"),
         handler_results_or_404("WikiSearch|404|message"),
     ]
+
+    class Meta:
+        proxy = True
+
+    def context(self, request):
+
+        # Input validation
+        query = request.GET.get('q', '')
+        if not query:
+            raise HIFNoInput(_('No input provided'))
+
+        # Returning context
+        return {
+            "query": query
+        }
+
+
+class CityCelebritiesService(CityCelebritiesStorage, Service):
+
+    HIF_main = ProcessAPIView
+    HIF_plain = ProcessPlainView
 
     class Meta:
         proxy = True

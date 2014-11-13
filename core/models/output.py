@@ -40,3 +40,11 @@ class PeopleSuggestionsStorage(ServiceStorage):
         db_table = "core_peoplesuggestions"
         verbose_name = "People Suggestions"
         verbose_name_plural = "People Suggestions"
+
+
+class CityCelebritiesStorage(ServiceStorage):
+    class Meta:
+        app_label = "core"  # TODO: change when migrating to 1.7
+        db_table = "core_citycelebrities"
+        verbose_name = "City Celebrities"
+        verbose_name_plural = "City Celebrities"
