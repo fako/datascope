@@ -78,10 +78,12 @@ class WikiBaseQuery(JsonQueryLink):
         "pageid": 0,
         "ns": None,
         "title": "",
-        "pageprops.wikibase_item": ""
+        "pageprops.wikibase_item": "",
+        "pageprops.page_image": ""
     }
     HIF_translations = {
-        "pageprops.wikibase_item": "wikidata"
+        "pageprops.wikibase_item": "wikidata",
+        "pageprops.page_image": "image"
     }
 
     def prepare_link(self):
