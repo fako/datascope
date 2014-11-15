@@ -371,7 +371,7 @@ class WikiGeo(WikiBaseQuery):
     HIF_parameters = override_dict(WikiBaseQuery.HIF_parameters, {
         "list": "geosearch",
         "gscoord": "",
-        "gsradius": 5000,
+        "gsradius": 2500,
         "gslimit": 500,
         "gsnamespace": 0,
         "gsprop": "type|dim",
