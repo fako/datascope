@@ -91,3 +91,6 @@ class Command(BaseCommand):
                 print location['title'], ' > ', len(location['people'])
                 print [person['title'] for person in location['people']]
                 print
+
+            city_celebrities.content = interesting_locations
+            city_celebrities.save()
