@@ -50,7 +50,7 @@ class ProcessAPIView(APIView):
 
         # Fire up the manifest
         service = Service()
-        service.setup(service.context(request))
+        service.setup(**service.context(request))
 
         if service.status in service.HIF_success_statusses:
             service.views += 1
