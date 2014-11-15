@@ -72,6 +72,7 @@ class WikiBaseQuery(JsonQueryLink):
         "format": "json",
         "redirects": "1"
     }
+    HIF_wiki_results_key = 'pages'
 
     HIF_objective = {
         "pageid": 0,
@@ -101,7 +102,7 @@ class WikiBaseQuery(JsonQueryLink):
         # Check general response
         if "query" not in body:
             raise HIFUnexpectedInput('Wrongly formatted Wikipedia response, missing "query"')
-        response = body['query'].values()[0]  # Wiki has response hidden under single keyed dicts :(
+        response = body['query'][self.HIF_wiki_results_key]  # Wiki has response hidden under single keyed dicts :(
 
 
         # We force a 404 on missing pages
@@ -314,6 +315,8 @@ class WikiBacklinks(WikiGenerator):
         "gblnamespace": 0
     })
 
+    HIF_wiki_results_key = 'backlinks'
+
     HIF_query_parameter = "gbltitle"
 
     class Meta:
@@ -367,6 +370,8 @@ class WikiCategoryMembers(WikiGenerator):
 
 
 class WikiGeo(WikiBaseQuery):
+
+    HIF_wiki_results_key = "geosearch"
 
     HIF_parameters = override_dict(WikiBaseQuery.HIF_parameters, {
         "list": "geosearch",
