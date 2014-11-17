@@ -40,7 +40,7 @@ class Command(BaseCommand):
 
             features = []
             for location in city_celebrities.content:
-                point = Point((location['lat'], location['lon'],))
+                point = Point((location['lon'], location['lat'],))
                 feature = Feature(geometry=point, properties={
                     'title': location['title'],
                     'people': ', '.join([person['title'] for person in location['people']])
