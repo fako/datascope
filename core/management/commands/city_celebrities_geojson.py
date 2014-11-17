@@ -35,7 +35,6 @@ class Command(BaseCommand):
 
             # Start the process
             city, coords = arg.split('/')
-            print("Fetching information for: {} at {}".format(city, coords))
             city_celebrities = CityCelebritiesService()
             city_celebrities.setup(query=unicode(city))
 
