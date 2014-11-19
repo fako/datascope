@@ -1,7 +1,7 @@
 from core.processes.base import Process, Retrieve
 from core.tasks import execute_process, extend_process
 
-
+# TODO: update for new style extend
 class CityCelebrities(Process):
 
     HIF_geo_lookup = 'WikiGeo'
