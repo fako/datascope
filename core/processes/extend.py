@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 from django.db import models
 
 import jsonfield
@@ -5,7 +7,7 @@ import jsonfield
 from core.processes.register import RegisterContainer
 from core.helpers.storage import get_hif_model
 from core.exceptions import HIFImproperUsage
-from core.helpers.data import reach
+from core.helpers.data import reach, expand, interpolate
 from core.helpers.enums import ProcessStatus as Status
 
 
@@ -26,6 +28,7 @@ class Extend(models.Model):
     def __init__(self, *args, **kwargs):
         super(Extend, self).__init__(*args, **kwargs)
         self.ext = None
+        self.source = None
 
     class Meta:
         abstract = True
@@ -41,64 +44,79 @@ class Extend(models.Model):
         super(Extend, self).retain_fields()
         self.extensions = self.ext.dict() if self.ext.dict() else None
 
+    def get_source(self, ser_extendee):
+
+        if self.source is None:
+
+            Extendee = get_hif_model(ser_extendee)
+            extendee = Extendee().load(serialization=ser_extendee)
+
+            # TODO: check existance _extend in config
+
+            if 'source' not in self.config._extend:
+                self.status = Status.ERROR
+                raise HIFImproperUsage('Source path is not present in extend config during extending')
+
+            self.source = reach(self.config._extend['source'], extendee.rsl)
+
+        return self.source
+
     def extend(self, ser_extendee):
         """
-        This method looks at extend configuration and adjusts arguments and configuration of process based on that.
-
         This method adds an entry called extending to the meta field
         That entry specifies how the results should be merged by extendee
         meta = {
             "extending": OriginalDict
         }
-
-        Should check statusses are in correct range
-        This method raises exceptions if extendee can't be worked with
         """
-        Extendee = get_hif_model(ser_extendee)
-        extendee = Extendee().load(serialization=ser_extendee)  # TODO: write test that makes sure this function does not change extendee
-
-
-
-        if 'keypath' not in self.config._extend:
-            self.status = Status.ERROR
-            raise HIFImproperUsage('Keypath is not present in extend config during extending')
+        source = self.get_source(ser_extendee)
 
         # Setting the meta field with extending key will make extension property return other then None
-        source = reach(self.config._extend['keypath'], extendee.rsl)
-        self.meta = {'extending': source}
+        self.meta = {'extending': reach(self.config._extend['target'], source)}
 
-        # Pad self.arguments with args from extend config
-        if 'args' in self.config._extend:
-            args = self.arguments or []
-            for keypath in self.config._extend['args']:
-                arg = reach(keypath, source)
-                if arg not in args:
-                    args.append(arg)
-            self.arguments = args
+    def extend_setups(self, ser_extendee):
+        """
 
-        # Pad config with extend kwargs
-        if 'kwargs' in self.config._extend:
-            kwargs = {}
-            for kw, keypath in self.config._extend['kwargs'].iteritems():
-                kwargs[kw] = reach(keypath, source)
-            self.config(kwargs)
+        """
+        source = self.get_source(ser_extendee)
+        setups = []
+
+        for args_path in expand(self.config._extend['args'], source):
+
+            kwargs = deepcopy(self.config.dict(protected=True))
+            args_data = reach(args_path, source)
+            args = [args_data] if not isinstance(args_data, list) else args_data
+
+            # Kwargs is config with extend kwargs
+            if 'kwargs' in self.config._extend:
+                for kw, kwpath in self.config._extend['kwargs'].iteritems():
+                    interpolated_kwpath = interpolate(kwpath, args_path)
+                    kwargs[kw] = reach(interpolated_kwpath, source)
+
+            # Args from config might be a list of keypaths to use as args
+            if 'target' in self.config._extend and self.config._extend['target'] is not None:
+                kwargs['_extend']['target'] = interpolate(self.config._extend['target'], args_path)
+
+            setups.append((args, kwargs,))
+
+        return setups
 
     @property
     def extension(self):
         """
-        Returns the keypath that is supposed to be replaced and the extended object
+        Returns the target path that is supposed to be updated and the object to extend with.
         """
         extension = self.meta.get('extending') if self.meta is not None else None
         if extension is None:
             return None
         extension[self.config._extend["extension"]] = self.rsl
-        return extension, self.config._extend["keypath"]
+        return extension, self.config._extend["target"]
 
     def merge_extensions(self):
         """
 
         """
-        for extension, keypath in self.ext.extensions():
-            target = reach(keypath, self.rsl)
+        for extension, path in self.ext.extensions():
+            target = reach(path, self.rsl)
             target.update(extension)
         self.ext.empty()

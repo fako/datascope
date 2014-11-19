@@ -27,8 +27,9 @@ class PeopleSuggestions(Process):
             "_link": self.HIF_person_claims,
             "_context": query,  # here only to distinct inter-query retriever configs from each other
             "_extend": {
-                "keypath": None,
-                "args": ["wikidata"],
+                "source": None,
+                "target": None,
+                "args": "wikidata",
                 "kwargs": {},
                 "extension": "claims"
             }
@@ -41,9 +42,10 @@ class PeopleSuggestions(Process):
             "_link": self.HIF_claimers,
             "_context": query,  # here only to distinct inter-query retriever configs from each other
             "_extend": {
-                "keypath": "claims",
-                "args": [None],  # entire dict at keypath will become args
+                "source": None,
+                "args": "claims.*",  # spawns extend processes for every claim
                 "kwargs": {},
+                "target": "claims.*",
                 "extension": "claimers"
             }
         }
@@ -54,7 +56,7 @@ class PeopleSuggestions(Process):
         task = (
             execute_process.s(query, person_lookup_retriever.retain()) |
             extend_process.s(person_claims_retriever.retain()) |
-            extend_process.s(claimers_retriever.retain(), multi=True)
+            extend_process.s(claimers_retriever.retain())
         )()
         self.task = task
 

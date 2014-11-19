@@ -40,9 +40,10 @@ class VisualTranslation(Process):
             "_link": model,
             "_context": "{}+{}+{}".format(self.config.query, self.config.translate_to, medium),
             "_extend": {
-                "keypath": None,
-                "args": ["translation"],
+                "source": None,
+                "args": "*.translation",
                 "kwargs": {},
+                "target": "*",
                 "extension": medium
             }
         }
@@ -56,7 +57,7 @@ class VisualTranslation(Process):
 
         for medium in self.config.media.split(','):
             retriever = self.get_visual_retriever(medium)
-            task |= extend_process.s(retriever.retain(), multi=True)
+            task |= extend_process.s(retriever.retain())
 
         self.task = task()
 

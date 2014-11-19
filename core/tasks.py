@@ -25,7 +25,7 @@ def execute_process(inp, ser_prc):
 
 
 @task(name="core.extend_process")
-def extend_process(ser_extendee, ser_extender, multi=False, register=True, finish=True):
+def extend_process(ser_extendee, ser_extender, register=True, finish=True):
     """
     Will extend data of the extendee by using the extender.
     """
@@ -41,43 +41,27 @@ def extend_process(ser_extendee, ser_extender, multi=False, register=True, finis
         extender.retain()
         return extendee.retain()
 
-    extenders = []
-    if not multi:
-        extenders.append(extender)
-    else:
-        base_keypath = extender.config._extend['keypath']
-        input_list = reach(base_keypath, extendee.rsl)
-        for ind, inp in enumerate(input_list):
-            # TODO: below can be done nicer probably
-            extndr = copy_hif_model(extender)
-            keypath = "{}.{}".format(base_keypath, ind) if base_keypath is not None else unicode(ind)
-            extndr.config._extend["keypath"] = keypath
-            extndr.setup()
-            extndr.identity = extndr.identify()
-            extndr.retain()
-            extenders.append(extndr)
-        # Make sure we can garbage collect the base extend class correctly
-        extendee.rgs.add(ser_extender)
-        extendee.retain()
+    # Make sure we can garbage collect the base extend class correctly
+    extendee.rgs.add(ser_extender)
 
+    extend_setups = extender.extend_setups(ser_extendee)
+    for args, kwargs in extend_setups:
+        extndr = Extender()
+        extndr.execute(*args, **kwargs)
+        extndr.extend(ser_extendee)
+        ser_extndr = extndr.retain()
 
-    for extndr in extenders:
         if register:
-            ser_extndr = extndr.retain()
             extendee.rgs.add(ser_extndr)
             extendee.ext.add(ser_extndr)  # Maybe make Containers push to X number of fields?
-            extendee.retain()
-
-        extndr.extend(ser_extendee)  # TODO: try block with a return
-        extndr.execute()
 
     if finish:
         extendee.merge_extensions()
-        extendee.retain()
 
-    return ser_extendee
+    return extendee.retain()
 
 
+# TODO: rewrite this to something that is correct
 @task(name="core.finish_extend")
 def finish_extend(extendee_list):
     extendee = extendee_list[0]

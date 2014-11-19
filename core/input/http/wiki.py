@@ -274,7 +274,7 @@ class WikiDataClaimers(HttpLink, HttpJsonMixin):
 
     def sanitize_input(self, to_check):
         if not isinstance(to_check, (list, tuple,)):
-            return False, "WikiDataClaimers is expects a list or tuple"
+            return False, "WikiDataClaimers expects a list or tuple"
         # TODO write a sanitize function that checks for existence of keys
         for claim_input in to_check:
             if not "property" in claim_input or not "item" in claim_input:
