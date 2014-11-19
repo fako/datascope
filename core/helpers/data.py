@@ -20,7 +20,7 @@ def reach(path, data):
     """
 
     # First we check whether we really get a structure we can use
-    if path is None:  # TODO: write a test for this behavior
+    if path is None:
         return data
     if not isinstance(data, (dict, list, tuple)):
        raise TypeError("Reach needs dict as input, got {} instead".format(type(data)))
@@ -44,6 +44,67 @@ def reach(path, data):
     # We try the path as key/index or return None.
     path = int(path) if path.isdigit() else path
     return root[path] if path in root else None
+
+
+def interpolate(interpolate_path, source_path):
+    """
+
+    :param path1:
+    :param path2:
+    :return:
+    """
+    interpolate_parts = interpolate_path.split('.')
+    source_parts = source_path.split('.')
+    parts = []
+
+    for interpolate_part, source_part in zip(interpolate_parts, source_parts):
+        if interpolate_part == '*':
+            if not source_part.isdigit():
+                raise ValueError("Can't interpolate * with non-digit value '{}'.".format(source_part))
+            parts.append(source_part)
+        elif interpolate_part == source_part:
+            parts.append(interpolate_part)
+        else:
+            raise ValueError("Can't interpolate {} with {}, because paths differ at {}/{}.".format(
+                interpolate_path,
+                source_path,
+                interpolate_part,
+                source_part
+            ))
+
+    if len(parts) < len(interpolate_parts):
+        parts += interpolate_parts[len(parts):]
+
+    return '.'.join(parts)
+
+
+def expand(keypath, data):  # TODO: handle exceptions better like dotted.key etc.
+    """
+
+    :param path:
+    :param data:
+    :return:
+    """
+    paths = [keypath] if not isinstance(keypath, list) else keypath
+    new = []
+
+    for path in paths:
+        pth = None
+
+        for part in path.split('.'):
+
+            if part == '*':  # TODO: prevent dict access here
+                for ind, value in enumerate(reach(pth, data)):
+                    new_path = path.replace('*', str(ind), 1)
+                    new.append(new_path)
+                break
+            else:
+                pth = part if pth is None else pth + '.' + part
+
+    if new:
+        return expand(new, data)
+    else:
+        return paths
 
 
 def extractor(target, objective):
