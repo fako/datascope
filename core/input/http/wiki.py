@@ -93,6 +93,9 @@ class WikiBaseQuery(JsonQueryLink):
         link = super(WikiBaseQuery, self).prepare_link()
         return link.format(self.config.source_language)
 
+    def store_response(self):
+        self.json = json.loads(self.body)
+
     def handle_error(self):
         """
         Handles missing pages and ambiguity errors
@@ -100,11 +103,10 @@ class WikiBaseQuery(JsonQueryLink):
         """
         super(WikiBaseQuery,self).handle_error()
 
-        body = json.loads(self.body)
         # Check general response
-        if "query" not in body:
+        if "query" not in self.json:
             raise HIFUnexpectedInput('Wrongly formatted Wikipedia response, missing "query"')
-        response = body['query'][self.HIF_wiki_results_key]  # Wiki has response hidden under single keyed dicts :(
+        response = self.json['query'][self.HIF_wiki_results_key]  # Wiki has response hidden under single keyed dicts :(
 
 
         # We force a 404 on missing pages
@@ -118,15 +120,14 @@ class WikiBaseQuery(JsonQueryLink):
             self.status = 404
             raise HIFHttpError40X(message)
 
-        # Look for ambiguity when dealing with pages search
-        if isinstance(response, dict):
-            for page_id, page in response.iteritems():
-                try:
-                    if "disambiguation" in page['pageprops']:
-                        self.status = 300
-                        raise HIFHttpWarning300(page["title"])
-                except KeyError:
-                    pass
+        return response
+
+    def prepare_next(self):
+        if "query-continue" in self.json and self.HIF_next_parameter:
+            self.next_value = self.json["query-continue"].values()[0][self.HIF_next_parameter]
+        else:
+            self.next_value = None
+        return super(WikiBaseQuery, self).prepare_next()
 
     def extract(self, source):
         """
@@ -181,6 +182,19 @@ class WikiSearch(WikiBaseQuery):
         """
         data = super(WikiSearch, self).data
         return data[0] if len(data) else {}
+
+    def handle_error(self):
+
+        # Look for ambiguity when dealing with pages search
+        response = super(WikiSearch, self).handle_error()
+        if isinstance(response, dict):
+            for page_id, page in response.iteritems():
+                try:
+                    if "disambiguation" in page['pageprops']:
+                        self.status = 300
+                        raise HIFHttpWarning300(page["title"])
+                except KeyError:
+                    pass
 
     class Meta:
         app_label = "core"
@@ -349,6 +363,8 @@ class WikiCategories(WikiGenerator):
         "gclshow": "!hidden"
     })
 
+    HIF_next_parameter = 'gclcontinue'
+
     class Meta:
         app_label = "core"
         proxy = True
@@ -363,6 +379,8 @@ class WikiCategoryMembers(WikiGenerator):
         "gcmlimit": 500,
         "gcmnamespace": 0
     })
+
+    HIF_next_parameter = 'gcmcontinue'
 
     HIF_query_parameter = "gcmtitle"
 

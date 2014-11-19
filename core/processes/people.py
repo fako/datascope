@@ -5,6 +5,56 @@ from core.helpers.data import count_2d_list
 
 class PeopleSuggestions(Process):
 
+    HIF_retrieve_categories = 'WikiCategories'
+    HIF_retrieve_members = 'WikiCategoryMembers'
+
+    def process(self):
+
+        # Get process input
+        query = self.config.query
+
+        # Setup person retriever
+        categories_config = {
+            "_link": self.HIF_retrieve_categories,
+        }
+        categories_config.update(self.config.dict())
+        categories_retriever = Retrieve()
+        categories_retriever.setup(**categories_config)
+
+        # Setup data retriever
+        members_config = {
+            "_link": self.HIF_retrieve_members,
+            "_context": query,  # here only to distinct inter-query retriever configs from each other
+            "_extend": {
+                "source": None,
+                "target": '*',
+                "args": "*.title",
+                "kwargs": {},
+                "extension": "members"
+            }
+        }
+        members_retriever = Retrieve()
+        members_retriever.setup(**members_config)
+
+        # Start Celery task
+        task = (
+            execute_process.s(query, categories_retriever.retain()) |
+            extend_process.s(members_retriever.retain())
+        )()
+        self.task = task
+
+    def post_process(self):
+        category_data = Retrieve().load(serialization=self.task.result).rsl
+        members_count = count_2d_list(category_data, d2_list='members', d2_id="title").most_common(11)[1:]  # takes 10, but strips query person
+        self.rsl = members_count
+
+    class Meta:
+        app_label = "core"
+        proxy = True
+
+
+class PeopleSuggestionsWikiData(Process):
+
     HIF_person_lookup = 'WikiSearch'
     HIF_person_claims = 'WikiDataClaims'
     HIF_claimers = 'WikiDataClaimers'

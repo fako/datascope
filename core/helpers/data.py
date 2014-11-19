@@ -200,7 +200,9 @@ def count_2d_list(data, d1_id=None, d2_list=None, d2_id=None, weight=None):  # T
                     type(d2_data)
                 )
             )
-
-        results += Counter(d2_data)  # TODO: add weight of lists with something like: weight[d1_id] * d2_data
+        if d2_id is not None:
+            results += Counter([data[d2_id] for data in d2_data])
+        else:
+            results += Counter(d2_data)  # TODO: add weight of lists with something like: weight[d1_id] * d2_data
 
     return results
