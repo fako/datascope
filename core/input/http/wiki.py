@@ -93,9 +93,6 @@ class WikiBaseQuery(JsonQueryLink):
         link = super(WikiBaseQuery, self).prepare_link()
         return link.format(self.config.source_language)
 
-    def store_response(self):
-        self.json = json.loads(self.body)
-
     def handle_error(self):
         """
         Handles missing pages and ambiguity errors
@@ -104,9 +101,10 @@ class WikiBaseQuery(JsonQueryLink):
         super(WikiBaseQuery,self).handle_error()
 
         # Check general response
-        if "query" not in self.json:
+        body = json.loads(self.body)
+        if "query" not in body:
             raise HIFUnexpectedInput('Wrongly formatted Wikipedia response, missing "query"')
-        response = self.json['query'][self.HIF_wiki_results_key]  # Wiki has response hidden under single keyed dicts :(
+        response = body['query'][self.HIF_wiki_results_key]  # Wiki has response hidden under single keyed dicts :(
 
 
         # We force a 404 on missing pages
@@ -123,8 +121,9 @@ class WikiBaseQuery(JsonQueryLink):
         return response
 
     def prepare_next(self):
-        if "query-continue" in self.json and self.HIF_next_parameter:
-            self.next_value = self.json["query-continue"].values()[0][self.HIF_next_parameter]
+        body = json.loads(self.body)
+        if "query-continue" in body and self.HIF_next_parameter:
+            self.next_value = body["query-continue"].values()[0][self.HIF_next_parameter]
         else:
             self.next_value = None
         return super(WikiBaseQuery, self).prepare_next()
@@ -365,12 +364,17 @@ class WikiCategories(WikiGenerator):
 
     HIF_next_parameter = 'gclcontinue'
 
+    def cleaner(self,result_instance):
+        if result_instance["title"].startswith('Category:Living people'):
+            return False
+        return True
+
+
     class Meta:
         app_label = "core"
         proxy = True
 
 
-# TODO: create a HttpLink generator for Wiki generators
 class WikiCategoryMembers(WikiGenerator):
 
     HIF_parameters = override_dict(WikiGenerator.HIF_parameters, {

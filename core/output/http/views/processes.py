@@ -36,8 +36,7 @@ class ProcessAPIView(APIView):
 
             return Response(data=results, status=HTTP_200_OK)
 
-        except HIFNoInput:
-            return Response(data=[], status=HTTP_200_OK)
+
         except HIFProcessingAsync:
             return Response(data=[], status=HTTP_202_ACCEPTED)
         except HIFProcessingWarning as exception:
@@ -49,8 +48,11 @@ class ProcessAPIView(APIView):
     def get(request, Service):
 
         # Fire up the manifest
-        service = Service()
-        service.setup(**service.context(request))
+        try:
+            service = Service()
+            service.setup(**service.context(request))
+        except HIFNoInput:
+            return Response(data=[], status=HTTP_200_OK)
 
         if service.status in service.HIF_success_statusses:
             service.views += 1

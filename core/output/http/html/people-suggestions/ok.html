@@ -12,8 +12,8 @@
                     <ul id="results-list">
                         {% for person in data %} {# data is the generic name for incoming information coming from the view #}
                             <li class="people-suggestions-result">
-                                <a target="_blank" href="http://en.wikipedia.org/wiki/{{ person.0 }}">{{ person.0 }}</a>
-                                ({{ person.1 }} thing(s) in common)
+                                <a target="_blank" href="http://en.wikipedia.org/wiki/{{ person.title }}">{{ person.title }}</a></br>
+                                ({% for category in person.categories %}{{ category }}{% if not forloop.last %}, {% endif %}{% endfor %} in common)
                             </li>
                         {% endfor %}
                     </ul>

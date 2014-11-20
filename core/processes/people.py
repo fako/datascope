@@ -5,6 +5,7 @@ from core.helpers.data import count_2d_list
 
 class PeopleSuggestions(Process):
 
+    HIF_person_lookup = 'WikiSearch'
     HIF_retrieve_categories = 'WikiCategories'
     HIF_retrieve_members = 'WikiCategoryMembers'
 
@@ -14,8 +15,24 @@ class PeopleSuggestions(Process):
         query = self.config.query
 
         # Setup person retriever
+        person_lookup_config = {
+            "_link": self.HIF_person_lookup,
+        }
+        person_lookup_config.update(self.config.dict())
+        person_lookup_retriever = Retrieve()
+        person_lookup_retriever.setup(**person_lookup_config)
+
+        # Setup person retriever
         categories_config = {
             "_link": self.HIF_retrieve_categories,
+            "_context": query,  # here only to distinct inter-query retriever configs from each other
+            "_extend": {
+                "source": None,
+                "target": None,
+                "args": "title",
+                "kwargs": {},
+                "extension": "categories"
+            }
         }
         categories_config.update(self.config.dict())
         categories_retriever = Retrieve()
@@ -27,8 +44,8 @@ class PeopleSuggestions(Process):
             "_context": query,  # here only to distinct inter-query retriever configs from each other
             "_extend": {
                 "source": None,
-                "target": '*',
-                "args": "*.title",
+                "target": 'categories.*',
+                "args": "categories.*.title",
                 "kwargs": {},
                 "extension": "members"
             }
@@ -38,15 +55,34 @@ class PeopleSuggestions(Process):
 
         # Start Celery task
         task = (
-            execute_process.s(query, categories_retriever.retain()) |
+            execute_process.s(query, person_lookup_retriever.retain()) |
+            extend_process.s(categories_retriever.retain()) |
             extend_process.s(members_retriever.retain())
         )()
         self.task = task
 
     def post_process(self):
-        category_data = Retrieve().load(serialization=self.task.result).rsl
-        members_count = count_2d_list(category_data, d2_list='members', d2_id="title").most_common(11)[1:]  # takes 10, but strips query person
-        self.rsl = members_count
+
+        person_data = Retrieve().load(serialization=self.task.result).rsl
+        members_count = count_2d_list(person_data['categories'], d2_list='members', d2_id="title").most_common(11)[1:]  # takes 10, but strips query person
+
+        people = []
+        for member, count in members_count:
+
+            person = {
+                "title": member,
+                "matches": count,
+                "categories": [],
+            }
+
+            for category in person_data['categories']:
+                members = [mem['title'] for mem in category['members']]
+                if person['title'] in members:
+                    person['categories'].append(category['title'][9:])  # strips 'Category:'
+
+            people.append(person)
+
+        self.rsl = people
 
     class Meta:
         app_label = "core"
