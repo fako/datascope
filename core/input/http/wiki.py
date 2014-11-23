@@ -1,63 +1,11 @@
 # TODO: split up into separate files
-
-import json
+import json, hashlib
 
 from core.input.http.base import JsonQueryLink, HttpJsonMixin, HttpLink
 from core.input.helpers import sanitize_single_trueish_input
 from core.helpers.override import override_dict
 from core.helpers.data import extractor
 from core.exceptions import HIFUnexpectedInput, HIFHttpError40X, HIFHttpWarning300
-
-
-##############################
-# http://wikilocation.org
-##############################
-
-
-class WikiLocationSearch(JsonQueryLink):
-
-    HIF_link = 'http://api.wikilocation.org/'
-    HIF_parameters = {
-        "type": "landmark",
-        "radius": 10000,
-    }
-
-    HIF_objective = {
-        "lat": 0.0,
-        "lng": 0.0,
-        "title": "",
-        "url": "",
-        "distance": ""
-    }
-
-    HIF_query_parameter = "coords"
-    HIF_next_parameter = "offset"
-    HIF_next_benchmark = 1  # TODO: weird, ask question about this
-
-    def prepare_params(self):
-        params = super(WikiLocationSearch, self).prepare_params()
-        # We could filter out the coords parameter from params here
-        # For now leaving it as a hack
-        params += u"&lat={}&lng={}".format(*self.HIF_parameters["coords"].split('+'))
-        return params
-
-    def cleaner(self,result_instance):
-        return not result_instance["title"].startswith('List')
-
-    def prepare_next(self):
-        data = json.loads(self.body)  # important to load "unclean" data for correct offset
-        length = len(data["articles"])
-        self.next_value = self.next_value + length if length else None
-        return super(WikiLocationSearch, self).prepare_next()
-
-    class Meta:
-        app_label = "core"
-        proxy = True
-
-
-##############################
-# PROPER STYLE WIKI LINKS
-##############################
 
 
 class WikiBaseQuery(JsonQueryLink):
@@ -106,7 +54,6 @@ class WikiBaseQuery(JsonQueryLink):
             raise HIFUnexpectedInput('Wrongly formatted Wikipedia response, missing "query"')
         response = body['query'][self.HIF_wiki_results_key]  # Wiki has response hidden under single keyed dicts :(
 
-
         # We force a 404 on missing pages
         message = "We did not find the page you were looking for. Perhaps you should create it?"
         # When searching for pages a dictionary gets returned
@@ -141,6 +88,21 @@ class WikiBaseQuery(JsonQueryLink):
         self._data = extractor(data, self.HIF_objective)
         return self
 
+    def translate(self):
+        super(WikiBaseQuery, self).translate()
+        # Update image URL's to point to commons directly
+        for page in self._data:
+            if "image" in page and page['image']:
+                md5 = hashlib.md5(page['image'].encode("utf-8"))
+                hexhash = md5.hexdigest()
+                page['image'] = u'http://upload.wikimedia.org/wikipedia/commons/{}/{}/{}'.format(
+                    hexhash[:1],
+                    hexhash[:2],
+                    page['image']
+                )
+        return self
+
+
     class Meta:
         proxy = True
 
@@ -164,8 +126,11 @@ class WikiGenerator(WikiBaseQuery):
         """
         try:
             super(WikiGenerator, self).handle_error()
+        # HIFUnexpectedInput should result in an empty list.
+        # This indicates the generator didn't find anything under the 'query' key in body
         except HIFUnexpectedInput:
-            raise HIFHttpError40X("We did not find the page you were looking for. Perhaps you should create it?")
+            # raise HIFHttpError40X("We did not find the page you were looking for. Perhaps you should create it?")
+            pass
 
     class Meta:
         proxy = True
@@ -204,7 +169,6 @@ class WikiTranslate(WikiBaseQuery):
 
     HIF_link = 'http://{}.wiktionary.org/w/api.php'  # updated at runtime
 
-    # TODO: Add a helper to do this and improve syntax looks?
     HIF_parameters = override_dict(WikiBaseQuery.HIF_parameters, {
         'prop': 'info|pageprops|iwlinks',
         'iwprop': 'url',
@@ -327,10 +291,8 @@ class WikiBacklinks(WikiGenerator):
         "generator": "backlinks",
         "gbllimit": 500,
         "gbltitle": "",
-        "gblnamespace": 0
+        "gblnamespace": 0,
     })
-
-    HIF_wiki_results_key = 'backlinks'
 
     HIF_query_parameter = "gbltitle"
 
@@ -339,7 +301,6 @@ class WikiBacklinks(WikiGenerator):
         proxy = True
 
 
-# TODO: create a HttpLink generator for Wiki generators
 class WikiLinks(WikiGenerator):
 
     HIF_parameters = override_dict(WikiGenerator.HIF_parameters, {
@@ -353,7 +314,6 @@ class WikiLinks(WikiGenerator):
         proxy = True
 
 
-# TODO: create a HttpLink generator for Wiki generators
 class WikiCategories(WikiGenerator):
 
     HIF_parameters = override_dict(WikiGenerator.HIF_parameters, {
@@ -400,7 +360,7 @@ class WikiGeo(WikiBaseQuery):
     HIF_parameters = override_dict(WikiBaseQuery.HIF_parameters, {
         "list": "geosearch",
         "gscoord": "",
-        "gsradius": 2500,
+        "gsradius": 0,  # gets set through config
         "gslimit": 500,
         "gsnamespace": 0,
         "gsprop": "type|dim",
@@ -416,6 +376,10 @@ class WikiGeo(WikiBaseQuery):
     }
 
     HIF_query_parameter = "gscoord"
+
+    def prepare_params(self):
+        self.HIF_parameters['gsradius'] = self.config.radius
+        return super(WikiGeo, self).prepare_params()
 
     def cleaner(self,result_instance):
         if result_instance["title"].startswith('List'):

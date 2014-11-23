@@ -1,15 +1,11 @@
-import json
 from geojson import Point, Feature, FeatureCollection, dumps as geodump
 
 from django.core.management.base import BaseCommand
 
-from core.helpers.storage import get_hif_model
-from core.helpers.enums import ProcessStatus
-
 
 class Command(BaseCommand):
     """
-    Clears TextStorage and/or ProcessStorage from the database.
+    Turns City Celebrities Service output into geojson encoded data.
     """
 
     def handle(self, *args, **kwargs):
@@ -22,19 +18,16 @@ class Command(BaseCommand):
         self.args = "<city_name>/<lat>|<lon> <city_name>/<lat>|<lon> ..."
 
         # Import models here to prevent circular imports
-        from core.processes.places import CityCelebrities
-        from core.processes.base import Retrieve
         from core.output.http.services.manifests import CityCelebritiesService
 
-
         if not args:
-            print("You'll need to specify coordinates like: London/51.5286416|-0.1015987")
+            print("You'll need to specify coordinates like: London/51.5286416|-0.1015987/100")
             return
 
         for arg in args:
 
             # Start the process
-            city, coords = arg.split('/')
+            city, coords, radius = arg.split('/')
             city_celebrities = CityCelebritiesService()
             city_celebrities.setup(query=unicode(city))
 

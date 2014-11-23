@@ -3,6 +3,7 @@ from core.tasks import execute_process, extend_process
 from core.helpers.data import count_2d_list
 
 
+# TODO: Fix people suggestions that use old texts and new processes
 class PeopleSuggestions(Process):
 
     HIF_person_lookup = 'WikiSearch'

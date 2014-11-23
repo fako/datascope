@@ -27,70 +27,26 @@ class Command(BaseCommand):
 
 
         if not args:
-            print("You'll need to specify coordinates like: London/51.5286416|-0.1015987")
+            print("You'll need to specify coordinates and radius like: London/51.5286416|-0.1015987/100")
             return
 
         for arg in args:
 
-            interesting_claims = [
-                {
-                    "property": "P106",
-                    "item": 33999  # actor
-                },
-                {
-                    "property": "P106",
-                    "item": 177220  # singer
-                },
-                {
-                    "property": "P106",
-                    "item": 488205  # singer-song writer
-                },
-                {
-                    "property": "P106",
-                    "item": 483501  # artist
-                },
-                {
-                    "property": "P106",
-                    "item": 2066131  # sports person
-                },
-                {
-                    "property": "P106",
-                    "item": 11513337  # athlete competitor
-                },
-                {
-                    "property": "P106",
-                    "item": 10800557  # film actor
-                },
-
-            ]
-
-
-
             # Start the process
-            city, coords = arg.split('/')
-            print("Fetching information for: {} at {}".format(city, coords))
+            city, coords, radius = arg.split('/')
+            print("Fetching information for: {} at {}".format(city, coords, radius))
             city_celebrities = CityCelebritiesService()
             city_celebrities.setup(query=unicode(city))
 
-            interesting_locations = []
+            location_count = 0
+            person_count = 0
+
             for location in city_celebrities.content:
-
-                interesting_persons = []
-                for person in location['people']:
-
-                    for interesting_claim in interesting_claims:
-                        if interesting_claim in person['claims']:
-                            interesting_persons.append(person)
-                            break
-
-                if len(interesting_persons):
-                    location['people'] = interesting_persons
-                    interesting_locations.append(location)
-
-            for location in interesting_locations:
+                location_count += 1
+                person_count += len(location['people'])
                 print location['title'], ' > ', len(location['people'])
                 print [person['title'] for person in location['people']]
                 print
 
-            city_celebrities.content = interesting_locations
-            city_celebrities.save()
+            print "Location count: {}".format(location_count)
+            print "People count: {}".format(person_count)
