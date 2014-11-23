@@ -50,6 +50,7 @@ class Command(BaseCommand):
 
             cc_service = CityCelebritiesService()
             cc_service.setup(query=city)
+            cc_service.status = 200
             cc_service.content = city_celebrities.rsl
             cc_service.retain()
 

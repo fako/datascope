@@ -21,8 +21,6 @@ class Command(BaseCommand):
         self.args = "<city_name>/<lat>|<lon> <city_name>/<lat>|<lon> ..."
 
         # Import models here to prevent circular imports
-        from core.processes.places import CityCelebrities
-        from core.processes.base import Retrieve
         from core.output.http.services.manifests import CityCelebritiesService
 
 
@@ -40,13 +38,17 @@ class Command(BaseCommand):
 
             location_count = 0
             person_count = 0
+            image_count = 0
 
             for location in city_celebrities.content:
                 location_count += 1
                 person_count += len(location['people'])
+                images = [person for person in location['people'] if person['image']]
+                image_count += len(images)
                 print location['title'], ' > ', len(location['people'])
                 print [person['title'] for person in location['people']]
                 print
 
             print "Location count: {}".format(location_count)
             print "People count: {}".format(person_count)
+            print "Images count: {}".format(image_count)
