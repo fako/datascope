@@ -34,6 +34,13 @@ class WikiBaseQuery(JsonQueryLink):
         "pageprops.page_image": "image"
     }
 
+    def setup(self, *args, **kwargs):
+        super(WikiBaseQuery, self).setup(*args, **kwargs)
+        if self.config.extracts and "extracts" not in self.HIF_parameters['prop']:
+            self.HIF_parameters['prop'] = self.HIF_parameters['prop'] + '|' + 'extracts'
+            self.HIF_objective['extract'] = ""
+        return self
+
     def prepare_link(self):
         """
         Prepare link does some pre formatting by including the source_language as a sub domain.

@@ -39,16 +39,30 @@ class Command(BaseCommand):
             location_count = 0
             person_count = 0
             image_count = 0
+            hqtext_count = 0
+            poortext_count = 0
 
             for location in city_celebrities.content:
                 location_count += 1
                 person_count += len(location['people'])
-                images = [person for person in location['people'] if person['image']]
-                image_count += len(images)
+                for person in location['people']:
+                    if person['image']:
+                        image_count += 1
+                    if person['text_quality'] == 1:
+                        hqtext_count += 1
+                    elif person['text_quality'] < 0:
+                        poortext_count += 1
                 print location['title'], ' > ', len(location['people'])
+                print
                 print [person['title'] for person in location['people']]
+                print
                 print
 
             print "Location count: {}".format(location_count)
             print "People count: {}".format(person_count)
             print "Images count: {}".format(image_count)
+            print "{} high quality, {} low quality and {}, poor quality texts".format(
+                hqtext_count,
+                person_count - hqtext_count - poortext_count,
+                poortext_count
+            )

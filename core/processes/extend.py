@@ -109,7 +109,10 @@ class Extend(models.Model):
         extension = self.meta.get('extending') if self.meta is not None else None
         if extension is None:
             return None
-        extension[self.config._extend["extension"]] = self.rsl
+        if self.config._extend["extension"] is not None:
+            extension[self.config._extend["extension"]] = self.rsl
+        else:
+            extension = self.rsl
         return extension, self.config._extend["target"]
 
     def merge_extensions(self):

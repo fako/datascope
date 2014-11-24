@@ -33,6 +33,7 @@ class Domain(object):
         'P248',  # claim stated in
         'P910',  # topic's main category
     ]
+    wiki_extracts = False
 
     translate_media = 'videos,images'  # can't be plural yet
 

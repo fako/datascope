@@ -30,6 +30,10 @@ def findParagraph(wholeText,term):
     return correctPara
 
 
+def stripTemplates(text):
+    return text
+
+
 def splitParagraphIntoSentences(paragraph):
     sentenceEnders = re.compile(r"""
         # Split sentences on whitespace between them.
@@ -97,6 +101,7 @@ class Command(BaseCommand):
                     r = requests.get(u'http://en.wikipedia.org/wiki/{}?action=raw'.format(person['title'].replace(' ', '_')))
                     searchTerm = location['title']
                     #print r.text
+                    text = stripTemplates(r.text)
                     paragraph = findParagraph(r.text, searchTerm)
                     sentences = splitParagraphIntoSentences(paragraph)
                     #print sentences

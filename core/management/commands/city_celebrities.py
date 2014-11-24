@@ -22,7 +22,6 @@ class Command(BaseCommand):
 
         # Import models here to prevent circular imports
         from core.processes.places import CityCelebrities
-        from core.processes.base import Retrieve
         from core.output.http.services.manifests import CityCelebritiesService
 
 
@@ -53,13 +52,3 @@ class Command(BaseCommand):
             cc_service.status = 200
             cc_service.content = city_celebrities.rsl
             cc_service.retain()
-
-            print("Printing stats for City Celebrities {}".format(city))
-
-            for location in cc_service.content:
-                print location['title'], ' > ', len(location['people'])
-                print
-                print [person['title'] for person in location['people']]
-                print
-                print
-                print
