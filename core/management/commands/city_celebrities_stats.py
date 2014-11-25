@@ -41,26 +41,25 @@ class Command(BaseCommand):
             image_count = 0
             hqtext_count = 0
             poortext_count = 0
-            high_list = []
+            text_lengths = []
 
             for location in city_celebrities.content:
                 print location['title'], ' > ', len(location['people'])
                 location_count += 1
                 person_count += len(location['people'])
                 for person in location['people']:
-                    print person['title'].encode('utf-8'), len(person['text']), person['text'].count('<p>')
+                    print person['title'].encode('utf-8')
+                    text_lengths.append(len(person['text']))
                     if person['image']:
                         image_count += 1
                     if person['text_quality'] == 1:
                         hqtext_count += 1
-                        high_list.append(person)
                     elif person['text_quality'] < 0:
                         poortext_count += 1
                 print
                 print
                 print
 
-            print json.dumps(high_list)
             print "Location count: {}".format(location_count)
             print "People count: {}".format(person_count)
             print "Images count: {}".format(image_count)
@@ -69,3 +68,6 @@ class Command(BaseCommand):
                 person_count - hqtext_count - poortext_count,
                 poortext_count
             )
+            print "Max length: " + str(max(text_lengths))
+            print "Min length: " + str(min(text_lengths))
+            print "Average length: " + str(sum(text_lengths)/len(text_lengths))

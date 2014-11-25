@@ -1,5 +1,7 @@
 import re
 import requests
+from lxml import html
+from lxml.etree import tostring
 
 from core.processes.base import Process, Retrieve
 from core.tasks import execute_process, extend_process
@@ -143,12 +145,28 @@ class CityCelebrities(Process):
 
     @staticmethod
     def select_paragraph(location, person):
-        match = re.search(r'<p>.*?{}.*?</p>'.format(location['title']), person['extract'], re.DOTALL)
+
+        def find_el_with_text(text, frags):
+            for frag in frags:
+                if text in frag.text_content():
+                    children = frag.getchildren()
+                    if children:
+                        child_el = find_el_with_text(text, children)
+                        if child_el is not None:
+                            return child_el
+                    if frag.tag == 'p':
+                        return frag
+                    else:
+                        return None
+            return None
+
+        fragments = html.fragments_fromstring(person['extract'])
+        el = find_el_with_text(location['title'], fragments)
         text_quality = 1
-        if match is None:
-            match = re.search(r'<p>.*?</p>', person['extract'], re.DOTALL)
+        if el is None:
+            el = fragments[0]
             text_quality = 0
-        return match.group(0), text_quality
+        return tostring(el), text_quality
 
     class Meta:
         app_label = "core"
