@@ -36,7 +36,7 @@ class Service(object):
     def handle_warnings(self, warnings, results):
         for handler in self.HIF_warning_handlers:
             for warning in warnings:
-                handler(warning,results)
+                handler(warning, results)
 
 
 class VisualTranslationsService(VisualTranslationsStorage, Service):

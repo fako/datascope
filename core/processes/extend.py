@@ -79,6 +79,11 @@ class Extend(models.Model):
 
         """
         source = self.get_source(ser_extendee)
+
+        # TODO: This should probably not be here. Write tests to confirm
+        if not source:
+            return []
+
         setups = []
 
         for args_path in expand(self.config._extend['args'], source):

@@ -199,6 +199,13 @@ class WikiTranslate(WikiBaseQuery):
         self.HIF_parameters['iwprefix'] = self.config.translate_to
         return super(WikiTranslate, self).prepare_params()
 
+    def handle_error(self):
+        super(WikiTranslate, self).handle_error()
+        # TODO: re-enable this. Causes bug with extend at the moment.
+        #if not "iwlinks" in self.body:
+        #    self.status = 404
+        #    raise HIFHttpError40X("No translations found in {} for {}".format(self.config.translate_to, self.input))
+
     class Meta:
         app_label = "core"
         proxy = True
