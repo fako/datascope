@@ -1,5 +1,5 @@
 # TODO: split up into separate files
-import json, hashlib
+import json, hashlib, re
 
 from core.input.http.base import JsonQueryLink, HttpJsonMixin, HttpLink
 from core.input.helpers import sanitize_single_trueish_input
@@ -341,6 +341,8 @@ class WikiCategories(WikiGenerator):
 
     def cleaner(self,result_instance):
         if result_instance["title"].startswith('Category:Living people'):
+            return False
+        if re.match(r'Category:\d\d\d\d (births|deaths)', result_instance['title']):
             return False
         return True
 
