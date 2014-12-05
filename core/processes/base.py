@@ -180,11 +180,11 @@ class Retrieve(Process):
 
             link = link_model()
             link.session = session
-            link_context.update(link.next_params)  # separates calls to some link type but different continuation
 
             next_link = True
             while next_link:
                 try:
+                    link_context.update(link.next_params)  # separates calls to some link type but different continuation
                     link.get(arg, **link_context)
                 except HIFInputError as exception:
                     self.handle_exception(exception, link)

@@ -122,6 +122,7 @@ class WikiGenerator(WikiBaseQuery):
         :param result_instance:
         :return:
         """
+        # TODO: a WikiData filter would be more accurate.
         if result_instance["title"].startswith('List'):
             return False
         return True

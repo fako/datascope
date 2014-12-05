@@ -1,11 +1,18 @@
+import textwrap
+
 from django.contrib import admin
 
 from core.models import TextStorage, ProcessStorage, VisualTranslationsStorage, PeopleSuggestionsStorage, CityCelebritiesStorage
 
 
 class TextStorageAdmin(admin.ModelAdmin):
-    list_display = ['__unicode__', 'status', 'head', 'body', 'created_at']
+    list_display = ['wrapped_unicode', 'status', 'head', 'body', 'created_at']
     search_fields = ['identity', 'arguments', 'configuration', 'type']
+
+    def wrapped_unicode(self, text_storage):
+        return textwrap.fill(unicode(text_storage), 25)
+    wrapped_unicode.short_description = 'Text'
+
 
 
 class ProcessStorageAdmin(admin.ModelAdmin):
