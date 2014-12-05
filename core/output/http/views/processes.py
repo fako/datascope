@@ -36,13 +36,10 @@ class ProcessAPIView(APIView):
 
             return Response(data=results, status=HTTP_200_OK)
 
-
         except HIFProcessingAsync:
             return Response(data=[], status=HTTP_202_ACCEPTED)
         except HIFProcessingWarning as exception:
             return Response(data=exception.data, status=exception.status)
-        except HIFBadRequest as exception:
-            return Response(data={"detail": exception.detail}, status=HTTP_400_BAD_REQUEST)
 
     @staticmethod
     def get(request, Service):
@@ -53,6 +50,8 @@ class ProcessAPIView(APIView):
             service.setup(**service.context(request))
         except HIFNoInput:
             return Response(data=[], status=HTTP_200_OK)
+        except HIFBadRequest as exception:
+            return Response(data={"detail": exception.detail}, status=HTTP_400_BAD_REQUEST)
 
         if service.status in service.HIF_success_statusses:
             service.views += 1
