@@ -32,7 +32,9 @@ class YouTubePopularityComparison(Process):
             "_link": "YouTubeDetails"
         })
 
-        self.rsl = Decimal(popularity_a.rsl[0]['viewCount']) / Decimal(popularity_b.rsl[0]['viewCount'])
+        self.rsl = {
+            "viewCount": Decimal(popularity_a.rsl[0]['viewCount']) / Decimal(popularity_b.rsl[0]['viewCount'])
+        }
 
     class Meta:
         app_label = "core"
