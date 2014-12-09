@@ -57,8 +57,8 @@ class YouTubeSearch(GoogleLink):
     # HIF interface
     HIF_link = 'https://www.googleapis.com/youtube/v3/search'
     HIF_parameters = {
-        'type':'video',
-        'part':'id,snippet'
+        'type': 'video',
+        'part': 'id,snippet'
     }
     HIF_objective = {
         "id.videoId": None,
@@ -67,6 +67,30 @@ class YouTubeSearch(GoogleLink):
     HIF_translations = {
         "id.videoId": "vid",
         "snippet.thumbnails.medium.url": "thumbnail"
+    }
+
+    class Meta:
+        app_label = "core"
+        proxy = True
+
+
+class YouTubeDetails(GoogleLink):
+
+    HIF_link = 'https://www.googleapis.com/youtube/v3/videos'
+    HIF_parameters = {
+        'id': '',
+        'part': 'statistics',
+    }
+
+    HIF_query_parameter = 'id'
+
+    HIF_objective = {
+        "id": None,
+        "statistics.viewCount": None
+    }
+    HIF_translations = {
+        "id": "vid",
+        "statistics.viewCount": 'viewCount'
     }
 
     class Meta:

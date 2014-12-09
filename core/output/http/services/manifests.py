@@ -2,7 +2,8 @@ from itertools import groupby
 
 from django.utils.translation import ugettext as _
 
-from core.models.output import VisualTranslationsStorage, PeopleSuggestionsStorage, CityCelebritiesStorage
+from core.models.output import (VisualTranslationsStorage, PeopleSuggestionsStorage, CityCelebritiesStorage,
+                                PopularityComparisonStorage)
 from core.output.http.views import ProcessAPIView, ProcessPlainView, ServiceView
 from core.output.http.handlers.warnings import handler_results_or_404, handler_wikipedia_disambiguation_300
 from core.exceptions import HIFBadRequest, HIFNoInput
@@ -112,6 +113,21 @@ class CityCelebritiesService(CityCelebritiesStorage, Service):
     def context(self, request):
         return {
             "query": request.GET.get('q', '')
+        }
+
+    class Meta:
+        proxy = True
+
+
+class PopularityComparisonService(PopularityComparisonStorage, Service):
+
+    HIF_process = "YouTubePopularityComparison"
+    HIF_main = ProcessAPIView
+
+    def context(self, request):
+        return {
+            "a": request.GET.get('a', ''),
+            "b": request.GET.get('b', '')
         }
 
     class Meta:

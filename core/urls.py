@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, url
 
-from core.output.http.services.manifests import VisualTranslationsService, PeopleSuggestionsService, CityCelebritiesService
+from core.output.http.services.manifests import (VisualTranslationsService, PeopleSuggestionsService,
+                                                 CityCelebritiesService, PopularityComparisonService)
 
 
 urlpatterns = patterns('core.views',
@@ -11,6 +12,8 @@ urlpatterns = patterns('core.views',
     url(r'^people-suggestions/plain/?$', PeopleSuggestionsService.HIF_plain.as_view(), {"Service": PeopleSuggestionsService}, name='people-suggestions-plain'),
 
     url(r'^city-celebrities/?$', CityCelebritiesService.HIF_main.as_view(), {"Service": CityCelebritiesService}, name='city-celebrities'),
+
+    url(r'^popularity-comparison/?$', PopularityComparisonService.HIF_main.as_view(), {"Service": PopularityComparisonService}, name='popularity-comparison'),
 
     url(r'question/?', 'question', name='question')
 )

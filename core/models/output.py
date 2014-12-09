@@ -48,3 +48,11 @@ class CityCelebritiesStorage(ServiceStorage):
         db_table = "core_citycelebrities"
         verbose_name = "City Celebrities"
         verbose_name_plural = "City Celebrities"
+
+
+class PopularityComparisonStorage(ServiceStorage):  # TODO: Should go to a generic core Service bucket
+    class Meta:
+        app_label = "core"  # TODO: change when migrating to 1.7
+        db_table = "core_popularitycomparison"
+        verbose_name = "Popularity Comparison"
+        verbose_name_plural = "Popularity Comparisons"

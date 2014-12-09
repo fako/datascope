@@ -2,7 +2,8 @@ import textwrap
 
 from django.contrib import admin
 
-from core.models import TextStorage, ProcessStorage, VisualTranslationsStorage, PeopleSuggestionsStorage, CityCelebritiesStorage
+from core.models import (TextStorage, ProcessStorage, VisualTranslationsStorage, PeopleSuggestionsStorage,
+                         CityCelebritiesStorage, PopularityComparisonStorage)
 
 
 class TextStorageAdmin(admin.ModelAdmin):
@@ -32,3 +33,4 @@ class ServiceAdmin(admin.ModelAdmin):
 admin.site.register(VisualTranslationsStorage, ServiceAdmin)
 admin.site.register(PeopleSuggestionsStorage, ServiceAdmin)
 admin.site.register(CityCelebritiesStorage, ServiceAdmin)
+admin.site.register(PopularityComparisonStorage, ServiceAdmin)
