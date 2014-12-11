@@ -14,13 +14,17 @@ class YouTubePopularityComparison(Process):
         retrieve_a.execute(subject_a, **{
             "_link": "YouTubeSearch"
         })
-        video_a = retrieve_a.rsl[0]
+        video_a = retrieve_a.rsl[0] if retrieve_a.rsl else None
 
         retrieve_b = Retrieve()
         retrieve_b.execute(subject_b, **{
             "_link": "YouTubeSearch"
         })
-        video_b = retrieve_b.rsl[0]
+        video_b = retrieve_b.rsl[0] if retrieve_b.rsl else None
+
+        if not video_a or not video_b:
+            self.rsl = None
+            return
 
         popularity_a = Retrieve()
         popularity_a.execute(video_a['vid'], **{
