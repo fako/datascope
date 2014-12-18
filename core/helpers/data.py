@@ -1,3 +1,8 @@
+"""
+A pypi demonstration vehicle.
+"""
+
+
 import json
 import copy
 from collections import Counter
