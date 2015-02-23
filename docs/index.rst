@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Data Scope's documentation!
+Data Scope's documentation
 ======================================
 
 Contents:
@@ -11,6 +11,7 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
+   storage
    helpers
 
 Indices and tables

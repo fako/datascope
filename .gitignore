@@ -5,6 +5,7 @@
 *.db
 
 logs/
+docs/_build/
 
 secrets.py
 server.py
