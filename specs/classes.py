@@ -5,16 +5,64 @@ from django.db import models
 from jsonfield import JSONField
 
 
-class Individual(models.Model):
+class DataEntity(models.Model):
     community = models.ForeignKey('Community')
-    collective = models.ForeignKey('Collective', null=True)
-
-    properties = JSONField()
     schema = JSONField()
     spirit = models.CharField(max_length=256, db_index=True)
 
+    @classmethod
+    def create_from_json(cls, json_string, schema, context=None):
+        """
+        Parses the json string into a data structure
+        and then adds dictionaries inside a newly created Collective if any validates against the schema.
+        The matching dictionaries will be stored as Individual. If the context parameter is set to a dictionary.
+        The Individuals get updated with the given dictionary.
+
+        :param json_string:
+        :param schema:
+        :param context:
+        :return:
+        """
+        pass
+
+    def add_from_json(self, json_string, schema, context=None):
+        """
+        Parses the json string into a data structure and then adds dictionaries to self if any validates against the schema.
+        The matching dictionaries will be stored as Individual. If the context parameter is set to a dictionary.
+        The Individuals get updated with the given dictionary.
+
+        :param json_string:
+        :param schema:
+        :param context:
+        :return:
+        """
+        pass
+
+    @property
+    def url(self, json_path=None):
+        """
+        TODO: Uses Django reverse
+        Sets an anchor if json_path is given
+
+        :param json_path: (optional)
+        :return:
+        """
+        if not self.id:
+            raise ValueError("Can't get path for unsaved Collective")
+        return "ind|col/{}/".format(self.id)
+
+    class Meta:
+        abstract = True
+        unique_together = ('community_id', 'spirit')
+
+
+class Individual(DataEntity):
+
+    collective = models.ForeignKey('Collective', null=True)
+    properties = JSONField()
+
     def __getattr__(self, item):
-        getattr(self.properties, item)
+        return getattr(self.properties, item)
 
     @classmethod  # TODO: write manager instead?
     def create_from_dict(cls, dic, schema):
@@ -36,26 +84,8 @@ class Individual(models.Model):
         """
         pass
 
-    @property
-    def url(self, json_path=None):
-        """
-        TODO: Uses Django reverse
-        Sets an anchor if json_path is given
 
-        :param json_path: (optional)
-        :return:
-        """
-        if not self.id:
-            raise ValueError("Can't get path for unsaved Individual")
-        return "ind/{}/".format(self.id)
-
-
-
-class Collective(models.Model):
-    community = models.ForeignKey('Community')
-
-    schema = JSONField()
-    spirit = models.CharField(max_length=256, db_index=True)
+class Collective(DataEntity):
 
     @classmethod  # TODO: write manager instead?
     def create_from_list(cls, lst, schema, context=None):
@@ -82,19 +112,6 @@ class Collective(models.Model):
         """
         pass
 
-    @property
-    def url(self, json_path=None):
-        """
-        TODO: Uses Django reverse
-        Sets an anchor if json_path is given
-
-        :param json_path: (optional)
-        :return:
-        """
-        if not self.id:
-            raise ValueError("Can't get path for unsaved Collective")
-        return "col/{}/".format(self.id)
-
     def list_json_path(self, json_path):
         """
         Returns a list consisting of values at json_path on Individuals that are members of this Collective.
@@ -103,9 +120,6 @@ class Collective(models.Model):
         :return:
         """
         pass
-
-    class Meta:
-        unique_together = ('community_id', 'spirit')
 
 
 class Community(models.Model):
@@ -293,7 +307,43 @@ class CityCelebrities(Community):
 
 
 class PersonProfile(Community):
-    pass
+    spirit = OrderedDict([
+        ("profile", {
+            "schema": {},
+            "config": {},
+            "process": "Retrieve",
+            "input": None,
+            "output": "Individual"
+        }),
+        ("basics", {
+            "schema": {},
+            "config": {},
+            "process": "Retrieve",
+            "input": "/ind/1/#$.fbid",
+            "output": "Individual"
+        }),
+        ("friends", {
+            "schema": {},
+            "config": {},
+            "process": "Retrieve",
+            "input": "/ind/1/#$.fbid",
+            "output": "Collective"
+        }),
+        ("likes", {
+            "schema": {},
+            "config": {},
+            "process": "Retrieve",
+            "input": "/ind/1/#$.fbid",
+            "output": "Collective"
+        }),
+        ("photos", {
+            "schema": {},
+            "config": {},
+            "process": "Retrieve",
+            "input": "/ind/1/#$.fbid",
+            "output": "Collective"
+        })
+    ])
 
 
 class FamousFlightDeaths(Community):
@@ -330,3 +380,46 @@ class CollectiveView(DataScopeView):
 
 class IndividualView(DataScopeView):
     pass
+
+
+class TextStorage(object):
+    """
+    Store the headers and body for any internet text source.
+    """
+    pass
+
+
+class HttpResource(object):  # HttpLink
+    """
+    A representation of how to retrieve/submit data from/to a HTTP resource.
+    """
+    pass
+
+
+class HttpRetrieve(object):
+    """
+    Retrieves a single http resource from the web and stores it as HyperText. Possibly returns a cached result.
+    """
+    pass
+
+
+class HttpRetrieveMass(object):
+    """
+    Retrieves multiple http resources at the same time.
+    """
+    pass
+
+
+class HttpSubmit(object):
+    """
+    Submits data to a http resource.
+    """
+    pass
+
+
+class HttpSubmitBatch(object):
+    """
+    Submits data in small chunks to a http resource.
+    """
+    pass
+
