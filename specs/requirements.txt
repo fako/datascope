@@ -1,0 +1,14 @@
+- Allow better batch processing (Mysql has gone away bug)
+- Allow partial POST (Construct a resource bit by bit)
+- Allow data private for user
+- Support partial processing
+- Support existing algorithms (ImageTranslations, PeopleSuggestions, )
+- Store history
+- Integrate with BeautifulSoup
+- Integrate with pattern
+
+- Use rest_framework 3
+- Use Python 3
+- Use Django 1.8
+- Use JSON path
+- Use JSON schema
