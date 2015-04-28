@@ -163,6 +163,7 @@ INSTALLED_APPS = (
     'datascope',
     # Framework apps
     'core',
+    'refactored',
 )
 
 # A sample logging configuration. The only tangible logging
