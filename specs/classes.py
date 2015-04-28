@@ -8,9 +8,9 @@ from jsonfield import JSONField
 class DataEntity(models.Model):
     community = models.ForeignKey('Community')
     schema = JSONField()
-    spirit = models.CharField(max_length=256, db_index=True)
+    spirit = models.CharField(max_length=255, db_index=True)
 
-    @classmethod
+    @classmethod  # TODO: write manager instead!
     def create_from_json(cls, json_string, schema, context=None):
         """
         Parses the json string into a data structure
@@ -21,6 +21,23 @@ class DataEntity(models.Model):
         :param json_string:
         :param schema:
         :param context:
+        :return:
+        """
+        pass
+
+    @classmethod  # TODO: write manager instead!
+    def create_from_growth(cls, growth):
+        """
+
+        :param growth:
+        :return:
+        """
+        pass
+
+    def add_from_growth(self, growth):
+        """
+
+        :param growth:
         :return:
         """
         pass
@@ -51,6 +68,15 @@ class DataEntity(models.Model):
             raise ValueError("Can't get path for unsaved Collective")
         return "ind|col/{}/".format(self.id)
 
+    @property
+    def content(self):
+        """
+        Return the content of the instance. This property is meant to be overridden by subclasses.
+
+        :return: None
+        """
+        return None
+
     class Meta:
         abstract = True
         unique_together = ('community_id', 'spirit')
@@ -64,7 +90,7 @@ class Individual(DataEntity):
     def __getattr__(self, item):
         return getattr(self.properties, item)
 
-    @classmethod  # TODO: write manager instead?
+    @classmethod  # TODO: write manager instead!
     def create_from_dict(cls, dic, schema):
         """
         Create new instance of this class from a dictionary if it validates against the schema.
@@ -84,10 +110,19 @@ class Individual(DataEntity):
         """
         pass
 
+    @property
+    def content(self):
+        """
+        Returns the content of this Individual
+
+        :return: properties dictionary
+        """
+        return self.properties
+
 
 class Collective(DataEntity):
 
-    @classmethod  # TODO: write manager instead?
+    @classmethod  # TODO: write manager instead!
     def create_from_list(cls, lst, schema, context=None):
         """
         Create new instance of this class from list if any dictionary inside validates against the schema.
@@ -121,13 +156,30 @@ class Collective(DataEntity):
         """
         pass
 
+    @property
+    def content(self):
+        """
+        Returns the content of the members of this Collective
+
+        :return: a list of properties from Individual members
+        """
+        return [ind.content for ind in self.individual_set.all()]  # TODO: fix QuerySet caching
+
 
 class Community(models.Model):
     """
     NB: When fetching a community it is recommended to prefetch Individuals, Collectives and Growths with it
+    TODO: Create a SpiritField or SpiritPhase class which manages a spirit phase
     """
+    default_configuration = {
+        "depth": 0
+    }
 
+    enlightened = models.BooleanField(default=False)
     data = JSONField(null=True, blank=True)
+
+    path = models.CharField(max_length=255, db_index=True)
+    config = JSONField(db_index=True)  # TODO: should become a ConfigurationField
 
     def get_collective_from_path(self, path):
         """
@@ -142,42 +194,62 @@ class Community(models.Model):
     def grow(self):
         """
 
-
         :return:
 
-        - If data property is set: exit
+        - If enlightened property is set: exit
         - Look for latest Growth
         - Calls Growth.progress
         - If no progress: exit
         - Fetch results
         - Create Collective or Individual from the results
-        - Call Community.after_PHASE
+        - Call Community.after_PHASE (optional)
         - If there is no new phase: exit
         - Go to next phase
-        - Call Community.before_PHASE
+        - Call Community.before_PHASE (optional)
         - Start new growth
+        - If no more growth: set enlightened to True
         """
-        if self.data:
+        if self.enlightened:
             return
 
     @property
-    def results(self):
+    def kernel(self):
         """
-        This method is meant to be overridden. It should mangle the data attached to the community.
-        And return a data structure in the correct form.
+        Returns the spirit of the Individual or Collective that is the base for results. Override this method in subclasses.
 
         :return: None
         """
         return None
 
+    def results(self, depth=None):
+        """
+        Return content of the self.kernel Individual or Collective.
+
+        :param depth: (optional) indicates the level of recursion that should be used to inline nested Individuals and or Collectives.
+        :return:
+        """
+        # TODO: should set a default depth from self.config
+        pass
+
+    class Meta:
+        abstract = True
+        unique_together = ('path', 'config')
+
 
 class Growth(models.Model):
     community = models.ForeignKey(Community)
-    phase_name = models.CharField(max_length=256)
-    phase_properties = JSONField()
-    task_id = models.CharField(max_length=256, null=True, blank=True)
 
-    @classmethod
+    name = models.CharField(max_length=255)
+    schema = JSONField()
+    config = JSONField()  # TODO: should become a ConfigurationField
+    process = models.CharField(max_length=255)
+    input = models.CharField(max_length=255)
+    output = models.CharField(max_length=255)
+
+    task_id = models.CharField(max_length=255, null=True, blank=True)
+
+
+    @classmethod  # TODO: write manager instead!
     def create_from_spirit_phase(cls, spirit_phase):
         """
         Creates a new Growth instance from a Community's spirit phase.
@@ -188,7 +260,7 @@ class Growth(models.Model):
 
     def start(self):
         """
-        Starts the Celery tasks according to the phase_properties to enable growth.
+        Starts the Celery tasks according to model fields to enable growth.
 
         :return:
         """
@@ -204,7 +276,7 @@ class Growth(models.Model):
         return None
 
     @property
-    def results(self):
+    def results(self):  # TODO: make this class iterable
         """
         Returns a Storage class and all ids that were created for the growth
 
@@ -221,17 +293,42 @@ class ImageTranslations(Community):
                 "_link": "WikiTranslate"
             },
             "process": "Retrieve",
-            "input": None,
+            "input": "Individual",
             "output": "Collective"
         }),
         ("visualization", {
             "schema": {},
             "config": {},
             "process": "Retrieve",
-            "input": "/col/1/#$.translation",
+            "input": "Collective",
             "output": "Collective"
         })
     ])
+
+    @property
+    def kernel(self):
+        """
+
+
+        :return: spirit that is the base for results
+        """
+        return "translation"
+
+    def before_translation(self, growth):
+        """
+        Use self.path to set initial input
+
+        :param growth:
+        :return:
+        """
+
+    def after_visualization(self, growth):
+        """
+        Add visualizations to all translations
+
+        :return:
+        """
+        pass
 
 
 class PeopleSuggestions(Community):
@@ -351,6 +448,10 @@ class FamousFlightDeaths(Community):
 
 
 class DataScopeView(object):
+    """
+    TODO: allow filtering based on GET parameters prefixed with $
+    TODO: allow partial responses by respecting json paths after # in the URL
+    """
 
     @staticmethod
     def get_user_from_request(request):
