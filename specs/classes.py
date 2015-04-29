@@ -5,7 +5,7 @@ from django.db import models
 from jsonfield import JSONField
 
 
-class DataEntity(models.Model):
+class Organism(models.Model):
     community = models.ForeignKey('Community')
     schema = JSONField()
     spirit = models.CharField(max_length=255, db_index=True)
@@ -82,7 +82,7 @@ class DataEntity(models.Model):
         unique_together = ('community_id', 'spirit')
 
 
-class Individual(DataEntity):
+class Individual(Organism):
 
     collective = models.ForeignKey('Collective', null=True)
     properties = JSONField()
@@ -120,7 +120,7 @@ class Individual(DataEntity):
         return self.properties
 
 
-class Collective(DataEntity):
+class Collective(Organism):
 
     @classmethod  # TODO: write manager instead!
     def create_from_list(cls, lst, schema, context=None):
@@ -242,9 +242,9 @@ class Growth(models.Model):
     name = models.CharField(max_length=255)
     schema = JSONField()
     config = JSONField()  # TODO: should become a ConfigurationField
-    process = models.CharField(max_length=255)
-    input = models.CharField(max_length=255)
-    output = models.CharField(max_length=255)
+    process = models.CharField(max_length=255)  # TODO: set choices
+    input = models.CharField(max_length=255)  # TODO: set choices
+    output = models.CharField(max_length=255)  # TODO: set choices
 
     task_id = models.CharField(max_length=255, null=True, blank=True)
 
@@ -253,16 +253,27 @@ class Growth(models.Model):
     def create_from_spirit_phase(cls, spirit_phase):
         """
         Creates a new Growth instance from a Community's spirit phase.
+        TODO: raise custom error when objects.create fails
 
         :return:
         """
         pass
 
-    def start(self):
+    def begin(self, *args):
         """
-        Starts the Celery tasks according to model fields to enable growth.
+        Starts the Celery tasks according to model fields and external arguments to enable growth.
 
+        :param args: (optional)
         :return:
+        """
+        pass
+
+    def end(self):
+        """
+        Takes results from self.results and creates an Organism according to ContentType stored in self.output.
+        It stores a reference to the new Organism in self.output and returns it
+
+        :return: Organism
         """
         pass
 
@@ -322,10 +333,12 @@ class ImageTranslations(Community):
         :return:
         """
 
-    def after_visualization(self, growth):
+    def after_visualization(self, growth, output):
         """
         Add visualizations to all translations
 
+        :param growth:
+        :param output:
         :return:
         """
         pass
