@@ -237,6 +237,9 @@ class Community(models.Model):
 
 
 class Growth(models.Model):
+
+    success_codes = [200, 201, 202, 204]
+
     community = models.ForeignKey(Community)
 
     name = models.CharField(max_length=255)
@@ -247,6 +250,7 @@ class Growth(models.Model):
     output = models.CharField(max_length=255)  # TODO: set choices
 
     task_id = models.CharField(max_length=255, null=True, blank=True)
+    state = models.CharField(max_length=255)  # TODO: set choices
 
 
     @classmethod  # TODO: write manager instead!
@@ -271,7 +275,8 @@ class Growth(models.Model):
     def end(self):
         """
         Takes results from self.results and creates an Organism according to ContentType stored in self.output.
-        It stores a reference to the new Organism in self.output and returns it
+        It stores a reference to the new Organism in self.output and returns it.
+        Will ignore any errors that are not specified in self.errors and
 
         :return: Organism
         """
@@ -299,13 +304,19 @@ class Growth(models.Model):
 class ImageTranslations(Community):
     spirit = OrderedDict([
         ("translation", {
-            "schema": {},
+            "process": "Retrieve",
             "config": {
                 "_link": "WikiTranslate"
             },
-            "process": "Retrieve",
+            "errors": {
+                300: "translation_300",
+                404: "translation_404"
+            },
             "input": "Individual",
-            "output": "Collective"
+            "context": "",
+            "schema": {},
+            "transformations": {},
+            "output": "Collective",
         }),
         ("visualization", {
             "schema": {},
@@ -332,6 +343,7 @@ class ImageTranslations(Community):
         :param growth:
         :return:
         """
+        pass
 
     def after_visualization(self, growth, output):
         """
@@ -341,6 +353,12 @@ class ImageTranslations(Community):
         :param output:
         :return:
         """
+        pass
+
+    def translation_300(self, obj):
+        pass
+
+    def translation_404(self, obj):
         pass
 
 
@@ -353,7 +371,8 @@ class PeopleSuggestions(Community):
             },
             "process": "Retrieve",
             "input": None,
-            "output": "Individual"
+            "output": "Individual",
+
         }),
         ("categories", {
             "schema": {},
