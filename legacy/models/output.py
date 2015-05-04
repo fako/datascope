@@ -29,7 +29,7 @@ class ServiceStorage(Storage):
 class VisualTranslationsStorage(ServiceStorage):
     class Meta:
         app_label = "legacy"  # TODO: change when migrating to 1.7
-        db_table = "core_visualtranslations"
+        db_table = "legacy_visualtranslations"
         verbose_name = "Visual Translations"
         verbose_name_plural = "Visual Translations"
 
@@ -37,7 +37,7 @@ class VisualTranslationsStorage(ServiceStorage):
 class PeopleSuggestionsStorage(ServiceStorage):
     class Meta:
         app_label = "legacy"  # TODO: change when migrating to 1.7
-        db_table = "core_peoplesuggestions"
+        db_table = "legacy_peoplesuggestions"
         verbose_name = "People Suggestions"
         verbose_name_plural = "People Suggestions"
 
@@ -45,7 +45,7 @@ class PeopleSuggestionsStorage(ServiceStorage):
 class CityCelebritiesStorage(ServiceStorage):
     class Meta:
         app_label = "legacy"  # TODO: change when migrating to 1.7
-        db_table = "core_citycelebrities"
+        db_table = "legacy_citycelebrities"
         verbose_name = "City Celebrities"
         verbose_name_plural = "City Celebrities"
 
@@ -53,6 +53,6 @@ class CityCelebritiesStorage(ServiceStorage):
 class PopularityComparisonStorage(ServiceStorage):  # TODO: Should go to a generic legacy Service bucket
     class Meta:
         app_label = "legacy"  # TODO: change when migrating to 1.7
-        db_table = "core_popularitycomparison"
+        db_table = "legacy_popularitycomparison"
         verbose_name = "Popularity Comparison"
         verbose_name_plural = "Popularity Comparisons"

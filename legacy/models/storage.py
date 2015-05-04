@@ -231,7 +231,7 @@ class ProcessStorage(Extend, Register, Storage):
     task_id = models.CharField(max_length=256, null=True, blank=True)
 
     class Meta:
-        db_table = "core_processstorage"
+        db_table = "legacy_processstorage"
         app_label = "legacy"
         verbose_name = "Process"
         verbose_name_plural = "Processes"
@@ -247,7 +247,7 @@ class TextStorage(Storage):
     body = models.TextField()
 
     class Meta:
-        db_table = "core_textstorage"
+        db_table = "legacy_textstorage"
         app_label = "legacy"
         verbose_name = "Text"
         verbose_name_plural = "Texts"
