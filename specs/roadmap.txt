@@ -1,6 +1,6 @@
 PREPARATION
-- Rename core to legacy
-- Update all packages to latest version (mainly: Django, DRF and Celery)
++ Rename core to legacy
++ Update all packages to latest version (mainly: Django, DRF and Celery)
 - Full test and deploy
 
 STORAGE
