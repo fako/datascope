@@ -3,5 +3,5 @@
 Storage
 =======
 
-.. automodule:: core.models.storage
+.. automodule:: legacy.models.storage
     :members: Storage, ProcessStorage, TextStorage, FileStorage

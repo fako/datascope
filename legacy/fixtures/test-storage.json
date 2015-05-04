@@ -1,0 +1,95 @@
+[
+{
+    "pk": 1, 
+    "model": "legacy.textstorage",
+    "fields": {
+        "status": 1,
+        "body": "Test text 1",
+        "retained": true,
+        "head": { },
+        "identity": "[u'test'] | {'test': u'test'}",
+        "arguments": [
+            "test"
+        ], 
+        "configuration": {
+            "test": "test"
+        }, 
+        "type": "TextStorage",
+        "modified_at": "2014-10-28T11:32:24.186",
+        "created_at": "2014-10-28T11:29:11.818",
+        "purge_at": "2014-11-28T11:32:15"
+    }
+},
+{
+    "pk": 2,
+    "model": "legacy.textstorage",
+    "fields": {
+        "status": 1,
+        "body": "Test text 2",
+        "retained": true,
+        "head": { },
+        "identity": "[u'test args'] | {'test': u'test'}",
+        "arguments": [
+            "test args"
+        ],
+        "configuration": {
+            "test": "test"
+        },
+        "type": "TextStorage",
+        "modified_at": "2014-10-28T11:32:24.186",
+        "created_at": "2014-10-28T11:29:11.818",
+        "purge_at": "2014-11-28T11:32:15"
+    }
+},
+{
+    "pk": 3,
+    "model": "legacy.textstorage",
+    "fields": {
+        "status": 0,
+        "body": "Test text 3",
+        "retained": true,
+        "head": { },
+        "identity": "[u'test'] | {'test': u'test kwargs'}",
+        "arguments": [
+            "test"
+        ],
+        "configuration": {
+            "test": "test kwargs"
+        },
+        "type": "TextStorage",
+        "modified_at": "2014-10-28T11:32:24.186",
+        "created_at": "2014-10-28T11:29:11.818",
+        "purge_at": "2014-11-28T11:32:15"
+    }
+},
+{
+    "pk": 1,
+    "model": "legacy.processstorage",
+    "fields": {
+        "status": 1,
+        "retained": true,
+        "task_id": null,
+        "results": [
+            {
+                "query": "test",
+                "results": ["test0", "test1"]
+            }
+        ],
+        "meta": null,
+        "identity": "[u'test'] | {'test': u'test'}",
+        "arguments": [
+            "test"
+        ],
+        "configuration": {
+            "test": "test"
+        },
+        "register": null,
+        "extensions": null,
+        "type": "ProcessStorage",
+        "modified_at": "2014-10-28T11:32:24.186",
+        "created_at": "2014-10-28T11:29:11.818",
+        "purge_at": "2014-11-28T11:32:15"
+
+    }
+}
+]

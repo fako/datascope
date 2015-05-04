@@ -83,7 +83,7 @@ STATIC_URL = '/static/' + PROJECT_NAME + '/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    PATH_TO_PROJECT + 'core/output/http/static',
+    PATH_TO_PROJECT + 'legacy/output/http/static',
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -106,13 +106,13 @@ TEMPLATE_LOADERS = (
 
 #TEMPLATE_CONTEXT_PROCESSORS = (
 #    "django.contrib.auth.context_processors.auth",
-#    "django.core.context_processors.debug",
-#    "django.core.context_processors.i18n",
-#    "django.core.context_processors.media",
-#    "django.core.context_processors.static",
-#    "django.core.context_processors.tz",
+#    "django.legacy.context_processors.debug",
+#    "django.legacy.context_processors.i18n",
+#    "django.legacy.context_processors.media",
+#    "django.legacy.context_processors.static",
+#    "django.legacy.context_processors.tz",
 #    "django.contrib.messages.context_processors.messages",
-#    'django.core.context_processors.request',
+#    'django.legacy.context_processors.request',
 #)
 
 MIDDLEWARE_CLASSES = (
@@ -126,7 +126,7 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Datascope middleware
-    'core.middleware.AllowOriginMiddleware',
+    'legacy.middleware.AllowOriginMiddleware',
 )
 
 ROOT_URLCONF = 'datascope.urls'
@@ -135,14 +135,14 @@ ROOT_URLCONF = 'datascope.urls'
 WSGI_APPLICATION = 'datascope.wsgi.application'
 
 TEMPLATE_DIRS = (
-    PATH_TO_PROJECT + "core/output/http/html",
+    PATH_TO_PROJECT + "legacy/output/http/html",
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
 )
 
 FIXTURE_DIRS = (
-    PATH_TO_PROJECT + 'core/fixtures/',
+    PATH_TO_PROJECT + 'legacy/fixtures/',
 )
 
 INSTALLED_APPS = (
@@ -162,7 +162,7 @@ INSTALLED_APPS = (
     # Main app
     'datascope',
     # Framework apps
-    'core',
+    'legacy',
     'refactored',
 )
 

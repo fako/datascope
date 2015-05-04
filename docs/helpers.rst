@@ -3,5 +3,5 @@
 Helpers
 =======
 
-.. automodule:: core.helpers.data
+.. automodule:: legacy.helpers.data
     :members:
