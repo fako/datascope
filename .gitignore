@@ -13,4 +13,4 @@ server.py
 *.warc.gz
 *.megawarc.warc.os.cdx
 *.megawarc.warc.os.cdx.gz
-
+nl-hyves*.html
