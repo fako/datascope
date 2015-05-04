@@ -5,7 +5,8 @@ from django.conf import settings
 class Domain(object):
 
     #HIF__supported_languages = ['en','nl','pt','de','fr','es']
-    HIF__supported_languages = ['zh','ru','pt']
+    #HIF__supported_languages = ['zh','ru','pt']
+    HIF__supported_languages = ['pl', 'tr', 'id']
     HIF_debug = True
     HIF_allowed_origins = [
         'http://localhost:9000',
