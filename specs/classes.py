@@ -8,7 +8,7 @@ from jsonfield import JSONField
 class Organism(models.Model):
     community = models.ForeignKey('Community')
     schema = JSONField()
-    spirit = models.CharField(max_length=255, db_index=True)
+    spirit = models.CharField(max_length=255, db_index=True)  # should be unique per community?
 
     @classmethod  # TODO: write manager instead!
     def create_from_json(cls, json_string, schema, context=None):
@@ -212,6 +212,15 @@ class Community(models.Model):
         if self.enlightened:
             return
 
+    def create_growth(self, spirit_phase):
+        """
+        Creates a Growth based on spirit_phase and returns it.
+
+        :param spirit_phase:
+        :return: Growth
+        """
+        pass
+
     @property
     def kernel(self):
         """
@@ -268,7 +277,7 @@ class Growth(models.Model):
         Starts the Celery tasks according to model fields and external arguments to enable growth.
 
         :param args: (optional)
-        :return:
+        :return: the input Organism
         """
         pass
 
@@ -278,7 +287,17 @@ class Growth(models.Model):
         It stores a reference to the new Organism in self.output and returns it.
         Will ignore any errors that are not specified in self.errors and
 
-        :return: Organism
+        :return: the output Organism
+        """
+        pass
+
+    def create_processor(self, *args, **kwargs):
+        """
+        Creates an instance of process based on self.process, self.config and args
+
+        :param args:
+        :param kwargs: (optional)
+        :return:
         """
         pass
 
@@ -306,31 +325,44 @@ class ImageTranslations(Community):
         ("translation", {
             "process": "Retrieve",
             "config": {
-                "_link": "WikiTranslate"
+                "_resource": "WikiTranslate"
             },
             "errors": {
                 300: "translation_300",
                 404: "translation_404"
             },
             "input": "Individual",
-            "context": "",
+            "context": {},
             "schema": {},
             "transformations": {},
             "output": "Collective",
+            "actions": ["fetch_more_images"]
         }),
         ("visualization", {
             "schema": {},
-            "config": {},
+            "config": {
+                "_resource": "GoogleImages|YouTubeSearch"
+            },
             "process": "Retrieve",
             "input": "Collective",
+            "context": {},
             "output": "Collective"
         })
     ])
 
+    def fetch_more_images(self, post_data):
+        """
+        Takes a list of Individual ids inside of post_data that were gathered by the translation growth.
+        It will get a processor from the visualization growth and add images to the Collectives referenced by the individuals.
+        These images should come from the processor response when using Individual.more_visuals_url as URL.
+
+        :param post_data:
+        :return:
+        """
+
     @property
     def kernel(self):
         """
-
 
         :return: spirit that is the base for results
         """
@@ -347,7 +379,7 @@ class ImageTranslations(Community):
 
     def after_visualization(self, growth, output):
         """
-        Add visualizations to all translations
+        Add visualizations and the more_visualization to all translations
 
         :param growth:
         :param output:
@@ -355,10 +387,10 @@ class ImageTranslations(Community):
         """
         pass
 
-    def translation_300(self, obj):
+    def translation_300(self, resources):
         pass
 
-    def translation_404(self, obj):
+    def translation_404(self, resources):
         pass
 
 
@@ -437,11 +469,18 @@ class CityCelebrities(Community):
 
 class PersonProfile(Community):
     spirit = OrderedDict([
+        ("auth", {
+            "schema": {},
+            "config": {},
+            "process": "Authenticate",
+            "input": None,
+            "output": "Individual"
+        }),
         ("profile", {
             "schema": {},
             "config": {},
             "process": "Retrieve",
-            "input": None,
+            "input": "Individual",
             "output": "Individual"
         }),
         ("basics", {
@@ -479,10 +518,22 @@ class FamousFlightDeaths(Community):
     pass
 
 
+class CommunityManager(models.Manager):
+
+    def get_queryset(self):  # TODO: good? bad?
+        return super(CommunityManager, self).get_queryset().prefetch_related(
+            'individuals',
+            'collectives',
+            'growths'
+        )
+
+
 class DataScopeView(object):
     """
     TODO: allow filtering based on GET parameters prefixed with $
     TODO: allow partial responses by respecting json paths after # in the URL
+
+    TODO: allow GET, POST (action), PUT, DELETE
     """
 
     @staticmethod
@@ -496,6 +547,17 @@ class DataScopeView(object):
 
 
 class CommunityView(DataScopeView):
+    """
+    TODO: allow actions who's function lives on a Community
+
+    Return structure:
+    {
+        "actions": ["fetch_more_images"],
+        "status": { },
+        "result: { },
+        "results": []
+    }
+    """
 
     @staticmethod
     def get_community_from_request(request):
@@ -505,6 +567,18 @@ class CommunityView(DataScopeView):
         :return: a Community ContentModel
         """
         pass
+
+
+class CommunityFeedView(DataScopeView):
+    pass
+
+
+class CommunityActionView(DataScopeView):
+    pass
+
+
+class CommunityHistoryView(DataScopeView):
+    pass
 
 
 class CollectiveView(DataScopeView):
@@ -556,3 +630,9 @@ class HttpSubmitBatch(object):
     """
     pass
 
+
+class HttpAuthenticate(object):
+    """
+    Goes through a HTTP flow for authentication (like OAuth)
+    """
+    pass
