@@ -1,1 +1,1 @@
-from .authentication import DataScopeUser
+from .user import DataScopeUser
