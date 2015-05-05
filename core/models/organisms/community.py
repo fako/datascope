@@ -2,6 +2,8 @@ from django.db import models
 
 import jsonfield
 
+from ..user import DataScopeUser
+
 
 class CommunityManager(models.Manager):
 
@@ -21,6 +23,8 @@ class Community(models.Model):
     default_configuration = {
         "depth": 0
     }
+    user = models.ForeignKey(DataScopeUser, null=True)
+    predecessor = models.ForeignKey('Community', null=True)
 
     enlightened = models.BooleanField(default=False)
     data = jsonfield.JSONField(null=True, blank=True)
