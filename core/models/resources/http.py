@@ -1,29 +1,41 @@
+import requests
+from copy import copy, deepcopy
+from urlobject import URLObject
+
 from django.db import models
 
 import jsonfield
 
-from core.fields import configuration
+from core.exceptions import DSHttpError50X, DSHttpError40X
+from core.utils import configuration
 from core.configuration import DefaultConfiguration
 
 
 class HttpResource(models.Model):
     """
     A representation of how to fetch/submit data from/to a HTTP resource.
-    Stores the headers and body for responses.
+    Stores the headers and body of responses.
     """
-    uri = models.CharField(max_length=255, db_index=True, null=True)
-    url = models.CharField(max_length=255, null=True)
 
-    #head = jsonfield.JSONField()
-    #body = jsonfield.JSONField()
-    #status = models.PositiveIntegerField()
+    # Identification
+    uri = models.CharField(max_length=255, db_index=True)
+    post_data = models.CharField(max_length=255, db_index=True, default="")
 
-    input = jsonfield.JSONField(null=True)
-    config = configuration.ConfigurationField(
-        default_configuration=DefaultConfiguration(),
-        default={}
-    )
+    # Getting data
+    request = jsonfield.JSONField()
+    config = configuration.ConfigurationField(default=DefaultConfiguration())
 
+    # Storing data
+    head = jsonfield.JSONField()
+    body = models.TextField()
+    status = models.PositiveIntegerField(default=0)
+
+    # Archiving fields
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    purge_at = models.DateTimeField(null=True, blank=True)
+
+    # Class constants that determine behavior
     GET_SCHEMA = {
         "args": {},
         "kwargs": {}
@@ -32,10 +44,15 @@ class HttpResource(models.Model):
         "args": {},
         "kwargs": {}
     }
-    URL_TEMPLATE = ""
+    URI_TEMPLATE = u""
     PARAMETERS = {}
-    NEXT_PARAMETER = ""
-    QUERY_PARAMETER = ""
+
+    #######################################################
+    # PUBLIC FUNCTIONALITY
+    #######################################################
+    # The get and post methods are the ways to interact
+    # with the external resource.
+    # Success and data are convenient to handle the results
 
     def get(self, *args, **kwargs):
         """
@@ -44,7 +61,29 @@ class HttpResource(models.Model):
         :param kwargs:
         :return: HttpResource
         """
-        pass
+        if not self.request:
+            self.request = self._create_request("get", *args, **kwargs)
+            self.uri = self.request.get("url")
+            self.post_data = hash(self.request.get("data"))
+        else:
+            self.validate_request(self.request)
+
+        self.clean()  # sets self.uri and self.post_data based on request
+        try:
+            resource = self.objects.get(
+                uri=self.uri,
+                post_data=self.post_data
+            )
+        except self.DoesNotExist:
+            resource = self
+
+        if resource.success:
+            return resource
+
+        resource.add_auth()
+        resource.send_request()
+        resource.handle_errors()
+        return resource
 
     def post(self, *args, **kwargs):
         """
@@ -55,9 +94,157 @@ class HttpResource(models.Model):
         """
         pass
 
-    # class Meta:
-    #     abstract = True
+    @property
+    def success(self):
+        """
+        Returns True if status is within HTTP success range
+        """
+        return self.status >= 200 and self.status < 300
 
+    @property
+    def data(self):
+        """
+
+        :return: content_type, data
+        """
+        return None, None
+
+    #######################################################
+    # CREATE REQUEST
+    #######################################################
+    # A set of methods to create a request dictionary
+    # The values inside are passed to the requests library
+    # Override parameters method to set dynamic parameters
+
+    def _create_request(self, method, *args, **kwargs):
+        return self.validate_request({
+            "args": args,
+            "kwargs": kwargs,
+            "method": method,
+            "url": self._create_url(*args),
+            "headers": {},
+            "data": kwargs,
+        })
+
+    def _create_url(self, *args):
+        url_template = copy(unicode(self.URI_TEMPLATE))
+        url = URLObject(url_template.format(*args))
+        url.query.add_params(self.parameters())
+
+    def parameters(self):
+        return self.PARAMETERS
+
+    def create_request_from_url(self, url):
+        raise NotImplementedError()
+
+    def validate_request(self, request):
+        assert request.get("method"), \
+            "Method should not be falsy."
+        assert request.get("method") in ["get", "post"], \
+            "{} is not a supported resource method.".format(request.get("method"))
+        return request
+
+    #######################################################
+    # AUTH LOGIC
+    #######################################################
+    # Methods to enable auth for the resource.
+    # Override auth_parameters to provide authentication.
+
+    def auth_parameters(self):
+        return {}
+
+    def add_auth(self):
+        url = URLObject(self.request.get("url"))
+        url = url.query.add_params(self.auth_parameters())
+        self.request.set("url", url)
+
+    def remove_auth(self, request):
+        url = URLObject(request.get("url"))
+        url = url.query.delete_params(self.auth_parameters())
+        self.request.set("url", url)
+
+    #######################################################
+    # NEXT LOGIC
+    #######################################################
+    # Methods to act on continuation for a resource
+    # Override next_parameters to provide auto continuation
+
+    def next_parameters(self):
+        return {}
+
+    def create_next_request(self):
+        url = URLObject(self.request.get("url"))
+        url = url.query.add_params(self.next_parameters())
+        request = deepcopy(self.request)
+        request.set("url", url)
+        return request
+
+    #######################################################
+    # PROTECTED METHODS
+    #######################################################
+    # It will be less common to override these methods.
+    # They change the behaviour of the public interface,
+    # on a level that you probably want the same
+    # for every link in the system
+
+    def send_request(self):
+        """
+        Does a get on the computed link
+        Will set storage fields to returned values
+        """
+        if self.session is None:
+            connection = requests
+        else:
+            connection = self.session
+        response = connection.get(self.url, headers=self.request_headers)
+
+        self.head = dict(response.headers)
+        self.body = response.content
+        self.status = response.status_code
+
+    def handle_error(self):
+        """
+        Raises exceptions upon error statuses
+        """
+        class_name = self.__class__.__name__
+        if self.status >= 500:
+            message = "{} > {} \n\n {}".format(class_name, self.status, self.body)
+            raise DSHttpError50X(message)
+        elif self.status >= 400:
+            message = "{} > {} \n\n {}".format(class_name, self.status, self.body)
+            raise DSHttpError40X(message)
+        else:
+            return True
+
+    #######################################################
+    # DJANGO MODEL
+    #######################################################
+    # Methods and properties to tweak Django
+
+    def __init__(self, *args, **kwargs):
+        super(HttpResource, self).__init__(*args, **kwargs)
+        self.session = None
+
+    def clean(self):
+        if self.request and not self.uri:
+            uri_request = self.request_without_auth(self.request)
+            self.uri = URLObject(uri_request.get("url"))
+        if self.request and not self.post_data:
+            uri_request = self.request_without_auth(self.request)
+            self.post_data = hash(uri_request.get("data"))
+
+    class Meta:
+        abstract = True
+
+
+class HttpResourceMock(HttpResource):
+
+    def __init__(self, *args, **kwargs):
+        super(HttpResourceMock, self).__init__(*args, **kwargs)
+        self.session = None  # mock requests here
+
+    def auth_parameters(self):
+        return {"auth": 1}
 
 
 input_schema = {

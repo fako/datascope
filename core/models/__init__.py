@@ -1,2 +1,2 @@
 from .user import DataScopeUser
-from .resources.http import HttpResource
+from .resources.http import HttpResourceMock

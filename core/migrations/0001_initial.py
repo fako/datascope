@@ -31,13 +31,22 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='HttpResource',
+            name='HttpResourceMock',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('uri', models.CharField(max_length=255, null=True, db_index=True)),
-                ('url', models.CharField(max_length=255, null=True)),
-                ('input', jsonfield.fields.JSONField(null=True)),
-                ('configuration', core.fields.configuration.ConfigurationField()),
+                ('uri', models.CharField(max_length=255, db_index=True)),
+                ('post_data', models.CharField(default=b'', max_length=255, db_index=True)),
+                ('request', jsonfield.fields.JSONField()),
+                ('config', core.fields.configuration.ConfigurationField()),
+                ('head', jsonfield.fields.JSONField()),
+                ('body', models.TextField()),
+                ('status', models.PositiveIntegerField(default=0)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('modified_at', models.DateTimeField(auto_now=True)),
+                ('purge_at', models.DateTimeField(null=True, blank=True)),
             ],
+            options={
+                'abstract': False,
+            },
         ),
     ]
