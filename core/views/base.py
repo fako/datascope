@@ -5,4 +5,11 @@ class DataScopeView(object):
 
     TODO: allow GET, POST (action), PUT, DELETE
     """
-    pass
+    def get_config_from_request(self, request):
+        """
+        Gets a configuration dictionary from the user and GET params on request.
+
+        :param request:
+        :return:
+        """
+        pass

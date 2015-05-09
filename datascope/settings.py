@@ -1,10 +1,19 @@
+import logging
+
+
+log = logging.getLogger(__name__)
+
+
 # Mode specific defaults
 DEBUG = True
 
 
-# Custom variables import
-from secrets import *
-from server import *
+# Environment specific settings
+try:
+    from secrets import *
+    from server import *
+except ImportError:
+    log.warning("Could not import environment specific server settings.")
 
 
 # Django settings for fakoberkers project.

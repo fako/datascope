@@ -1,14 +1,43 @@
 from django.db import models
 
+import jsonfield
+
+from core.fields import configuration
+from core.configuration import DefaultConfiguration
+
 
 class HttpResource(models.Model):
     """
     A representation of how to fetch/submit data from/to a HTTP resource.
     Stores the headers and body for responses.
     """
+    uri = models.CharField(max_length=255, db_index=True, null=True)
+    url = models.CharField(max_length=255, null=True)
 
-    @classmethod
-    def get(cls, *args, **kwargs):
+    #head = jsonfield.JSONField()
+    #body = jsonfield.JSONField()
+    #status = models.PositiveIntegerField()
+
+    input = jsonfield.JSONField(null=True)
+    config = configuration.ConfigurationField(
+        default_configuration=DefaultConfiguration(),
+        default={}
+    )
+
+    GET_SCHEMA = {
+        "args": {},
+        "kwargs": {}
+    }
+    POST_SCHEMA = {
+        "args": {},
+        "kwargs": {}
+    }
+    URL_TEMPLATE = ""
+    PARAMETERS = {}
+    NEXT_PARAMETER = ""
+    QUERY_PARAMETER = ""
+
+    def get(self, *args, **kwargs):
         """
 
         :param args:
@@ -17,8 +46,7 @@ class HttpResource(models.Model):
         """
         pass
 
-    @classmethod
-    def post(cls, *args, **kwargs):
+    def post(self, *args, **kwargs):
         """
 
         :param args:
@@ -27,8 +55,8 @@ class HttpResource(models.Model):
         """
         pass
 
-    class Meta:
-        abstract = True
+    # class Meta:
+    #     abstract = True
 
 
 
