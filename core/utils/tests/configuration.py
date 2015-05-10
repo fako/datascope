@@ -1,17 +1,13 @@
 from django.test import TestCase
 
-from core.utils.configuration import ConfigurationType, ConfigurationNotFoundError
-
-
-class MockDomain(object):
-    name_namespace_configuration = "namespace configuration"
-    global_global_configuration = "global configuration"
+from core.utils.configuration import ConfigurationType, ConfigurationNotFoundError, ConfigurationProperty, ConfigurationField
+from core.utils.mock import MockDefaults
 
 
 class TestConfigurationType(TestCase):
 
     def setUp(self):
-        self.config = ConfigurationType(namespace="name", private=["_test3"], defaults=MockDomain())
+        self.config = ConfigurationType(namespace="name", private=["_test3"], defaults=MockDefaults())
         self.config.set_configuration({
             "test": "public",
             "_test2": "protected",
@@ -20,14 +16,14 @@ class TestConfigurationType(TestCase):
 
     def test_init(self):
         # Implicit init
-        instance = ConfigurationType(defaults=MockDomain())
-        self.assertIsInstance(instance._defaults, MockDomain)
+        instance = ConfigurationType(defaults=MockDefaults())
+        self.assertIsInstance(instance._defaults, MockDefaults)
         self.assertEqual(instance._namespace, ConfigurationType._global_prefix)
         self.assertEqual(instance._private, ConfigurationType._private_defaults)
         self.assertEqual(instance._private, ConfigurationType._private_defaults)
         # Explicit init with double private key
-        instance = ConfigurationType(namespace="name", private=["_test", "_test", "oops"], defaults=MockDomain())
-        self.assertIsInstance(instance._defaults, MockDomain)
+        instance = ConfigurationType(namespace="name", private=["_test", "_test", "oops"], defaults=MockDefaults())
+        self.assertIsInstance(instance._defaults, MockDefaults)
         self.assertEqual(instance._namespace, "name")
         self.assertEqual(instance._private, ConfigurationType._private_defaults + ["_test", "_oops"])
         # Wrong init
@@ -96,3 +92,20 @@ class TestConfigurationType(TestCase):
         # Make sure that all private keys are there
         # But the defaults key should not be passed down
         self.assertEqual(len(self.config._private) - 1 + len(public), len(private))
+
+
+class TestConfigurationProperty(TestCase):
+
+    def setUp(self):
+        self.property = ConfigurationProperty(
+            "storage",
+            namespace="name",
+            private=["_test3"],
+            defaults=MockDefaults()
+        )
+
+    def test_getter(self):
+        pass
+
+    def test_setter(self):
+        pass

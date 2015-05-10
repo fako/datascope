@@ -18,7 +18,7 @@ class ConfigurationType(object):
     _private_defaults = ["_private", "_defaults", "_namespace"]
     _global_prefix = "global"
 
-    def __init__(self, defaults, namespace="", private=("",)):
+    def __init__(self, defaults, namespace="", private=tuple()):
         """
         Initiates the Configuration type by running some checks and setting properties based on arguments.
 
@@ -126,13 +126,13 @@ class ConfigurationProperty(object):
     """
     This class only creates a property that manages a ConfigurationType instance on the owner class.
     """
-    def __init__(self, storage_attribute, namespace, private, defaults):
+    def __init__(self, storage_attribute, defaults, namespace, private):
         self._storage_attribute = storage_attribute
         self._namespace = namespace
         self._private = private
         self._defaults = defaults
 
-    def __get__(self, obj, type=None):
+    def __get__(self, obj, cls=None):
         if obj is None:
             log.warning("ConfigurationType not bound to an owner.")
             return self
@@ -162,15 +162,13 @@ class ConfigurationProperty(object):
 
 class ConfigurationField(fields.TextField):
 
-    def __init__(self, namespace="", private=[], default=None, *args, **kwargs):
+    def __init__(self, default=None, namespace="", private=tuple(), *args, **kwargs):
         """
         This field creates a property of ConfigurationType on the model.
 
-
-
+        :param default:
         :param namespace:
         :param private:
-        :param default_configuration:
         :param args:
         :param kwargs:
         :return:
