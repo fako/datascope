@@ -1,5 +1,6 @@
 import json
 import logging
+from copy import copy
 
 from django.db.models import fields
 from django.utils import six
@@ -17,15 +18,14 @@ class ConfigurationType(object):
     _private_defaults = ["_private", "_defaults", "_namespace"]
     _global_prefix = "global"
 
-    def __init__(self, namespace, private, defaults):
-        # TODO: update comments
+    def __init__(self, defaults, namespace="", private=("",)):
         """
-        On init the domain gets set, which holds default values for configuration.
-        The default config can be found on Domain object as an attribute like <namespace>_<config>
-        Namespace is also set on init and can be given to this constructor.
-        Last but not least a list with private keys can be given to this constructor.
-        It will add those to the default ones set on this class.
-        Private keys begin with an underscore. They won't get passed on by the dict function by default.
+        Initiates the Configuration type by running some checks and setting properties based on arguments.
+
+        :param defaults: (object) that should hold default configurations as attributes
+        :param namespace: (string) prefix to search default configurations with
+        :param private: (list) keys that are considered as private
+        :return: None
         """
         assert isinstance(defaults, object), \
             "Defaults should be an object with attributes set as the configuration defaults."
@@ -37,55 +37,67 @@ class ConfigurationType(object):
         super(ConfigurationType, self).__init__()
         self._defaults = defaults
         self._namespace = namespace or self._global_prefix
-        self._private = self._private_defaults + [prv for prv in private if prv not in self._private_defaults]
-
-    def __getattr__(self, item):
-        return self.get_configuration(item)
-
-    def get_configuration(self, item):
-        """
-        Here is where the magic happens :)
-        This function gets called when attribute is not found on the object itself.
-        We check whether the <namespace>_<item> attribute exists on default object.
-        If it does we return that, if it doesn't we raise AttributeError.
-        """
-        shielded_attr = '_' + item
-        namespace_attr = self._namespace + '_' + item
-        shielded_namespace_attr = self._namespace + '__' + item
-        global_attr = self._global_prefix + '_' + item
-
-        if shielded_attr in self.__dict__:
-            return self.__dict__[shielded_attr]
-        if hasattr(self._defaults, namespace_attr):
-            return getattr(self._defaults, namespace_attr)
-        if hasattr(self._defaults, shielded_namespace_attr):
-            return getattr(self._defaults, shielded_namespace_attr)
-        elif hasattr(self._defaults, global_attr):  # TODO: test getting configuration with global prefix
-            return getattr(self._defaults, global_attr)
-        else:
-            raise ConfigurationNotFoundError(
-                "Tried to retrieve '{}' in config and namespace '{}', without results.".format(item, self._namespace)
-            )
+        self._private = copy(self._private_defaults)
+        for prv in private:
+            if not prv:
+                continue
+            elif not prv.startswith('_'):
+                prv = '_' + prv
+            if prv not in self._private:
+                self._private.append(prv)
 
     def set_configuration(self, new):
         """
-        Setting this type will update the dictionary on the owner
-        It won't delete any keys, it only adds or updates them.
+        Will update any keys in new with corresponding attributes on self.
+
+        :param new: (dictionary) to update attributes on self with
+        :return: None
         """
         assert isinstance(new, dict), "Configurations can only be set with a dictionary not a {}".format(type(new))
         for key, value in new.iteritems():
             setattr(self, key, value)
 
-    def __str__(self):
-        return str(self.dict())  # TODO: why? unicode? only self?
+    def _get_configuration(self, config):
+        """
+        This function tries to find configurations on self other than configurations set as direct attributes.
 
-    def dict(self, protected=False, private=False):
+        It will first try to append a _ to the configuration to see if the configuration is protected/private.
+        Then it will prefix the configuration with self._namespace and see if it exists on the defaults object as an attribute.
+        If the configuration still isn't found it will prefix with self._global_prefix and look again for that as an attribute on defaults object.
+        Finally it will raise a ConfigurationNotFoundError if the configuration is not there.
+
+        NB: if you haven't set self._namespace it will default to self._global_prefix
+
+        :param config: (string) name of the configuration to search for
+        :return: (mixed) the configuration variable
+        """
+        shielded_key = '_' + config
+        namespace_attr = self._namespace + '_' + config
+        global_attr = self._global_prefix + '_' + config
+
+        if shielded_key in self.__dict__:
+            return self.__dict__[shielded_key]
+        if hasattr(self._defaults, namespace_attr):
+            return getattr(self._defaults, namespace_attr)
+        elif hasattr(self._defaults, global_attr):
+            return getattr(self._defaults, global_attr)
+        else:
+            raise ConfigurationNotFoundError(
+                "Tried to retrieve '{}' in config and namespace '{}', without results.".format(config, self._namespace)
+            )
+
+    def to_dict(self, protected=False, private=False):
         """
         Will return the current configuration in dict form.
+
         By default it will return all attributes except those that start with an underscore.
-        If protected=True is given it will return attributes starting with underscore that are not marked as private.
-        If private=True is given it will return attributes starting with underscore that are marked as private.
-        It never returns domain attribute, because that attribute is the same for all config instances.
+        You can include protected and private configurations through arguments
+
+        NB: It never returns domain attribute, because that attribute is the same for all config instances.
+
+        :param protected: (boolean) flag to include protected configurations
+        :param private: (boolean) flag to include private configurations
+        :return: (dict) current configuration other than default
         """
         dictionary = dict()
         for key, value in self.__dict__.iteritems():
@@ -99,6 +111,15 @@ class ConfigurationType(object):
             else:
                 dictionary[key] = value
         return dictionary
+
+    def __getattr__(self, item):
+        return self._get_configuration(item)
+
+    def __str__(self):
+        return str(self.to_dict(protected=True))
+
+    def __unicode__(self):
+        return  unicode(self.to_dict(protected=True))
 
 
 class ConfigurationProperty(object):
@@ -181,5 +202,5 @@ class ConfigurationField(fields.TextField):
         return super(ConfigurationField, self).to_python(dictionary)
 
     def get_prep_value(self, value):
-        json_dict = json.dumps(value.dict(protected=True, private=True))
+        json_dict = json.dumps(value.to_dict(protected=True, private=True))
         return super(ConfigurationField, self).get_prep_value(json_dict)

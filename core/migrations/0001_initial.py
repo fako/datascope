@@ -3,9 +3,9 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 import jsonfield.fields
+import core.utils.configuration
 import django.contrib.auth.models
 from django.conf import settings
-import core.fields.configuration
 
 
 class Migration(migrations.Migration):
@@ -37,7 +37,7 @@ class Migration(migrations.Migration):
                 ('uri', models.CharField(max_length=255, db_index=True)),
                 ('post_data', models.CharField(default=b'', max_length=255, db_index=True)),
                 ('request', jsonfield.fields.JSONField()),
-                ('config', core.fields.configuration.ConfigurationField()),
+                ('config', core.utils.configuration.ConfigurationField()),
                 ('head', jsonfield.fields.JSONField()),
                 ('body', models.TextField()),
                 ('status', models.PositiveIntegerField(default=0)),
