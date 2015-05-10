@@ -80,9 +80,9 @@ class HttpResource(models.Model):
         if resource.success:
             return resource
 
-        resource.add_auth()
-        resource.send_request()
-        resource.handle_errors()
+        resource.request = resource.request_with_auth()
+        resource._send_request()
+        resource._handle_errors()
         return resource
 
     def post(self, *args, **kwargs):
@@ -99,7 +99,7 @@ class HttpResource(models.Model):
         """
         Returns True if status is within HTTP success range
         """
-        return self.status >= 200 and self.status < 300
+        return self.status >= 200 and self.status < 207
 
     @property
     def data(self):
@@ -153,15 +153,15 @@ class HttpResource(models.Model):
     def auth_parameters(self):
         return {}
 
-    def add_auth(self):
+    def request_with_auth(self):
         url = URLObject(self.request.get("url"))
         url = url.query.add_params(self.auth_parameters())
-        self.request.set("url", url)
+        return deepcopy(self.request).set("url", url)
 
-    def remove_auth(self, request):
-        url = URLObject(request.get("url"))
+    def request_without_auth(self):
+        url = URLObject(self.request.get("url"))
         url = url.query.delete_params(self.auth_parameters())
-        self.request.set("url", url)
+        return deepcopy(self.request).set("url", url)
 
     #######################################################
     # NEXT LOGIC
@@ -175,19 +175,14 @@ class HttpResource(models.Model):
     def create_next_request(self):
         url = URLObject(self.request.get("url"))
         url = url.query.add_params(self.next_parameters())
-        request = deepcopy(self.request)
-        request.set("url", url)
-        return request
+        return deepcopy(self.request).set("url", url)
 
     #######################################################
     # PROTECTED METHODS
     #######################################################
-    # It will be less common to override these methods.
-    # They change the behaviour of the public interface,
-    # on a level that you probably want the same
-    # for every link in the system
+    # Some internal methods for the get and post methods.
 
-    def send_request(self):
+    def _send_request(self):
         """
         Does a get on the computed link
         Will set storage fields to returned values
@@ -202,7 +197,7 @@ class HttpResource(models.Model):
         self.body = response.content
         self.status = response.status_code
 
-    def handle_error(self):
+    def _handle_error(self):
         """
         Raises exceptions upon error statuses
         """
@@ -221,16 +216,16 @@ class HttpResource(models.Model):
     #######################################################
     # Methods and properties to tweak Django
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, session=None, *args, **kwargs):
         super(HttpResource, self).__init__(*args, **kwargs)
-        self.session = None
+        self.session = session
 
     def clean(self):
         if self.request and not self.uri:
-            uri_request = self.request_without_auth(self.request)
+            uri_request = self.request_without_auth()
             self.uri = URLObject(uri_request.get("url"))
         if self.request and not self.post_data:
-            uri_request = self.request_without_auth(self.request)
+            uri_request = self.request_without_auth()
             self.post_data = hash(uri_request.get("data"))
 
     class Meta:
@@ -245,6 +240,9 @@ class HttpResourceMock(HttpResource):
 
     def auth_parameters(self):
         return {"auth": 1}
+
+    def next_parameters(self):
+        return {"next": 1}
 
 
 input_schema = {

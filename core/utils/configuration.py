@@ -128,9 +128,9 @@ class ConfigurationProperty(object):
     """
     def __init__(self, storage_attribute, defaults, namespace, private):
         self._storage_attribute = storage_attribute
+        self._defaults = defaults
         self._namespace = namespace
         self._private = private
-        self._defaults = defaults
 
     def __get__(self, obj, cls=None):
         if obj is None:
@@ -180,7 +180,7 @@ class ConfigurationField(fields.TextField):
         assert isinstance(private, (list, tuple,)), \
             "Private should be a list or tuple of private configurations."
 
-        super(ConfigurationField, self).__init__(*args, **kwargs)
+        super(ConfigurationField, self).__init__(*args, default={}, **kwargs)
         self._default = default
         self._namespace = namespace
         self._private = private
@@ -188,10 +188,10 @@ class ConfigurationField(fields.TextField):
     def contribute_to_class(self, cls, name, virtual_only=False):
         super(ConfigurationField, self).contribute_to_class(cls, name)
         configuration_property = ConfigurationProperty(
-            "_" + name,
-            self._namespace,
-            self._private,
-            self._default
+            storage_attribute="_" + name,
+            defaults=self._default,
+            namespace=self._namespace,
+            private=self._private
         )
         setattr(cls, self.name, configuration_property)
 
