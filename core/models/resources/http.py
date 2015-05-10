@@ -99,7 +99,7 @@ class HttpResource(models.Model):
         """
         Returns True if status is within HTTP success range
         """
-        return self.status >= 200 and self.status < 207
+        return 200 <= self.status < 207
 
     @property
     def data(self):
