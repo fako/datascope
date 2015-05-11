@@ -27,11 +27,11 @@ class HttpResourceTestMixin(TestCase):
     def test_next_parameters(self):
         self.assertIsInstance(self.instance.next_parameters(), dict)
 
-    def test_send_request(self):
+    def test_make_request(self):
         pass
 
     def test_success(self):
-        success_range = range(200, 207)
+        success_range = range(200, 209)
         for status in range(0, 999):
             self.instance.status = status
             if status in success_range:
@@ -67,13 +67,22 @@ class ConfigurationFieldTestMixin(TestCase):
     def setUp(self):
         super(ConfigurationFieldTestMixin, self).setUp()
         self.instance = self.get_test_instance()
+        self.model = self.instance.__class__
 
     @staticmethod
     def get_test_instance():
-        raise NotImplementedError()
+        raise NotImplementedError("Should return the model that holds the configuration field.")
+
+    def fill_test_instance(self):
+        raise NotImplementedError("Should make self.instance ready for save by filling required fields.")
 
     def test_set_storage_load_and_get(self):
-        pass
+        self.fill_test_instance()
+        self.instance.config = {"test": "loaded"}
+        self.assertEqual(self.instance.config.test, "loaded")
+        self.instance.save()
+        new = self.model.objects.get(id=self.instance.id)
+        self.assertEqual(new.config.test, "loaded")
 
 
 class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
@@ -81,6 +90,13 @@ class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
     @staticmethod
     def get_test_instance():
         return HttpResourceMock()
+
+    def fill_test_instance(self):
+        self.instance.uri = "uri"
+        self.instance.post_data = "12345"
+        self.instance.head = {"json": "test"}
+        self.instance.body = "response"
+        self.instance.status = 200
 
     def test_get(self):
         # init, new
@@ -103,3 +119,5 @@ class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
     def test_validate_request(self):
         pass
 
+    def test_clean(self):
+        pass
