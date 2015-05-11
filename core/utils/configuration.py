@@ -161,11 +161,13 @@ class ConfigurationField(fields.TextField):
         """
         This field creates a property of ConfigurationType on the model.
 
-        :param default:
-        :param namespace:
-        :param private:
-        :param args:
-        :param kwargs:
+        NB: default that gets stored in the database is always an empty dictionary.
+
+        :param defaults: (object) that should hold default configurations as attributes
+        :param namespace: (string) prefix to search default configurations with
+        :param private: (list) keys that are considered as private
+        :param args: additional field arguments
+        :param kwargs: additional field keyword arguments
         :return:
         """
         assert isinstance(default, object), \
