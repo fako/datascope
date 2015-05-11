@@ -9,6 +9,7 @@ import jsonfield
 from core.exceptions import DSHttpError50X, DSHttpError40X
 from core.utils import configuration
 from core.configuration import DefaultConfiguration
+from core.utils.mocks import MockRequests, MockDefaults
 
 
 class HttpResource(models.Model):
@@ -23,10 +24,9 @@ class HttpResource(models.Model):
 
     # Getting data
     request = jsonfield.JSONField()
-    config = configuration.ConfigurationField(default=DefaultConfiguration())
 
     # Storing data
-    head = jsonfield.JSONField()
+    head = jsonfield.JSONField(default={})
     body = models.TextField()
     status = models.PositiveIntegerField(default=0)
 
@@ -36,6 +36,9 @@ class HttpResource(models.Model):
     purge_at = models.DateTimeField(null=True, blank=True)
 
     # Class constants that determine behavior
+    URI_TEMPLATE = u""
+    PARAMETERS = {}
+    HEADERS = {}
     GET_SCHEMA = {
         "args": {},
         "kwargs": {}
@@ -44,8 +47,7 @@ class HttpResource(models.Model):
         "args": {},
         "kwargs": {}
     }
-    URI_TEMPLATE = u""
-    PARAMETERS = {}
+
 
     #######################################################
     # PUBLIC FUNCTIONALITY
@@ -81,7 +83,7 @@ class HttpResource(models.Model):
             return resource
 
         resource.request = resource.request_with_auth()
-        resource._send_request()
+        resource._make_request()
         resource._handle_errors()
         return resource
 
@@ -122,7 +124,7 @@ class HttpResource(models.Model):
             "kwargs": kwargs,
             "method": method,
             "url": self._create_url(*args),
-            "headers": {},
+            "headers": self.HEADERS,
             "data": kwargs,
         })
 
@@ -130,6 +132,7 @@ class HttpResource(models.Model):
         url_template = copy(unicode(self.URI_TEMPLATE))
         url = URLObject(url_template.format(*args))
         url.query.add_params(self.parameters())
+        return url
 
     def parameters(self):
         return self.PARAMETERS
@@ -182,16 +185,22 @@ class HttpResource(models.Model):
     #######################################################
     # Some internal methods for the get and post methods.
 
-    def _send_request(self):
+    def _make_request(self):
         """
         Does a get on the computed link
         Will set storage fields to returned values
         """
+        assert self.request and isinstance(self.request, dict), \
+            "Trying to make request before having a valid request dictionary."
+
         if self.session is None:
             connection = requests
         else:
             connection = self.session
-        response = connection.get(self.url, headers=self.request_headers)
+
+        url = self.request.get("url")
+        headers = self.request.get("headers")
+        response = connection.get(url, headers=headers)
 
         self.head = dict(response.headers)
         self.body = response.content
@@ -216,9 +225,9 @@ class HttpResource(models.Model):
     #######################################################
     # Methods and properties to tweak Django
 
-    def __init__(self, session=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(HttpResource, self).__init__(*args, **kwargs)
-        self.session = session
+        self.session = kwargs.get("session")
 
     def clean(self):
         if self.request and not self.uri:
@@ -234,21 +243,54 @@ class HttpResource(models.Model):
 
 class HttpResourceMock(HttpResource):
 
+    URI_TEMPLATE = "http://localhost:8000/{}/?q={}"
+    PARAMETERS = {
+        "param": 1
+    }
+    HEADERS = {
+        "header": "value"
+    }
+    GET_SCHEMA = {
+        "args": {
+            "title": "resource mock arguments",
+            "type": "array",  # a single alphanumeric element
+            "items": [
+                {
+                    "type": "string",
+                    "enum": ["en", "nl"]
+                },
+                {
+                    "type": "string",
+                    "pattern": "[A-Za-z0-9]+"
+                }
+            ],
+            "additionalItems": False
+        },
+        "kwargs": None  # not allowed
+    }
+    POST_SCHEMA = {
+        "args": {},
+        "kwargs": {}
+    }
+
+    config = configuration.ConfigurationField(
+        default=MockDefaults(),
+        namespace="mock"
+    )
+
     def __init__(self, *args, **kwargs):
         super(HttpResourceMock, self).__init__(*args, **kwargs)
-        self.session = None  # mock requests here
+        self.session = MockRequests
+
+    def get(self, *args, **kwargs):
+        args = self.config.source_language + args
+        super(HttpResourceMock, self).get(*args, **kwargs)
 
     def auth_parameters(self):
-        return {"auth": 1}
+        return {
+            "auth": 1,
+            "key": self.config.secret
+        }
 
     def next_parameters(self):
         return {"next": 1}
-
-
-input_schema = {
-    "items": [{
-        "type": "string",
-        "pattern": "[A-Za-z0-9]+"  # a single alphanumeric
-    }],
-    "additionalItems": False
-}
