@@ -1,7 +1,10 @@
+import json
+
 from django.test import TestCase
 
 from core.exceptions import DSHttpError50X, DSHttpError40X
 from core.models.resources.http import HttpResourceMock
+from core.utils.mocks import MOCK_DATA
 
 
 class HttpResourceTestMixin(TestCase):
@@ -28,7 +31,34 @@ class HttpResourceTestMixin(TestCase):
         self.assertIsInstance(self.instance.next_parameters(), dict)
 
     def test_make_request(self):
-        pass
+        test_url = "http://localhost:8000/test/"
+        content_header = {
+            "ContentType": "application/json"
+        },
+        self.instance.request = {
+            "args": tuple(),
+            "kwargs": {},
+            "method": "get",
+            "url": test_url,
+            "headers": content_header,
+            "data": {},
+        }
+        self.instance._make_request()
+
+        args, kwargs = self.instance.session.get.call_args
+        self.assertEqual(args[0], test_url)
+        self.assertEqual(kwargs["headers"], content_header)
+
+        self.assertEqual(self.instance.head, {"ContentType": "application/json"})
+        self.assertEqual(self.instance.body, json.dumps(MOCK_DATA))
+        self.assertEqual(self.instance.status, 200)
+
+        self.instance.request = None
+        try:
+            self.instance._make_request()
+            self.fail("_make_request should fail when self.request is not set.")
+        except AssertionError:
+            pass
 
     def test_success(self):
         success_range = range(200, 209)
