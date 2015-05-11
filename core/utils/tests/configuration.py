@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from core.utils.configuration import ConfigurationType, ConfigurationNotFoundError, ConfigurationProperty, ConfigurationField
-from core.utils.mock import MockDefaults
+from core.utils.mocks import MockDefaults
 
 
 class TestConfigurationType(TestCase):
@@ -105,7 +105,12 @@ class TestConfigurationProperty(TestCase):
         )
 
     def test_getter(self):
-        pass
+        self.assertFalse(hasattr(self, "storage"))
+        self.assertIsInstance(self.property, ConfigurationType)
+        self.assertTrue(hasattr(self, "storage"))
 
     def test_setter(self):
-        pass
+        self.assertFalse(hasattr(self, "storage"))
+        self.property = {}
+        self.assertIsInstance(self.property, ConfigurationType)
+        self.assertTrue(hasattr(self, "storage"))
