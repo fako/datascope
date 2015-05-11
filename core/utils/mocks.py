@@ -1,5 +1,6 @@
-from mocks import Mock
+import requests
 from requests.models import Response
+from mock import Mock, NonCallableMock
 
 
 class MockDefaults(object):  # TODO: make it a dict
@@ -13,4 +14,10 @@ class MockDefaults(object):  # TODO: make it a dict
     mock_secret = "oehhh"
 
 
-class MockResponse(object)
+MockRequests = NonCallableMock(spec=requests)
+response = NonCallableMock(spec=Response)
+response.headers = {"ContentType": "application/json"}
+response.content = '{"data": 1}'
+response.status_code = 200
+MockRequestsGet = Mock(return_value=response)
+MockRequests.get = MockRequestsGet
