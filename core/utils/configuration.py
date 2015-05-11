@@ -6,7 +6,7 @@ from django.db.models import fields
 from django.utils import six
 
 
-log = logging.getLogger(__name__)
+log = logging.getLogger("datascope")
 
 
 class ConfigurationNotFoundError(Exception):
@@ -152,11 +152,6 @@ class ConfigurationProperty(object):
                 private=self._private,
                 defaults=self._defaults
             )
-        if isinstance(new, six.string_types):
-            try:
-                new = json.loads(new)
-            except ValueError:
-                log.warning("Could not load a dictionary for ConfigurationType from set value.")
         obj.__dict__[self._storage_attribute].set_configuration(new)
 
 
@@ -194,6 +189,9 @@ class ConfigurationField(fields.TextField):
             private=self._private
         )
         setattr(cls, self.name, configuration_property)
+
+    def from_db_value(self, value, expression, connection, context):
+        return json.loads(value)
 
     def to_python(self, value):
         dictionary = json.loads(value)

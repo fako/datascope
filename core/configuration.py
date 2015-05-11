@@ -1,7 +1,7 @@
 from django.conf import settings
 
 
-class DefaultConfiguration(object):
+class DefaultConfiguration(object):  # TODO: make it a dict
 
     #HIF__supported_languages = ['en','nl','pt','de','fr','es']
     #HIF__supported_languages = ['zh','ru','pt']
