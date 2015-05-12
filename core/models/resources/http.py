@@ -11,7 +11,6 @@ import jsonfield
 
 from core.exceptions import DSHttpError50X, DSHttpError40X
 from core.utils import configuration
-from core.configuration import DefaultConfiguration
 from core.utils.mocks import MockRequests, MockDefaults
 
 
@@ -29,7 +28,7 @@ class HttpResource(models.Model):
     request = jsonfield.JSONField()
 
     # Storing data
-    head = jsonfield.JSONField(default={})
+    head = jsonfield.JSONField()
     body = models.TextField()
     status = models.PositiveIntegerField(default=0)
 
@@ -51,7 +50,6 @@ class HttpResource(models.Model):
         "kwargs": {}
     }
 
-
     #######################################################
     # PUBLIC FUNCTIONALITY
     #######################################################
@@ -68,14 +66,16 @@ class HttpResource(models.Model):
         """
         if not self.request:
             self.request = self._create_request("get", *args, **kwargs)
-            self.uri = self.request.get("url")
-            self.post_data = hash(self.request.get("data"))
+            self.uri = HttpResource.uri_from_url(self.request.get("url"))
+            self.post_data = HttpResource.hash_from_data(
+                self.request.get("data")
+            )
         else:
             self.validate_request(self.request)
 
         self.clean()  # sets self.uri and self.post_data based on request
         try:
-            resource = self.objects.get(
+            resource = self.__class__.objects.get(
                 uri=self.uri,
                 post_data=self.post_data
             )
@@ -122,6 +122,7 @@ class HttpResource(models.Model):
     # Override parameters method to set dynamic parameters
 
     def _create_request(self, method, *args, **kwargs):
+        self._validate_input(method, *args, **kwargs)
         return self.validate_request({
             "args": args,
             "kwargs": kwargs,
@@ -129,13 +130,13 @@ class HttpResource(models.Model):
             "url": self._create_url(*args),
             "headers": self.HEADERS,
             "data": kwargs,
-        })
+        }, validate_input=False)
 
     def _create_url(self, *args):
         url_template = copy(unicode(self.URI_TEMPLATE))
         url = URLObject(url_template.format(*args))
         url.query.add_params(self.parameters())
-        return url
+        return unicode(url)
 
     def parameters(self):
         return self.PARAMETERS
@@ -143,7 +144,7 @@ class HttpResource(models.Model):
     def create_request_from_url(self, url):
         raise NotImplementedError()
 
-    def validate_request(self, request):
+    def validate_request(self, request, validate_input=True):
         # Internal asserts about the request
         assert isinstance(request, dict), \
             "Request should be a dictionary."
@@ -152,12 +153,20 @@ class HttpResource(models.Model):
             "Method should not be falsy."
         assert method in ["get", "post"], \
             "{} is not a supported resource method.".format(request.get("method"))
+        if validate_input:
+            self._validate_input(
+                method,
+                *request.get("args", tuple()),
+                **request.get("kwargs", {})
+            )
+        # All is fine :)
+        return request
+
+    def _validate_input(self, method, *args, **kwargs):
         # Validations of external influence
         schemas = self.GET_SCHEMA if method == "get" else self.POST_SCHEMA
         args_schema = schemas.get("args")
         kwargs_schema = schemas.get("kwargs")
-        args = request.get("args", tuple())
-        kwargs = request.get("kwargs", {})
         if args_schema is None and len(args):
             raise ValidationError("Received arguments for request where there should be none.")
         if kwargs_schema is None and len(kwargs):
@@ -172,8 +181,6 @@ class HttpResource(models.Model):
                 jsonschema.validate(kwargs, kwargs_schema)
             except SchemaValidationError as ex:
                 raise ValidationError(ex)
-        # All is fine :)
-        return request
 
     #######################################################
     # AUTH LOGIC
@@ -186,13 +193,17 @@ class HttpResource(models.Model):
 
     def request_with_auth(self):
         url = URLObject(self.request.get("url"))
-        url = url.query.add_params(self.auth_parameters())
-        return deepcopy(self.request).set("url", url)
+        url = url.add_query_params(self.auth_parameters())
+        request = deepcopy(self.request)
+        request["url"] = unicode(url)
+        return request
 
     def request_without_auth(self):
         url = URLObject(self.request.get("url"))
-        url = url.query.delete_params(self.auth_parameters())
-        return deepcopy(self.request).set("url", url)
+        url = url.del_query_params(self.auth_parameters())
+        request = deepcopy(self.request)
+        request["url"] = unicode(url)
+        return request
 
     #######################################################
     # NEXT LOGIC
@@ -234,7 +245,7 @@ class HttpResource(models.Model):
         self.body = response.content
         self.status = response.status_code
 
-    def _handle_error(self):
+    def _handle_errors(self):
         """
         Raises exceptions upon error statuses
         """
@@ -260,10 +271,24 @@ class HttpResource(models.Model):
     def clean(self):
         if self.request and not self.uri:
             uri_request = self.request_without_auth()
-            self.uri = URLObject(uri_request.get("url"))
+            self.uri = HttpResource.uri_from_url(uri_request.get("url"))
         if self.request and not self.post_data:
             uri_request = self.request_without_auth()
-            self.post_data = hash(uri_request.get("data"))
+            self.post_data = HttpResource.hash_from_data(uri_request.get("data"))
+
+    #######################################################
+    # CONVENIENCE
+    #######################################################
+    # Some static methods to provide standardization
+
+    @staticmethod
+    def uri_from_url(url):
+        url = URLObject(url)
+        return unicode(url).replace(url.scheme + "://", "")
+
+    @staticmethod
+    def hash_from_data(data):
+        return hash(tuple(data)) if data else ""
 
     class Meta:
         abstract = True
@@ -276,7 +301,7 @@ class HttpResourceMock(HttpResource):
         "param": 1
     }
     HEADERS = {
-        "header": "value"
+        "ContentType": "application/json"
     }
     GET_SCHEMA = {
         "args": {
@@ -292,7 +317,8 @@ class HttpResourceMock(HttpResource):
                     "pattern": "[A-Za-z0-9]+"
                 }
             ],
-            "additionalItems": False
+            "additionalItems": False,
+            "minItems": 2
         },
         "kwargs": None  # not allowed
     }
@@ -311,8 +337,8 @@ class HttpResourceMock(HttpResource):
         self.session = MockRequests
 
     def get(self, *args, **kwargs):
-        args = self.config.source_language + args
-        super(HttpResourceMock, self).get(*args, **kwargs)
+        args = (self.config.source_language,) + args
+        return super(HttpResourceMock, self).get(*args, **kwargs)
 
     def auth_parameters(self):
         return {
