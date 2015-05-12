@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.core.exceptions import ValidationError
 
 from core.exceptions import DSHttpError50X, DSHttpError40X
-from core.models.resources.http import HttpResourceMock
+from core.models.resources.http import HttpResource, HttpResourceMock
 from core.utils.mocks import MOCK_DATA
 
 
@@ -77,7 +77,7 @@ class HttpResourceTestMixin(TestCase):
         for status in statuses_50x:
             self.instance.status = status
             try:
-                self.instance._handle_error()
+                self.instance._handle_errors()
                 self.fail("Handle error doesn't handle status {}".format(status))
             except DSHttpError50X:
                 pass
@@ -86,7 +86,7 @@ class HttpResourceTestMixin(TestCase):
         for status in statuses_40x:
             self.instance.status = status
             try:
-                self.instance._handle_error()
+                self.instance._handle_errors()
                 self.fail("Handle error doesn't handle status {}".format(status))
             except DSHttpError40X:
                 pass
@@ -119,6 +119,8 @@ class ConfigurationFieldTestMixin(TestCase):
 
 class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
 
+    fixtures = ['test-http-resource-mock']
+
     @staticmethod
     def get_test_instance():
         return HttpResourceMock()
@@ -142,13 +144,30 @@ class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         }
 
     def test_get(self):
-        # init, new
-        # init, load
+        content_header = {
+            "ContentType": "application/json"
+        }
+        # Make a new request
+        instance = self.model().get("new")
+        args, kwargs = instance.session.get.call_args
+        self.assertEqual(args[0], "http://localhost:8000/en/?q=new&key=oehhh&auth=1")
+        self.assertEqual(kwargs["headers"], content_header)
+        self.assertEqual(instance.head, {"ContentType": "application/json"})
+        self.assertEqual(instance.body, json.dumps(MOCK_DATA))
+        self.assertEqual(instance.status, 200)
+        # Load an existing request
+        instance.session.get.reset_mock()
+        instance = self.model().get("success")
+        self.assertFalse(instance.session.get.called)
+        self.assertEqual(instance.head, {"ContentType": "application/json"})
+        self.assertEqual(instance.body, json.dumps(MOCK_DATA))
+        self.assertEqual(instance.status, 200)
         # init, load -> retry
         # preset, new
         # preset, load
         # preset, load -> retry
-        # invalid
+        # invalid init
+        # invalid preset
         pass
 
     def test_request_with_auth(self):
@@ -164,11 +183,17 @@ class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         # Valid
         try:
             self.instance.validate_request(self.test_request)
-        except ValidationError:
+        except ValidationError as ex:
             self.fail("validate_request raised for a valid request.")
         # Invalid
         invalid_request = deepcopy(self.test_request)
         invalid_request["args"] = ("en", "en", "test")
+        try:
+            self.instance.validate_request(invalid_request)
+            self.fail("validate_request did not raise with invalid args for schema.")
+        except ValidationError:
+            pass
+        invalid_request["args"] = tuple()
         try:
             self.instance.validate_request(invalid_request)
             self.fail("validate_request did not raise with invalid args for schema.")
