@@ -1,7 +1,10 @@
 import requests
+import jsonschema
+from jsonschema.exceptions import ValidationError as SchemaValidationError
 from copy import copy, deepcopy
 from urlobject import URLObject
 
+from django.core.exceptions import ValidationError
 from django.db import models
 
 import jsonfield
@@ -141,10 +144,35 @@ class HttpResource(models.Model):
         raise NotImplementedError()
 
     def validate_request(self, request):
-        assert request.get("method"), \
+        # Internal asserts about the request
+        assert isinstance(request, dict), \
+            "Request should be a dictionary."
+        method = request.get("method")
+        assert method, \
             "Method should not be falsy."
-        assert request.get("method") in ["get", "post"], \
+        assert method in ["get", "post"], \
             "{} is not a supported resource method.".format(request.get("method"))
+        # Validations of external influence
+        schemas = self.GET_SCHEMA if method == "get" else self.POST_SCHEMA
+        args_schema = schemas.get("args")
+        kwargs_schema = schemas.get("kwargs")
+        args = request.get("args", tuple())
+        kwargs = request.get("kwargs", {})
+        if args_schema is None and len(args):
+            raise ValidationError("Received arguments for request where there should be none.")
+        if kwargs_schema is None and len(kwargs):
+            raise ValidationError("Received keyword arguments for request where there should be none.")
+        if args_schema:
+            try:
+                jsonschema.validate(list(args), args_schema)
+            except SchemaValidationError as ex:
+                raise ValidationError(ex)
+        if kwargs_schema:
+            try:
+                jsonschema.validate(kwargs, kwargs_schema)
+            except SchemaValidationError as ex:
+                raise ValidationError(ex)
+        # All is fine :)
         return request
 
     #######################################################

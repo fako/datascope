@@ -1,6 +1,8 @@
 import json
+from copy import deepcopy
 
 from django.test import TestCase
+from django.core.exceptions import ValidationError
 
 from core.exceptions import DSHttpError50X, DSHttpError40X
 from core.models.resources.http import HttpResourceMock
@@ -128,6 +130,17 @@ class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.instance.body = "response"
         self.instance.status = 200
 
+    def setUp(self):
+        super(TestHttpResource, self).setUp()
+        self.test_request = {
+            "args": ("en", "test",),
+            "kwargs": {},
+            "method": "get",
+            "url": "http://localhost:8000/en/?q=test",
+            "headers": {},
+            "data": {},
+        }
+
     def test_get(self):
         # init, new
         # init, load
@@ -135,6 +148,7 @@ class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         # preset, new
         # preset, load
         # preset, load -> retry
+        # invalid
         pass
 
     def test_request_with_auth(self):
@@ -146,8 +160,33 @@ class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
     def test_create_next_request(self):
         pass
 
-    def test_validate_request(self):
-        pass
+    def test_validate_request_args(self):
+        # Valid
+        try:
+            self.instance.validate_request(self.test_request)
+        except ValidationError:
+            self.fail("validate_request raised for a valid request.")
+        # Invalid
+        invalid_request = deepcopy(self.test_request)
+        invalid_request["args"] = ("en", "en", "test")
+        try:
+            self.instance.validate_request(invalid_request)
+            self.fail("validate_request did not raise with invalid args for schema.")
+        except ValidationError:
+            pass
+        # No schema
+        self.instance.GET_SCHEMA["args"] = None
+        try:
+            self.instance.validate_request(self.test_request)
+            self.fail("validate_request did not raise with invalid args for no schema.")
+        except ValidationError:
+            pass
+        # Always valid schema
+        self.instance.GET_SCHEMA["args"] = {}
+        try:
+            self.instance.validate_request(invalid_request)
+        except ValidationError:
+            self.fail("validate_request invalidated with a schema without restrictions.")
 
     def test_clean(self):
         pass
