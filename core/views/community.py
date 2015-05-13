@@ -22,3 +22,7 @@ class CommunityView(DataScopeView):
         :return: a Community ContentModel
         """
         pass
+
+
+class PlainCommunityView(CommunityView):
+    pass
