@@ -15,6 +15,7 @@ class HttpResourceTestMixin(TestCase):
         super(HttpResourceTestMixin, self).setUp()
         self.instance = self.get_test_instance()
 
+
     @staticmethod
     def get_test_instance():
         raise NotImplementedError()
@@ -134,41 +135,63 @@ class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
 
     def setUp(self):
         super(TestHttpResource, self).setUp()
+        self.content_type_header = {
+            "ContentType": "application/json"
+        }
         self.test_request = {
             "args": ("en", "test",),
             "kwargs": {},
             "method": "get",
             "url": "http://localhost:8000/en/?q=test",
-            "headers": {},
+            "headers": self.content_type_header,
             "data": {},
         }
 
-    def test_get(self):
-        content_header = {
-            "ContentType": "application/json"
-        }
-        # Make a new request
+    def assert_call_args(self, call_args, term):
+        expected_url = "http://localhost:8000/en/?q={}&key=oehhh&auth=1".format(term)
+        args, kwargs = call_args
+        url = args[0]
+        self.assertTrue(url.startswith("http://localhost:8000/en/?"))
+        self.assertIn("q={}".format(term), url)
+        self.assertIn("key=oehhh", url)
+        self.assertIn("auth=1", url)
+        self.assertEqual(len(expected_url), len(url))
+        self.assertEqual(kwargs["headers"], self.content_type_header)
+
+    def test_get_new(self):
+        # Make a new request and store it.
         instance = self.model().get("new")
-        args, kwargs = instance.session.get.call_args
-        self.assertEqual(args[0], "http://localhost:8000/en/?q=new&key=oehhh&auth=1")
-        self.assertEqual(kwargs["headers"], content_header)
-        self.assertEqual(instance.head, {"ContentType": "application/json"})
+        instance.save()
+        self.assert_call_args(instance.session.get.call_args, "new")
+        self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
+        self.assertTrue(instance.id)
+        # Make a new request from an existing request dictionary
+        request = self.model().get("new2").request
+        instance = self.model(request=request).get()
+        instance.save()
+        self.assert_call_args(instance.session.get.call_args, "new2")
+        self.assertEqual(instance.head, self.content_type_header)
+        self.assertEqual(instance.body, json.dumps(MOCK_DATA))
+        self.assertEqual(instance.status, 200)
+        self.assertTrue(instance.id)
+
+    def test_get_success(self):
         # Load an existing request
-        instance.session.get.reset_mock()
         instance = self.model().get("success")
         self.assertFalse(instance.session.get.called)
-        self.assertEqual(instance.head, {"ContentType": "application/json"})
+        self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
-        # init, load -> retry
-        # preset, new
+        self.assertTrue(instance.id)
         # preset, load
+
+        # init, load -> retry
         # preset, load -> retry
+
         # invalid init
         # invalid preset
-        pass
 
     def test_request_with_auth(self):
         pass

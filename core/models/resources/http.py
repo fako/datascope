@@ -21,16 +21,16 @@ class HttpResource(models.Model):
     """
 
     # Identification
-    uri = models.CharField(max_length=255, db_index=True)
+    uri = models.CharField(max_length=255, db_index=True, default=None)
     post_data = models.CharField(max_length=255, db_index=True, default="")
 
     # Getting data
-    request = jsonfield.JSONField()
+    request = jsonfield.JSONField(default=None)
 
     # Storing data
-    head = jsonfield.JSONField()
-    body = models.TextField()
-    status = models.PositiveIntegerField(default=0)
+    head = jsonfield.JSONField(default=None)
+    body = models.TextField(default=None)
+    status = models.PositiveIntegerField(default=None)
 
     # Archiving fields
     created_at = models.DateTimeField(auto_now_add=True)
@@ -135,7 +135,9 @@ class HttpResource(models.Model):
     def _create_url(self, *args):
         url_template = copy(unicode(self.URI_TEMPLATE))
         url = URLObject(url_template.format(*args))
-        url.query.add_params(self.parameters())
+        params = url.query.dict
+        params.update(self.parameters())
+        url.query.set_params(params)
         return unicode(url)
 
     def parameters(self):
@@ -193,7 +195,9 @@ class HttpResource(models.Model):
 
     def request_with_auth(self):
         url = URLObject(self.request.get("url"))
-        url = url.add_query_params(self.auth_parameters())
+        params = url.query.dict
+        params.update(self.auth_parameters())
+        url = url.set_query_params(params)
         request = deepcopy(self.request)
         request["url"] = unicode(url)
         return request
@@ -335,6 +339,7 @@ class HttpResourceMock(HttpResource):
     def __init__(self, *args, **kwargs):
         super(HttpResourceMock, self).__init__(*args, **kwargs)
         self.session = MockRequests
+        self.session.get.reset_mock()
 
     def get(self, *args, **kwargs):
         args = (self.config.source_language,) + args
