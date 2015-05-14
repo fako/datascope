@@ -115,6 +115,12 @@ class HttpResource(models.Model):
 
         :return: content_type, data
         """
+        if self.success:
+            content_type = self.head["Content-Type"].split(';')[0]
+            if content_type == "application/json":
+                return content_type, json.loads(self.body)
+            else:
+                return content_type, None
         return None, None
 
     #######################################################
