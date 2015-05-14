@@ -246,13 +246,27 @@ class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
             pass
 
     def test_request_with_auth(self):
-        pass
+        self.instance.request = self.test_request
+        request = self.instance.request_with_auth()
+        self.assertIn("auth=1", request["url"])
+        self.assertNotIn("auth=1", self.instance.request["url"], "request_with_auth should not alter existing request")
+        self.assertIn("key=oehhh", request["url"])
+        self.assertNotIn("key=oehhh", self.instance.request["url"], "request_with_auth should not alter existing request")
 
     def test_request_without_auth(self):
-        pass
+        self.instance.request = deepcopy(self.test_request)
+        self.instance.request["url"] = self.test_request["url"] + "&auth=1&key=ahhh"
+        request = self.instance.request_without_auth()
+        self.assertNotIn("auth=1", request["url"])
+        self.assertIn("auth=1", self.instance.request["url"], "request_without_auth should not alter existing request")
+        self.assertNotIn("key=oehhh", request["url"])
+        self.assertIn("key=ahhh", self.instance.request["url"], "request_without_auth should not alter existing request")
 
     def test_create_next_request(self):
-        pass
+        instance = self.model().get("success")
+        request = instance.create_next_request()
+        self.assertIn("next=1", request["url"])
+        self.assertNotIn("auth=1", instance.request["url"], "create_next_request should not alter existing request")
 
     def test_validate_request_args(self):
         # Valid
