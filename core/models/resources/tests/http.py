@@ -22,8 +22,18 @@ class HttpResourceTestMixin(TestCase):
         raise NotImplementedError()
 
     def test_data(self):
-        # type only
-        pass
+        # Test access when request is missing
+        content_type, data = self.instance.data
+        self.assertIsNone(content_type)
+        self.assertIsNone(data)
+        # Test when request was made
+        self.instance.head = {"Content-Type": "application/json; charset=utf-8"}
+        self.instance.body = json.dumps(self.test_data)
+        self.instance.status = 200
+        content_type, data = self.instance.data
+        self.assertEqual(content_type, "application/json")
+        self.assertEqual(data, self.test_data)
+
 
     def test_parameters(self):
         self.assertIsInstance(self.instance.parameters(), dict)
