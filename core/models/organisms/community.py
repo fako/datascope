@@ -32,6 +32,9 @@ class Community(models.Model):
     path = models.CharField(max_length=255, db_index=True)
     config = jsonfield.JSONField(db_index=True)  # TODO: should become a ConfigurationField
 
+    # TODO: add created_at etc.
+    # TODO: add view count
+
     def get_collective_from_path(self, path):
         """
         Parse a path and return the collective that belongs to that path.
