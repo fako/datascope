@@ -5,16 +5,14 @@ from requests.models import Response
 from mock import Mock, NonCallableMock
 
 
-class MockDefaults(object):  # TODO: make it a dict
-
+MOCK_DEFAULTS = {
     # testing basic functionality
-    name_namespace_configuration = "namespace configuration"
-    global_global_configuration = "global configuration"
-
+    "name_namespace_configuration": "namespace configuration",
+    "global_global_configuration": "global configuration",
     # mock configuration for testing HttpResourceMock
-    global_source_language = "en"
-    mock_secret = "oehhh"
-
+    "global_source_language": "en",
+    "mock_secret": "oehhh"
+}
 
 MOCK_DATA = {
     "dict": {

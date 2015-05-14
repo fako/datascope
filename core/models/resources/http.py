@@ -14,7 +14,7 @@ import jsonfield
 
 from core.exceptions import DSHttpError50X, DSHttpError40X
 from core.utils import configuration
-from core.utils.mocks import MockRequests, MockDefaults
+from core.utils.mocks import MockRequests, MOCK_DEFAULTS
 
 
 class HttpResource(models.Model):
@@ -349,7 +349,7 @@ class HttpResourceMock(HttpResource):
     }
 
     config = configuration.ConfigurationField(
-        default=MockDefaults(),
+        default=MOCK_DEFAULTS,
         namespace="mock"
     )
 

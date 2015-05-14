@@ -27,8 +27,8 @@ class ConfigurationType(object):
         :param private: (list) keys that are considered as private
         :return: None
         """
-        assert isinstance(defaults, object), \
-            "Defaults should be an object with attributes set as the configuration defaults."
+        assert isinstance(defaults, dict), \
+            "Defaults should be a dict which values are the configuration defaults."
         assert isinstance(namespace, six.string_types), \
             "Namespaces should be a string that acts as a prefix for finding configurations."
         assert isinstance(private, (list, tuple,)), \
@@ -77,10 +77,10 @@ class ConfigurationType(object):
 
         if shielded_key in self.__dict__:
             return self.__dict__[shielded_key]
-        if hasattr(self._defaults, namespace_attr):
-            return getattr(self._defaults, namespace_attr)
-        elif hasattr(self._defaults, global_attr):
-            return getattr(self._defaults, global_attr)
+        if namespace_attr in self._defaults:
+            return self._defaults[namespace_attr]
+        elif global_attr in self._defaults:
+            return self._defaults[global_attr]
         else:
             raise ConfigurationNotFoundError(
                 "Tried to retrieve '{}' in config and namespace '{}', without results.".format(config, self._namespace)
