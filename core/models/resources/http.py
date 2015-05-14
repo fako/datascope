@@ -312,7 +312,7 @@ class HttpResourceMock(HttpResource):
         "param": 1
     }
     HEADERS = {
-        "ContentType": "application/json"
+        "Accept": "application/json"
     }
     GET_SCHEMA = {
         "args": {

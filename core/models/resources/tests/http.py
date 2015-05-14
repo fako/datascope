@@ -37,7 +37,7 @@ class HttpResourceTestMixin(TestCase):
     def test_make_request(self):
         test_url = "http://localhost:8000/test/"
         content_header = {
-            "ContentType": "application/json"
+            "Accept": "application/json"
         },
         self.instance.request = {
             "args": tuple(),
@@ -53,7 +53,7 @@ class HttpResourceTestMixin(TestCase):
         self.assertEqual(args[0], test_url)
         self.assertEqual(kwargs["headers"], content_header)
 
-        self.assertEqual(self.instance.head, {"ContentType": "application/json"})
+        self.assertEqual(self.instance.head, {"Content-Type": "application/json"})
         self.assertEqual(self.instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(self.instance.status, 200)
 
@@ -155,14 +155,14 @@ class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
     def setUp(self):
         super(TestHttpResource, self).setUp()
         self.content_type_header = {
-            "ContentType": "application/json"
+            "Content-Type": "application/json"  # change to Accept
         }
         self.test_request = {
             "args": ("en", "test",),
             "kwargs": {},
             "method": "get",
             "url": "http://localhost:8000/en/?q=test",
-            "headers": self.content_type_header,
+            "headers": {"Accept": "application/json"},
             "data": {},
         }
 
@@ -175,7 +175,7 @@ class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertIn("key=oehhh", url)
         self.assertIn("auth=1", url)
         self.assertEqual(len(expected_url), len(url))
-        self.assertEqual(kwargs["headers"], self.content_type_header)
+        self.assertEqual(kwargs["headers"], {"Accept": "application/json"})
 
     def test_get_new(self):
         # Make a new request and store it.
