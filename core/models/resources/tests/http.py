@@ -14,6 +14,7 @@ class HttpResourceTestMixin(TestCase):
     def setUp(self):
         super(HttpResourceTestMixin, self).setUp()
         self.instance = self.get_test_instance()
+        self.test_data = {"data": "test"}
 
 
     @staticmethod
@@ -93,6 +94,24 @@ class HttpResourceTestMixin(TestCase):
                 pass
             except Exception, exception:
                 self.fail("Handle error throws wrong exception '{}' expecting 40X".format(exception))
+
+    def test_uri_from_url(self):
+        uri = HttpResource.uri_from_url("http://localhost:8000/")
+        self.assertEqual(uri, "localhost:8000/")
+        uri = HttpResource.uri_from_url("https://localhost:8000/")
+        self.assertEqual(uri, "localhost:8000/")
+
+    def test_hash_from_data(self):
+        # Give no data
+        post_data = HttpResource.hash_from_data({})
+        self.assertEqual(post_data, "")
+        # Give data
+        post_data = HttpResource.hash_from_data(self.test_data)
+        self.assertIsInstance(post_data, str)
+        # Compare with slightly altered data
+        self.test_data["data"] = "tezt"
+        post_data2 = HttpResource.hash_from_data(self.test_data)
+        self.assertNotEqual(post_data, post_data2)
 
 
 class ConfigurationFieldTestMixin(TestCase):
@@ -185,13 +204,46 @@ class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
         self.assertTrue(instance.id)
-        # preset, load
+        # Load an existing resource from its request
+        request = instance.request
+        instance = self.model(request=request).get()
+        self.assertFalse(instance.session.get.called)
+        self.assertEqual(instance.head, self.content_type_header)
+        self.assertEqual(instance.body, json.dumps(MOCK_DATA))
+        self.assertEqual(instance.status, 200)
+        self.assertTrue(instance.id)
 
-        # init, load -> retry
-        # preset, load -> retry
+    def test_get_retry(self):
+        # Load and retry an existing request
+        instance = self.model().get("fail")
+        self.assert_call_args(instance.session.get.call_args, "fail")
+        self.assertEqual(instance.head, self.content_type_header)
+        self.assertEqual(instance.body, json.dumps(MOCK_DATA))
+        self.assertEqual(instance.status, 200)
+        self.assertTrue(instance.id)
+        # Load an existing resource from its request
+        request = instance.request
+        instance = self.model(request=request).get()
+        self.assert_call_args(instance.session.get.call_args, "fail")
+        self.assertEqual(instance.head, self.content_type_header)
+        self.assertEqual(instance.body, json.dumps(MOCK_DATA))
+        self.assertEqual(instance.status, 200)
+        self.assertTrue(instance.id)
 
-        # invalid init
-        # invalid preset
+    def test_get_invalid(self):
+        # Invalid invoke of get
+        try:
+            self.model().get()
+            self.fail("Get did not raise a validation exception when invoked with invalid arguments.")
+        except ValidationError:
+            pass
+        # Invalid request preset
+        self.test_request["args"] = tuple()
+        try:
+            self.model(request=self.test_request).get()
+            self.fail("Get did not raise a validation exception when confronted with an invalid preset request.")
+        except ValidationError:
+            pass
 
     def test_request_with_auth(self):
         pass
@@ -237,4 +289,7 @@ class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
             self.fail("validate_request invalidated with a schema without restrictions.")
 
     def test_clean(self):
-        pass
+        self.instance.request = self.test_request
+        self.instance.clean()
+        self.assertEqual(self.instance.uri, "localhost:8000/en/?q=test")
+        self.assertEqual(self.instance.post_data, "")

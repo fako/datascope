@@ -1,7 +1,10 @@
+import hashlib
+import json
+from copy import copy, deepcopy
+
 import requests
 import jsonschema
 from jsonschema.exceptions import ValidationError as SchemaValidationError
-from copy import copy, deepcopy
 from urlobject import URLObject
 
 from django.core.exceptions import ValidationError
@@ -288,11 +291,15 @@ class HttpResource(models.Model):
     @staticmethod
     def uri_from_url(url):
         url = URLObject(url)
-        return unicode(url).replace(url.scheme + "://", "")
+        return unicode(url).replace(url.scheme + u"://", u"")
 
     @staticmethod
     def hash_from_data(data):
-        return hash(tuple(data)) if data else ""
+        if not data:
+            return ""
+        hsh = hashlib.sha1()
+        hsh.update(json.dumps(data))
+        return hsh.hexdigest()
 
     class Meta:
         abstract = True
