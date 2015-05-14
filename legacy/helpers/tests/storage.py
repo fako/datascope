@@ -51,10 +51,6 @@ class TestContainer(TestCase):
 
     fixtures = ['test-storage']
 
-    @classmethod
-    def setUpClass(cls):
-        pass
-
     def setUp(self):
         self.valid = {
             "TextStorage": [1,3],

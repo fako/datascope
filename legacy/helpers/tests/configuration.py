@@ -12,11 +12,6 @@ class MockDomain(object):
 
 class TestConfiguration(TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        pass
-        #cls.config = Config()
-
     def test_config_init(self):
         # Standard init
         instance = Config(namespace="TEST",private=[])

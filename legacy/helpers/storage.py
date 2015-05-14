@@ -39,8 +39,9 @@ def get_hif_model(inp):  # TODO: tests!
     else:
         name = inp
 
-    model = get_model(app_label="legacy", model_name=name)
-    if model is None:
+    try:
+        model = get_model(app_label="legacy", model_name=name)
+    except LookupError:
         raise HIFImproperUsage("The specified model does not exist, is not imported in models " +
                                "or is not registered as Django model with HIF label.")
     return model
