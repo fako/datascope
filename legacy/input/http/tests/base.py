@@ -12,10 +12,6 @@ from legacy.exceptions import HIFHttpError40X, HIFHttpError50X, HIFImproperUsage
 
 class TestHttpLink(TestCase):
 
-    @classmethod
-    def setUpClass(cls):
-        pass
-
     def setUp(self):
 
         def test_callable():

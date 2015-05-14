@@ -13,6 +13,7 @@ class TestStorage(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        super(TestStorage, cls).setUpClass()
         cls.test_args = [u'test']
         cls.test_config = {'test': u'test'}
         ###cls.test_subs = {'TextStorage': [1, 2, 3]}

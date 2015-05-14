@@ -30,6 +30,7 @@ class TestDataMixin(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        super(TestDataMixin, cls).setUpClass()
         cls.translations = {
             "test": "translated"
         }
