@@ -229,8 +229,12 @@ class HttpResource(models.Model):
 
     def create_next_request(self):
         url = URLObject(self.request.get("url"))
-        url = url.query.add_params(self.next_parameters())
-        return deepcopy(self.request).set("url", url)
+        params = url.query.dict
+        params.update(self.next_parameters())
+        url = url.set_query_params(params)
+        request = deepcopy(self.request)
+        request["url"] = unicode(url)
+        return request
 
     #######################################################
     # PROTECTED METHODS
@@ -365,4 +369,9 @@ class HttpResourceMock(HttpResource):
         }
 
     def next_parameters(self):
-        return {"next": 1}
+        content_type, data = self.data
+        try:
+            nxt = data.get("next")
+        except (AttributeError, KeyError):
+            return {}
+        return {"next": nxt}
