@@ -323,3 +323,15 @@ class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertIsNone(instance.query)
         instance.get("new")
         self.assertEqual(instance.query, "new")
+
+    def test_input_for_organism(self):
+        instance = self.model()
+        spirit, content_type, data = instance.input_for_organism
+        self.assertIsNone(spirit)
+        self.assertIsNone(content_type)
+        self.assertIsNone(data)
+        instance.get("new")
+        spirit, content_type, data = instance.input_for_organism
+        self.assertEqual(spirit, "new")
+        self.assertEqual(content_type, "application/json")
+        self.assertEqual(data, MOCK_DATA)

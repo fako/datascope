@@ -12,12 +12,13 @@ from django.db import models
 
 import jsonfield
 
+from core.models.organisms.protocols import OrganismInputProtocol
 from core.exceptions import DSHttpError50X, DSHttpError40X
 from core.utils import configuration
 from core.utils.mocks import MockRequests, MOCK_DEFAULTS
 
 
-class HttpResource(models.Model):
+class HttpResource(models.Model, OrganismInputProtocol):
     """
     A representation of how to fetch/submit data from/to a HTTP resource.
     Stores the headers and body of responses.
@@ -386,3 +387,8 @@ class HttpResourceMock(HttpResource):
             return self.request["args"][1]
         except (KeyError, IndexError, TypeError):
             return None
+
+    @property
+    def input_for_organism(self):
+        content_type, data = self.data
+        return self.query, content_type, data
