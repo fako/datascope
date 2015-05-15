@@ -317,3 +317,9 @@ class TestHttpResource(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.instance.clean()
         self.assertEqual(self.instance.uri, "localhost:8000/en/?q=test")
         self.assertEqual(self.instance.post_data, "")
+
+    def test_query(self):
+        instance = self.model()
+        self.assertIsNone(instance.query)
+        instance.get("new")
+        self.assertEqual(instance.query, "new")

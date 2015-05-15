@@ -123,6 +123,10 @@ class HttpResource(models.Model):
                 return content_type, None
         return None, None
 
+    @property
+    def query(self):
+        return None
+
     #######################################################
     # CREATE REQUEST
     #######################################################
@@ -375,3 +379,10 @@ class HttpResourceMock(HttpResource):
         except (AttributeError, KeyError):
             return {}
         return {"next": nxt}
+
+    @property
+    def query(self):
+        try:
+            return self.request["args"][1]
+        except (KeyError, IndexError, TypeError):
+            return None

@@ -10,7 +10,7 @@ class Organism(models.Model):
     spirit = models.CharField(max_length=255, db_index=True)  # should be unique per community?
 
     @classmethod  # TODO: write manager instead!
-    def create_from_json(cls, json_string, schema, context=None):
+    def create_from_json(cls, json_string, schema, context=None, spirit=None):
         """
         Parses the json string into a data structure
         and then adds dictionaries inside a newly created Collective if any validates against the schema.
@@ -41,7 +41,7 @@ class Organism(models.Model):
         """
         pass
 
-    def add_from_json(self, json_string, schema, context=None):
+    def add_from_json(self, json_string, schema, context=None, spirit=None):
         """
         Parses the json string into a data structure and then adds dictionaries to self if any validates against the schema.
         The matching dictionaries will be stored as Individual. If the context parameter is set to a dictionary.
