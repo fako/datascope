@@ -26,12 +26,6 @@ class TestConfigurationType(TestCase):
         self.assertEqual(instance._defaults, MOCK_DEFAULTS)
         self.assertEqual(instance._namespace, "name")
         self.assertEqual(instance._private, ConfigurationType._private_defaults + ["_test", "_oops"])
-        # Wrong init
-        try:
-            ConfigurationType({"configuration": "wrong"})
-            self.fail("ConfigurationType should assert correct initiation.")
-        except AssertionError:
-            pass
 
     def test_attribute_access(self):
         self.assertEqual(self.config.test, "public")

@@ -14,26 +14,23 @@ class ConfigurationNotFoundError(Exception):
 
 
 class ConfigurationType(object):
+    """
+    This is the type for a ConfigurationProperty.
+
+    """
 
     _private_defaults = ["_private", "_defaults", "_namespace"]
     _global_prefix = "global"
 
-    def __init__(self, defaults, namespace="", private=tuple()):
+    def __init__(self, defaults={}, namespace="", private=tuple()):  # TODO: immutable dict?
         """
-        Initiates the Configuration type by running some checks and setting properties based on arguments.
+        Initiates the ConfigurationType by setting privates
 
-        :param defaults: (object) that should hold default configurations as attributes
+        :param defaults: (dict) that should hold default configurations as items
         :param namespace: (string) prefix to search default configurations with
         :param private: (list) keys that are considered as private
         :return: None
         """
-        assert isinstance(defaults, dict), \
-            "Defaults should be a dict which values are the configuration defaults."
-        assert isinstance(namespace, six.string_types), \
-            "Namespaces should be a string that acts as a prefix for finding configurations."
-        assert isinstance(private, (list, tuple,)), \
-            "Private should be a list or tuple of private configurations."
-
         super(ConfigurationType, self).__init__()
         self._defaults = defaults
         self._namespace = namespace or self._global_prefix
@@ -124,9 +121,27 @@ class ConfigurationType(object):
 
 class ConfigurationProperty(object):
     """
-    This class only creates a property that manages a ConfigurationType instance on the owner class.
+    This class creates a property that manages a ConfigurationType instance on the owner class.
     """
+
     def __init__(self, storage_attribute, defaults, namespace, private):
+        """
+        Runs some checks to create a ConfigurationType successfully upon first access of the property.
+
+        :param storage_attribute: (string) name of the attribute used to store configuration on owner of this property
+        :param defaults: (dict) that should hold default configurations as items
+        :param namespace: (string) prefix to search default configurations with
+        :param private: (list) keys that are considered as private
+        :return: None
+        """
+        assert storage_attribute, \
+            "Specify a storage_attribute to store the configuration in."
+        assert isinstance(defaults, dict), \
+            "Defaults should be a dict which values are the configuration defaults."
+        assert isinstance(namespace, six.string_types), \
+            "Namespaces should be a string that acts as a prefix for finding configurations."
+        assert isinstance(private, (list, tuple,)), \
+            "Private should be a list or tuple of private configurations."
         self._storage_attribute = storage_attribute
         self._defaults = defaults
         self._namespace = namespace
@@ -156,27 +171,23 @@ class ConfigurationProperty(object):
 
 
 class ConfigurationField(fields.TextField):
+    """
+    This field creates a property of ConfigurationType on the model.
+
+    NB: default that gets stored in the database is always an empty dictionary.
+    """
 
     def __init__(self, default=None, namespace="", private=tuple(), *args, **kwargs):
         """
-        This field creates a property of ConfigurationType on the model.
+        Stores its arguments for later use by contribute_to_class
 
-        NB: default that gets stored in the database is always an empty dictionary.
-
-        :param defaults: (object) that should hold default configurations as attributes
+        :param defaults: (dict) that should hold default configurations as items
         :param namespace: (string) prefix to search default configurations with
         :param private: (list) keys that are considered as private
         :param args: additional field arguments
         :param kwargs: additional field keyword arguments
         :return:
         """
-        assert isinstance(default, object), \
-            "Default configuration should be an object with attributes set as the configuration defaults."
-        assert isinstance(namespace, six.string_types), \
-            "Namespaces should be a string that acts as a prefix for finding configurations."
-        assert isinstance(private, (list, tuple,)), \
-            "Private should be a list or tuple of private configurations."
-
         super(ConfigurationField, self).__init__(*args, default={}, **kwargs)
         self._default = default
         self._namespace = namespace
