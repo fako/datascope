@@ -11,4 +11,4 @@ class OrganismInputProtocol(object):
 
         :return: spirit, content_type, data
         """
-        return None, None, None
+        raise NotImplementedError("This class didn't implement the input_for_organism from OrganismInputProtocol.")
