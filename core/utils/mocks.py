@@ -11,7 +11,10 @@ MOCK_DEFAULTS = {
     "global_global_configuration": "global configuration",
     # mock configuration for testing HttpResourceMock
     "global_source_language": "en",
-    "mock_secret": "oehhh"
+    "mock_secret": "oehhh",
+    # HttpResource (processor)
+    "http_resource_batch_size": 0,
+    "http_resource_continuation_limit": 1,
 }
 
 MOCK_DATA = {
