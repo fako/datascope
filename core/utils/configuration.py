@@ -116,6 +116,24 @@ class ConfigurationType(object):
                 dictionary[key] = value
         return dictionary
 
+    @classmethod
+    def from_dict(cls, config, defaults):
+        assert isinstance(config, dict), \
+            "Config should be a dict which values are the configurations."
+        assert "_namespace" in config, \
+            "_namespace needs to be specified in the configuration."
+        assert "_private" in config, \
+            "_private needs to be specified in the configuration."
+        assert isinstance(defaults, dict), \
+            "Defaults should be a dict which values are the configuration defaults."
+        instance = cls(
+            defaults=defaults,
+            namespace=config["_namespace"],
+            private=config["_private"]
+        )
+        instance.set_configuration(config)
+        return instance
+
     def __getattr__(self, item):
         return self._get_configuration(item)
 
