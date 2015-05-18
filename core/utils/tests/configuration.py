@@ -86,11 +86,25 @@ class TestConfigurationType(TestCase):
         # But the defaults key should not be passed down
         self.assertEqual(len(self.config._private) - 1 + len(public), len(private))
 
+    def test_from_dict(self):
+        type_instance = ConfigurationType.from_dict(
+            self.config.to_dict(private=True, protected=True),
+            MOCK_CONFIGURATION
+        )
+        self.assertEqual(type_instance.test, "public")
+        self.assertEqual(type_instance.test2, "protected")
+        self.assertEqual(type_instance.test3, "private")
+        self.assertEqual(type_instance.global_configuration, "global configuration")
+        self.assertEqual(type_instance.namespace_configuration, "namespace configuration")
+        self.assertEqual(type_instance._private, self.config._private)
+
 
 class TestConfigurationProperty(TestCase):
 
-    def setUp(self):
-        self.property = ConfigurationProperty(
+    @classmethod
+    def setUpClass(cls):
+        super(TestConfigurationProperty, cls).setUpClass()
+        cls.property = ConfigurationProperty(
             "storage",
             namespace="name",
             private=["_test3"],

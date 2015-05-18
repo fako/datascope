@@ -1,1 +1,1 @@
-from core.utils.tests.configuration import TestConfigurationType
+from core.utils.tests.configuration import TestConfigurationType, TestConfigurationProperty

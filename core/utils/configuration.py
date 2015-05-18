@@ -172,7 +172,7 @@ class ConfigurationProperty(object):
         if obj is None:
             log.warning("ConfigurationType not bound to an owner.")
             return self
-        elif not obj.__dict__[self._storage_attribute]:
+        elif not self._storage_attribute in obj.__dict__ or not obj.__dict__[self._storage_attribute]:
             obj.__dict__[self._storage_attribute] = self._config_instance
         return obj.__dict__[self._storage_attribute]
 
