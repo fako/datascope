@@ -13,7 +13,6 @@ class HttpResourceTestMixin(TestCase):
         self.instance = self.get_test_instance()
         self.test_data = {"data": "test"}
 
-
     @staticmethod
     def get_test_instance():
         raise NotImplementedError()
