@@ -1,7 +1,6 @@
 from django.apps import apps as django_apps
 
 from celery import current_app as app
-from celery.contrib.methods import task_method
 
 from core.utils.configuration import ConfigurationProperty, load_config
 from core.configuration import DEFAULT_CONFIGURATION
@@ -19,41 +18,47 @@ class HttpResourceProcessor(object):
     config = ConfigurationProperty(
         storage_attribute="_config",
         defaults=DEFAULT_CONFIGURATION,
-        private=["_resource", "_configuration_limit", "_batch_size"],
-        namespace=""
+        private=["_resource", "_continuation_limit", "_batch_size"],
+        namespace="http_resource"  # TODO: test that batch_size and continuation_limit are picked up
     )
 
-    def __init__(self, configuration):
+    # TODO: test that config with resource is the same as with _resource if denounced private
+    def __init__(self, config):
         super(HttpResourceProcessor, self).__init__()
-        assert isinstance(configuration, dict) and "_resource" in configuration, \
+        assert isinstance(config, dict) and ("_resource" in config or "resource" in config), \
             "HttpFetch expects a resource that it should fetch in the configuration."
+        self.config = config
 
-        if "continuation_limit" not in configuration:
-            configuration["_continuation_limit"] = 1
-        if "batch_size" not in configuration:
-            configuration["_batch_size"] = 0
+    @staticmethod
+    def get_link(config, session=None):
+        Resource = django_apps.get_model("core", config.resource)
+        link = Resource(config=config.to_dict(protected=True))
+        if session is not None:
+            link.session = session
+        # FEATURE: update session to use proxy when configured
+        # FEATURE: update session to use custom user agents when configured
+        return link
 
-        self.config = configuration
+    @property
+    def fetch(self):
+        return self._fetch.s(
+            config=self.config.to_dict(private=True, protected=True)
+        )
 
-    def get_link(self):
-        Resource = django_apps.get_model("core", self.config.resource)
-        return Resource(config=self.config.to_dict(protected=True))
-
-    @app.task(name="HttpFetch.fetch", filter=task_method)
-    def fetch(self, *args, **kwargs):
-        print self
-        print args
-        print kwargs
+    @staticmethod
+    @app.task(name="HttpFetch._fetch")
+    @load_config(defaults=DEFAULT_CONFIGURATION)  # TODO: test the little bugger
+    def _fetch(config, *args, **kwargs):
         # Set vars
         results = []
         has_next_request = True
         current_request = {}
         count = 0
-        limit = self.config.continuation_limit
+        limit = config.continuation_limit
         # Continue as long as there are subsequent requests
         while has_next_request and count < limit:
             # Get payload
-            link = self.get_link()
+            link = HttpResourceProcessor.get_link(config)
             link.request = current_request
             link.get(*args, **kwargs)
             link.save()
@@ -65,6 +70,8 @@ class HttpResourceProcessor(object):
         return results
 
     def fetch_mass(self, *args, **kwargs):
+        # FEATURE: use an interval in between requests if configured
+        # FEATURE: chain "batches" of fetch_mass if configured
         pass
 
     def submit(self, *args, **kwargs):
