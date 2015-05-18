@@ -62,6 +62,7 @@ class ConfigurationType(object):
         """
         assert isinstance(new, dict), "Configurations can only be set with a dictionary not a {}".format(type(new))
         for key, value in new.iteritems():
+            # FEATURE: guard here against improper override of internal attributes
             shielded_key = key if key.startswith('_') else '_' + key
             if shielded_key in self._private:
                 setattr(self, shielded_key, value)

@@ -22,7 +22,6 @@ class HttpResourceProcessor(object):
         namespace="http_resource"  # TODO: test that batch_size and continuation_limit are picked up
     )
 
-    # TODO: test that config with resource is the same as with _resource if denounced private
     def __init__(self, config):
         super(HttpResourceProcessor, self).__init__()
         assert isinstance(config, dict) and ("_resource" in config or "resource" in config), \
