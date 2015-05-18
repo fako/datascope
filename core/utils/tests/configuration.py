@@ -133,3 +133,10 @@ class TestConfigurationProperty(TestCase):
         self.property = {}
         self.assertIsInstance(self.property, ConfigurationType)
         self.assertTrue(hasattr(self, "storage"))
+
+
+class TestLoadConfigDecorator(TestCase):
+
+    def test_decorator(self):
+        pass
+        #self.fail("not tested")

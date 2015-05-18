@@ -1,1 +1,1 @@
-from core.utils.tests.configuration import TestConfigurationType, TestConfigurationProperty
+from core.utils.tests.configuration import TestConfigurationType, TestConfigurationProperty, TestLoadConfigDecorator
