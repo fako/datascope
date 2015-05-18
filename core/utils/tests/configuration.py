@@ -1,13 +1,13 @@
 from django.test import TestCase
 
+from datascope.configuration import MOCK_CONFIGURATION
 from core.utils.configuration import ConfigurationType, ConfigurationNotFoundError, ConfigurationProperty
-from core.utils.mocks import MOCK_DEFAULTS
 
 
 class TestConfigurationType(TestCase):
 
     def setUp(self):
-        self.config = ConfigurationType(namespace="name", private=["_test3"], defaults=MOCK_DEFAULTS)
+        self.config = ConfigurationType(namespace="name", private=["_test3"], defaults=MOCK_CONFIGURATION)
         self.config.set_configuration({
             "test": "public",
             "_test2": "protected",
@@ -16,13 +16,13 @@ class TestConfigurationType(TestCase):
 
     def test_init(self):
         # Implicit init
-        instance = ConfigurationType(defaults=MOCK_DEFAULTS)
-        self.assertEqual(instance._defaults, MOCK_DEFAULTS)
+        instance = ConfigurationType(defaults=MOCK_CONFIGURATION)
+        self.assertEqual(instance._defaults, MOCK_CONFIGURATION)
         self.assertEqual(instance._namespace, ConfigurationType._global_prefix)
         self.assertEqual(instance._private, ConfigurationType._private_defaults)
         # Explicit init with double private key
-        instance = ConfigurationType(namespace="name", private=["_test", "_test", "oops"], defaults=MOCK_DEFAULTS)
-        self.assertEqual(instance._defaults, MOCK_DEFAULTS)
+        instance = ConfigurationType(namespace="name", private=["_test", "_test", "oops"], defaults=MOCK_CONFIGURATION)
+        self.assertEqual(instance._defaults, MOCK_CONFIGURATION)
         self.assertEqual(instance._namespace, "name")
         self.assertEqual(instance._private, ConfigurationType._private_defaults + ["_test", "_oops"])
 
@@ -94,7 +94,7 @@ class TestConfigurationProperty(TestCase):
             "storage",
             namespace="name",
             private=["_test3"],
-            defaults=MOCK_DEFAULTS
+            defaults=MOCK_CONFIGURATION
         )
 
     def test_getter(self):

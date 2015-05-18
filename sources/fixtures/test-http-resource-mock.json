@@ -12,7 +12,7 @@
         "config": "{}",
         "purge_at": null
     },
-    "model": "core.httpresourcemock",
+    "model": "sources.httpresourcemock",
     "pk": 1
 },
 {
@@ -28,7 +28,7 @@
         "config": "{}",
         "purge_at": null
     },
-    "model": "core.httpresourcemock",
+    "model": "sources.httpresourcemock",
     "pk": 2
 }
 ]

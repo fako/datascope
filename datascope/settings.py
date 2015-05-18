@@ -172,6 +172,7 @@ INSTALLED_APPS = (
     'datascope',
     # Framework apps
     'core',
+    'sources',
     'legacy',
 )
 
