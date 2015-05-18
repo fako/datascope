@@ -20,7 +20,6 @@ class TestConfigurationType(TestCase):
         self.assertEqual(instance._defaults, MOCK_DEFAULTS)
         self.assertEqual(instance._namespace, ConfigurationType._global_prefix)
         self.assertEqual(instance._private, ConfigurationType._private_defaults)
-        self.assertEqual(instance._private, ConfigurationType._private_defaults)
         # Explicit init with double private key
         instance = ConfigurationType(namespace="name", private=["_test", "_test", "oops"], defaults=MOCK_DEFAULTS)
         self.assertEqual(instance._defaults, MOCK_DEFAULTS)
