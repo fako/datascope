@@ -87,6 +87,7 @@ class TestConfigurationType(TestCase):
         self.assertEqual(len(self.config._private) - 1 + len(public), len(private))
 
     def test_from_dict(self):
+        # Call with correct dict
         type_instance = ConfigurationType.from_dict(
             self.config.to_dict(private=True, protected=True),
             MOCK_CONFIGURATION
@@ -97,6 +98,17 @@ class TestConfigurationType(TestCase):
         self.assertEqual(type_instance.global_configuration, "global configuration")
         self.assertEqual(type_instance.namespace_configuration, "namespace configuration")
         self.assertEqual(type_instance._private, self.config._private)
+        # Call with malformed dicts
+        try:
+            ConfigurationType.from_dict({"_namespace": "test"}, MOCK_CONFIGURATION)
+            self.fail("from_dict does not fail if _private is missing from configuration.")
+        except AssertionError:
+            pass
+        try:
+            ConfigurationType.from_dict({"_private": "test"}, MOCK_CONFIGURATION)
+            self.fail("from_dict does not fail if _namespace is missing from configuration.")
+        except AssertionError:
+            pass
 
 
 class TestConfigurationProperty(TestCase):
