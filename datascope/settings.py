@@ -135,7 +135,7 @@ MIDDLEWARE_CLASSES = (
     # Uncomment the next line for simple clickjacking protection:
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Datascope middleware
-    'legacy.middleware.AllowOriginMiddleware',
+    'core.middleware.origin.AllowOriginMiddleware',
 )
 
 ROOT_URLCONF = 'datascope.urls'
