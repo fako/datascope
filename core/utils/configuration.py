@@ -54,12 +54,19 @@ class ConfigurationType(object):
         """
         Will update any keys in new with corresponding attributes on self.
 
+        NB: Be careful with using _private, _namespace, _defaults and _global_prefix as configurations.
+            They will override attributes that the ConfigurationType needs internally.
+
         :param new: (dictionary) to update attributes on self with
         :return: None
         """
         assert isinstance(new, dict), "Configurations can only be set with a dictionary not a {}".format(type(new))
         for key, value in new.iteritems():
-            setattr(self, key, value)
+            shielded_key = key if key.startswith('_') else '_' + key
+            if shielded_key in self._private:
+                setattr(self, shielded_key, value)
+            else:
+                setattr(self, key, value)
 
     def _get_configuration(self, config):
         """
@@ -75,7 +82,7 @@ class ConfigurationType(object):
         :param config: (string) name of the configuration to search for
         :return: (mixed) the configuration variable
         """
-        shielded_key = '_' + config  # TODO: move to set_configuration
+        shielded_key = '_' + config
         namespace_attr = self._namespace + '_' + config
         global_attr = self._global_prefix + '_' + config
 
@@ -237,7 +244,7 @@ def load_config(defaults):
                 return func(*args, **kwargs)
             if not isinstance(config, dict):
                 return func(config=config, *args, **kwargs)
-            config_instance = ConfigurationType.from_dict(config, defaults)  # TODO: test that!
+            config_instance = ConfigurationType.from_dict(config, defaults)
             print config_instance
             return func(config_instance, *args, **kwargs)
 

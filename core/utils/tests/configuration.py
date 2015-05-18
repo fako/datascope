@@ -30,6 +30,8 @@ class TestConfigurationType(TestCase):
         self.assertEqual(self.config.test, "public")
         self.assertEqual(self.config.test2, "protected")
         self.assertEqual(self.config.test3, "private")
+        self.assertEqual(self.config._test2, "protected")
+        self.assertEqual(self.config._test3, "private")
         # Not found error
         try:
             self.test = self.config.test4
@@ -54,6 +56,7 @@ class TestConfigurationType(TestCase):
             pass
 
     def test_update_using_set_configuration(self):
+        # Test (partial) updating
         self.config.set_configuration({"test": "public 2"})
         self.assertEqual(self.config.test, "public 2")
         self.assertEqual(self.config.test2, "protected")
@@ -62,6 +65,11 @@ class TestConfigurationType(TestCase):
         self.assertEqual(self.config.test, "public 2")
         self.assertEqual(self.config.test2, "protected 2")
         self.assertEqual(self.config.test3, "private 2")
+        # Test private configuration detection
+        self.config._private.append("_private_also")
+        self.config.set_configuration({"private_also": "private"})
+        self.assertEqual(self.config.private_also, "private")
+        self.assertEqual(self.config._private_also, "private")
 
     def test_to_dict(self):
         # Get all different possibilities
