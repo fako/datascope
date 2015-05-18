@@ -358,7 +358,7 @@ class HttpResourceMock(HttpResource):
     }
 
     config = configuration.ConfigurationField(
-        default=MOCK_DEFAULTS,
+        config_defaults=MOCK_DEFAULTS,
         namespace="mock"
     )
 

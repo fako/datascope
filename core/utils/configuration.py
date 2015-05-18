@@ -22,15 +22,22 @@ class ConfigurationType(object):
     _private_defaults = ["_private", "_defaults", "_namespace"]
     _global_prefix = "global"
 
-    def __init__(self, defaults={}, namespace="", private=tuple()):  # TODO: immutable dict?
+    def __init__(self, defaults, namespace="", private=tuple()):
         """
-        Initiates the ConfigurationType by setting privates
+        Initiates the ConfigurationType by checking arguments and setting privates
 
         :param defaults: (dict) that should hold default configurations as items
         :param namespace: (string) prefix to search default configurations with
         :param private: (list) keys that are considered as private
         :return: None
         """
+        assert isinstance(defaults, dict), \
+            "Defaults should be a dict which values are the configuration defaults."
+        assert isinstance(namespace, six.string_types), \
+            "Namespaces should be a string that acts as a prefix for finding configurations."
+        assert isinstance(private, (list, tuple,)), \
+            "Private should be a list or tuple of private configurations."
+
         super(ConfigurationType, self).__init__()
         self._defaults = defaults
         self._namespace = namespace or self._global_prefix
@@ -68,7 +75,7 @@ class ConfigurationType(object):
         :param config: (string) name of the configuration to search for
         :return: (mixed) the configuration variable
         """
-        shielded_key = '_' + config
+        shielded_key = '_' + config  # TODO: move to set_configuration
         namespace_attr = self._namespace + '_' + config
         global_attr = self._global_prefix + '_' + config
 
@@ -136,37 +143,24 @@ class ConfigurationProperty(object):
         """
         assert storage_attribute, \
             "Specify a storage_attribute to store the configuration in."
-        assert isinstance(defaults, dict), \
-            "Defaults should be a dict which values are the configuration defaults."
-        assert isinstance(namespace, six.string_types), \
-            "Namespaces should be a string that acts as a prefix for finding configurations."
-        assert isinstance(private, (list, tuple,)), \
-            "Private should be a list or tuple of private configurations."
         self._storage_attribute = storage_attribute
-        self._defaults = defaults
-        self._namespace = namespace
-        self._private = private
+        self._config_instance = ConfigurationType(
+            defaults=defaults,
+            namespace=namespace,
+            private=private
+        )
 
     def __get__(self, obj, cls=None):
         if obj is None:
             log.warning("ConfigurationType not bound to an owner.")
             return self
         elif not obj.__dict__[self._storage_attribute]:
-            obj.__dict__[self._storage_attribute] = ConfigurationType(
-                namespace=self._namespace,
-                private=self._private,
-                defaults=self._defaults
-            )
-
+            obj.__dict__[self._storage_attribute] = self._config_instance
         return obj.__dict__[self._storage_attribute]
 
     def __set__(self, obj, new):
         if self._storage_attribute not in obj.__dict__:
-            obj.__dict__[self._storage_attribute] = ConfigurationType(
-                namespace=self._namespace,
-                private=self._private,
-                defaults=self._defaults
-            )
+            obj.__dict__[self._storage_attribute] = self._config_instance
         obj.__dict__[self._storage_attribute].set_configuration(new)
 
 
@@ -177,19 +171,20 @@ class ConfigurationField(fields.TextField):
     NB: default that gets stored in the database is always an empty dictionary.
     """
 
-    def __init__(self, default=None, namespace="", private=tuple(), *args, **kwargs):
+    def __init__(self, config_defaults=None, namespace="", private=tuple(), default=None, *args, **kwargs):
         """
-        Stores its arguments for later use by contribute_to_class
+        Stores its arguments for later use by contribute_to_class.
+        Assertions are done by the ConfigurationType class, upon contribute_to_class.
 
-        :param defaults: (dict) that should hold default configurations as items
+        :param config_defaults: (dict) that should hold default configurations as items
         :param namespace: (string) prefix to search default configurations with
         :param private: (list) keys that are considered as private
         :param args: additional field arguments
         :param kwargs: additional field keyword arguments
         :return:
         """
-        super(ConfigurationField, self).__init__(*args, default={}, **kwargs)
-        self._default = default
+        super(ConfigurationField, self).__init__(default={}, *args, **kwargs)
+        self._defaults = config_defaults if config_defaults else {}
         self._namespace = namespace
         self._private = private
 
@@ -197,7 +192,7 @@ class ConfigurationField(fields.TextField):
         super(ConfigurationField, self).contribute_to_class(cls, name)
         configuration_property = ConfigurationProperty(
             storage_attribute="_" + name,
-            defaults=self._default,
+            defaults=self._defaults,
             namespace=self._namespace,
             private=self._private
         )
