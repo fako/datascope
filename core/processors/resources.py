@@ -3,7 +3,7 @@ from django.apps import apps as django_apps
 from celery import current_app as app
 from celery.contrib.methods import task_method
 
-from core.utils.configuration import ConfigurationProperty
+from core.utils.configuration import ConfigurationProperty, load_config
 from core.configuration import DEFAULT_CONFIGURATION
 
 

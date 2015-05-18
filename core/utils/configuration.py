@@ -226,3 +226,20 @@ class ConfigurationField(fields.TextField):
     def get_prep_value(self, value):
         json_dict = json.dumps(value.to_dict(protected=True, private=True))
         return super(ConfigurationField, self).get_prep_value(json_dict)
+
+
+def load_config(defaults):
+
+    def wrap(func):
+        def config_func(*args, **kwargs):
+            config = kwargs.pop("config")
+            if not config:
+                return func(*args, **kwargs)
+            if not isinstance(config, dict):
+                return func(config=config, *args, **kwargs)
+            config_instance = ConfigurationType.from_dict(config, defaults)  # TODO: test that!
+            print config_instance
+            return func(config_instance, *args, **kwargs)
+
+        return config_func
+    return wrap
