@@ -4,25 +4,30 @@ PREPARATION
 - Full test and deploy
 
 STORAGE
-- Simplify existing storage functionality in new "core"
-- Keep documentation and tests intact as much as possible
++ Simplify existing storage functionality in new "core"
++ Keep documentation and tests intact as much as possible
 
 EXTERNAL RESOURCES
-- Rename HttpLink to HttpResource and move to new "core"
-- Make resources use simplified storage
++ Rename HttpLink to HttpResource and move to new "core"
++ Make resources use simplified storage
 - Provide a POST mechanism
 
 PROCESSES
-- Simplify processes (mainly: Retrieve) and move it to new "core"
-- Rename Retrieve to Fetch
++ Simplify processes (mainly: Retrieve) and move it to new "core"
++ Rename Retrieve to Fetch
 - Provide a Submit process
 
 NEW STYLE OBJECTS
 - Create the Individual
 - Create the Collective
-- Create the Community
 - Create an Individual resource
 - Create a Collective resource
+- Make individuals and collectives collect data from a source
+
+COMMUNITY
+- Create the Community
+- Create Growth
+- Make a spirit provide growth for a community
 
 PORT ALGORITHMS
 - Create new style visual-translations
