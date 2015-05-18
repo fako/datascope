@@ -17,6 +17,7 @@ from core.exceptions import DSHttpError50X, DSHttpError40X
 
 
 class HttpResource(models.Model, OrganismInputProtocol):
+    # TODO: make sphinx friendly and doc all methods
     """
     A representation of how to fetch/submit data from/to a HTTP resource.
 
@@ -128,6 +129,10 @@ class HttpResource(models.Model, OrganismInputProtocol):
 
     @property
     def query(self):
+        """
+
+        :return: None
+        """
         return None
 
     #######################################################
@@ -157,6 +162,10 @@ class HttpResource(models.Model, OrganismInputProtocol):
         return unicode(url)
 
     def parameters(self):
+        """
+
+        :return: dict
+        """
         return self.PARAMETERS
 
     def create_request_from_url(self, url):

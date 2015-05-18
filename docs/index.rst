@@ -11,8 +11,8 @@ Contents:
 .. toctree::
    :maxdepth: 2
 
-   storage
-   helpers
+   configuration
+   resources
 
 Indices and tables
 ==================
