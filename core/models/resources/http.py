@@ -21,7 +21,11 @@ from core.utils.mocks import MockRequests, MOCK_DEFAULTS
 class HttpResource(models.Model, OrganismInputProtocol):
     """
     A representation of how to fetch/submit data from/to a HTTP resource.
-    Stores the headers and body of responses.
+
+    Stores the headers, body and status of responses. It acts as a wrapper around requests library and provides:
+    - responses from database when retrieved before
+    - hooks to work with continuation URL's in responses
+    - hooks to work with authentication
     """
 
     # Identification
