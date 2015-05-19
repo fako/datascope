@@ -35,6 +35,17 @@ class Community(models.Model):
     # TODO: add created_at etc.
     # TODO: add view count
 
+    def capture_initial_input(self, config, *args, **kwargs):
+        """
+        For visual-translations this would return a Collective with {"locale": X, "query": Y} Individuals.
+        Their spirits should be init-Y-X and init-Y for the Collective
+
+        :param args:
+        :param kwargs:
+        :return: Collective or Individual
+        """
+        return None
+
     def get_collective_from_path(self, path):
         """
         Parse a path and return the collective that belongs to that path.
@@ -45,7 +56,7 @@ class Community(models.Model):
         """
         pass
 
-    def grow(self):
+    def grow(self, config, *args, **kwargs):
         """
 
         :return:

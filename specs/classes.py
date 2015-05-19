@@ -1,41 +1,45 @@
+# THINK: seeds to turn input into Collectives/Individuals
+# THINK: @ operator to access attributes on Collectives/Individuals and @.@ to access attributes on Individuals belonging to Collectives
+# THINK: ; separator to get to more than one piece of information when using selections through #
+
 from collections import OrderedDict
-
-from django.db import models
-
-from jsonfield import JSONField
 
 from core.models.organisms.community import Community
 
 
 class ImageTranslations(Community):
+
     spirit = OrderedDict([
         ("translation", {
-            "process": "Retrieve",
+            "process": "HttpResourceProcessor.fetch_mass",
             "config": {
                 "_resource": "WikiTranslate"
             },
             "errors": {
-                300: "translation_300",
                 404: "translation_404"
             },
-            "input": "Individual",
-            "context": {},
+            "input": None,  # leaves it to capture_initial_input to provide this
             "schema": {},
             "transformations": {},
             "output": "Collective",
             "actions": ["fetch_more_images"]
         }),
-        ("visualization", {
-            "schema": {},
+        ("images", {
+            "process": "HttpResourceProcessor.fetch_mass",
             "config": {
-                "_resource": "GoogleImages|YouTubeSearch"
+                "_resource": "GoogleImages"
             },
-            "process": "Retrieve",
-            "input": "Collective",
-            "context": {},
+            "errors": {},
+            "input": "@translation.output#$.word",
+            "context": {
+
+            },
+            "schema": {},
             "output": "Collective"
         })
     ])
+
+
 
     def fetch_more_images(self, post_data):
         """
@@ -72,9 +76,6 @@ class ImageTranslations(Community):
         :param output:
         :return:
         """
-        pass
-
-    def translation_300(self, resources):
         pass
 
     def translation_404(self, resources):
