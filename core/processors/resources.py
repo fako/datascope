@@ -2,8 +2,8 @@ from django.apps import apps as django_apps
 
 from celery import current_app as app
 
+from datascope.configuration import DEFAULT_CONFIGURATION
 from core.utils.configuration import ConfigurationProperty, load_config
-from core.configuration import DEFAULT_CONFIGURATION
 
 
 class HttpResourceProcessor(object):
@@ -19,7 +19,7 @@ class HttpResourceProcessor(object):
         storage_attribute="_config",
         defaults=DEFAULT_CONFIGURATION,
         private=["_resource", "_continuation_limit", "_batch_size"],
-        namespace="http_resource"  # TODO: test that batch_size and continuation_limit are picked up
+        namespace="http_resource"
     )
 
     def __init__(self, config):
@@ -30,7 +30,7 @@ class HttpResourceProcessor(object):
 
     @staticmethod
     def get_link(config, session=None):
-        Resource = django_apps.get_model("core", config.resource)
+        Resource = django_apps.get_model("sources", config.resource)
         link = Resource(config=config.to_dict(protected=True))
         if session is not None:
             link.session = session
@@ -49,6 +49,7 @@ class HttpResourceProcessor(object):
     @load_config(defaults=DEFAULT_CONFIGURATION)  # TODO: test the little bugger
     def _fetch(config, *args, **kwargs):
         # Set vars
+        session = kwargs.pop("session", None)
         results = []
         has_next_request = True
         current_request = {}
@@ -57,9 +58,9 @@ class HttpResourceProcessor(object):
         # Continue as long as there are subsequent requests
         while has_next_request and count < limit:
             # Get payload
-            link = HttpResourceProcessor.get_link(config)
+            link = HttpResourceProcessor.get_link(config, session)
             link.request = current_request
-            link.get(*args, **kwargs)
+            link = link.get(*args, **kwargs)
             link.save()
             results.append(link.id)
             # Prepare next request
@@ -70,7 +71,7 @@ class HttpResourceProcessor(object):
 
     def fetch_mass(self, *args, **kwargs):
         # FEATURE: use an interval in between requests if configured
-        # FEATURE: chain "batches" of fetch_mass if configured
+        # FEATURE: chain "batches" of fetch_mass if configured through batch_size
         pass
 
     def submit(self, *args, **kwargs):

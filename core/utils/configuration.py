@@ -240,13 +240,12 @@ def load_config(defaults):
 
     def wrap(func):
         def config_func(*args, **kwargs):
-            config = kwargs.pop("config")
+            config = kwargs.pop("config", {})
             if not config:
                 return func(*args, **kwargs)
             if not isinstance(config, dict):
                 return func(config=config, *args, **kwargs)
             config_instance = ConfigurationType.from_dict(config, defaults)
-            print config_instance
             return func(config_instance, *args, **kwargs)
 
         return config_func
