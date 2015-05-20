@@ -1,6 +1,4 @@
-# THINK: seeds to turn input into Collectives/Individuals
-# THINK: @ operator to access attributes on Collectives/Individuals and @.@ to access attributes on Individuals belonging to Collectives
-# THINK: ; separator to get to more than one piece of information when using selections through #
+# THINK: make it possible to store some of the context of responses inside Individuals.
 
 from collections import OrderedDict
 
@@ -18,11 +16,14 @@ class ImageTranslations(Community):
             "errors": {
                 404: "translation_404"
             },
-            "input": None,  # leaves it to capture_initial_input to provide this
+            "input": (
+                "Collective",
+                ("$.source", "$.target", "$.query"),
+                tuple()
+            ),  # leaves it to capture_initial_incoming to provide this
             "schema": {},
             "transformations": {},
             "output": "Collective",
-            "actions": ["fetch_more_images"]
         }),
         ("images", {
             "process": "HttpResourceProcessor.fetch_mass",
@@ -30,15 +31,25 @@ class ImageTranslations(Community):
                 "_resource": "GoogleImages"
             },
             "errors": {},
-            "input": "@translation.output#$.word",
-            "context": {
-
-            },
+            "input": (
+                "$.translation.outgoing",
+                ("$.word",),
+                tuple()
+            ),
             "schema": {},
-            "output": "Collective"
+            "transformations": {},
+            "outgoing": "Collective",
+            "actions": ["fetch_more_images"]
         })
     ])
 
+    def setup_translation(self, input_organism):
+        """
+        Should return a tuple in format of (tuple, dict) which will be passed directly into the specified process.
+
+        :param incoming:
+        :return:
+        """
 
 
     def fetch_more_images(self, post_data):
@@ -59,16 +70,15 @@ class ImageTranslations(Community):
         """
         return "translation"
 
-    def before_translation(self, growth):
+    def setup_visualization(self, incoming):
         """
-        Use self.path to set initial input
+        Should return a tuple in format of (tuple, dict) which will be passed directly into the specified process.
 
-        :param growth:
+        :param incoming:
         :return:
         """
-        pass
 
-    def after_visualization(self, growth, output):
+    def after_visualization(self, input_organism, output_organism):
         """
         Add visualizations and the more_visualization to all translations
 
@@ -118,41 +128,76 @@ class PeopleSuggestions(Community):
 class CityCelebrities(Community):
     spirit = OrderedDict([
         ("radius", {
+            "process": "HttpResourceProcessor.fetch",
+            "config": {
+                "_resource": ""
+            },
+            "errors": {},
+            "input": ("Individual", ("$.latitude", "$.longitude",), tuple()),  # should be coords
             "schema": {},
-            "config": {},
-            "process": "Retrieve",
-            "input": None,
+            "transformations": {},
             "output": "Collective"
         }),
         ("backlinks", {
+            "process": "HttpResourceProcessor.fetch_mass",
+            "config": {
+                "_resouce": "WikiBacklinks",
+            },
+            "errors": {},
+            "input": ("$.radius.output", ("title",), tuple()),
             "schema": {},
-            "config": {},
-            "process": "Retrieve",
-            "input": "/col/1/#$.title",
+            "transformations": {},
             "output": "Collective"
         }),
         ("people_filter", {
+            "process": "HttpResourceProcessor.submit_mass",
+            "config": {
+                "_resource": "WikiDataFilter",
+                "concat_args_with": ",",
+                "wdq_template": "ITEMS[{}] AND CLAIM[31:5] AND NOCLAIM[570]"
+            },
+            "errors": {},
+            "input": ("$.backlinks.output", ("wikidata",), tuple()),
             "schema": {},
-            "config": {},
-            "process": "Submit",
-            "input": "/col/2/#$.wikidata",
-            "output": "Collective"
+            "transformations": {},
+            "output": "Individual"
         }),
         ("people_text", {
+            "process": "HttpResourceProcessor.fetch_mass",
+            "config": {
+                "_resource": "WikiSearch",
+                "concat_with": ","
+            },
+            "errors": {},
+            "input": ("$.backlinks.output", ("id",), tuple()),
             "schema": {},
-            "config": {},
-            "process": "Retrieve",
-            "input": "/col/3/#$.title",
+            "transformations": {},
             "output": "Collective"
         }),
         ("location_text", {
+            "process": "HttpResourceProcessor.fetch_mass",
+            "config": {
+                "_resource": "WikiSearch",
+                "concat_with": ","
+            },
+            "errors": {},
+            "input": ("$.radius.output", ("id",), tuple()),
             "schema": {},
-            "config": {},
-            "process": "Retrieve",
-            "input": "/col/1/",
+            "transformations": {},
             "output": "Collective"
         })
     ])
+
+    def setup_backlinks(self, incoming):
+        pass
+
+    def finish_people_filter(self):
+        """
+        Will remove items from backlinks.output based on people_filter.output
+
+        :return:
+        """
+        pass
 
 
 class PersonProfile(Community):

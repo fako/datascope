@@ -105,6 +105,14 @@ class Community(models.Model):
         # TODO: should set a default depth from self.config
         pass
 
+    def load_organism_from_spirit(self, json_path):
+        """
+        Query Organism assigned to key at json_path.
+
+        :param json_path:
+        :return:
+        """
+
     class Meta:
         abstract = True
         unique_together = ('path', 'config')

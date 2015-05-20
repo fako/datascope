@@ -45,3 +45,27 @@ class Collective(Organism):
         :return: a list of properties from Individual members
         """
         return [ind.content for ind in self.individual_set.all()]  # TODO: fix QuerySet caching
+
+    def group_by(self, key):
+        """
+        Outputs a dict that contains a list of Individuals where that key is True
+
+        :param key:
+        :return:
+        """
+
+    def children_from_group_by(self, key=None):
+        """
+        Outputs a dict with Collectives as values created by this method.
+        The Collectives are filled with Individuals that hold the same value for key.
+
+        :param key:
+        :return:
+        """
+
+    def group_by_spirit(self):
+        """
+        Groups individuals by their spirit
+
+        :return:
+        """

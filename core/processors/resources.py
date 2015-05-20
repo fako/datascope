@@ -72,6 +72,7 @@ class HttpResourceProcessor(object):
     def fetch_mass(self, *args, **kwargs):
         # FEATURE: use an interval in between requests if configured
         # FEATURE: chain "batches" of fetch_mass if configured through batch_size
+        # FEATURE: concat requests using concat_with configuration
         pass
 
     def submit(self, *args, **kwargs):
