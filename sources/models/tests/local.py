@@ -3,7 +3,7 @@ from copy import deepcopy
 
 from django.core.exceptions import ValidationError
 
-from core.models.resources.tests import HttpResourceTestMixin, ConfigurationFieldTestMixin
+from core.models.resources.tests.http import HttpResourceTestMixin, ConfigurationFieldTestMixin
 
 from sources.models.local import HttpResourceMock
 from .mocks import MOCK_DATA

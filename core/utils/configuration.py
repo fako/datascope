@@ -242,9 +242,9 @@ def load_config(defaults):
         def config_func(*args, **kwargs):
             config = kwargs.pop("config", {})
             if not config:
-                return func(*args, **kwargs)
+                raise TypeError("load_config decorator expects a config kwarg.")
             if not isinstance(config, dict):
-                return func(config=config, *args, **kwargs)
+                return func(config, *args, **kwargs)
             config_instance = ConfigurationType.from_dict(config, defaults)
             return func(config_instance, *args, **kwargs)
 
