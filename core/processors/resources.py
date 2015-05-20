@@ -4,6 +4,7 @@ from celery import current_app as app
 
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.utils.configuration import ConfigurationProperty, load_config
+from core.exceptions import DSHttpResourceError
 
 
 class HttpResourceProcessor(object):
@@ -50,24 +51,29 @@ class HttpResourceProcessor(object):
     def _fetch(config, *args, **kwargs):
         # Set vars
         session = kwargs.pop("session", None)
-        results = []
+        success = []
+        errors = []
         has_next_request = True
         current_request = {}
         count = 0
-        limit = config.continuation_limit
+        limit = config.continuation_limit or 1
         # Continue as long as there are subsequent requests
         while has_next_request and count < limit:
             # Get payload
             link = HttpResourceProcessor.get_link(config, session)
             link.request = current_request
-            link = link.get(*args, **kwargs)
-            link.save()
-            results.append(link.id)
+            try:
+                link = link.get(*args, **kwargs)
+                link.save()
+                success.append(link.id)
+            except DSHttpResourceError:
+                link.save()
+                errors.append(link.id)
             # Prepare next request
             has_next_request = current_request = link.create_next_request()
             count += 1
-        # Output results
-        return results
+        # Output results in simple type for json serialization
+        return [success, errors]
 
     def fetch_mass(self, *args, **kwargs):
         # FEATURE: use an interval in between requests if configured

@@ -244,6 +244,8 @@ class HttpResource(models.Model, OrganismInputProtocol):
         return {}
 
     def create_next_request(self):
+        if not self.next_parameters():
+            return None
         url = URLObject(self.request.get("url"))
         params = url.query.dict
         params.update(self.next_parameters())
