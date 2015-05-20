@@ -1,4 +1,5 @@
 import json
+from copy import deepcopy
 
 import requests
 from requests.models import Response
@@ -13,14 +14,19 @@ MOCK_DATA = {
     },
     "list": ["value 0", "value 1", "value 2"],
     "dotted.key": "another value",
-    "next": 1
 }
 
 
+MOCK_DATA_WITH_NEXT = deepcopy(MOCK_DATA)
+MOCK_DATA_WITH_NEXT["next"] = 1
+
+
+standard_response = NonCallableMock(spec=Response)
+standard_response.headers = {"Content-Type": "application/json"}
+standard_response.content = json.dumps(MOCK_DATA)
+standard_response.status_code = 200
+
+
 MockRequests = NonCallableMock(spec=requests)
-response = NonCallableMock(spec=Response)
-response.headers = {"Content-Type": "application/json"}
-response.content = json.dumps(MOCK_DATA)
-response.status_code = 200
-MockRequestsGet = Mock(return_value=response)
+MockRequestsGet = Mock(return_value=standard_response)
 MockRequests.get = MockRequestsGet

@@ -2,8 +2,7 @@ from datascope.configuration import MOCK_CONFIGURATION
 
 from core.models.resources.http import HttpResource
 from core.utils import configuration
-
-from .tests.mocks import MockRequests
+from core.tests.mocks import MockRequests
 
 
 class HttpResourceMock(HttpResource):

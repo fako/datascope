@@ -46,7 +46,7 @@ class HttpResourceProcessor(object):
 
     @staticmethod
     @app.task(name="HttpFetch._fetch")
-    @load_config(defaults=DEFAULT_CONFIGURATION)  # TODO: test the little bugger
+    @load_config(defaults=DEFAULT_CONFIGURATION)
     def _fetch(config, *args, **kwargs):
         # Set vars
         session = kwargs.pop("session", None)

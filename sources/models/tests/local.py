@@ -4,9 +4,9 @@ from copy import deepcopy
 from django.core.exceptions import ValidationError
 
 from core.models.resources.tests.http import HttpResourceTestMixin, ConfigurationFieldTestMixin
+from core.tests.mocks import MOCK_DATA
 
 from sources.models.local import HttpResourceMock
-from .mocks import MOCK_DATA
 
 
 class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
@@ -135,7 +135,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertIn("key=ahhh", self.instance.request["url"], "request_without_auth should not alter existing request")
 
     def test_create_next_request(self):
-        instance = self.model().get("success")
+        instance = self.model().get("next")
         request = instance.create_next_request()
         self.assertIn("next=1", request["url"])
         self.assertNotIn("auth=1", instance.request["url"], "create_next_request should not alter existing request")
