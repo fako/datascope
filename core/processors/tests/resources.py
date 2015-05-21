@@ -4,7 +4,8 @@ from django.utils import six
 from datascope.configuration import MOCK_CONFIGURATION
 from core.processors.resources import HttpResourceProcessor
 from core.utils.configuration import ConfigurationType
-
+from core.tests.mocks import MockRequestsWithAgent
+from sources.models.local import HttpResourceMock
 
 class TestFetch(TestCase):
 
@@ -45,10 +46,19 @@ class TestFetch(TestCase):
         self.check_results(err, 1)
 
     def test_continuation_prohibited_fetch(self):
-        pass
+        rsl, err = HttpResourceProcessor._fetch("next", config=self.config)
+        self.check_results(rsl, 1)
+        self.check_results(err, 0)
 
     def test_continuation_fetch(self):
-        pass
+        self.config.continuation_limit = 10
+        rsl, err = HttpResourceProcessor._fetch("next", config=self.config)
+        self.check_results(rsl, 2)
+        self.check_results(err, 0)
 
     def test_inserted_session_fetch(self):
-        pass
+        rsl, err = HttpResourceProcessor._fetch("test", config=self.config, session=MockRequestsWithAgent)
+        self.check_results(rsl, 1)
+        self.check_results(err, 0)
+        link = HttpResourceMock.objects.get(id=rsl[0])
+        self.assertIn("User-Agent", link.head)
