@@ -80,7 +80,7 @@ class TestFetch(TestCase):
     def test_fetch_mass_intervals(self):
         self.config.interval_duration = 250  # 0.25 secs
         args_list = [["test"], ["test2"]]
-        kwargs_list = [{}, {}, {}]
+        kwargs_list = [{}, {}]
         start = datetime.now()
         scc, err = HttpResourceProcessor._fetch_mass(args_list, kwargs_list, config=self.config, session=MockRequests)
         end = datetime.now()
