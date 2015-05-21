@@ -30,35 +30,35 @@ class TestFetch(TestCase):
 
     def test_single_fetch(self):
         # Test makes equivalent call of HttpResourceProcessor.fetch.delay("test")
-        rsl, err = HttpResourceProcessor._fetch("test", config=self.config)
-        self.check_results(rsl, 1)
+        scc, err = HttpResourceProcessor._fetch("test", config=self.config)
+        self.check_results(scc, 1)
         self.check_results(err, 0)
         # Similar but with a cached result
-        rsl, err = HttpResourceProcessor._fetch("success", config=self.config,)
-        self.check_results(rsl, 1)
+        scc, err = HttpResourceProcessor._fetch("success", config=self.config,)
+        self.check_results(scc, 1)
         self.check_results(err, 0)
         # And with an error response
-        rsl, err = HttpResourceProcessor._fetch("404", config=self.config)
-        self.check_results(rsl, 0)
+        scc, err = HttpResourceProcessor._fetch("404", config=self.config)
+        self.check_results(scc, 0)
         self.check_results(err, 1)
-        rsl, err = HttpResourceProcessor._fetch("500", config=self.config)
-        self.check_results(rsl, 0)
+        scc, err = HttpResourceProcessor._fetch("500", config=self.config)
+        self.check_results(scc, 0)
         self.check_results(err, 1)
 
     def test_continuation_prohibited_fetch(self):
-        rsl, err = HttpResourceProcessor._fetch("next", config=self.config)
-        self.check_results(rsl, 1)
+        scc, err = HttpResourceProcessor._fetch("next", config=self.config)
+        self.check_results(scc, 1)
         self.check_results(err, 0)
 
     def test_continuation_fetch(self):
         self.config.continuation_limit = 10
-        rsl, err = HttpResourceProcessor._fetch("next", config=self.config)
-        self.check_results(rsl, 2)
+        scc, err = HttpResourceProcessor._fetch("next", config=self.config)
+        self.check_results(scc, 2)
         self.check_results(err, 0)
 
     def test_inserted_session_fetch(self):
-        rsl, err = HttpResourceProcessor._fetch("test", config=self.config, session=MockRequestsWithAgent)
-        self.check_results(rsl, 1)
+        scc, err = HttpResourceProcessor._fetch("test", config=self.config, session=MockRequestsWithAgent)
+        self.check_results(scc, 1)
         self.check_results(err, 0)
-        link = HttpResourceMock.objects.get(id=rsl[0])
+        link = HttpResourceMock.objects.get(id=scc[0])
         self.assertIn("User-Agent", link.head)
