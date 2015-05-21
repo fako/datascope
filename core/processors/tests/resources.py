@@ -78,7 +78,7 @@ class TestFetch(TestCase):
         self.check_results(err, 1)
 
     def test_fetch_mass_intervals(self):
-        self.config.interval_length = 250  # 0.25 secs
+        self.config.interval_duration = 250  # 0.25 secs
         args_list = [["test"], ["test2"]]
         kwargs_list = [{}, {}, {}]
         start = datetime.now()

@@ -14,7 +14,7 @@ DEFAULT_CONFIGURATION = {
 
     "http_resource_batch_size": 0,
     "http_resource_continuation_limit": 1,
-    "http_resource_interval_length": 0,  # NB: milliseconds!
+    "http_resource_interval_duration": 0,  # NB: milliseconds!
 
 }
 
@@ -29,5 +29,5 @@ MOCK_CONFIGURATION = {
     # HttpResource (processor)
     "http_resource_batch_size": 0,
     "http_resource_continuation_limit": 1,
-    "http_resource_interval_length": 0,  # NB: milliseconds!
+    "http_resource_interval_duration": 0,  # NB: milliseconds!
 }

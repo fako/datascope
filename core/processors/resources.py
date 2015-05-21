@@ -103,9 +103,9 @@ class HttpResourceProcessor(object):
             success += scc
             errors += err
             # Take a break for scraping if configured
-            interval_length = config.interval_length / 1000.000
-            if interval_length:
-                sleep(interval_length)
+            interval_duration = config.interval_duration / 1000.000
+            if interval_duration:
+                sleep(interval_duration)
         return [success, errors]
 
     def submit(self, *args, **kwargs):
