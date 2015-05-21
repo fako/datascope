@@ -61,8 +61,8 @@ class HttpResourceMock(HttpResource):
     def next_parameters(self):
         content_type, data = self.data
         try:
-            nxt = data.get("next")
-        except (AttributeError, KeyError):
+            nxt = data["next"]
+        except (KeyError, TypeError):
             return {}
         return {"next": nxt}
 
