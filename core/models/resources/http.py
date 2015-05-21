@@ -150,7 +150,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
             "method": method,
             "url": self._create_url(*args),
             "headers": self.HEADERS,
-            "data": kwargs,
+            "data": self.data(**kwargs),
         }, validate_input=False)
 
     def _create_url(self, *args):
@@ -160,6 +160,13 @@ class HttpResource(models.Model, OrganismInputProtocol):
         params.update(self.parameters())
         url.query.set_params(params)
         return unicode(url)
+
+    def data(self, **kwargs):
+        """
+
+        :return:
+        """
+        return kwargs
 
     def parameters(self):
         """
