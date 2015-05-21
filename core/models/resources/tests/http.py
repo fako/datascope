@@ -109,15 +109,15 @@ class HttpResourceTestMixin(TestCase):
 
     def test_hash_from_data(self):
         # Give no data
-        post_data = HttpResource.hash_from_data({})
-        self.assertEqual(post_data, "")
+        post_hash = HttpResource.hash_from_data({})
+        self.assertEqual(post_hash, "")
         # Give data
-        post_data = HttpResource.hash_from_data(self.test_data)
-        self.assertIsInstance(post_data, str)
+        post_hash = HttpResource.hash_from_data(self.test_data)
+        self.assertIsInstance(post_hash, str)
         # Compare with slightly altered data
         self.test_data["data"] = "tezt"
-        post_data2 = HttpResource.hash_from_data(self.test_data)
-        self.assertNotEqual(post_data, post_data2)
+        post_hash2 = HttpResource.hash_from_data(self.test_data)
+        self.assertNotEqual(post_hash, post_hash2)
 
 
 class ConfigurationFieldTestMixin(TestCase):

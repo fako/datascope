@@ -8,7 +8,7 @@
         "created_at": "2015-05-12T18:45:22.105",
         "request": "{\"url\":\"http://localhost:8000/en/?q=success\",\"args\":[\"en\",\"success\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{},\"data\":{},\"method\":\"get\"}",
         "uri": "localhost:8000/en/?q=success",
-        "post_data": "",
+        "post_hash": "",
         "config": "{}",
         "purge_at": null
     },
@@ -24,7 +24,7 @@
         "created_at": "2015-05-12T18:45:22.105",
         "request": "{\"url\":\"http://localhost:8000/en/?q=fail\",\"args\":[\"en\",\"fail\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{},\"data\":{},\"method\":\"get\"}",
         "uri": "localhost:8000/en/?q=fail",
-        "post_data": "",
+        "post_hash": "",
         "config": "{}",
         "purge_at": null
     },
@@ -40,7 +40,7 @@
         "created_at": "2015-05-12T18:45:22.105",
         "request": "{\"url\":\"http://localhost:8000/en/?q=next\",\"args\":[\"en\",\"next\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{},\"data\":{},\"method\":\"get\"}",
         "uri": "localhost:8000/en/?q=next",
-        "post_data": "",
+        "post_hash": "",
         "config": "{}",
         "purge_at": null
     },
