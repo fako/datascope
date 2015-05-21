@@ -116,6 +116,7 @@ class MoederAnneCastingSearch(HttpResource):
             link.session = requests.Session()
             link.get()
             self.session = link.session
+        return super(MoederAnneCastingSearch, self).get(*args, **kwargs)
 
     def data(self, **kwargs):
         return {
