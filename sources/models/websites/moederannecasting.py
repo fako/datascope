@@ -115,7 +115,7 @@ class MoederAnneCastingSearch(HttpResource):
             link = MoederAnneCastingSession()
             link.session = requests.Session()
             link.get()
-            self.session = link.session
+            self.session = link.session  # TODO: make sure that in fetch_mass the session gets transferred
         return super(MoederAnneCastingSearch, self).get(*args, **kwargs)
 
     def data(self, **kwargs):
