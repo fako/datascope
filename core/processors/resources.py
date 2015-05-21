@@ -1,3 +1,9 @@
+# noinspection PyUnresolvedReferences
+from six.moves import zip
+from time import sleep
+
+import requests
+
 from django.apps import apps as django_apps
 
 from celery import current_app as app
@@ -46,7 +52,7 @@ class HttpResourceProcessor(object):
         )
 
     @staticmethod
-    @app.task(name="HttpFetch._fetch")
+    @app.task(name="HttpFetch.fetch")
     @load_config(defaults=DEFAULT_CONFIGURATION)
     def _fetch(config, *args, **kwargs):
         # Set vars
@@ -75,11 +81,32 @@ class HttpResourceProcessor(object):
         # Output results in simple type for json serialization
         return [success, errors]
 
-    def fetch_mass(self, *args, **kwargs):
-        # FEATURE: use an interval in between requests if configured
+    @property
+    def fetch_mass(self):
+        return self._fetch_mass.s(
+            config=self.config.to_dict(private=True, protected=True)
+        )
+
+    @staticmethod
+    @app.task(name="HttpFetch.fetch_mass")
+    @load_config(defaults=DEFAULT_CONFIGURATION)
+    def _fetch_mass(config, args_list, kwargs_list, session=None):
         # FEATURE: chain "batches" of fetch_mass if configured through batch_size
-        # FEATURE: concat requests using concat_with configuration
-        pass
+        # FEATURE: concat requests using concat_args_with configuration
+        success = []
+        errors = []
+        if session is None:
+            session = requests.Session()
+        for args, kwargs in zip(args_list, kwargs_list):
+            # Get the results
+            scc, err = HttpResourceProcessor._fetch(config=config, session=session, *args, **kwargs)
+            success += scc
+            errors += err
+            # Take a break for scraping if configured
+            interval_length = config.interval_length / 1000.000
+            if interval_length:
+                sleep(interval_length)
+        return [success, errors]
 
     def submit(self, *args, **kwargs):
         pass
