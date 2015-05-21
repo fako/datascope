@@ -150,7 +150,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
             "kwargs": kwargs,
             "method": method,
             "url": self._create_url(*args),
-            "headers": self.HEADERS,
+            "headers": self.headers(),
             "data": self.data(**kwargs),
         }, validate_input=False)
 
@@ -162,12 +162,12 @@ class HttpResource(models.Model, OrganismInputProtocol):
         url.query.set_params(params)
         return unicode(url)
 
-    def data(self, **kwargs):
+    def headers(self):
         """
 
         :return:
         """
-        return kwargs
+        return self.HEADERS
 
     def parameters(self):
         """
@@ -175,6 +175,13 @@ class HttpResource(models.Model, OrganismInputProtocol):
         :return: dict
         """
         return self.PARAMETERS
+
+    def data(self, **kwargs):
+        """
+
+        :return:
+        """
+        return kwargs
 
     def create_request_from_url(self, url):
         raise NotImplementedError()
