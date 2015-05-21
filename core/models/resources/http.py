@@ -114,7 +114,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
         return 200 <= self.status < 209
 
     @property
-    def data(self):
+    def content(self):
         """
 
         :return: content_type, data

@@ -59,7 +59,7 @@ class HttpResourceMock(HttpResource):
         }
 
     def next_parameters(self):
-        content_type, data = self.data
+        content_type, data = self.content
         try:
             nxt = data["next"]
         except (KeyError, TypeError):
@@ -75,5 +75,5 @@ class HttpResourceMock(HttpResource):
 
     @property
     def input_for_organism(self):
-        content_type, data = self.data
+        content_type, data = self.content
         return self.query, content_type, data
