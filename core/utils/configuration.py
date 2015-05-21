@@ -232,8 +232,9 @@ class ConfigurationField(fields.TextField):
         return super(ConfigurationField, self).to_python(dictionary)
 
     def get_prep_value(self, value):
-        json_dict = json.dumps(value.to_dict(protected=True, private=True))
-        return super(ConfigurationField, self).get_prep_value(json_dict)
+        if not isinstance(value, dict):
+            value = json.dumps(value.to_dict(protected=True, private=True))
+        return super(ConfigurationField, self).get_prep_value(value)
 
 
 def load_config(defaults):
