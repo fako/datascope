@@ -9,6 +9,7 @@ from urlobject import URLObject
 
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.conf import settings
 
 import jsonfield
 
@@ -281,7 +282,8 @@ class HttpResource(models.Model, OrganismInputProtocol):
 
         url = self.request.get("url")
         headers = self.request.get("headers")
-        response = connection.get(url, headers=headers)
+        data = self.request.get("data")
+        response = connection.post(url, headers=headers, data=data, proxies=settings.REQUESTS_PROXIES)
 
         self.head = dict(response.headers)
         self.body = response.content

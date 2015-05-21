@@ -232,3 +232,5 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.fakoberkers.nl"
 EMAIL_PORT = 587
+
+REQUESTS_PROXIES = None
