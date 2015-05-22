@@ -3,18 +3,22 @@
 from django.core.management.base import BaseCommand
 
 from core.processors.resources import HttpResourceProcessor
+from sources.models.websites.moederannecasting import MoederAnneCastingSearch
 
 
 class Command(BaseCommand):
     """
-    Scrapes profiles of actors/actresses from Moeder Maria Casting
+    Commands to work with Moeder Anne Casting website.
     """
 
-    def handle(self, *args, **kwargs):
-        SITE_SIZE = 620
+    SITE_SIZE = 620
 
-        args_list = [[] for i in xrange(SITE_SIZE)]
-        kwargs_list = [{"page": i+1} for i in xrange(SITE_SIZE)]
+    def fetch(self):
+        """
+        Scrapes profiles of actors/actresses from Moeder Maria Casting
+        """
+        args_list = [[] for i in xrange(self.SITE_SIZE)]
+        kwargs_list = [{"page": i+1} for i in xrange(self.SITE_SIZE)]
         config = {
             "resource":"MoederAnneCastingSearch",
             "interval_duration": 1000
@@ -24,3 +28,8 @@ class Command(BaseCommand):
         task = hrp.fetch_mass.delay(args_list, kwargs_list)
 
         print "TASK:", task
+
+    def handle(self, *args, **kwargs):
+        for link in MoederAnneCastingSearch.objects.all()[:1]:
+            content_type, data = link.content
+            print content_type
