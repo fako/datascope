@@ -17,10 +17,41 @@ MOCK_DATA = {
     "list": ["value 0", "value 1", "value 2"],
     "dotted.key": "another value",
 }
-
-
 MOCK_DATA_WITH_NEXT = deepcopy(MOCK_DATA)
 MOCK_DATA_WITH_NEXT["next"] = 1
+
+
+MOCK_HTML = """
+<!doctype html>
+<html>
+
+<head>
+    <title>Test</title>
+</head>
+
+<body>
+
+</body>
+
+<div id="content">
+    <p>
+        A list with links:
+        <ul>
+            <li><a href="/test">test</a></li>
+            <li><a href="/test2">test 2</a></li>
+            <li><a href="/test3">test 3</a></li>
+            <li>That's it!</li>
+        </ul>
+    </p>
+</div>
+
+</html>
+"""
+MOCK_SCRAPE_DATA = [
+    {'text': 'test', 'link': '/test', 'page': 'Test'},
+    {'text': u'test 2', 'link': '/test2', 'page': 'Test'},
+    {'text': u'test 3', 'link': '/test3', 'page': 'Test'}
+]
 
 
 ok_response = NonCallableMock(spec=Response)

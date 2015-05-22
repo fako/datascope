@@ -8,6 +8,7 @@ URLObject==2.4.0
 alabaster==0.7.4
 amqp==1.4.6
 anyjson==0.3.3
+beautifulsoup4==4.3.2
 billiard==3.3.0.20
 celery==3.1.18
 django-celery==3.1.16
