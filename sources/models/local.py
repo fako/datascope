@@ -75,3 +75,6 @@ class HttpResourceMock(HttpResource):
     def input_for_organism(self):
         content_type, data = self.content
         return self.query, content_type, data
+
+    def data(self, **kwargs):
+        return {"test": "test"}

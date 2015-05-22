@@ -47,6 +47,7 @@ class TestSend(TestCase):
         scc, err = HttpResourceProcessor._send("500", method="get", config=self.config)
         self.check_results(scc, 0)
         self.check_results(err, 1)
+        self.fail("should test POST as well")
 
     def test_send_continuation_prohibited(self):
         scc, err = HttpResourceProcessor._send("next", method="get", config=self.config)
@@ -76,6 +77,7 @@ class TestSend(TestCase):
         self.assertLess(duration, 0.01)
         self.check_results(scc, 2)
         self.check_results(err, 1)
+        self.fail("should test POST as well")
 
     def test_send_mass_intervals(self):
         self.config.interval_duration = 250  # 0.25 secs

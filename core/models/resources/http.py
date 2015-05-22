@@ -166,13 +166,14 @@ class HttpResource(models.Model, OrganismInputProtocol):
 
     def _create_request(self, method, *args, **kwargs):
         self._validate_input(method, *args, **kwargs)
+        data = self.data(**kwargs) if not method == "get" else None
         return self.validate_request({
             "args": args,
             "kwargs": kwargs,
             "method": method,
             "url": self._create_url(*args),
             "headers": self.headers(),
-            "data": self.data(**kwargs),
+            "data": data,
         }, validate_input=False)
 
     def _create_url(self, *args):
@@ -308,12 +309,13 @@ class HttpResource(models.Model, OrganismInputProtocol):
         else:
             connection = self.session
 
-        data = self.request.get("data")
+        method = self.request.get("method")
+        data = self.request.get("data") if not method == "get" else None
         request = requests.Request(
-            method=self.request.get("method"),
+            method=method,
             url=self.request.get("url"),
             headers=self.request.get("headers"),
-            data=data if data else None
+            data=data
         )
         preq = request.prepare()
         response = connection.send(preq, proxies=settings.REQUESTS_PROXIES)
