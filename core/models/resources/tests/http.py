@@ -1,6 +1,7 @@
 import six
 
 import json
+import urllib
 
 from django.test import TestCase
 
@@ -44,7 +45,7 @@ class HttpResourceTestMixin(TestCase):
     def test_next_parameters(self):
         self.assertIsInstance(self.instance.next_parameters(), dict)
 
-    def test_send_request(self):
+    def test_send_request_get(self):
         test_url = "http://localhost:8000/test/"
         content_header = {
             "Accept": "application/json"
@@ -67,11 +68,40 @@ class HttpResourceTestMixin(TestCase):
         self.assertIsNotNone(self.instance.head)
         self.assertIsNotNone(self.instance.body)
         self.assertIsNotNone(self.instance.status)
-        # Make sure that make request aborts with no request
+
+    def test_send_request_post(self):
+        test_url = "http://localhost:8000/test/"
+        test_data = {"test": "test"}
+        content_header = {
+            "Accept": "application/json",
+            'Content-Length': '9',
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+        self.instance.request = {
+            "args": tuple(),
+            "kwargs": {},
+            "method": "post",
+            "url": test_url,
+            "headers": content_header,
+            "data": test_data,
+        }
+        self.instance._send()
+        # See if request was made properly
+        args, kwargs = self.instance.session.send.call_args
+        preq = args[0]
+        self.assertEqual(preq.url, test_url)
+        self.assertEqual(preq.headers, content_header)
+        self.assertEqual(preq.body, urllib.urlencode(test_data))
+        # Make sure that response fields are set to something and do not remain None
+        self.assertIsNotNone(self.instance.head)
+        self.assertIsNotNone(self.instance.body)
+        self.assertIsNotNone(self.instance.status)
+
+    def test_send_request_wrong(self):
         self.instance.request = None
         try:
             self.instance._send()
-            self.fail("_make_request should fail when self.request is not set.")
+            self.fail("_send should fail when self.request is not set.")
         except AssertionError:
             pass
 
