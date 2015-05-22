@@ -41,7 +41,8 @@ class Command(BaseCommand):
 
         print("TASK:", task)
 
-    def extract(self, limit=1):
+    @staticmethod
+    def extract(limit=1):
         """
         Will extract data from MoederMariaCastingSearch responses that should have been fetched.
 
