@@ -48,7 +48,7 @@ error_response.content = json.dumps({"error": "internal error"})
 error_response.status_code = 500
 
 
-def return_get_response(url, headers):
+def return_get_response(url, headers, proxies):
     if "404" in url:
         return not_found_response
     elif "500" in url:

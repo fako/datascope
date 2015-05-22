@@ -290,7 +290,8 @@ class HttpResource(models.Model, OrganismInputProtocol):
         url = self.request.get("url")
         headers = self.request.get("headers")
         data = self.request.get("data")
-        response = connection.post(url, headers=headers, data=data, proxies=settings.REQUESTS_PROXIES)
+        response = connection.get(url, headers=headers, proxies=settings.REQUESTS_PROXIES)
+        #response = connection.post(url, headers=headers, data=data, proxies=settings.REQUESTS_PROXIES)
 
         self.head = dict(response.headers)
         self.body = response.content
