@@ -46,11 +46,11 @@ class HttpResourceMock(HttpResource):
     def __init__(self, *args, **kwargs):
         super(HttpResourceMock, self).__init__(*args, **kwargs)
         self.session = MockRequests
-        self.session.get.reset_mock()
+        self.session.send.reset_mock()
 
-    def get(self, *args, **kwargs):
+    def send(self, method, *args, **kwargs):
         args = (self.config.source_language,) + args
-        return super(HttpResourceMock, self).get(*args, **kwargs)
+        return super(HttpResourceMock, self).send(method, *args, **kwargs)
 
     def auth_parameters(self):
         return {

@@ -23,7 +23,7 @@ class HttpResourceTestMixin(TestCase):
         self.assertIsNone(content_type)
         self.assertIsNone(data)
         # Test when request was made
-        self.instance.head = {"Content-Type": "application/json; charset=utf-8"}
+        self.instance.head = {"content-type": "application/json; charset=utf-8"}
         self.instance.body = json.dumps(self.test_data)
         self.instance.status = 200
         content_type, data = self.instance.content
@@ -42,11 +42,11 @@ class HttpResourceTestMixin(TestCase):
     def test_next_parameters(self):
         self.assertIsInstance(self.instance.next_parameters(), dict)
 
-    def test_make_request(self):
+    def test_send_request(self):
         test_url = "http://localhost:8000/test/"
         content_header = {
             "Accept": "application/json"
-        },
+        }
         self.instance.request = {
             "args": tuple(),
             "kwargs": {},
@@ -55,11 +55,12 @@ class HttpResourceTestMixin(TestCase):
             "headers": content_header,
             "data": {},
         }
-        self.instance._make_request()
+        self.instance._send()
         # See if request was made properly
-        args, kwargs = self.instance.session.get.call_args
-        self.assertEqual(args[0], test_url)
-        self.assertEqual(kwargs["headers"], content_header)
+        args, kwargs = self.instance.session.send.call_args
+        preq = args[0]
+        self.assertEqual(preq.url, test_url)
+        self.assertEqual(preq.headers, content_header)
         # Make sure that response fields are set to something and do not remain None
         self.assertIsNotNone(self.instance.head)
         self.assertIsNotNone(self.instance.body)
@@ -67,7 +68,7 @@ class HttpResourceTestMixin(TestCase):
         # Make sure that make request aborts with no request
         self.instance.request = None
         try:
-            self.instance._make_request()
+            self.instance._send()
             self.fail("_make_request should fail when self.request is not set.")
         except AssertionError:
             pass

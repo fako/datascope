@@ -17,9 +17,10 @@ from core.exceptions import DSHttpResourceError
 
 
 class HttpResourceProcessor(object):
+    # TODO: make sphinx friendly and doc all methods
     """
     A collection of Celery tasks that share their need for specific a configuration.
-    Each task should return a single list of ids to be further handled by Growth instances.
+    Each task should return a single list of ids to be further handled classes like Growth.
 
     The configuration must include
     - a HttpResource class name to be loaded with Django
@@ -48,18 +49,18 @@ class HttpResourceProcessor(object):
         # FEATURE: update session to use custom user agents when configured
         return link
 
-    @property
-    def fetch(self):
-        return self._fetch.s(
-            config=self.config.to_dict(private=True, protected=True)
-        )
+    #######################################################
+    # PUBLIC
+    #######################################################
+    # Celery tasks to fetch resources in background.
 
     @staticmethod
-    @app.task(name="HttpFetch.fetch")
+    @app.task(name="HttpFetch.send")
     @load_config(defaults=DEFAULT_CONFIGURATION)
-    def _fetch(config, *args, **kwargs):
+    def _send(config, *args, **kwargs):
         # Set vars
         session = kwargs.pop("session", None)
+        method = kwargs.pop("method", None)
         success = []
         errors = []
         has_next_request = True
@@ -72,7 +73,7 @@ class HttpResourceProcessor(object):
             link = HttpResourceProcessor.get_link(config, session)
             link.request = current_request
             try:
-                link = link.get(*args, **kwargs)
+                link = link.send(method, *args, **kwargs)
                 link.save()
                 success.append(link.id)
             except DSHttpResourceError:
@@ -84,16 +85,10 @@ class HttpResourceProcessor(object):
         # Output results in simple type for json serialization
         return [success, errors]
 
-    @property
-    def fetch_mass(self):
-        return self._fetch_mass.s(
-            config=self.config.to_dict(private=True, protected=True)
-        )
-
     @staticmethod
-    @app.task(name="HttpFetch.fetch_mass")
+    @app.task(name="HttpFetch.send_mass")
     @load_config(defaults=DEFAULT_CONFIGURATION)
-    def _fetch_mass(config, args_list, kwargs_list, session=None):
+    def _send_mass(config, args_list, kwargs_list, session=None, method=None):
         # FEATURE: chain "batches" of fetch_mass if configured through batch_size
         # FEATURE: concat requests using concat_args_with configuration
         success = []
@@ -102,7 +97,7 @@ class HttpResourceProcessor(object):
             session = requests.Session()
         for args, kwargs in zip(args_list, kwargs_list):
             # Get the results
-            scc, err = HttpResourceProcessor._fetch(config=config, session=session, *args, **kwargs)
+            scc, err = HttpResourceProcessor._send(method=method, config=config, session=session, *args, **kwargs)
             success += scc
             errors += err
             # Take a break for scraping if configured
@@ -111,8 +106,36 @@ class HttpResourceProcessor(object):
                 sleep(interval_duration)
         return [success, errors]
 
-    def submit(self, *args, **kwargs):
-        pass
+    #######################################################
+    # PUBLIC
+    #######################################################
+    # Wrappers that act as an interface
+    # to background retrieval of resources
 
-    def submit_mass(self, *args, **kwargs):
-        pass
+    @property
+    def fetch(self):
+        return self._send.s(
+            method="get",
+            config=self.config.to_dict(private=True, protected=True)
+        )
+
+    @property
+    def fetch_mass(self):
+        return self._send_mass.s(
+            method="get",
+            config=self.config.to_dict(private=True, protected=True)
+        )
+
+    @property
+    def submit(self):
+        return self._send.s(
+            method="post",
+            config=self.config.to_dict(private=True, protected=True)
+        )
+
+    @property
+    def submit_mass(self):
+        return self._send_mass.s(
+            method="post",
+            config=self.config.to_dict(private=True, protected=True)
+        )

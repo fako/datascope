@@ -27,7 +27,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
     def setUp(self):
         super(TestHttpResourceMock, self).setUp()
         self.content_type_header = {
-            "Content-Type": "application/json"  # change to Accept
+            "content-type": "application/json"  # change to Accept
         }
         self.test_request = {
             "args": ("en", "test",),
@@ -41,19 +41,19 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
     def assert_call_args(self, call_args, term):
         expected_url = "http://localhost:8000/en/?q={}&key=oehhh&auth=1".format(term)
         args, kwargs = call_args
-        url = args[0]
-        self.assertTrue(url.startswith("http://localhost:8000/en/?"))
-        self.assertIn("q={}".format(term), url)
-        self.assertIn("key=oehhh", url)
-        self.assertIn("auth=1", url)
-        self.assertEqual(len(expected_url), len(url))
-        self.assertEqual(kwargs["headers"], {"Accept": "application/json"})
+        preq = args[0]
+        self.assertTrue(preq.url.startswith("http://localhost:8000/en/?"))
+        self.assertIn("q={}".format(term), preq.url)
+        self.assertIn("key=oehhh", preq.url)
+        self.assertIn("auth=1", preq.url)
+        self.assertEqual(len(expected_url), len(preq.url))
+        self.assertEqual(preq.headers, {"Accept": "application/json"})
 
     def test_get_new(self):
         # Make a new request and store it.
         instance = self.model().get("new")
         instance.save()
-        self.assert_call_args(instance.session.get.call_args, "new")
+        self.assert_call_args(instance.session.send.call_args, "new")
         self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
@@ -62,7 +62,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         request = self.model().get("new2").request
         instance = self.model(request=request).get()
         instance.save()
-        self.assert_call_args(instance.session.get.call_args, "new2")
+        self.assert_call_args(instance.session.send.call_args, "new2")
         self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
@@ -71,7 +71,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
     def test_get_success(self):
         # Load an existing request
         instance = self.model().get("success")
-        self.assertFalse(instance.session.get.called)
+        self.assertFalse(instance.session.send.called)
         self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
@@ -79,7 +79,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         # Load an existing resource from its request
         request = instance.request
         instance = self.model(request=request).get()
-        self.assertFalse(instance.session.get.called)
+        self.assertFalse(instance.session.send.called)
         self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
@@ -88,7 +88,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
     def test_get_retry(self):
         # Load and retry an existing request
         instance = self.model().get("fail")
-        self.assert_call_args(instance.session.get.call_args, "fail")
+        self.assert_call_args(instance.session.send.call_args, "fail")
         self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
@@ -96,7 +96,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         # Load an existing resource from its request
         request = instance.request
         instance = self.model(request=request).get()
-        self.assert_call_args(instance.session.get.call_args, "fail")
+        self.assert_call_args(instance.session.send.call_args, "fail")
         self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)

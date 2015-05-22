@@ -110,13 +110,13 @@ class MoederAnneCastingSearch(HttpResource):
         namespace="moeder_anne_casting"
     )
 
-    def get(self, *args, **kwargs):
+    def send(self, *args, **kwargs):
         if self.session is None or not self.session.cookies.get("ASP.NET_SessionId"):
             link = MoederAnneCastingSession()
             link.session = requests.Session()
             link.get()
             self.session = link.session  # TODO: make sure that in fetch_mass the session gets transferred
-        return super(MoederAnneCastingSearch, self).get(*args, **kwargs)
+        return super(MoederAnneCastingSearch, self).send(*args, **kwargs)
 
     def data(self, **kwargs):
         return {

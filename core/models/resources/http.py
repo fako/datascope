@@ -1,3 +1,5 @@
+from __future__ import unicode_literals, absolute_import, print_function, division
+
 import hashlib
 import json
 from copy import copy, deepcopy
@@ -47,7 +49,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
     purge_at = models.DateTimeField(null=True, blank=True)
 
     # Class constants that determine behavior
-    URI_TEMPLATE = u""
+    URI_TEMPLATE = ""
     PARAMETERS = {}
     HEADERS = {}
     GET_SCHEMA = {
@@ -66,7 +68,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
     # with the external resource.
     # Success and data are convenient to handle the results
 
-    def get(self, *args, **kwargs):
+    def send(self, method, *args, **kwargs):
         """
 
         :param args:
@@ -74,7 +76,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
         :return: HttpResource
         """
         if not self.request:
-            self.request = self._create_request("get", *args, **kwargs)
+            self.request = self._create_request(method, *args, **kwargs)
             self.uri = HttpResource.uri_from_url(self.request.get("url"))
             self.post_hash = HttpResource.hash_from_data(
                 self.request.get("data")
@@ -95,9 +97,18 @@ class HttpResource(models.Model, OrganismInputProtocol):
             return resource
 
         resource.request = resource.request_with_auth()
-        resource._make_request()
+        resource._send()
         resource._handle_errors()
         return resource
+
+    def get(self, *args, **kwargs):
+        """
+
+        :param args:
+        :param kwargs:
+        :return:
+        """
+        return self.send("get", *args, **kwargs)
 
     def post(self, *args, **kwargs):
         """
@@ -106,7 +117,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
         :param kwargs:
         :return: HttpResource
         """
-        pass
+        return self.send("post", *args, **kwargs)
 
     @property
     def success(self):
@@ -197,7 +208,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
         assert method, \
             "Method should not be falsy."
         assert method in ["get", "post"], \
-            "{} is not a supported resource method.".format(request.get("method"))
+            "{} is not a supported resource method.".format(request.get("method"))  # FEATURE: allow all methods
         if validate_input:
             self._validate_input(
                 method,
@@ -209,7 +220,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
 
     def _validate_input(self, method, *args, **kwargs):
         # Validations of external influence
-        schemas = self.GET_SCHEMA if method == "get" else self.POST_SCHEMA
+        schemas = self.GET_SCHEMA if method == "get" else self.POST_SCHEMA  # FEATURE: allow all methods
         args_schema = schemas.get("args")
         kwargs_schema = schemas.get("kwargs")
         if args_schema is None and len(args):
@@ -277,7 +288,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
     #######################################################
     # Some internal methods for the get and post methods.
 
-    def _make_request(self):
+    def _send(self):
         """
         Does a get on the computed link
         Will set storage fields to returned values
@@ -290,11 +301,15 @@ class HttpResource(models.Model, OrganismInputProtocol):
         else:
             connection = self.session
 
-        url = self.request.get("url")
-        headers = self.request.get("headers")
         data = self.request.get("data")
-        response = connection.get(url, headers=headers, proxies=settings.REQUESTS_PROXIES)
-        #response = connection.post(url, headers=headers, data=data, proxies=settings.REQUESTS_PROXIES)
+        request = requests.Request(
+            method=self.request.get("method"),
+            url=self.request.get("url"),
+            headers=self.request.get("headers"),
+            data=data if data else None
+        )
+        preq = request.prepare()
+        response = connection.send(preq, proxies=settings.REQUESTS_PROXIES)
 
         self.head = dict(response.headers)
         self.body = response.content

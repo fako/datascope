@@ -6,6 +6,7 @@ log = logging.getLogger(__name__)
 
 # Mode specific defaults
 DEBUG = True
+REQUESTS_PROXIES = None
 
 
 # Environment specific settings
@@ -233,4 +234,4 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.fakoberkers.nl"
 EMAIL_PORT = 587
 
-REQUESTS_PROXIES = None
+

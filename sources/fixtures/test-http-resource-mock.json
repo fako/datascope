@@ -3,7 +3,7 @@
     "fields": {
         "body": "{\"list\": [\"value 0\", \"value 1\", \"value 2\"], \"dict\": {\"test\": \"nested value\", \"dict\": {\"test\": \"test\"}, \"list\": [\"nested value 0\", \"nested value 1\", \"nested value 2\"]}, \"dotted.key\": \"another value\"}",
         "status": 200,
-        "head": "{\"Content-Type\":\"application/json\"}",
+        "head": "{\"content-type\":\"application/json\"}",
         "modified_at": "2015-05-12T18:45:22.105",
         "created_at": "2015-05-12T18:45:22.105",
         "request": "{\"url\":\"http://localhost:8000/en/?q=success\",\"args\":[\"en\",\"success\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{},\"data\":{},\"method\":\"get\"}",
@@ -19,7 +19,7 @@
     "fields": {
         "body": "{\"error\": \"failure\"}",
         "status": 502,
-        "head": "{\"Content-Type\":\"application/json\"}",
+        "head": "{\"content-type\":\"application/json\"}",
         "modified_at": "2015-05-12T18:45:22.105",
         "created_at": "2015-05-12T18:45:22.105",
         "request": "{\"url\":\"http://localhost:8000/en/?q=fail\",\"args\":[\"en\",\"fail\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{},\"data\":{},\"method\":\"get\"}",
@@ -35,7 +35,7 @@
     "fields": {
         "body": "{\"list\": [\"value 0\", \"value 1\", \"value 2\"], \"next\": 1, \"dict\": {\"test\": \"nested value\", \"dict\": {\"test\": \"test\"}, \"list\": [\"nested value 0\", \"nested value 1\", \"nested value 2\"]}, \"dotted.key\": \"another value\"}",
         "status": 200,
-        "head": "{\"Content-Type\":\"application/json\"}",
+        "head": "{\"content-type\":\"application/json\"}",
         "modified_at": "2015-05-12T18:45:22.105",
         "created_at": "2015-05-12T18:45:22.105",
         "request": "{\"url\":\"http://localhost:8000/en/?q=next\",\"args\":[\"en\",\"next\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{},\"data\":{},\"method\":\"get\"}",

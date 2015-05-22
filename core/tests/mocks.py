@@ -55,14 +55,14 @@ MOCK_SCRAPE_DATA = [
 
 
 ok_response = NonCallableMock(spec=Response)
-ok_response.headers = {"Content-Type": "application/json"}
+ok_response.headers = {"content-type": "application/json"}
 ok_response.content = json.dumps(MOCK_DATA)
 ok_response.status_code = 200
 
 
 agent_response = NonCallableMock(spec=Response)
 agent_response.headers = {
-    "Content-Type": "application/json",
+    "content-type": "application/json",
     "User-Agent": "Mozilla /5.0 (Compatible MSIE 9.0;Windows NT 6.1;WOW64; Trident/5.0)"
 }
 agent_response.content = json.dumps(MOCK_DATA)
@@ -70,31 +70,31 @@ agent_response.status_code = 200
 
 
 not_found_response = NonCallableMock(spec=Response)
-not_found_response.headers = {"Content-Type": "application/json"}
+not_found_response.headers = {"content-type": "application/json"}
 not_found_response.content = json.dumps({"error": "not found"})
 not_found_response.status_code = 404
 
 
 error_response = NonCallableMock(spec=Response)
-error_response.headers = {"Content-Type": "application/json"}
+error_response.headers = {"content-type": "application/json"}
 error_response.content = json.dumps({"error": "internal error"})
 error_response.status_code = 500
 
 
-def return_get_response(url, headers, proxies):
-    if "404" in url:
+def return_response(prepared_request, proxies):
+    if "404" in prepared_request.url:
         return not_found_response
-    elif "500" in url:
+    elif "500" in prepared_request.url:
         return error_response
     else:
         return ok_response
 
 
 MockRequests = NonCallableMock(spec=requests)
-MockRequestsGet = Mock(side_effect=return_get_response)
-MockRequests.get = MockRequestsGet
+MockRequestsSend = Mock(side_effect=return_response)
+MockRequests.send = MockRequestsSend
 
 
 MockRequestsWithAgent = NonCallableMock(spec=requests)
-MockRequestsGetWithAgent = Mock(return_value=agent_response)
-MockRequestsWithAgent.get = MockRequestsGetWithAgent
+MockRequestsSendWithAgent = Mock(return_value=agent_response)
+MockRequestsWithAgent.send = MockRequestsSendWithAgent

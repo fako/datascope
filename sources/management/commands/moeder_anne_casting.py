@@ -36,7 +36,7 @@ class Command(BaseCommand):
         }
 
         hrp = HttpResourceProcessor(config=config)
-        task = hrp.fetch_mass.delay(args_list, kwargs_list)
+        task = hrp.submit_mass.delay(args_list, kwargs_list)
 
         print("TASK:", task)
 
