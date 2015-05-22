@@ -218,9 +218,9 @@ class ConfigurationField(fields.TextField):
         super(ConfigurationField, self).contribute_to_class(cls, name)
         configuration_property = ConfigurationProperty(
             storage_attribute="_" + name,
-            defaults=self._defaults,
-            namespace=self._namespace,
-            private=self._private
+            defaults=getattr(cls, 'CONFIG_DEFAULTS', self._defaults),
+            namespace=getattr(cls, 'CONFIG_NAMESPACE', self._namespace),
+            private=getattr(cls, 'CONFIG_PRIVATE', self._private)
         )
         setattr(cls, self.name, configuration_property)
 

@@ -16,7 +16,9 @@ from django.conf import settings
 
 import jsonfield
 
+from datascope.configuration import DEFAULT_CONFIGURATION
 from core.models.organisms.protocols import OrganismInputProtocol
+from core.utils import configuration
 from core.exceptions import DSHttpError50X, DSHttpError40X
 
 
@@ -34,6 +36,11 @@ class HttpResource(models.Model, OrganismInputProtocol):
     # Identification
     uri = models.CharField(max_length=255, db_index=True, default=None)
     data_hash = models.CharField(max_length=255, db_index=True, default="")
+
+    # Configuration
+    config = configuration.ConfigurationField(
+        config_defaults=DEFAULT_CONFIGURATION,
+    )
 
     # Getting data
     request = jsonfield.JSONField(default=None)

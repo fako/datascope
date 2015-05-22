@@ -20,10 +20,7 @@ class MoederAnneCastingSession(HttpResource):
         "Content-Type":	"application/x-www-form-urlencoded"
     }
 
-    config = configuration.ConfigurationField(
-        config_defaults=DEFAULT_CONFIGURATION,
-        namespace="moeder_anne_casting"
-    )
+    CONFIG_NAMESPACE = "moeder_anne_casting"
 
     def data(self):
         data_dict = {
@@ -105,10 +102,7 @@ class MoederAnneCastingSearch(HttpResource):
         "Content-Type":	"application/x-www-form-urlencoded"
     }
 
-    config = configuration.ConfigurationField(
-        config_defaults=DEFAULT_CONFIGURATION,
-        namespace="moeder_anne_casting"
-    )
+    CONFIG_NAMESPACE = "moeder_anne_casting"
 
     def send(self, *args, **kwargs):
         if self.session is None or not self.session.cookies.get("ASP.NET_SessionId"):

@@ -38,10 +38,8 @@ class HttpResourceMock(HttpResource):
         "kwargs": {}
     }
 
-    config = configuration.ConfigurationField(
-        config_defaults=MOCK_CONFIGURATION,
-        namespace="mock"
-    )
+    CONFIG_NAMESPACE = "mock"
+    CONFIG_DEFAULTS = MOCK_CONFIGURATION
 
     def __init__(self, *args, **kwargs):
         super(HttpResourceMock, self).__init__(*args, **kwargs)
