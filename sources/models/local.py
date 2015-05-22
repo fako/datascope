@@ -47,7 +47,8 @@ class HttpResourceMock(HttpResource):
         self.session.send.reset_mock()
 
     def send(self, method, *args, **kwargs):
-        kwargs["query"] = args[0]
+        if method == "post":
+            kwargs["query"] = args[0]
         args = (self.config.source_language,) + args
         return super(HttpResourceMock, self).send(method, *args, **kwargs)
 

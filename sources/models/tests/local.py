@@ -74,7 +74,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         # Make a new request and store it.
         instance = self.model().get("new")
         instance.save()
-        self.assert_call_args(instance.session.send.call_args, "new")
+        self.assert_call_args_get(instance.session.send.call_args, "new")
         self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
@@ -83,7 +83,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         request = self.model().get("new2").request
         instance = self.model(request=request).get()
         instance.save()
-        self.assert_call_args(instance.session.send.call_args, "new2")
+        self.assert_call_args_get(instance.session.send.call_args, "new2")
         self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
@@ -109,7 +109,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
     def test_get_retry(self):
         # Load and retry an existing request
         instance = self.model().get("fail")
-        self.assert_call_args(instance.session.send.call_args, "fail")
+        self.assert_call_args_get(instance.session.send.call_args, "fail")
         self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
@@ -117,7 +117,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         # Load an existing resource from its request
         request = instance.request
         instance = self.model(request=request).get()
-        self.assert_call_args(instance.session.send.call_args, "fail")
+        self.assert_call_args_get(instance.session.send.call_args, "fail")
         self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
@@ -131,9 +131,9 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         except ValidationError:
             pass
         # Invalid request preset
-        self.test_request["args"] = tuple()
+        self.test_get_request["args"] = tuple()
         try:
-            self.model(request=self.test_request).get()
+            self.model(request=self.test_get_request).get()
             self.fail("Get did not raise a validation exception when confronted with an invalid preset request.")
         except ValidationError:
             pass
@@ -238,11 +238,11 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
     def test_validate_request_args(self):
         # Valid
         try:
-            self.instance.validate_request(self.test_request)
+            self.instance.validate_request(self.test_get_request)
         except ValidationError:
             self.fail("validate_request raised for a valid request.")
         # Invalid
-        invalid_request = deepcopy(self.test_request)
+        invalid_request = deepcopy(self.test_get_request)
         invalid_request["args"] = ("en", "en", "test")
         try:
             self.instance.validate_request(invalid_request)
@@ -258,7 +258,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         # No schema
         self.instance.GET_SCHEMA["args"] = None
         try:
-            self.instance.validate_request(self.test_request)
+            self.instance.validate_request(self.test_get_request)
             self.fail("validate_request did not raise with invalid args for no schema.")
         except ValidationError:
             pass
@@ -313,7 +313,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.instance.request = self.test_post_request
         self.instance.clean()
         self.assertEqual(self.instance.uri, "localhost:8000/en/?q=test")
-        self.assertEqual(self.instance.data_hash, "")
+        self.assertEqual(self.instance.data_hash, "31ead60c9066eefb8011f3f68aed25d004d60957")
 
     def test_query(self):
         instance = self.model()
