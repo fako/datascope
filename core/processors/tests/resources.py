@@ -33,34 +33,34 @@ class TestSend(TestCase):
 
     def test_send(self):
         # Test makes equivalent call of HttpResourceProcessor.fetch.delay("test")
-        scc, err = HttpResourceProcessor._send("get", "test", config=self.config)
+        scc, err = HttpResourceProcessor._send("test", method="get", config=self.config)
         self.check_results(scc, 1)
         self.check_results(err, 0)
         # Similar but with a cached result
-        scc, err = HttpResourceProcessor._send("get", "success", config=self.config,)
+        scc, err = HttpResourceProcessor._send("success", method="get", config=self.config,)
         self.check_results(scc, 1)
         self.check_results(err, 0)
         # And with an error response
-        scc, err = HttpResourceProcessor._send("get", "404", config=self.config)
+        scc, err = HttpResourceProcessor._send("404", method="get", config=self.config)
         self.check_results(scc, 0)
         self.check_results(err, 1)
-        scc, err = HttpResourceProcessor._send("get", "500", config=self.config)
+        scc, err = HttpResourceProcessor._send("500", method="get", config=self.config)
         self.check_results(scc, 0)
         self.check_results(err, 1)
 
     def test_send_continuation_prohibited(self):
-        scc, err = HttpResourceProcessor._send("get", "next", config=self.config)
+        scc, err = HttpResourceProcessor._send("next", method="get", config=self.config)
         self.check_results(scc, 1)
         self.check_results(err, 0)
 
     def test_send_continuation(self):
         self.config.continuation_limit = 10
-        scc, err = HttpResourceProcessor._send("get", "next", config=self.config)
+        scc, err = HttpResourceProcessor._send("next", method="get", config=self.config)
         self.check_results(scc, 2)
         self.check_results(err, 0)
 
     def test_send_inserted_session(self):
-        scc, err = HttpResourceProcessor._send("get", "test", config=self.config, session=MockRequestsWithAgent)
+        scc, err = HttpResourceProcessor._send("test", method="get", config=self.config, session=MockRequestsWithAgent)
         self.check_results(scc, 1)
         self.check_results(err, 0)
         link = HttpResourceMock.objects.get(id=scc[0])
@@ -70,7 +70,7 @@ class TestSend(TestCase):
         args_list = [["test"], ["test2"], ["404"]]
         kwargs_list = [{}, {}, {}]
         start = datetime.now()
-        scc, err = HttpResourceProcessor._send_mass("get", args_list, kwargs_list, config=self.config, session=MockRequests)
+        scc, err = HttpResourceProcessor._send_mass(args_list, kwargs_list, method="get", config=self.config, session=MockRequests)
         end = datetime.now()
         duration = (end - start).total_seconds()
         self.assertLess(duration, 0.01)
@@ -82,7 +82,7 @@ class TestSend(TestCase):
         args_list = [["test"], ["test2"]]
         kwargs_list = [{}, {}]
         start = datetime.now()
-        scc, err = HttpResourceProcessor._send_mass("get", args_list, kwargs_list, config=self.config, session=MockRequests)
+        scc, err = HttpResourceProcessor._send_mass(args_list, kwargs_list, method="get", config=self.config, session=MockRequests)
         end = datetime.now()
         duration = (end - start).total_seconds()
         self.assertGreater(duration, 0.5)
@@ -93,7 +93,7 @@ class TestSend(TestCase):
     def test_send_mass_continuation_prohibited(self):
         args_list = [["test"], ["next"], ["404"]]
         kwargs_list = [{}, {}, {}]
-        scc, err = HttpResourceProcessor._send_mass("get", args_list, kwargs_list, config=self.config, session=MockRequests)
+        scc, err = HttpResourceProcessor._send_mass(args_list, kwargs_list, method="get", config=self.config, session=MockRequests)
         self.check_results(scc, 2)
         self.check_results(err, 1)
 
@@ -101,6 +101,6 @@ class TestSend(TestCase):
         self.config.continuation_limit = 10
         args_list = [["test"], ["next"], ["404"]]
         kwargs_list = [{}, {}, {}]
-        scc, err = HttpResourceProcessor._send_mass("get", args_list, kwargs_list, config=self.config, session=MockRequests)
+        scc, err = HttpResourceProcessor._send_mass(args_list, kwargs_list, method="get", config=self.config, session=MockRequests)
         self.check_results(scc, 3)
         self.check_results(err, 1)
