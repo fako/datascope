@@ -1,8 +1,12 @@
-#from six.moves import range
+from __future__ import unicode_literals, absolute_import, print_function, division
+import six
+# noinspection PyUnresolvedReferences
+from six.moves import range
 
 from django.core.management.base import BaseCommand
 
 from core.processors.resources import HttpResourceProcessor
+from core.processors.extraction import ExtractProcessor
 from sources.models.websites.moederannecasting import MoederAnneCastingSearch
 
 
@@ -13,12 +17,20 @@ class Command(BaseCommand):
 
     SITE_SIZE = 620
 
-    def fetch(self):
+    def add_arguments(self, parser):
+        parser.add_argument('subcommand', type=unicode, choices=['fetch', 'extract'])
+        parser.add_argument('-l', '--limit', type=int, nargs="?", default=1)
+
+    def fetch(self, limit=1):
         """
         Scrapes profiles of actors/actresses from Moeder Maria Casting
+
+        :param limit: limits how much responses should be fetched (0 for unlimited)
+        :return: None
         """
-        args_list = [[] for i in xrange(self.SITE_SIZE)]
-        kwargs_list = [{"page": i+1} for i in xrange(self.SITE_SIZE)]
+        size = limit or self.SITE_SIZE
+        args_list = [[] for i in range(size)]
+        kwargs_list = [{"page": i+1} for i in range(size)]
         config = {
             "resource":"MoederAnneCastingSearch",
             "interval_duration": 1000
@@ -27,9 +39,32 @@ class Command(BaseCommand):
         hrp = HttpResourceProcessor(config=config)
         task = hrp.fetch_mass.delay(args_list, kwargs_list)
 
-        print "TASK:", task
+        print("TASK:", task)
 
-    def handle(self, *args, **kwargs):
-        for link in MoederAnneCastingSearch.objects.all()[:1]:
+    def extract(self, limit=1):
+        """
+        Will extract data from MoederMariaCastingSearch responses that should have been fetched.
+
+        :param limit: limits how much responses need to get extracted (0 for unlimited)
+        :return: None
+        """
+        if not limit:
+            limit = MoederAnneCastingSearch.objects.all().count()
+
+        ep = ExtractProcessor(objective={
+            "@": "soup.find_all(class_='record') + soup.find_all(class_='record_alt')",
+            "name": "el.select('b:nth-of-type(2)')[0].text.replace('Voornaam: ', '').lower().capitalize()",
+            "birth_date": "el.select('br:nth-of-type(3)')[0].next_sibling.replace('Geboortedatum: ','')",
+            "image": "el.find('img')['src'] if el.find('img') else ''"
+        })
+        results = []
+        for link in MoederAnneCastingSearch.objects.all()[:limit]:
             content_type, data = link.content
-            print content_type
+            results += ep.extract(content_type, data)
+
+        print(results)
+
+    def handle(self, **options):
+        execute = getattr(self, options["subcommand"])
+        execute(limit=options["limit"])
+
