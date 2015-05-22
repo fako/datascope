@@ -34,10 +34,10 @@ class ExtractProcessor(object):
         else:
             raise TypeError("Extract processor does not support content_type {}".format(content_type))
 
-    def json_application(self, data):
+    def application_json(self, data):
         pass
 
-    def html_text(self, soup):
+    def text_html(self, soup):  # soup used in eval!
 
         context = {}
         for name, objective in six.iteritems(self._context):
@@ -48,7 +48,7 @@ class ExtractProcessor(object):
             elements = [at]
 
         results = []
-        for el in elements:
+        for el in elements:  # el used in eval!
             result = copy(context)
             for name, objective in six.iteritems(self._objective):
                 result[name] = eval(objective)

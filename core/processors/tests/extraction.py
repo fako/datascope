@@ -19,5 +19,5 @@ class TestExtractProcessorHTML(TestCase):
         self.soup = BeautifulSoup(MOCK_HTML)
 
     def test_html_text(self):
-        rsl = self.prc.html_text(self.soup)
+        rsl = self.prc.text_html(self.soup)
         self.assertEqual(rsl, MOCK_SCRAPE_DATA)

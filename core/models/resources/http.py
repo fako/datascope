@@ -6,6 +6,7 @@ import requests
 import jsonschema
 from jsonschema.exceptions import ValidationError as SchemaValidationError
 from urlobject import URLObject
+from bs4 import BeautifulSoup
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -121,9 +122,11 @@ class HttpResource(models.Model, OrganismInputProtocol):
         :return: content_type, data
         """
         if self.success:
-            content_type = self.head["Content-Type"].split(';')[0]
+            content_type = self.head["content-type"].split(';')[0]
             if content_type == "application/json":
                 return content_type, json.loads(self.body)
+            elif content_type == "text/html":
+                return content_type, BeautifulSoup(self.body)
             else:
                 return content_type, None
         return None, None
