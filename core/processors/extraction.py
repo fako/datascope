@@ -41,7 +41,7 @@ class ExtractProcessor(object):
 
         context = {}
         for name, objective in six.iteritems(self._context):
-            context[name] = eval(objective)
+            context[name] = eval(objective) if objective else objective
 
         at = elements = eval(self._at)
         if not isinstance(at, list):
@@ -51,7 +51,7 @@ class ExtractProcessor(object):
         for el in elements:  # el used in eval!
             result = copy(context)
             for name, objective in six.iteritems(self._objective):
-                result[name] = eval(objective)
+                result[name] = eval(objective) if objective else objective
             results.append(result)
 
         return results
