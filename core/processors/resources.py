@@ -1,5 +1,8 @@
+from __future__ import unicode_literals, absolute_import, print_function, division
 # noinspection PyUnresolvedReferences
 from six.moves import zip
+
+
 from time import sleep
 
 import requests
@@ -103,7 +106,7 @@ class HttpResourceProcessor(object):
             success += scc
             errors += err
             # Take a break for scraping if configured
-            interval_duration = config.interval_duration / 1000.000
+            interval_duration = config.interval_duration / 1000
             if interval_duration:
                 sleep(interval_duration)
         return [success, errors]
