@@ -19,7 +19,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
 
     def fill_test_instance(self):
         self.instance.uri = "uri"
-        self.instance.post_hash = "12345"
+        self.instance.data_hash = "12345"
         self.instance.head = {"json": "test"}
         self.instance.body = "response"
         self.instance.status = 200
@@ -178,7 +178,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.instance.request = self.test_request
         self.instance.clean()
         self.assertEqual(self.instance.uri, "localhost:8000/en/?q=test")
-        self.assertEqual(self.instance.post_hash, "")
+        self.assertEqual(self.instance.data_hash, "")
 
     def test_query(self):
         instance = self.model()

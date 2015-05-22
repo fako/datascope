@@ -33,7 +33,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
 
     # Identification
     uri = models.CharField(max_length=255, db_index=True, default=None)
-    post_hash = models.CharField(max_length=255, db_index=True, default="")
+    data_hash = models.CharField(max_length=255, db_index=True, default="")
 
     # Getting data
     request = jsonfield.JSONField(default=None)
@@ -78,17 +78,17 @@ class HttpResource(models.Model, OrganismInputProtocol):
         if not self.request:
             self.request = self._create_request(method, *args, **kwargs)
             self.uri = HttpResource.uri_from_url(self.request.get("url"))
-            self.post_hash = HttpResource.hash_from_data(
+            self.data_hash = HttpResource.hash_from_data(
                 self.request.get("data")
             )
         else:
             self.validate_request(self.request)
 
-        self.clean()  # sets self.uri and self.post_hash based on request
+        self.clean()  # sets self.uri and self.data_hash based on request
         try:
             resource = self.__class__.objects.get(
                 uri=self.uri,
-                post_hash=self.post_hash
+                data_hash=self.data_hash
             )
         except self.DoesNotExist:
             resource = self
@@ -342,9 +342,9 @@ class HttpResource(models.Model, OrganismInputProtocol):
         if self.request and not self.uri:
             uri_request = self.request_without_auth()
             self.uri = HttpResource.uri_from_url(uri_request.get("url"))
-        if self.request and not self.post_hash:
+        if self.request and not self.data_hash:
             uri_request = self.request_without_auth()
-            self.post_hash = HttpResource.hash_from_data(uri_request.get("data"))
+            self.data_hash = HttpResource.hash_from_data(uri_request.get("data"))
 
     #######################################################
     # CONVENIENCE
