@@ -10,12 +10,12 @@ STORAGE
 EXTERNAL RESOURCES
 + Rename HttpLink to HttpResource and move to new "core"
 + Make resources use simplified storage
-- Provide a POST mechanism
++ Provide a POST mechanism
 
 PROCESSES
 + Simplify processes (mainly: Retrieve) and move it to new "core"
 + Rename Retrieve to Fetch
-- Provide a Submit process
++ Provide a Submit process
 
 NEW STYLE OBJECTS
 - Create the Individual
@@ -28,6 +28,12 @@ COMMUNITY
 - Create the Community
 - Create Growth
 - Make a spirit provide growth for a community
+- See how scraping will fit into the picture
+
+FACEBOOK PROFILE
+- Provide a way to use OAuth as a process
+- Create resources
+- Create community
 
 PORT ALGORITHMS
 - Create new style visual-translations
@@ -40,6 +46,3 @@ PORT ALGORITHMS
 DEPRECATE LEGACY
 - Remove all legacy code
 - Update to Python3
-
-FACEBOOK PROFILE
-- Provide a

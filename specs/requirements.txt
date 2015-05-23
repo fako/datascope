@@ -7,14 +7,14 @@
 + Store history
 + Support oauth mechanism
 
-- Integrate with BeautifulSoup
++ Integrate with BeautifulSoup
 - Integrate with pattern
-- Prepare Facebook functionality
-- Think about different views upon the same results
-- Prepare website scraping (president-death statistics)
++ Prepare Facebook functionality
++ Think about different views upon the same results
++ Prepare website scraping (president-death statistics)
 
 + Use rest_framework 3
-- Use Python 3
++ Use Python 3
 + Use Django 1.8 or 1.7
 + Use JSON path
 + Use JSON schema
