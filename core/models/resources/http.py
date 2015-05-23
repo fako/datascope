@@ -317,7 +317,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
             data=data
         )
         preq = request.prepare()
-        response = self.session.send(preq, proxies=settings.REQUESTS_PROXIES)
+        response = self.session.send(preq, proxies=settings.REQUESTS_PROXIES, verify=settings.REQUESTS_VERIFY)
 
         self.head = dict(response.headers)
         self.body = response.content

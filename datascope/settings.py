@@ -7,6 +7,7 @@ log = logging.getLogger(__name__)
 # Mode specific defaults
 DEBUG = True
 REQUESTS_PROXIES = None
+REQUESTS_VERIFY = True
 
 
 # Environment specific settings

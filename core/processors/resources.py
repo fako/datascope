@@ -77,6 +77,7 @@ class HttpResourceProcessor(object):
                 link.save()
                 success.append(link.id)
             except DSHttpResourceError:
+                # TODO: link can be invalid if retry failed
                 link.save()
                 errors.append(link.id)
             # Prepare next request
