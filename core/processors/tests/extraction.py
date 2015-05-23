@@ -18,6 +18,15 @@ class TestExtractProcessorHTML(TestCase):
         })
         self.soup = BeautifulSoup(MOCK_HTML)
 
+    def test_init(self):
+        self.fail("test")
+
+    def test_load_objective(self):
+        self.fail("test")
+
+    def test_extract(self):
+        self.fail("test")
+
     def test_html_text(self):
         rsl = self.prc.text_html(self.soup)
         self.assertEqual(rsl, MOCK_SCRAPE_DATA)

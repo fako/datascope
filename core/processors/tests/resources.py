@@ -32,6 +32,24 @@ class TestHttpResourceProcessorMixin(TestCase):
             self.assertGreater(id, 0)
 
 
+class TestHttpResourceProcessor(TestHttpResourceProcessorMixin, TestCase):
+
+    def test_get_link(self):
+        self.fail("test")
+
+    def test_fetch(self):
+        self.fail("test")
+
+    def test_fetch_mass(self):
+        self.fail("test")
+
+    def test_submit(self):
+        self.fail("test")
+
+    def test_submit_mass(self):
+        self.fail("test")
+
+
 class TestHttpResourceProcessorBase(TestHttpResourceProcessorMixin, TestCase):
 
     method = ""
@@ -51,6 +69,7 @@ class TestHttpResourceProcessorBase(TestHttpResourceProcessorMixin, TestCase):
             return [{"query": query} for query in queries]
         else:
             raise Exception("{} does not have a valid method specified.".format(self.__class__.__name__))
+
 
     def test_send_mass(self):
         args_list = self.get_args_list(["test", "test2", "404"])
