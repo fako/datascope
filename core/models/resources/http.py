@@ -320,8 +320,14 @@ class HttpResource(models.Model, OrganismInputProtocol):
         response = self.session.send(preq, proxies=settings.REQUESTS_PROXIES, verify=settings.REQUESTS_VERIFY)
 
         self.head = dict(response.headers)
-        self.body = response.content
         self.status = response.status_code
+        try:
+            self.body = unicode(response.content, 'utf-8')
+        except UnicodeDecodeError:  #
+            print(self.query)
+            self.body = ""
+            self.status = 444
+
 
     def _handle_errors(self):
         """
