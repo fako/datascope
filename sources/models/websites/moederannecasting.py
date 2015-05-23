@@ -128,4 +128,3 @@ class MoederAnneCastingSearch(HttpResource):
             "URL_WINKELWAGEN": "",
             "URL_XSLTSERVICE": "http://zoekbestand.moederannecasting.nl/AtlantisPubliek/XSLTService.asmx"
         }
-
