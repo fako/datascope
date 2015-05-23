@@ -28,6 +28,6 @@ class ActeursSpotProfile(HttpResource):
 
     def _handle_errors(self):
         super(ActeursSpotProfile, self)._handle_errors()
-        if "De acteur werd niet gevonden" in self.body:
+        if b"De acteur werd niet gevonden" in self.body or b"Dit profiel is nog niet zichtbaar" in self.body:
             self.status = 404
             raise DSHttpError40X("Not found")
