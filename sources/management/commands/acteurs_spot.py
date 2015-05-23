@@ -11,7 +11,7 @@ from sources.models.websites.acteursspot import ActeursSpotProfile
 
 class Command(BaseCommand):
     """
-    Commands to work with Moeder Anne Casting website.
+    Commands to work with Acteurs Spot website.
     """
 
     SITE_SIZE = 1700
@@ -22,7 +22,7 @@ class Command(BaseCommand):
 
     def fetch(self, limit=1):
         """
-        Scrapes profiles of actors/actresses from Moeder Maria Casting
+        Scrapes profiles of actors/actresses from Acteurs Spot
 
         :param limit: limits how much responses should be fetched (0 for unlimited)
         :return: None
@@ -43,7 +43,7 @@ class Command(BaseCommand):
     @staticmethod
     def extract(limit=1):
         """
-        Will extract data from MoederMariaCastingSearch responses that should have been fetched.
+        Will extract data from Acteurs Spot responses that should have been fetched.
 
         :param limit: limits how much responses need to get extracted (0 for unlimited)
         :return: None
