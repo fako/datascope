@@ -60,6 +60,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
     def assert_call_args_post(self, call_args, term):
         expected_url = "http://localhost:8000/en/?q={}&key=oehhh&auth=1".format(term)
         expected_body = "test={}".format(term)
+        expected_length = len(expected_body)
         args, kwargs = call_args
         preq = args[0]
         self.assertTrue(preq.url.startswith("http://localhost:8000/en/?"))
@@ -67,7 +68,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertIn("key=oehhh", preq.url)
         self.assertIn("auth=1", preq.url)
         self.assertEqual(len(expected_url), len(preq.url))
-        self.assertEqual(preq.headers, {"Accept": "application/json"})
+        self.assertEqual(preq.headers, {'Content-Length': str(expected_length), 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json'})
         self.assertEqual(preq.body, expected_body)
 
     def test_get_new(self):
@@ -79,6 +80,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
         self.assertTrue(instance.id)
+        self.assertFalse(instance.data_hash)
         # Make a new request from an existing request dictionary
         request = self.model().get("new2").request
         instance = self.model(request=request).get()
@@ -88,6 +90,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
         self.assertTrue(instance.id)
+        self.assertFalse(instance.data_hash)
 
     def test_get_success(self):
         # Load an existing request
@@ -140,69 +143,75 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
 
     def test_post_new(self):
         # Make a new request and store it.
-        instance = self.model().get("new")
+        instance = self.model().post(query="new")
         instance.save()
-        self.assert_call_args(instance.session.send.call_args, "new")
+        self.assert_call_args_post(instance.session.send.call_args, "new")
         self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
         self.assertTrue(instance.id)
+        self.assertTrue(instance.data_hash)
         # Make a new request from an existing request dictionary
-        request = self.model().get("new2").request
+        request = self.model().post(query="new2").request
         instance = self.model(request=request).get()
         instance.save()
-        self.assert_call_args(instance.session.send.call_args, "new2")
+        self.assert_call_args_post(instance.session.send.call_args, "new2")
         self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
         self.assertTrue(instance.id)
+        self.assertTrue(instance.data_hash)
 
     def test_post_success(self):
         # Load an existing request
-        instance = self.model().get("success")
+        instance = self.model().post(query="success")
         self.assertFalse(instance.session.send.called)
         self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
         self.assertTrue(instance.id)
+        self.assertTrue(instance.data_hash)
         # Load an existing resource from its request
         request = instance.request
-        instance = self.model(request=request).get()
+        instance = self.model(request=request).post()
         self.assertFalse(instance.session.send.called)
         self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
         self.assertTrue(instance.id)
+        self.assertTrue(instance.data_hash)
 
     def test_post_retry(self):
         # Load and retry an existing request
-        instance = self.model().get("fail")
-        self.assert_call_args(instance.session.send.call_args, "fail")
+        instance = self.model().post(query="fail")
+        self.assert_call_args_post(instance.session.send.call_args, "fail")
         self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
         self.assertTrue(instance.id)
+        self.assertTrue(instance.data_hash)
         # Load an existing resource from its request
         request = instance.request
-        instance = self.model(request=request).get()
-        self.assert_call_args(instance.session.send.call_args, "fail")
+        instance = self.model(request=request).post()
+        self.assert_call_args_post(instance.session.send.call_args, "fail")
         self.assertEqual(instance.head, self.content_type_header)
         self.assertEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
         self.assertTrue(instance.id)
+        self.assertTrue(instance.data_hash)
 
     def test_post_invalid(self):
         # Invalid invoke of get
         try:
-            self.model().get()
-            self.fail("Get did not raise a validation exception when invoked with invalid arguments.")
+            self.model().post()
+            self.fail("Post did not raise a validation exception when invoked with invalid arguments.")
         except ValidationError:
             pass
         # Invalid request preset
-        self.test_request["args"] = tuple()
+        self.test_post_request["kwargs"] = {}
         try:
-            self.model(request=self.test_request).get()
-            self.fail("Get did not raise a validation exception when confronted with an invalid preset request.")
+            self.model(request=self.test_post_request).post()
+            self.fail("Post did not raise a validation exception when confronted with an invalid preset request.")
         except ValidationError:
             pass
 
@@ -226,16 +235,27 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertEqual(request["data"], self.test_post_request["data"])
 
     def test_create_next_request(self):
+        # Test with get
         instance = self.model().get("next")
         request = instance.create_next_request()
+        self.assertIsNotNone(request)
         self.assertIn("next=1", request["url"])
         self.assertNotIn("auth=1", instance.request["url"], "create_next_request should not alter existing request")
-        instance = self.model().post("next")
+        # Test with post
+        instance = self.model().post(query="next")
         request = instance.create_next_request()
+        self.assertIsNotNone(request)
         self.assertIn("next=1", request["url"])
         self.assertNotIn("auth=1", instance.request["url"], "create_next_request should not alter existing request")
+        # Test that None is returned when there is no continuation
+        instance = self.model().get("success")
+        request = instance.create_next_request()
+        self.assertIsNone(request)
+        instance = self.model().post(query="success")
+        request = instance.create_next_request()
+        self.assertIsNone(request)
 
-    def test_validate_request_args(self):
+    def test_validate_request_args(self):  # using GET
         # Valid
         try:
             self.instance.validate_request(self.test_get_request)
@@ -269,35 +289,35 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         except ValidationError:
             self.fail("validate_request invalidated with a schema without restrictions.")
 
-    def test_validate_request_kwargs(self):
+    def test_validate_request_kwargs(self):  # using POST
         # Valid
         try:
-            self.instance.validate_request(self.test_request)
+            self.instance.validate_request(self.test_post_request)
         except ValidationError:
             self.fail("validate_request raised for a valid request.")
         # Invalid
-        invalid_request = deepcopy(self.test_request)
-        invalid_request["args"] = ("en", "en", "test")
+        invalid_request = deepcopy(self.test_post_request)
+        invalid_request["kwargs"] = {"query": 1}
         try:
             self.instance.validate_request(invalid_request)
-            self.fail("validate_request did not raise with invalid args for schema.")
+            self.fail("validate_request did not raise with invalid kwargs for schema.")
         except ValidationError:
             pass
-        invalid_request["args"] = tuple()
+        invalid_request["kwargs"] = {}
         try:
             self.instance.validate_request(invalid_request)
-            self.fail("validate_request did not raise with invalid args for schema.")
+            self.fail("validate_request did not raise with invalid kwargs for schema.")
         except ValidationError:
             pass
         # No schema
-        self.instance.GET_SCHEMA["args"] = None
+        self.instance.POST_SCHEMA["kwargs"] = None
         try:
-            self.instance.validate_request(self.test_request)
-            self.fail("validate_request did not raise with invalid args for no schema.")
+            self.instance.validate_request(self.test_post_request)
+            self.fail("validate_request did not raise with invalid kwargs for no schema.")
         except ValidationError:
             pass
         # Always valid schema
-        self.instance.GET_SCHEMA["args"] = {}
+        self.instance.POST_SCHEMA["kwargs"] = {}
         try:
             self.instance.validate_request(invalid_request)
         except ValidationError:
