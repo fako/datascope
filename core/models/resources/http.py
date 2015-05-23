@@ -97,6 +97,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
                 uri=self.uri,
                 data_hash=self.data_hash
             )
+            self.validate_request(resource.request)
         except self.DoesNotExist:
             resource = self
 
