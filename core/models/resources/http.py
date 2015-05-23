@@ -306,9 +306,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
             "Trying to make request before having a valid request dictionary."
 
         if self.session is None:
-            connection = requests
-        else:
-            connection = self.session
+            self.session = requests.Session()
 
         method = self.request.get("method")
         data = self.request.get("data") if not method == "get" else None
@@ -319,7 +317,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
             data=data
         )
         preq = request.prepare()
-        response = connection.send(preq, proxies=settings.REQUESTS_PROXIES)
+        response = self.session.send(preq, proxies=settings.REQUESTS_PROXIES)
 
         self.head = dict(response.headers)
         self.body = response.content
