@@ -30,7 +30,7 @@ class BenfCastingProfile(HttpResource):
         super(BenfCastingProfile, self)._handle_errors()
         if not b"detailCell" in self.body:
             self.status = 404
-            raise DSHttpError40X("Not found")
+            raise DSHttpError40X("Not found", resource=self)
 
     def save(self, *args, **kwargs):
         self.body = "\n".join(self.body.split("\n")[1:])  # strip </body></html> from response :S

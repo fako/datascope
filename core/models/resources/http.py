@@ -336,10 +336,10 @@ class HttpResource(models.Model, OrganismInputProtocol):
         class_name = self.__class__.__name__
         if self.status >= 500:
             message = "{} > {} \n\n {}".format(class_name, self.status, self.body)
-            raise DSHttpError50X(message)
+            raise DSHttpError50X(message, resource=elf)
         elif self.status >= 400:
             message = "{} > {} \n\n {}".format(class_name, self.status, self.body)
-            raise DSHttpError40X(message)
+            raise DSHttpError40X(message, resource=self)
         else:
             return True
 

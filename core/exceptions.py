@@ -1,5 +1,8 @@
 class DSHttpResourceError(Exception):
-    pass
+
+    def __init__(self, message, resource):
+        super(DSHttpResourceError, self).__init__(message)
+        self.resource = resource
 
 
 class DSHttpError50X(DSHttpResourceError):
