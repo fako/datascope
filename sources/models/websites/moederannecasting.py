@@ -1,11 +1,8 @@
-import re
 import urllib
 
 import requests
 
-from datascope.configuration import DEFAULT_CONFIGURATION
 from core.models.resources.http import HttpResource
-from core.utils import configuration
 
 
 class MoederAnneCastingSession(HttpResource):
