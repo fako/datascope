@@ -2,6 +2,8 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 # noinspection PyUnresolvedReferences
 from six.moves import range
 
+from copy import copy
+
 from django.core.management.base import BaseCommand
 
 from core.processors.resources import HttpResourceProcessor
@@ -53,16 +55,22 @@ class Command(BaseCommand):
 
         ep = ExtractProcessor(objective={
             "@": "soup.find_all(class_='record') + soup.find_all(class_='record_alt')",
-            "name": "el.select('b:nth-of-type(2)')[0].text.replace('Voornaam: ', '').lower().capitalize()",
-            "birth_date": "el.select('br:nth-of-type(3)')[0].next_sibling.replace('Geboortedatum: ','')",
-            "image": "el.find('img')['src'] if el.find('img') else ''"
+            "voornaam": "el.select('b:nth-of-type(2)')[0].text.replace('Voornaam: ', '').lower().capitalize()",
+            "geboortedatum": "el.select('br:nth-of-type(3)')[0].next_sibling.replace('Geboortedatum: ','')",
+            "afbeelding": "el.find('img')['src'] if el.find('img') else ''"
         })
         results = []
         for link in MoederAnneCastingSearch.objects.all()[:limit]:
             content_type, data = link.content
             results += ep.extract(content_type, data)
 
-        print(results)
+        formatted = []
+        for rsl in results:
+            frsl = copy(rsl)
+            frsl["geboortedatum"] = rsl["geboortedatum"].replace('/', '-')
+            formatted.append(frsl)
+
+        print(formatted)
 
     def handle(self, **options):
         execute = getattr(self, options["subcommand"])
