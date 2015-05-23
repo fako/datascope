@@ -34,8 +34,30 @@ class HttpResourceMock(HttpResource):
         "kwargs": None  # not allowed
     }
     POST_SCHEMA = {
-        "args": {},
-        "kwargs": {}
+        "args": {
+            "title": "resource mock arguments",
+            "type": "array",  # a single alphanumeric element
+            "items": [
+                {
+                    "type": "string",
+                    "enum": ["en", "nl"]
+                },
+                {
+                    "type": "string",
+                    "pattern": "[A-Za-z0-9]+"
+                }
+            ],
+            "additionalItems": False,
+            "minItems": 2
+        },
+        "kwargs": {
+            "title": "resource mock keyword arguments",
+            "type": "object",
+            "properties": {
+                "query": {"type": "string"}
+            },
+            "required": ["query"]
+        }
     }
 
     CONFIG_NAMESPACE = "mock"
@@ -48,8 +70,12 @@ class HttpResourceMock(HttpResource):
 
     def send(self, method, *args, **kwargs):
         if method == "post":
-            kwargs["query"] = args[0]
-        args = (self.config.source_language,) + args
+            query = kwargs.get("query")
+            if query:
+                args += (query,)
+            args = (self.config.source_language,) + args
+        elif method == "get":
+            args = (self.config.source_language,) + args
         return super(HttpResourceMock, self).send(method, *args, **kwargs)
 
     def auth_parameters(self):
@@ -80,5 +106,5 @@ class HttpResourceMock(HttpResource):
 
     def data(self, **kwargs):
         return {
-            "test": kwargs["query"]
+            "test": kwargs.get("query")
         }
