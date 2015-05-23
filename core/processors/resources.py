@@ -92,6 +92,12 @@ class HttpResourceProcessor(object):
     def _send_mass(config, args_list, kwargs_list, session=None, method=None):
         # FEATURE: chain "batches" of fetch_mass if configured through batch_size
         # FEATURE: concat requests using concat_args_with configuration
+        return HttpResourceProcessor._send_serie(args_list, kwargs_list, config=config, method=method, session=session)
+
+    @staticmethod
+    @app.task(name="HttpFetch.send_serie")
+    @load_config(defaults=DEFAULT_CONFIGURATION)
+    def _send_serie(config, args_list, kwargs_list, session=None, method=None):
         success = []
         errors = []
         if session is None:
