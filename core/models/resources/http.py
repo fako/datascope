@@ -321,13 +321,9 @@ class HttpResource(models.Model, OrganismInputProtocol):
 
         self.head = dict(response.headers)
         self.status = response.status_code
-        try:
-            self.body = unicode(response.content, 'utf-8')
-        except UnicodeDecodeError:  #
-            print(self.query)
-            self.body = ""
-            self.status = 444
-
+        self.body = unicode(
+            response.content, 'utf-8', errors='replace'  # HTML can have some weird bytes, so replace errors!
+        )
 
     def _handle_errors(self):
         """
@@ -336,7 +332,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
         class_name = self.__class__.__name__
         if self.status >= 500:
             message = "{} > {} \n\n {}".format(class_name, self.status, self.body)
-            raise DSHttpError50X(message, resource=elf)
+            raise DSHttpError50X(message, resource=self)
         elif self.status >= 400:
             message = "{} > {} \n\n {}".format(class_name, self.status, self.body)
             raise DSHttpError40X(message, resource=self)

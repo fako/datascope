@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import unicode_literals, absolute_import, print_function, division
 
 import json
@@ -16,6 +17,7 @@ MOCK_DATA = {
     },
     "list": ["value 0", "value 1", "value 2"],
     "dotted.key": "another value",
+    "unicode": ["überhaupt"]
 }
 MOCK_DATA_WITH_NEXT = deepcopy(MOCK_DATA)
 MOCK_DATA_WITH_NEXT["next"] = 1
@@ -81,7 +83,7 @@ error_response.content = json.dumps({"error": "internal error"})
 error_response.status_code = 500
 
 
-def return_response(prepared_request, proxies):
+def return_response(prepared_request, proxies, verify):
     if "404" in prepared_request.url:
         return not_found_response
     elif "500" in prepared_request.url:

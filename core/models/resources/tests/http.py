@@ -135,6 +135,7 @@ class HttpResourceTestMixin(TestCase):
                 pass
             except Exception, exception:
                 self.fail("Handle error throws wrong exception '{}' expecting 40X".format(exception))
+        self.fail("should check for resource property on exception")
 
     def test_uri_from_url(self):
         uri = HttpResource.uri_from_url("http://localhost:8000/")
