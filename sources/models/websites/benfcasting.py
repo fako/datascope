@@ -35,3 +35,7 @@ class BenfCastingProfile(HttpResource):
     def save(self, *args, **kwargs):
         self.body = "\n".join(self.body.split("\n")[1:])  # strip </body></html> from response :S
         super(BenfCastingProfile, self).save(*args, **kwargs)
+
+    @property
+    def query(self):
+        return self.request["args"][0]
