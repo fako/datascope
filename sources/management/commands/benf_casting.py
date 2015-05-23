@@ -4,13 +4,12 @@ from six.moves import range
 
 from copy import copy
 
-from pandas import DataFrame
-
 from django.core.management.base import BaseCommand
 
 from core.processors.resources import HttpResourceProcessor
 from core.processors.extraction import ExtractProcessor
 from sources.models.websites.benfcasting import BenfCastingProfile
+from sources.models.websites.moederannecasting import MoederAnneCastingSearch
 
 
 class Command(BaseCommand):
@@ -41,7 +40,7 @@ class Command(BaseCommand):
         hrp = HttpResourceProcessor(config=config)
         task = hrp.fetch_mass.delay(args_list, kwargs_list)
 
-        print("TASK:", task)
+        return "TASK: {}".format(task)
 
     @staticmethod
     def extract(limit=1):
@@ -68,21 +67,17 @@ class Command(BaseCommand):
             content_type, data = link.content
             results += ep.extract(content_type, data)
 
-        formatted = []
+        benf_formatted = []
         for rsl in results:
             frsl = copy(rsl)
             year, month, day = rsl["geboortedatum"].split('-')
             frsl["geboortedatum"] = "-".join([day, month, year])
             frsl["achternaam"] = "{} {}".format(rsl["tussenvoegsel"], rsl["achternaam"]) if rsl["tussenvoegsel"] else rsl["achternaam"]
             del frsl["tussenvoegsel"]
-            formatted.append(frsl)
+            benf_formatted.append(frsl)
 
-        print(formatted)
-
-        df = DataFrame.from_records(formatted)
-        df.to_csv("benf_casting.csv")
+        return benf_formatted
 
     def handle(self, **options):
         execute = getattr(self, options["subcommand"])
-        execute(limit=options["limit"])
-
+        print(execute(limit=options["limit"]))
