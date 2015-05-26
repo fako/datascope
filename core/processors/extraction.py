@@ -14,6 +14,7 @@ class ExtractProcessor(object):
         self.load_objective(objective)
 
     def load_objective(self, objective):
+        assert isinstance(objective, dict), "An objective should be a dict."
         for key, value in six.iteritems(objective):
             if key == "@":
                 self._at = value
