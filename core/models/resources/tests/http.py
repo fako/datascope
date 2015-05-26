@@ -122,8 +122,9 @@ class HttpResourceTestMixin(TestCase):
             try:
                 self.instance._handle_errors()
                 self.fail("Handle error doesn't handle status {}".format(status))
-            except DSHttpError50X:
-                pass
+            except DSHttpError50X as exc:
+                self.assertIsInstance(exc.resource, HttpResource)
+                self.assertEqual(exc.resource.status, status)
             except Exception, exception:
                 self.fail("Handle error throws wrong exception '{}' expecting 50X".format(exception))
         for status in statuses_40x:
@@ -131,11 +132,11 @@ class HttpResourceTestMixin(TestCase):
             try:
                 self.instance._handle_errors()
                 self.fail("Handle error doesn't handle status {}".format(status))
-            except DSHttpError40X:
-                pass
+            except DSHttpError40X as exc:
+                self.assertIsInstance(exc.resource, HttpResource)
+                self.assertEqual(exc.resource.status, status)
             except Exception, exception:
                 self.fail("Handle error throws wrong exception '{}' expecting 40X".format(exception))
-        self.fail("should check for resource property on exception")
 
     def test_uri_from_url(self):
         uri = HttpResource.uri_from_url("http://localhost:8000/")
