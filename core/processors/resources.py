@@ -12,7 +12,7 @@ from django.apps import apps as django_apps
 from celery import current_app as app
 
 from datascope.configuration import DEFAULT_CONFIGURATION
-from core.utils.configuration import ConfigurationProperty, load_config
+from core.utils.configuration import ConfigurationProperty, ConfigurationType, load_config
 from core.exceptions import DSHttpResourceError
 
 
@@ -41,6 +41,7 @@ class HttpResourceProcessor(object):
 
     @staticmethod
     def get_link(config, session=None):
+        assert isinstance(config, ConfigurationType), "get_link expects a fully prepared ConfigurationType for config"
         Resource = django_apps.get_model("sources", config.resource)
         link = Resource(config=config.to_dict(protected=True))
         if session is not None:

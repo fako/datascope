@@ -7,6 +7,7 @@ from copy import deepcopy
 import requests
 from requests.models import Response
 from mock import Mock, NonCallableMock
+from celery import Task
 
 
 MOCK_DATA = {
@@ -100,3 +101,6 @@ MockRequests.send = MockRequestsSend
 MockRequestsWithAgent = NonCallableMock(spec=requests)
 MockRequestsSendWithAgent = Mock(return_value=agent_response)
 MockRequestsWithAgent.send = MockRequestsSendWithAgent
+
+MockTask = Mock(spec=Task)
+MockTask.s = Mock(return_value=Task())

@@ -1,12 +1,14 @@
 from datetime import datetime
 
+import requests
+
 from django.test import TestCase
 from django.utils import six
 
 from datascope.configuration import MOCK_CONFIGURATION
 from core.processors.resources import HttpResourceProcessor
 from core.utils.configuration import ConfigurationType
-from core.tests.mocks import MockRequestsWithAgent, MockRequests
+from core.tests.mocks import MockRequestsWithAgent, MockRequests, MockTask
 from sources.models.local import HttpResourceMock
 
 
@@ -34,20 +36,55 @@ class TestHttpResourceProcessorMixin(TestCase):
 
 class TestHttpResourceProcessor(TestHttpResourceProcessorMixin, TestCase):
 
+    def setUp(self):
+        super(TestHttpResourceProcessor, self).setUp()
+        self.prc = HttpResourceProcessor(config=self.config.to_dict(protected=True, private=True))
+        self.prc._send = MockTask
+        self.prc._send_mass = MockTask
+
     def test_get_link(self):
-        self.fail("test")
+        self.config.set_configuration({"test": "test"})
+        session = requests.Session()
+        session.cookies = {"test": "test"}
+        link = HttpResourceProcessor.get_link(config=self.config, session=session)
+        self.assertIsInstance(link, HttpResourceMock)
+        self.assertIsNone(link.id)
+        self.assertIsNone(link.request)
+        self.assertFalse(hasattr(link.config, 'resource'))
+        self.assertEqual(link.config.test, 'test')
+        self.assertEqual(link.session.cookies, {"test": "test"})
 
     def test_fetch(self):
-        self.fail("test")
+        null = self.prc.fetch
+        self.assertTrue(self.prc._send.s.called)
+        args, kwargs = self.prc._send.s.call_args
+        self.assertEqual(kwargs["method"], "get")
+        self.assertIsInstance(kwargs["config"], dict)
+        self.assertTrue(kwargs["config"].get("_resource"))
 
     def test_fetch_mass(self):
-        self.fail("test")
+        null = self.prc.fetch_mass
+        self.assertTrue(self.prc._send_mass.s.called)
+        args, kwargs = self.prc._send_mass.s.call_args
+        self.assertEqual(kwargs["method"], "get")
+        self.assertIsInstance(kwargs["config"], dict)
+        self.assertTrue(kwargs["config"].get("_resource"))
 
     def test_submit(self):
-        self.fail("test")
+        null = self.prc.submit
+        self.assertTrue(self.prc._send.s.called)
+        args, kwargs = self.prc._send.s.call_args
+        self.assertEqual(kwargs["method"], "post")
+        self.assertIsInstance(kwargs["config"], dict)
+        self.assertTrue(kwargs["config"].get("_resource"))
 
     def test_submit_mass(self):
-        self.fail("test")
+        null = self.prc.submit_mass
+        self.assertTrue(self.prc._send_mass.s.called)
+        args, kwargs = self.prc._send_mass.s.call_args
+        self.assertEqual(kwargs["method"], "post")
+        self.assertIsInstance(kwargs["config"], dict)
+        self.assertTrue(kwargs["config"].get("_resource"))
 
 
 class TestHttpResourceProcessorBase(TestHttpResourceProcessorMixin, TestCase):
