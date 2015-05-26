@@ -18,7 +18,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('uri', models.CharField(default=None, max_length=255, db_index=True)),
-                ('post_hash', models.CharField(default=b'', max_length=255, db_index=True)),
+                ('data_hash', models.CharField(default='', max_length=255, db_index=True)),
+                ('config', core.utils.configuration.ConfigurationField(default={})),
                 ('request', jsonfield.fields.JSONField(default=None)),
                 ('head', jsonfield.fields.JSONField(default=None)),
                 ('body', models.TextField(default=None)),
@@ -26,7 +27,6 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('modified_at', models.DateTimeField(auto_now=True)),
                 ('purge_at', models.DateTimeField(null=True, blank=True)),
-                ('config', core.utils.configuration.ConfigurationField(default={})),
             ],
             options={
                 'abstract': False,
