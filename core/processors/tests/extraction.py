@@ -8,7 +8,7 @@ from mock import Mock
 from django.test import TestCase
 
 from core.processors.extraction import ExtractProcessor
-from core.tests.mocks import MOCK_HTML, MOCK_SCRAPE_DATA
+from core.tests.mocks import MOCK_HTML, MOCK_SCRAPE_DATA, MOCK_DATA_WITH_RECORDS, MOCK_JSON_DATA
 
 
 class TestExtractProcessorHTML(TestCase):
@@ -24,6 +24,15 @@ class TestExtractProcessorHTML(TestCase):
         }
         self.html_prc = ExtractProcessor(objective=self.html_obj)
         self.soup = BeautifulSoup(MOCK_HTML)
+        self.json_obj = {
+            "@": "$.records",
+            "#unicode": "$.unicode[0]",
+            "#goal": "$.dict.dict.test",
+            "id": "$.id",
+            "record": "$.record"
+        }
+        self.json_prc = ExtractProcessor(objective=self.json_obj)
+        self.json = MOCK_DATA_WITH_RECORDS
 
     def test_init_and_load_objective(self):
         self.assertEqual(self.html_prc._at, "soup.find_all('a')")
@@ -47,4 +56,9 @@ class TestExtractProcessorHTML(TestCase):
     def test_html_text(self):
         rsl = self.html_prc.text_html(self.soup)
         self.assertEqual(rsl, MOCK_SCRAPE_DATA)
+        self.assertIsInstance(rsl, list, "Extractors are expected to return lists with 0 or more elements inside.")
+
+    def test_application_json(self):
+        rsl = self.json_prc.application_json(self.json)
+        self.assertEqual(rsl, MOCK_JSON_DATA)
         self.assertIsInstance(rsl, list, "Extractors are expected to return lists with 0 or more elements inside.")

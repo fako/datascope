@@ -22,6 +22,19 @@ MOCK_DATA = {
 }
 MOCK_DATA_WITH_NEXT = deepcopy(MOCK_DATA)
 MOCK_DATA_WITH_NEXT["next"] = 1
+MOCK_DATA_WITH_RECORDS = deepcopy(MOCK_DATA)
+MOCK_DATA_WITH_RECORDS["records"] = [
+    {"id": 1, "record": "Hallelujah"},
+    {"id": 2, "record": "The Beatles"},
+    {"id": 3, "record": "The Stones"},
+]
+MOCK_JSON_DATA_CONTEXT = {
+    "unicode": "überhaupt",
+    "goal": "test"
+}
+MOCK_JSON_DATA = [
+    dict(record, **MOCK_JSON_DATA_CONTEXT) for record in MOCK_DATA_WITH_RECORDS["records"]
+]
 
 
 MOCK_HTML = """
