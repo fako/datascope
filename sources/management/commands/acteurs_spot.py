@@ -38,7 +38,7 @@ class Command(BaseCommand):
         hrp = HttpResourceProcessor(config=config)
         task = hrp.fetch_mass.delay(args_list, kwargs_list)
 
-        print("TASK:", task)
+        return task
 
     @staticmethod
     def extract(limit=1):
@@ -53,18 +53,18 @@ class Command(BaseCommand):
 
         ep = ExtractProcessor(objective={
             "@": "soup.find('html')",
-            "full_name": "el.find('title').text.replace('Profiel van ', '').replace(' | Acteursspot','')",
-            "first_name": "el.find(id='profiel_data_naam').text.strip().split(' ')[0]",
-            "image": "el.find(id='profiel_data_profielfoto').find('img')['src']"
+            "achternaam": "el.find('title').text.replace('Profiel van ', '').replace(' | Acteursspot','')",
+            "voornaam": "el.find(id='profiel_data_naam').text.strip().split(' ')[0]",
+            "afbeelding": "el.find(id='profiel_data_profielfoto').find('img')['src']"
         })
         results = []
         for link in ActeursSpotProfile.objects.filter(status=200)[:limit]:
             content_type, data = link.content
             results += ep.extract(content_type, data)
 
-        print(results)
+        return results
 
     def handle(self, **options):
         execute = getattr(self, options["subcommand"])
-        execute(limit=options["limit"])
+        print(execute(limit=options["limit"]))
 
