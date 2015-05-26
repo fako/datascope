@@ -1,12 +1,16 @@
-from django.conf.urls import patterns, include, url
+from __future__ import unicode_literals, absolute_import, print_function, division
+
+from django.conf.urls import include, url
 
 from django.contrib import admin
 admin.autodiscover()
 
-urlpatterns = patterns('',
-    # Examples:
-    # url(r'^$', 'datascope.views.home', name='home'),
-    url(r'', include('legacy.urls')),
+from . import views
 
+urlpatterns = [
+    url(r'', include('legacy.urls')),
+    url(r'^data/', include('core.urls')),
     url(r'^admin/', include(admin.site.urls)),
-)
+
+    url(r'^intersection/$', views.casting_comparison_by_face)
+]
