@@ -115,7 +115,7 @@ class TestHttpResourceProcessorBase(TestHttpResourceProcessorMixin, TestCase):
         scc, err = HttpResourceProcessor._send_mass(args_list, kwargs_list, method=self.method, config=self.config, session=MockRequests)
         end = datetime.now()
         duration = (end - start).total_seconds()
-        self.assertLess(duration, 0.01)
+        self.assertLess(duration, 0.02)
         self.check_results(scc, 2)
         self.check_results(err, 1)
 
