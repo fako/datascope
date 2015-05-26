@@ -13,25 +13,15 @@ class Individual(Organism):
     def __getattr__(self, item):
         return getattr(self.properties, item)
 
-    @classmethod  # TODO: write manager instead!
-    def create_from_dict(cls, dic, schema):
+    def update(self, data):
         """
-        Create new instance of this class from a dictionary if it validates against the schema.
+        Update the instance with new data. This property is meant to be overridden by subclasses.
 
-        :param dic:
-        :param schema:the schema to validate against
+        :return: None
+
+        :param data:
         :return:
         """
-        pass
-
-    def update_from_dict(self, dic):
-        """
-        Override existing properties with values from dic if it validates against the schema.
-
-        :param dic:
-        :return:
-        """
-        pass
 
     @property
     def content(self):

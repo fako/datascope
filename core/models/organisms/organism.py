@@ -20,6 +20,15 @@ class Organism(models.Model):
         """
 
     @property
+    def content(self):
+        """
+        Return the content of the instance. This property is meant to be overridden by subclasses.
+
+        :return: None
+        """
+        return None
+
+    @property
     def url(self):
         """
         TODO: Uses Django reverse
@@ -29,15 +38,6 @@ class Organism(models.Model):
         if not self.id:
             raise ValueError("Can't get path for unsaved Collective")
         return "ind|col/{}/".format(self.id)
-
-    @property
-    def content(self):
-        """
-        Return the content of the instance. This property is meant to be overridden by subclasses.
-
-        :return: None
-        """
-        return None
 
     class Meta:
         abstract = True
