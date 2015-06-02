@@ -6,5 +6,7 @@ from . import views
 
 urlpatterns = [
     url(r'^collective/(?P<pk>\d+)/content/$', views.CollectiveContentView.as_view()),
-    url(r'^collective/(?P<pk>\d+)/$', views.CollectiveView.as_view())
+    url(r'^collective/(?P<pk>\d+)/$', views.CollectiveView.as_view()),
+    url(r'^individual/(?P<pk>\d+)/content/$', views.IndividualContentView.as_view()),
+    url(r'^individual/(?P<pk>\d+)/$', views.IndividualView.as_view()),
 ]

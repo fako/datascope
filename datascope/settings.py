@@ -227,7 +227,7 @@ LOGGING = {
 
 REST_FRAMEWORK = {
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
-    'DEFAULT_PAGINATION_CLASS': 'core.views.content.ContentPagination',
+    #'DEFAULT_PAGINATION_CLASS': 'core.views.content.ContentPagination',
     'PAGE_SIZE': 100,
 }
 

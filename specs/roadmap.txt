@@ -18,11 +18,11 @@ PROCESSES
 + Provide a Submit process
 
 NEW STYLE OBJECTS
-- Create the Individual
-- Create the Collective
-- Create an Individual resource
-- Create a Collective resource
-- Make individuals and collectives collect data from a source
++ Create the Individual
++ Create the Collective
++ Create an Individual resource
++ Create a Collective resource
++ Make individuals and collectives collect data from a source
 
 COMMUNITY
 - Create the Community

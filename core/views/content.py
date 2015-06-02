@@ -2,29 +2,50 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 
 from django.core.exceptions import ValidationError
 
-from rest_framework import serializers, pagination
+from rest_framework import serializers, pagination, generics
 from rest_framework.response import Response
 
-from core.models.organisms import Individual
+from core.models.organisms import Individual, Collective
 
 
 class ContentSerializer(serializers.Serializer):
 
     def to_representation(self, instance):
         # TODO: allow partial responses by respecting json paths after # in the URL from self.context["request"]
-        if isinstance(instance, Individual):
+        if isinstance(instance, self.context["content_class"]):
             return instance.content
-        elif isinstance(instance, dict):
+        elif isinstance(instance, (dict, list)):
             return instance
         else:
             assert True, "Received unexpected type {} as content.".format(type(instance))
 
     def to_internal_value(self, data):
         try:
-            data = Individual.validate(data, self.context["schema"])
+            content_class = self.context["content_class"]
+            data = content_class.validate(data, self.context["schema"])
         except ValidationError as exc:
             raise serializers.ValidationError(exc)
         return data
+
+    def update(self, instance, validated_data):
+        instance.update(validated_data, validate=False)
+        instance.save()
+        return instance
+
+
+class ContentView(generics.RetrieveAPIView):
+    serializer_class = ContentSerializer
+    content_class = None
+
+    def dispatch(self, request, *args, **kwargs):
+        request.organism = self.get_object()
+        return super(ContentView, self).dispatch(request, *args, **kwargs)
+
+    def get_serializer(self, *args, **kwargs):
+        serializer = super(ContentView, self).get_serializer(*args, **kwargs)
+        serializer.context["schema"] = serializer.context["request"].organism.schema
+        serializer.context["content_class"] = self.content_class
+        return serializer
 
 
 class ContentPagination(pagination.PageNumberPagination):
