@@ -9,7 +9,7 @@ from . import views
 
 urlpatterns = [
     url(r'', include('legacy.urls')),
-    url(r'^data/', include('core.urls')),
+    url(r'^data/v1/', include('core.urls', namespace="v1")),
     url(r'^admin/', include(admin.site.urls)),
 
     url(r'^intersection/$', views.casting_comparison_by_face)

@@ -9,6 +9,29 @@ DEBUG = True
 REQUESTS_PROXIES = None
 REQUESTS_VERIFY = True
 
+INSTALLED_APPS = (
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.sites',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    # Uncomment the next line to enable the admin:
+    'django.contrib.admin',
+    # Uncomment the next line to enable admin documentation:
+    # 'django.contrib.admindocs',
+    # 3rd party
+    'djcelery',
+    'rest_framework',
+    # Main app
+    'datascope',
+    # Framework apps
+    'core',
+    'sources',
+    'legacy',
+
+    'debug_toolbar',  # TODO: refactor
+)
 
 # Environment specific settings
 try:
@@ -17,8 +40,7 @@ try:
 except ImportError:
     log.warning("Could not import environment specific server settings.")
 
-
-# Django settings for fakoberkers project.
+# Django settings for DataScope project.
 
 TEMPLATE_DEBUG = DEBUG
 
@@ -138,6 +160,7 @@ MIDDLEWARE_CLASSES = (
     # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Datascope middleware
     'core.middleware.origin.AllowOriginMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',  # TODO: refactor
 )
 
 ROOT_URLCONF = 'datascope.urls'
@@ -156,27 +179,7 @@ FIXTURE_DIRS = (
     PATH_TO_PROJECT + 'legacy/fixtures/',
 )
 
-INSTALLED_APPS = (
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.sites',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    # Uncomment the next line to enable the admin:
-    'django.contrib.admin',
-    # Uncomment the next line to enable admin documentation:
-    # 'django.contrib.admindocs',
-    # 3rd party
-    'djcelery',
-    'rest_framework',
-    # Main app
-    'datascope',
-    # Framework apps
-    'core',
-    'sources',
-    'legacy',
-)
+
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -221,6 +224,16 @@ LOGGING = {
         },
     }
 }
+
+REST_FRAMEWORK = {
+    'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning'
+}
+
+# TODO: refactor
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_COLLAPSED': True
+}
+DEBUG_TOOLBAR = True
 
 # Celery settings
 import djcelery
