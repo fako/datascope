@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from core.models.organisms import Collective, Individual
 from core.views.individual import IndividualSerializer
-from core.views.content import ContentView, ContentSerializer, ContentPagination
+from core.views.content import ContentView, ContentPagination
 
 
 class CollectiveSerializer(serializers.ModelSerializer):

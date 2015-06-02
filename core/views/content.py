@@ -5,8 +5,6 @@ from django.core.exceptions import ValidationError
 from rest_framework import serializers, pagination, generics
 from rest_framework.response import Response
 
-from core.models.organisms import Individual, Collective
-
 
 class ContentSerializer(serializers.Serializer):
 
