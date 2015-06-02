@@ -1,0 +1,48 @@
+[
+{
+    "fields": {
+        "created_at": "2015-06-02T09:56:36.303",
+        "modified_at": "2015-06-02T09:56:36.303",
+        "spirit": "test",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"width\",\"height\",\"name\"],\"type\":\"object\",\"properties\":{\"width\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"},\"height\":{\"type\":\"integer\"}}}"
+    },
+    "model": "core.collective",
+    "pk": 1
+},
+{
+    "fields": {
+        "properties": "{\"width\":1024,\"name\":\"modest\",\"height\":768}",
+        "collective": 1,
+        "modified_at": "2015-06-02T10:01:47.572",
+        "spirit": "test 0",
+        "created_at": "2015-06-02T10:00:20.247",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"width\",\"height\",\"name\"],\"type\":\"object\",\"properties\":{\"width\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"},\"height\":{\"type\":\"integer\"}}}"
+    },
+    "model": "core.individual",
+    "pk": 1
+},
+{
+    "fields": {
+        "properties": "{\"width\":1600,\"name\":\"nice\",\"height\":900}",
+        "collective": 1,
+        "modified_at": "2015-06-02T10:01:47.572",
+        "spirit": "test 1",
+        "created_at": "2015-06-02T10:00:20.247",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"width\",\"height\",\"name\"],\"type\":\"object\",\"properties\":{\"width\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"},\"height\":{\"type\":\"integer\"}}}"
+    },
+    "model": "core.individual",
+    "pk": 2
+},
+{
+    "fields": {
+        "properties": "{\"width\":102400,\"name\":\"wtf\",\"height\":76800}",
+        "collective": 1,
+        "modified_at": "2015-06-02T10:01:47.572",
+        "spirit": "test 2",
+        "created_at": "2015-06-02T10:00:20.247",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"width\",\"height\",\"name\"],\"type\":\"object\",\"properties\":{\"width\":{\"type\":\"integer\"},\"name\":{\"type\":\"string\"},\"height\":{\"type\":\"integer\"}}}"
+    },
+    "model": "core.individual",
+    "pk": 3
+}
+]

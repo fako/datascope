@@ -10,8 +10,8 @@ class Individual(Organism):
     collective = models.ForeignKey('Collective', null=True)
     properties = jsonfield.JSONField()
 
-    def __getattr__(self, item):
-        return getattr(self.properties, item)
+    def __getitem__(self, item):
+        return self.properties[item]
 
     def update(self, data):
         """
