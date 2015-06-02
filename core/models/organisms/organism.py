@@ -1,3 +1,5 @@
+from __future__ import unicode_literals, absolute_import, print_function, division
+
 from django.db import models
 
 from jsonfield import JSONField

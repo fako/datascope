@@ -1,3 +1,6 @@
+from __future__ import unicode_literals, absolute_import, print_function, division
+
+
 class OrganismInputProtocol(object):
     """
     Anything that acts as input for Organisms should implement this protocol.
