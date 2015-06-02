@@ -1,7 +1,4 @@
-from .base import DataScopeView
-
-
-class CommunityView(DataScopeView):
+class CommunityView(object):
     """
     TODO: allow actions who's function lives on a Community
 
@@ -20,6 +17,15 @@ class CommunityView(DataScopeView):
 
         :param request:
         :return: a Community ContentModel
+        """
+        pass
+
+    def get_config_from_request(self, request):
+        """
+        Gets a configuration dictionary from the user and GET params on request.
+
+        :param request:
+        :return:
         """
         pass
 

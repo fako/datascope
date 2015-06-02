@@ -1,3 +1,5 @@
+import six
+
 from django.db import models
 
 import jsonfield
@@ -30,4 +32,11 @@ class Individual(Organism):
 
         :return: properties dictionary
         """
-        return self.properties
+        meta = {
+            "ds_id": self.id,
+            "ds_spirit": self.spirit
+        }
+        return dict(
+            {key: value for key, value in six.iteritems(self.properties) if not key.startswith('_')},
+            **meta
+        )
