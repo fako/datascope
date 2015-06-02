@@ -14,24 +14,16 @@ class Organism(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
 
-    def update(self, data):
-        """
-        Update the instance with new data. This property is meant to be overridden by subclasses.
+    @staticmethod
+    def validate(data, schema):
+        raise NotImplementedError()
 
-        :return: None
-
-        :param data:
-        :return:
-        """
+    def update(self, data, validate=True):
+        raise NotImplementedError()
 
     @property
     def content(self):
-        """
-        Return the content of the instance. This property is meant to be overridden by subclasses.
-
-        :return: None
-        """
-        return None
+        raise NotImplementedError()
 
     @property
     def url(self):

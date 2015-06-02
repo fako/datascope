@@ -1,6 +1,8 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
-from rest_framework import generics, serializers
+from django.core.exceptions import ValidationError
+
+from rest_framework import generics, serializers, status
 from rest_framework.response import Response
 
 from core.models.organisms import Collective
@@ -37,7 +39,7 @@ class CollectiveView(generics.RetrieveAPIView):
     serializer_class = CollectiveSerializer
 
 
-class CollectiveContentView(generics.CreateAPIView, generics.RetrieveAPIView):
+class CollectiveContentView(generics.RetrieveAPIView):
     """
     A Collective is a list of Individuals that share the same JSON schema.
     """
@@ -71,18 +73,9 @@ class CollectiveContentView(generics.CreateAPIView, generics.RetrieveAPIView):
         serializer = self.get_serializer(request.collective.content, many=True)
         return Response(serializer.data)
 
-    def perform_create(self, serializer):
-        collective = self.request.collective
-        data = serializer.data
-        spirit = data.pop("ds_spirit", collective.spirit)
-        self.request.individual = collective.individual_set.create(
-            spirit=spirit,
-            schema=collective.schema,
-            properties=data
-        )
-
-    def create(self, request, *args, **kwargs):
-        response = super(CollectiveContentView, self).create(request, *args, **kwargs)
-        response.data["ds_id"] = request.individual.id
-        response.data["ds_spirit"] = request.individual.spirit
-        return response
+    def post(self, request, *args, **kwargs):
+        try:
+            results = self.request.collective.update(request.data)
+        except ValidationError as exc:
+            raise serializers.ValidationError(exc)
+        return Response([result.content for result in results], status=status.HTTP_201_CREATED)
