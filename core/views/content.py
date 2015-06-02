@@ -1,3 +1,8 @@
+import six
+
+import jsonschema
+from jsonschema.exceptions import ValidationError as SchemaValidationError
+
 from rest_framework import serializers, pagination
 from rest_framework.response import Response
 
@@ -16,7 +21,20 @@ class ContentSerializer(serializers.Serializer):
             assert True, "Received unexpected type {} as content.".format(type(instance))
 
     def to_internal_value(self, data):
-        pass
+        data.pop("ds_id", None)
+        spirit = data.pop("ds_spirit", "")
+
+        try:
+            jsonschema.validate(data, self.context["schema"])
+        except SchemaValidationError as exc:
+            raise serializers.ValidationError(exc)
+
+        if spirit and not isinstance(spirit, six.string_types):
+            raise serializers.ValidationError("The spirit of an individual needs to be a string.")
+        elif spirit:
+            data["ds_spirit"] = spirit
+
+        return data
 
 
 class ContentPagination(pagination.PageNumberPagination):
