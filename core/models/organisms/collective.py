@@ -35,17 +35,14 @@ class Collective(Organism):
         updates = []
         if isinstance(data, dict):
             pk = data.pop("ds_id", None)
-            spirit = data.pop("ds_spirit", self.spirit)
             if pk is None:
                 individual = self.individual_set.create(
-                    spirit=spirit,
                     schema=self.schema,
                     properties=data
                 )
             else:
                 individual = Individual.objects.get(pk=pk)
                 individual.update(data)
-                individual.spirit = spirit
                 individual.collective = self
                 individual.save()
             updates.append(individual)
@@ -68,14 +65,6 @@ class Collective(Organism):
         Outputs a dict with Collectives. The Collectives are filled with Individuals that hold the same value for key.
 
         :param key:
-        :return:
-        """
-        pass
-
-    def group_by_spirit(self):
-        """
-        Groups individuals by their spirit
-
         :return:
         """
         pass

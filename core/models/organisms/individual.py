@@ -60,12 +60,13 @@ class Individual(Organism):
         :param validate: (optional) whether to validate data or not (yes by default)
         :return: Updated content
         """
+        if isinstance(data, (list, tuple,)):
+            data = data[0]
+
         if validate:
             self.validate(data, self.schema)
 
-        spirit = data.pop("ds_spirit", self.spirit)
         self.properties.update(data)
-        self.spirit = spirit
         self.save()
         return self.content
 
@@ -78,7 +79,6 @@ class Individual(Organism):
         """
         meta = {
             "ds_id": self.id,
-            "ds_spirit": self.spirit
         }
         return dict(
             {key: value for key, value in six.iteritems(self.properties) if not key.startswith('_')},

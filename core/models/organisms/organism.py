@@ -9,7 +9,6 @@ class Organism(models.Model):
 
     #community = models.ForeignKey('Community')
     schema = JSONField(default=None, null=False, blank=False)  # BUG: schema does not throw IntegrityError on None
-    spirit = models.CharField(max_length=255, db_index=True, default=None)
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
