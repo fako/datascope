@@ -176,7 +176,7 @@ TEMPLATE_DIRS = (
 )
 
 FIXTURE_DIRS = (
-    PATH_TO_PROJECT + 'legacy/fixtures/',
+    PATH_TO_PROJECT + 'core/tests/fixtures/',
 )
 
 

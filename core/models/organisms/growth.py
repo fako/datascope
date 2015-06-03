@@ -1,25 +1,39 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
+import six
 
 from django.db import models
 
+from datascope.configuration import PROCESS_CHOICE_LIST
 from core.models.organisms.community import Community
 from core.utils.configuration import ConfigurationField
 
 
+class GrowthState(object):
+    NEW = "New"
+    PROCESSING = "Processing"
+    FINISHED = "Finished"
+    ERROR = "Error"
+    RETRY = "Retry"
+
+GROWTH_STATE_CHOICES = [
+    (attr, value) for attr, value in six.iteritems(GrowthState.__dict__) if not attr.startswith("_")
+]
+
+
 class Growth(models.Model):
 
-    community = models.ForeignKey(Community)
+    #community = models.ForeignKey(Community)
 
     type = models.CharField(max_length=255)
     input = models.CharField(max_length=255)
     config = ConfigurationField()
 
-    process = models.CharField(max_length=255)  # TODO: set choices
-    success = models.CharField(max_length=255)  # TODO: set choices
+    process = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST)
+    success = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST)
     output = models.CharField(max_length=255)
 
     task_id = models.CharField(max_length=255, null=True, blank=True)
-    state = models.CharField(max_length=255)  # TODO: set choices
+    state = models.CharField(max_length=255, choices=GROWTH_STATE_CHOICES, default=GrowthState.NEW)
     is_finished = models.BooleanField(default=False)
 
     def begin(self, *args, **kwargs):
@@ -49,7 +63,7 @@ class Growth(models.Model):
         """
         pass
 
-    def create_processor(self, *args, **kwargs):
+    def create_processor(self, processor, config):
         """
         Creates an instance of process based on self.process, self.config and args
 
@@ -57,6 +71,11 @@ class Growth(models.Model):
         :param kwargs: (optional)
         :return:
         """
+        mod = __import__(name)
+        components = name.split('.')
+        for comp in components[1:]:
+            mod = getattr(mod, comp)
+        return mod
         pass
 
     @property
@@ -76,3 +95,7 @@ class Growth(models.Model):
         :return:
         """
         return None
+
+    def save(self, *args, **kwargs):
+        self.is_finished = self.state == GrowthState.FINISHED
+        super(Growth, self).save(*args, **kwargs)

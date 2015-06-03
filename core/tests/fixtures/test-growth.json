@@ -1,0 +1,17 @@
+[
+{
+    "fields": {
+        "task_id": null,
+        "success": "ExtractProcessor.extract_from_resource",
+        "process": "HttpResourceProcessor.fetch_mass",
+        "type": "test",
+        "state": "New",
+        "output": "Collective",
+        "input": "Collective",
+        "is_finished": false,
+        "config": "{'objective': {u'gotcha': u'$.dict'}, 'resource': u'HttpResourceMock'}"
+    },
+    "model": "core.growth",
+    "pk": 1
+}
+]
