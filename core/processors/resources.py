@@ -10,10 +10,11 @@ import requests
 from django.apps import apps as django_apps
 
 from celery import current_app as app
+from celery.result import AsyncResult, states as TaskStates
 
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.utils.configuration import ConfigurationProperty, ConfigurationType, load_config
-from core.exceptions import DSHttpResourceError
+from core.exceptions import DSHttpResourceException, DSProcessUnfinished, DSProcessError
 
 
 class HttpResourceProcessor(object):
@@ -80,7 +81,7 @@ class HttpResourceProcessor(object):
                 link = link.send(method, *args, **kwargs)
                 link.save()
                 success.append(link.id)
-            except DSHttpResourceError as exc:
+            except DSHttpResourceException as exc:
                 link = exc.resource
                 link.save()
                 errors.append(link.id)

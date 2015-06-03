@@ -1,17 +1,29 @@
-class DSHttpResourceError(Exception):
+class DSHttpResourceException(Exception):
 
     def __init__(self, message, resource):
-        super(DSHttpResourceError, self).__init__(message)
+        super(DSHttpResourceException, self).__init__(message)
         self.resource = resource
 
 
-class DSHttpError50X(DSHttpResourceError):
+class DSHttpError50X(DSHttpResourceException):
     pass
 
 
-class DSHttpError40X(DSHttpResourceError):
+class DSHttpError40X(DSHttpResourceException):
     pass
 
 
-class DSHttpWarning300(DSHttpResourceError):
+class DSHttpWarning300(DSHttpResourceException):
+    pass
+
+
+class DSProcessException(Exception):
+    pass
+
+
+class DSProcessUnfinished(DSProcessException):
+    pass
+
+
+class DSProcessError(DSProcessException):
     pass
