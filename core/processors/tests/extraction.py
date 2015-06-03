@@ -22,7 +22,7 @@ class TestExtractProcessorHTML(TestCase):
             "link": "el['href']",
             "#page": "soup.find('title').text",
         }
-        self.html_prc = ExtractProcessor(objective=self.html_obj)
+        self.html_prc = ExtractProcessor(config={"objective": self.html_obj})
         self.soup = BeautifulSoup(MOCK_HTML)
         self.json_obj = {
             "@": "$.records",
@@ -31,7 +31,7 @@ class TestExtractProcessorHTML(TestCase):
             "id": "$.id",
             "record": "$.record"
         }
-        self.json_prc = ExtractProcessor(objective=self.json_obj)
+        self.json_prc = ExtractProcessor(config={"objective": self.json_obj})
         self.json = MOCK_DATA_WITH_RECORDS
 
     def test_init_and_load_objective(self):

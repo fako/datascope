@@ -2,54 +2,50 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 
 from django.db import models
 
-import jsonfield
-
-from .community import Community
+from core.models.organisms.community import Community
+from core.utils.configuration import ConfigurationField
 
 
 class Growth(models.Model):
 
-    success_codes = [200, 201, 202, 204]
-
     community = models.ForeignKey(Community)
 
-    name = models.CharField(max_length=255)
-    schema = jsonfield.JSONField()
-    config = jsonfield.JSONField()  # TODO: should become a ConfigurationField
+    type = models.CharField(max_length=255)
+    input = models.CharField(max_length=255)
+    config = ConfigurationField()
+
     process = models.CharField(max_length=255)  # TODO: set choices
-    input = models.CharField(max_length=255)  # TODO: set choices
-    output = models.CharField(max_length=255)  # TODO: set choices
+    success = models.CharField(max_length=255)  # TODO: set choices
+    output = models.CharField(max_length=255)
 
     task_id = models.CharField(max_length=255, null=True, blank=True)
     state = models.CharField(max_length=255)  # TODO: set choices
+    is_finished = models.BooleanField(default=False)
 
-
-    @classmethod  # TODO: write manager instead!
-    def create_from_spirit_phase(cls, spirit_phase):
-        """
-        Creates a new Growth instance from a Community's spirit phase.
-        TODO: raise custom error when objects.create fails
-
-        :return:
-        """
-        pass
-
-    def begin(self, *args):
+    def begin(self, *args, **kwargs):
         """
         Starts the Celery tasks according to model fields and external arguments to enable growth.
 
         :param args: (optional)
         :return: the input Organism
+
+        - Initializes a process
+        - Passes args and kwargs to delay of specified attribute, which is assumed to be a subtask
+        - Stores resulting task_id and sets state
         """
         pass
 
-    def end(self):
+    def finish(self):
         """
         Takes results from self.results and creates an Organism according to ContentType stored in self.output.
         It stores a reference to the new Organism in self.output and returns it.
         Will ignore any errors that are not specified in self.errors and
 
         :return: the output Organism
+        - Revives the process and calls get_results
+        - Runs the success process for every success
+        - Fills output with results from success process
+        - Returns the output as well as the (unprocessed) errors
         """
         pass
 

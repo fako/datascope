@@ -1,43 +1,77 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
+from collections import OrderedDict
+
 from django.db import models
+from django.contrib.contenttypes.fields import GenericForeignKey
 
 import jsonfield
 
-from ..user import DataScopeUser
+from core.models.user import DataScopeUser
 
 
 class CommunityManager(models.Manager):
 
-    def get_queryset(self):  # TODO: good? bad?
-        return super(CommunityManager, self).get_queryset().prefetch_related(
-            'individuals',
-            'collectives',
-            'growths'
+    def get_queryset(self, *args, **kwargs):
+        super(CommunityManager, self).get_queryset(*args, **kwargs).select_related(
+            "current_growth"
         )
+
+
+class CommunitySpirit(object):
+    def setup_growth(self):
+        """
+        Will create all Growth objects based on the community_spirit
+        """
+        pass
+
+    def next_growth(self):
+        """
+        Returns the first is_finished=False Growth on the community
+        """
+        pass
 
 
 class Community(models.Model):
     """
-    NB: When fetching a community it is recommended to prefetch Individuals, Collectives and Growths with it
-    TODO: Create a SpiritField or SpiritPhase class which manages a spirit phase
+
     """
-    default_configuration = {
-        "depth": 0
-    }
     user = models.ForeignKey(DataScopeUser, null=True)
     predecessor = models.ForeignKey('Community', null=True)
 
-    enlightened = models.BooleanField(default=False)
-    data = jsonfield.JSONField(null=True, blank=True)
-
-    path = models.CharField(max_length=255, db_index=True)
     config = jsonfield.JSONField(db_index=True)  # TODO: should become a ConfigurationField
 
-    # TODO: add created_at etc.
-    # TODO: add view count
+    current_growth = models.ForeignKey('Growth', null=True)
+    kernel = GenericForeignKey(ct_field="kernel_type", fk_field="kernel_id")
+    kernel_type = models.CharField(max_length=255, null=True)
+    kernel_id = models.PositiveIntegerField(null=True)
 
-    def capture_initial_input(self, config, *args, **kwargs):
+    created_at = models.DateTimeField(auto_now_add=True)
+    modified_at = models.DateTimeField(auto_now=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    purge_at = models.DateTimeField(null=True, blank=True)
+
+    views = models.IntegerField(default=1)
+    state = models.CharField(max_length=255)  # TODO: set choices
+
+    COMMUNITY_SPIRIT = OrderedDict()
+    COMMUNITY_BODY = []
+
+    @property
+    def spirit(self):
+        return None
+    @spirit.setter
+    def spirit(self, community_spirit):
+        pass
+
+    def set_kernel(self):
+        """
+
+        :return:
+        """
+        pass
+
+    def capture_initial_input(self, *args, **kwargs):
         """
         For visual-translations this would return a Collective with {"locale": X, "query": Y} Individuals.
         Their spirits should be init-Y-X and init-Y for the Collective
@@ -48,54 +82,25 @@ class Community(models.Model):
         """
         return None
 
-    def get_collective_from_path(self, path):
-        """
-        Parse a path and return the collective that belongs to that path.
-        If a JSON path is specified after the hash, it will return a list of values present at that path.
-
-        :param path:
-        :return:
-        """
-        pass
-
-    def grow(self, config, *args, **kwargs):
+    def grow(self, *args, **kwargs):
         """
 
         :return:
 
-        - If enlightened property is set: exit
-        - Look for latest Growth
-        - Calls Growth.progress
-        - If no progress: exit
-        - Fetch results
-        - Create Collective or Individual from the results
-        - Call Community.after_PHASE (optional)
-        - If there is no new phase: exit
-        - Go to next phase
-        - Call Community.before_PHASE (optional)
-        - Start new growth
-        - If no more growth: set enlightened to True
+        - If there is no current_growth: spirit.setup_growth(); spirit.next_growth(); growth.begin()
+        - If current_growth.is_finished: exit
+        - Calls current_growth.finish which raises on not ready or error
+
+        - Call Community.error_PHASE_X(errors, output) for erroneous results
+        - Call Community.finish_PHASE (optional)
+        - current_growth = spirit.next_growth() under try statement
+        - If there is no next growth: self.set_kernel(); exit
+        - Call Community.begin_PHASE (optional)
+        - current_growth.begin()
+        - raise in progress
         """
         if self.enlightened:
             return
-
-    def create_growth(self, spirit_phase):
-        """
-        Creates a Growth based on spirit_phase and returns it.
-
-        :param spirit_phase:
-        :return: Growth
-        """
-        pass
-
-    @property
-    def kernel(self):
-        """
-        Returns the spirit of the Individual or Collective that is the base for results. Override this method in subclasses.
-
-        :return: None
-        """
-        return None
 
     def results(self, depth=None):
         """
@@ -117,4 +122,3 @@ class Community(models.Model):
 
     class Meta:
         abstract = True
-        unique_together = ('path', 'config')

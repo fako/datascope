@@ -36,7 +36,7 @@ class HttpResourceProcessor(object):
     def __init__(self, config):
         super(HttpResourceProcessor, self).__init__()
         assert isinstance(config, dict) and ("_resource" in config or "resource" in config), \
-            "HttpFetch expects a resource that it should fetch in the configuration."
+            "HttpResourceProcessor expects a resource that it should fetch in the configuration."
         self.config = config
 
     @staticmethod
@@ -50,8 +50,11 @@ class HttpResourceProcessor(object):
         # FEATURE: update session to use custom user agents when configured
         return link
 
+    def get_results(self, task_id):
+        pass
+
     #######################################################
-    # PUBLIC
+    # PRIVATE
     #######################################################
     # Celery tasks to fetch resources in background.
 

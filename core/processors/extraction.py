@@ -5,15 +5,27 @@ from copy import copy
 
 from jsonpath_rw import parse as jsonpath_parse
 
+from datascope.configuration import DEFAULT_CONFIGURATION
+from core.utils.configuration import ConfigurationProperty
 
 class ExtractProcessor(object):
 
-    def __init__(self, objective):
+    config = ConfigurationProperty(
+        storage_attribute="_config",
+        defaults=DEFAULT_CONFIGURATION,
+        private=["_objective"],
+        namespace="extract_processor"
+    )
+
+    def __init__(self, config):
         super(ExtractProcessor, self).__init__()
+        assert isinstance(config, dict) and ("_objective" in config or "objective" in config), \
+            "ExtractProcessor expects an objective to extract in the configuration."
+        self.config = config
         self._at = None
         self._context = {}
         self._objective = {}
-        self.load_objective(objective)
+        self.load_objective(self.config.objective)
 
     def load_objective(self, objective):
         assert isinstance(objective, dict), "An objective should be a dict."
@@ -28,6 +40,9 @@ class ExtractProcessor(object):
             "ExtractProcessor did not load elements to start with from its objective {}. " \
             "Make sure that '@' is specified".format(objective)
         assert self._objective, "No objectives loaded from objective {}".format(objective)
+
+    def extract_resource(self, resource):  # TODO: test
+        return self.extract(*resource.content)
 
     def extract(self, content_type, data):
         content_type_method = content_type.replace("/", "_")

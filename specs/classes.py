@@ -1,5 +1,3 @@
-# THINK: make it possible to store some of the context of responses inside Individuals.
-
 from collections import OrderedDict
 
 from core.models.organisms.community import Community
@@ -7,50 +5,72 @@ from core.models.organisms.community import Community
 
 class ImageTranslations(Community):
 
-    spirit = OrderedDict([
+    PUBLIC_CONFIG = {
+        "source_language": "en",
+        "$depth": 0
+    }
+
+    COMMUNITY_SPIRIT = OrderedDict([
         ("translation", {
             "process": "HttpResourceProcessor.fetch_mass",
             "config": {
-                "_resource": "WikiTranslate"
-            },
-            "errors": {
-                404: "translation_404"
+                "_resource": "WikiTranslate",
+                "_objective": {},
+                "source_language": "en"
             },
             "input": (
-                "Collective",
-                ("$.source", "$.target", "$.query"),
+                "Collective",  # leaves it to capture_initial_input to provide this
+                ("$.language", "$.target", "$.query"),
                 tuple()
-            ),  # leaves it to capture_initial_incoming to provide this
+            ),
+            "success": "ExtractProcessor.extract_resource",
+            "errors": {
+                404: "not_found"
+            },
             "schema": {},
-            "transformations": {},
             "output": "Collective",
         }),
         ("images", {
             "process": "HttpResourceProcessor.fetch_mass",
             "config": {
-                "_resource": "GoogleImages"
+                "_resource": "GoogleImages",
+                "_objective": {}
             },
+            "success": "ExtractProcessor.extract_resource",
             "errors": {},
             "input": (
-                "$.translation.outgoing",
+                "@translation",
                 ("$.word",),
                 tuple()
             ),
             "schema": {},
-            "transformations": {},
-            "outgoing": "Collective",
+            "output": "Collective",
             "actions": ["fetch_more_images"]
         })
     ])
 
-    def setup_translation(self, input_organism):
-        """
-        Should return a tuple in format of (tuple, dict) which will be passed directly into the specified process.
+    COMMUNITY_BODY = [
+        {
+            "process": "Expand.nested_organisms",
+            "config": {
+                "depth": 0,
+                "keys": ["images"]
+            }
+        }
+    ]
 
-        :param incoming:
+    def error_translation_not_found(self, errors, output):
+        pass
+
+    def set_kernel(self):
+        """
+        Add visualizations and the more_visualization to all translations
+
+        :param growth:
+        :param output:
         :return:
         """
-
+        pass
 
     def fetch_more_images(self, post_data):
         """
@@ -61,68 +81,69 @@ class ImageTranslations(Community):
         :param post_data:
         :return:
         """
-
-    @property
-    def kernel(self):
-        """
-
-        :return: spirit that is the base for results
-        """
-        return "translation"
-
-    def setup_visualization(self, incoming):
-        """
-        Should return a tuple in format of (tuple, dict) which will be passed directly into the specified process.
-
-        :param incoming:
-        :return:
-        """
-
-    def after_visualization(self, input_organism, output_organism):
-        """
-        Add visualizations and the more_visualization to all translations
-
-        :param growth:
-        :param output:
-        :return:
-        """
-        pass
-
-    def translation_404(self, resources):
         pass
 
 
 class PeopleSuggestions(Community):
+
+    PUBLIC_CONFIG = {}
+
     spirit = OrderedDict([
         ("person", {
-            "schema": {},
+            "process": "HttpResourceProcessor.fetch",
             "config": {
-                "_link": "WikiSearch"
+                "_resource": "WikiSearch",
+                "_objective": {},
+                "props": "categories"
             },
-            "process": "Retrieve",
-            "input": None,
+            "input": (
+                "Individual",  # leaves it to capture_initial_input to provide this
+                ("$.person",),
+                tuple()
+            ),
+            "success": "ExtractProcessor.extract_resource",
+            "errors": {
+                300: "multiple_choice",
+                404: "not_found"
+            },
+            "schema": {},
             "output": "Individual",
-
-        }),
-        ("categories", {
-            "schema": {},
-            "config": {
-                "_link": "WikiCategories"
-            },
-            "process": "Retrieve",
-            "input": "/ind/1/#$.title",
-            "output": "Collective"
         }),
         ("members", {
-            "schema": {},
+            "process": "HttpResourceProcessor.fetch_mass",
             "config": {
-                "_link": "WikiCategoryMembers"
+                "_resource": "WikiCategoryMembers",
+                "_objective": {}
             },
-            "process": "Retrieve",
-            "input": "/col/1/#$.title",
-            "output": "Collective"
+            "success": "ExtractProcessor.extract_resource",
+            "errors": {},
+            "input": (
+                "$.translation.output",
+                ("$.categories[*].title",),
+                tuple()
+            ),
+            "schema": {},
+            "output": "Collective",
         })
     ])
+
+    COMMUNITY_BODY = [
+        {
+            "process": "Rank.weights_in",
+            "config": {
+                "path": "$.categories",
+            }
+        }
+    ]
+
+    def error_person_not_found(self):
+        pass
+
+    def error_person_multiple_choice(self):
+        pass
+
+    def set_kernel(self):
+        pass
 
 
 class CityCelebrities(Community):
@@ -130,23 +151,25 @@ class CityCelebrities(Community):
         ("radius", {
             "process": "HttpResourceProcessor.fetch",
             "config": {
-                "_resource": ""
+                "_resource": "WikiGeoLocation",
+                "_objective": {}
             },
+            "success": "ExtractProcessor.extract_resource",
             "errors": {},
-            "input": ("Individual", ("$.latitude", "$.longitude",), tuple()),  # should be coords
+            "input": ("Individual", ("$.latitude", "$.longitude",), tuple()),
             "schema": {},
-            "transformations": {},
-            "output": "Collective"
+            "output": "Collective",
         }),
         ("backlinks", {
             "process": "HttpResourceProcessor.fetch_mass",
             "config": {
-                "_resouce": "WikiBacklinks",
+                "_resource": "WikiBacklinks",
+                "_objective": {}
             },
+            "success": "ExtractProcessor.extract_resource",
             "errors": {},
-            "input": ("$.radius.output", ("title",), tuple()),
+            "input": ("$.radius.output", ("$.title",), tuple()),
             "schema": {},
-            "transformations": {},
             "output": "Collective"
         }),
         ("people_filter", {
@@ -156,20 +179,22 @@ class CityCelebrities(Community):
                 "concat_args_with": ",",
                 "wdq_template": "ITEMS[{}] AND CLAIM[31:5] AND NOCLAIM[570]"
             },
+            "success": "ExtractProcessor.extract_resource",
             "errors": {},
-            "input": ("$.backlinks.output", ("wikidata",), tuple()),
+            "input": ("@backlinks", ("$.wikidata",), tuple()),
             "schema": {},
-            "transformations": {},
-            "output": "Individual"
+            "output": "Collective"
         }),
         ("people_text", {
             "process": "HttpResourceProcessor.fetch_mass",
             "config": {
                 "_resource": "WikiSearch",
-                "concat_with": ","
+                "concat_args_with": ",",
+                "_objective": {}
             },
+            "success": "ExtractProcessor.extract_resource",
             "errors": {},
-            "input": ("$.backlinks.output", ("id",), tuple()),
+            "input": ("@backlinks", ("id",), tuple()),
             "schema": {},
             "transformations": {},
             "output": "Collective"
@@ -178,8 +203,10 @@ class CityCelebrities(Community):
             "process": "HttpResourceProcessor.fetch_mass",
             "config": {
                 "_resource": "WikiSearch",
-                "concat_with": ","
+                "concat_with": ",",
+                "_objective": {}
             },
+            "success": "ExtractProcessor.extract_resource",
             "errors": {},
             "input": ("$.radius.output", ("id",), tuple()),
             "schema": {},
@@ -197,6 +224,9 @@ class CityCelebrities(Community):
 
         :return:
         """
+        pass
+
+    def set_kernel(self):
         pass
 
 
@@ -247,5 +277,21 @@ class PersonProfile(Community):
     ])
 
 
+class WikiNewsFeed(Community):
+    pass
+
+
 class FamousFlightDeaths(Community):
+    pass
+
+
+class CommunityPortal(Community):
+    pass
+
+
+class SynonymImages(Community):
+    pass
+
+
+class FindSimilar(Community):
     pass
