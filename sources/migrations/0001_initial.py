@@ -4,7 +4,6 @@ from __future__ import unicode_literals
 from django.db import models, migrations
 import jsonfield.fields
 import core.utils.configuration
-import core.models.organisms.protocols
 
 
 class Migration(migrations.Migration):
@@ -31,6 +30,6 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
-            bases=(models.Model, core.models.organisms.protocols.OrganismInputProtocol),
+            bases=(models.Model,),
         ),
     ]

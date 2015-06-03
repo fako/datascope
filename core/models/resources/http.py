@@ -17,12 +17,11 @@ from django.conf import settings
 import jsonfield
 
 from datascope.configuration import DEFAULT_CONFIGURATION
-from core.models.organisms.protocols import OrganismInputProtocol
 from core.utils import configuration
 from core.exceptions import DSHttpError50X, DSHttpError40X
 
 
-class HttpResource(models.Model, OrganismInputProtocol):
+class HttpResource(models.Model):
     # TODO: make sphinx friendly and doc all methods
     """
     A representation of how to fetch/submit data from/to a HTTP resource.
@@ -151,7 +150,7 @@ class HttpResource(models.Model, OrganismInputProtocol):
         return None, None
 
     @property
-    def query(self):
+    def meta(self):
         """
 
         :return: None

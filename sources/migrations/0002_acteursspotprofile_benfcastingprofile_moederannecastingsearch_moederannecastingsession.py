@@ -3,7 +3,6 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 import core.utils.configuration
-import core.models.organisms.protocols
 import jsonfield.fields
 
 
@@ -32,7 +31,7 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
-            bases=(models.Model, core.models.organisms.protocols.OrganismInputProtocol),
+            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='BenfCastingProfile',
@@ -52,7 +51,7 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
-            bases=(models.Model, core.models.organisms.protocols.OrganismInputProtocol),
+            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='MoederAnneCastingSearch',
@@ -72,7 +71,7 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
-            bases=(models.Model, core.models.organisms.protocols.OrganismInputProtocol),
+            bases=(models.Model,),
         ),
         migrations.CreateModel(
             name='MoederAnneCastingSession',
@@ -92,6 +91,6 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
-            bases=(models.Model, core.models.organisms.protocols.OrganismInputProtocol),
+            bases=(models.Model,),
         ),
     ]

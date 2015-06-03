@@ -335,25 +335,8 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertEqual(self.instance.uri, "localhost:8000/en/?q=test")
         self.assertEqual(self.instance.data_hash, "31ead60c9066eefb8011f3f68aed25d004d60957")
 
-    def test_query(self):
+    def test_meta(self):
         instance = self.model()
-        self.assertIsNone(instance.query)
+        self.assertIsNone(instance.meta)
         instance.get("new")
-        self.assertEqual(instance.query, "new")
-
-    def test_input_for_organism(self):
-        instance = self.model()
-        spirit, content_type, data = instance.input_for_organism
-        self.assertIsNone(spirit)
-        self.assertIsNone(content_type)
-        self.assertIsNone(data)
-        instance.get("new")
-        spirit, content_type, data = instance.input_for_organism
-        self.assertEqual(spirit, "new")
-        self.assertEqual(content_type, "application/json")
-        self.assertEqual(data, MOCK_DATA)
-        instance.post("new")
-        spirit, content_type, data = instance.input_for_organism
-        self.assertEqual(spirit, "new")
-        self.assertEqual(content_type, "application/json")
-        self.assertEqual(data, MOCK_DATA)
+        self.assertEqual(instance.meta, "new")

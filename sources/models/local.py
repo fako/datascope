@@ -92,16 +92,11 @@ class HttpResourceMock(HttpResource):
         return {"next": nxt}
 
     @property
-    def query(self):
+    def meta(self):
         try:
             return self.request["args"][1]
         except (KeyError, IndexError, TypeError):
             return None
-
-    @property
-    def input_for_organism(self):
-        content_type, data = self.content
-        return self.query, content_type, data
 
     def data(self, **kwargs):
         return {
