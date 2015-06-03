@@ -115,5 +115,7 @@ MockRequestsWithAgent = NonCallableMock(spec=requests)
 MockRequestsSendWithAgent = Mock(return_value=agent_response)
 MockRequestsWithAgent.send = MockRequestsSendWithAgent
 
-MockTask = Mock(spec=Task)
-MockTask.s = Mock(return_value=Task())
+MockTaskChain = Mock(spec=Task, id="task-id")
+MockTask = Mock(spec=Task, id="task-id", return_value=MockTaskChain)
+MockTask.attach_mock(MockTask, "s")
+MockTask.attach_mock(MockTask, "delay")

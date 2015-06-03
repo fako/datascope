@@ -1,15 +1,17 @@
 [
-{
+    {
     "fields": {
+        "output_id": 1,
         "task_id": null,
         "success": "ExtractProcessor.extract_from_resource",
         "process": "HttpResourceProcessor.fetch_mass",
-        "type": "test",
+        "type": "test_new",
         "state": "New",
-        "output": "Collective",
-        "input": "Collective",
+        "input_id": 1,
+        "input_type": 17,
+        "output_type": 18,
         "is_finished": false,
-        "config": "{'objective': {u'gotcha': u'$.dict'}, 'resource': u'HttpResourceMock'}"
+        "config": "{\"objective\": {\"gotcha\": \"$.dict\"}, \"resource\": \"HttpResourceMock\"}"
     },
     "model": "core.growth",
     "pk": 1

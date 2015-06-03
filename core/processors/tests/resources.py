@@ -29,9 +29,9 @@ class TestHttpResourceProcessorMixin(TestCase):
 
     def check_results(self, results, expected_length):
         self.assertEqual(len(results), expected_length)
-        for id in results:
-            self.assertIsInstance(id, six.integer_types)
-            self.assertGreater(id, 0)
+        for pk in results:
+            self.assertIsInstance(pk, six.integer_types)
+            self.assertGreater(pk, 0)
 
 
 class TestHttpResourceProcessor(TestHttpResourceProcessorMixin, TestCase):
@@ -41,6 +41,7 @@ class TestHttpResourceProcessor(TestHttpResourceProcessorMixin, TestCase):
         self.prc = HttpResourceProcessor(config=self.config.to_dict(protected=True, private=True))
         self.prc._send = MockTask
         self.prc._send_mass = MockTask
+        MockTask.reset_mock()
 
     def test_get_link(self):
         self.config.set_configuration({"test": "test"})
