@@ -17,7 +17,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('schema', jsonfield.fields.JSONField(default=None)),
-                ('spirit', models.CharField(default=None, max_length=255, db_index=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('modified_at', models.DateTimeField(auto_now=True)),
             ],
@@ -30,7 +29,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('schema', jsonfield.fields.JSONField(default=None)),
-                ('spirit', models.CharField(default=None, max_length=255, db_index=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('modified_at', models.DateTimeField(auto_now=True)),
                 ('properties', jsonfield.fields.JSONField()),
