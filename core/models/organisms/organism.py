@@ -27,7 +27,7 @@ class Organism(models.Model):
         raise NotImplementedError()
 
     @property
-    def url(self):
+    def url(self):  # TODO: implement?
         """
         TODO: Uses Django reverse
 

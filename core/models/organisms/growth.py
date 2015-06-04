@@ -70,7 +70,7 @@ class Growth(models.Model):
         self.state = GrowthState.PROCESSING
         self.save()
 
-    def finish(self):
+    def finish(self):  # TODO: test
         """
 
         :return: the output Organism and unprocessed errors

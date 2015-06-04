@@ -51,7 +51,7 @@ class HttpResourceProcessor(object):
         # FEATURE: update session to use custom user agents when configured
         return link
 
-    def get_results(self, result_id):
+    def get_results(self, result_id):  # TODO: test
         task = AsyncResult(result_id)
         if not task.ready():
             raise DSProcessUnfinished()

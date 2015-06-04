@@ -13,7 +13,6 @@ class IndividualInline(admin.StackedInline):
     extra = 0
 
 
-
 class OrganismAdmin(admin.ModelAdmin):
     list_display = ['__str__', 'pretty_content', 'created_at', 'modified_at']
 
