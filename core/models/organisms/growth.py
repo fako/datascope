@@ -24,6 +24,11 @@ GROWTH_STATE_CHOICES = [
 ]
 
 
+CONTRIBUTE_TYPE_CHOICES = [
+    ("append", "Add contributions to the output.")
+]
+
+
 class Growth(models.Model):
 
     #community = models.ForeignKey(Community)
@@ -32,7 +37,8 @@ class Growth(models.Model):
     config = ConfigurationField()
 
     process = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST)
-    success = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST)
+    contribute = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST, null=True, default=None)
+    contribute_type = models.CharField(max_length=255, choices=CONTRIBUTE_TYPE_CHOICES)
 
     input = GenericForeignKey(ct_field="input_type", fk_field="input_id")
     input_type = models.ForeignKey(ContentType, related_name="+")
@@ -41,20 +47,9 @@ class Growth(models.Model):
     output_type = models.ForeignKey(ContentType, related_name="+")
     output_id = models.PositiveIntegerField()
 
-    task_id = models.CharField(max_length=255, null=True, blank=True)
+    result_id = models.CharField(max_length=255, null=True, blank=True)
     state = models.CharField(max_length=255, choices=GROWTH_STATE_CHOICES, default=GrowthState.NEW, db_index=True)
     is_finished = models.BooleanField(default=False, db_index=True)
-
-    @property
-    def task(self):
-        if not self.task_id:
-            raise ValueError("Growth does not have a task set")
-        else:
-            return AsyncResult(self.task_id)
-    @task.setter
-    def task(self, task):
-        self.task_id = task.id
-        self.status = self.state = GrowthState.PROCESSING
 
     def begin(self, *args, **kwargs):
         """
