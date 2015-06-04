@@ -187,7 +187,10 @@ class ConfigurationProperty(object):
     def __set__(self, obj, new):
         if self._storage_attribute not in obj.__dict__:
             obj.__dict__[self._storage_attribute] = self._config_instance
-        obj.__dict__[self._storage_attribute].set_configuration(new)
+        if isinstance(new, ConfigurationType):  # TODO: test
+            obj.__dict__[self._storage_attribute] = new
+        else:
+            obj.__dict__[self._storage_attribute].set_configuration(new)
 
 
 class ConfigurationField(fields.TextField):

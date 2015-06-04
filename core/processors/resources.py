@@ -51,8 +51,17 @@ class HttpResourceProcessor(object):
         # FEATURE: update session to use custom user agents when configured
         return link
 
-    def get_results(self, task_id):
-        pass
+    def get_results(self, result_id):
+        task = AsyncResult(result_id)
+        if not task.ready():
+            raise DSProcessUnfinished()
+        if task.status != TaskStates.SUCCESS:
+            raise DSProcessError()
+        scc_ids, err_ids = task.result
+        Resource = django_apps.get_model("sources", self.config.resource)
+        scc = Resource.objects.filter(id__in=scc_ids)
+        err = Resource.objects.filter(id__in=err_ids)
+        return scc, err
 
     #######################################################
     # PRIVATE

@@ -4,8 +4,6 @@ import six
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 
-from celery.result import AsyncResult
-
 from datascope.configuration import PROCESS_CHOICE_LIST
 from core.models.organisms.community import Community
 import core.processors
@@ -24,8 +22,11 @@ GROWTH_STATE_CHOICES = [
 ]
 
 
+class ContributeType(object):
+    APPEND = "Append"
+
 CONTRIBUTE_TYPE_CHOICES = [
-    ("append", "Add contributions to the output.")
+    (attr, value) for attr, value in six.iteritems(ContributeType.__dict__) if not attr.startswith("_")
 ]
 
 
@@ -37,7 +38,7 @@ class Growth(models.Model):
     config = ConfigurationField()
 
     process = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST)
-    contribute = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST, null=True, default=None)
+    contribute = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST)
     contribute_type = models.CharField(max_length=255, choices=CONTRIBUTE_TYPE_CHOICES)
 
     input = GenericForeignKey(ct_field="input_type", fk_field="input_id")
@@ -64,19 +65,34 @@ class Growth(models.Model):
 
         processor, method = self.prepare_process(self.process)
         task = getattr(processor, method)
-        self.task = task.delay(*args, **kwargs)
+        result = task.delay(*args, **kwargs)
+        self.result_id = result.id
+        self.state = GrowthState.PROCESSING
         self.save()
 
     def finish(self):
         """
 
         :return: the output Organism and unprocessed errors
-        - Revives the process and calls get_results
-        - Runs the success process for every success
-        - Fills output with results from success process
         - Returns the output as well as the (unprocessed) errors
         """
-        pass
+        processor, method = self.prepare_process(self.process)
+        successes, errors = processor.get_results(self.result_id)
+        if self.contribute_type == ContributeType.APPEND:
+            self.append_to_output(successes)
+        else:
+            raise AssertionError("Growth.finish did not act on contribute_type {}".format(self.contribute_type))
+        self.state = GrowthState.FINISHED
+        self.save()
+        return self.output, errors
+
+    def append_to_output(self, contributions):
+        contribute_processor, contribute_method = self.prepare_process(self.contribute)
+        results = []
+        for contribution in contributions:
+            callback = getattr(contribute_processor, contribute_method)
+            results += callback(contribution)
+        self.output.update(results)
 
     def prepare_process(self, process):
         """
