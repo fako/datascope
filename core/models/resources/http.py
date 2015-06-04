@@ -13,6 +13,8 @@ from bs4 import BeautifulSoup
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.conf import settings
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 
 import jsonfield
 
@@ -53,6 +55,11 @@ class HttpResource(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
     purge_at = models.DateTimeField(null=True, blank=True)
+
+    # Retention
+    retainer = GenericForeignKey(ct_field="retainer_type", fk_field="retainer_id")
+    retainer_type = models.ForeignKey(ContentType, null=True)
+    retainer_id = models.PositiveIntegerField(null=True)
 
     # Class constants that determine behavior
     URI_TEMPLATE = ""
@@ -156,6 +163,10 @@ class HttpResource(models.Model):
         :return: None
         """
         return None
+
+    def retain(self, retainer):
+        self.retainer = retainer
+        self.save()
 
     #######################################################
     # CREATE REQUEST

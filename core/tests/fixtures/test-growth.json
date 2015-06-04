@@ -19,12 +19,75 @@
 },
 {
     "fields": {
+        "output_id": 1,
+        "result_id": null,
+        "contribute": "ExtractProcessor.extract_from_resource",
+        "contribute_type": "Append",
+        "process": "HttpResourceProcessor.fetch_mass",
+        "type": "test_processing",
+        "state": "Processing",
+        "input_id": 1,
+        "input_type": 17,
+        "output_type": 18,
+        "is_finished": false,
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}"
+    },
+    "model": "core.growth",
+    "pk": 2
+},
+{
+    "fields": {
+        "output_id": 2,
+        "result_id": null,
+        "contribute": "ExtractProcessor.extract_from_resource",
+        "contribute_type": "Append",
+        "process": "HttpResourceProcessor.fetch_mass",
+        "type": "test_finished",
+        "state": "Finished",
+        "input_id": 1,
+        "input_type": 17,
+        "output_type": 18,
+        "is_finished": true,
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}"
+    },
+    "model": "core.growth",
+    "pk": 3
+},
+{
+    "fields": {
+        "output_id": 1,
+        "result_id": null,
+        "contribute": "ExtractProcessor.extract_from_resource",
+        "contribute_type": "Append",
+        "process": "HttpResourceProcessor.fetch_mass",
+        "type": "test_partial",
+        "state": "Partial",
+        "input_id": 1,
+        "input_type": 17,
+        "output_type": 18,
+        "is_finished": false,
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}"
+    },
+    "model": "core.growth",
+    "pk": 4
+},
+{
+    "fields": {
         "created_at": "2015-06-04T11:31:27.940",
         "modified_at": "2015-06-04T11:34:06.960",
         "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}"
     },
     "model": "core.collective",
     "pk": 1
+},
+{
+    "fields": {
+        "created_at": "2015-06-04T11:31:27.940",
+        "modified_at": "2015-06-04T11:34:06.960",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}"
+    },
+    "model": "core.collective",
+    "pk": 2
 },
 {
     "fields": {
@@ -36,6 +99,17 @@
     },
     "model": "core.individual",
     "pk": 1
+},
+{
+    "fields": {
+        "properties": "{\"context\":\"nested value\",\"value\":\"nested value 0\"}",
+        "collective": 2,
+        "modified_at": "2015-06-02T10:01:47.572",
+        "created_at": "2015-06-02T10:00:20.247",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}"
+    },
+    "model": "core.individual",
+    "pk": 2
 },
 {
     "fields": {
@@ -100,5 +174,21 @@
     },
     "model": "sources.httpresourcemock",
     "pk": 4
+},
+{
+    "fields": {
+        "body": "{\"error\": \"failure\"}",
+        "status": 502,
+        "head": "{\"content-type\":\"application/json\"}",
+        "modified_at": "2015-05-12T18:45:22.105",
+        "created_at": "2015-05-12T18:45:22.105",
+        "request": "{\"url\":\"http://localhost:8000/en/?q=fail2\",\"args\":[\"en\",\"fail2\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{},\"data\":{},\"method\":\"get\"}",
+        "uri": "localhost:8000/en/?q=fail2",
+        "data_hash": "",
+        "config": "{}",
+        "purge_at": null
+    },
+    "model": "sources.httpresourcemock",
+    "pk": 5
 }
 ]

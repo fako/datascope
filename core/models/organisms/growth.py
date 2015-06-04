@@ -1,19 +1,22 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 import six
 
+from django.apps import apps as django_apps
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 
+import core.processors
 from datascope.configuration import PROCESS_CHOICE_LIST
 from core.models.organisms.community import Community
-import core.processors
 from core.utils.configuration import ConfigurationField
+from core.exceptions import DSProcessError
 
 
 class GrowthState(object):
     NEW = "New"
     PROCESSING = "Processing"
     FINISHED = "Finished"
+    PARTIAL = "Partial"
     ERROR = "Error"
     RETRY = "Retry"
 
@@ -70,21 +73,31 @@ class Growth(models.Model):
         self.state = GrowthState.PROCESSING
         self.save()
 
-    def finish(self):  # TODO: test
+    def finish(self):
         """
 
         :return: the output Organism and unprocessed errors
-        - Returns the output as well as the (unprocessed) errors
         """
-        processor, method = self.prepare_process(self.process)
-        successes, errors = processor.get_results(self.result_id)
-        if self.contribute_type == ContributeType.APPEND:
-            self.append_to_output(successes)
-        else:
-            raise AssertionError("Growth.finish did not act on contribute_type {}".format(self.contribute_type))
-        self.state = GrowthState.FINISHED
-        self.save()
-        return self.output, errors
+        assert self.state in [GrowthState.PROCESSING, GrowthState.FINISHED, GrowthState.PARTIAL], \
+            "Can't finish a growth that is in state {}".format(self.state)
+
+        if self.state in [GrowthState.PROCESSING]:
+            processor, method = self.prepare_process(self.process)
+            try:
+                successes, errors = processor.get_results(self.result_id)
+            except DSProcessError as exc:
+                self.state = GrowthState.ERROR
+                self.save()
+                raise exc  # TODO: reraise?
+            if self.contribute_type == ContributeType.APPEND:
+                self.append_to_output(successes)
+            else:
+                raise AssertionError("Growth.finish did not act on contribute_type {}".format(self.contribute_type))
+            for error in errors:
+                error.retain(self)
+            self.state = GrowthState.FINISHED if not len(errors) else GrowthState.PARTIAL
+            self.save()
+        return self.output, self.resources
 
     def append_to_output(self, contributions):
         contribute_processor, contribute_method = self.prepare_process(self.contribute)
@@ -116,3 +129,9 @@ class Growth(models.Model):
     def save(self, *args, **kwargs):
         self.is_finished = self.state == GrowthState.FINISHED
         super(Growth, self).save(*args, **kwargs)
+
+    @property
+    def resources(self):
+        Resource = django_apps.get_model("sources", self.config.resource)
+        Type = ContentType.objects.get_for_model(self)
+        return Resource.objects.filter(retainer_type__pk=Type.id, retainer_id=self.id)

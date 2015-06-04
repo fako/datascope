@@ -2,7 +2,6 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 # noinspection PyUnresolvedReferences
 from six.moves import zip
 
-
 from time import sleep
 
 import requests
@@ -51,16 +50,19 @@ class HttpResourceProcessor(object):
         # FEATURE: update session to use custom user agents when configured
         return link
 
-    def get_results(self, result_id):  # TODO: test
-        task = AsyncResult(result_id)
-        if not task.ready():
-            raise DSProcessUnfinished()
-        if task.status != TaskStates.SUCCESS:
-            raise DSProcessError()
-        scc_ids, err_ids = task.result
+    def get_resources_by_ids(self, ids):  # TODO: test
         Resource = django_apps.get_model("sources", self.config.resource)
-        scc = Resource.objects.filter(id__in=scc_ids)
-        err = Resource.objects.filter(id__in=err_ids)
+        return Resource.objects.filter(id__in=ids)
+
+    def get_results(self, result_id):  # TODO: test
+        async_result = AsyncResult(result_id)
+        if not async_result.ready():
+            raise DSProcessUnfinished("Result with id {} is not ready.".format(result_id))
+        if async_result.status != TaskStates.SUCCESS:
+            raise DSProcessError("An error occurred during background processing.")  # TODO: reraise with celery trace?
+        scc_ids, err_ids = async_result.result
+        scc = self.get_resources_by_ids(scc_ids)
+        err = self.get_resources_by_ids(err_ids)
         return scc, err
 
     #######################################################
