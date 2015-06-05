@@ -31,6 +31,8 @@ INSTALLED_APPS = (
     'legacy',
 
     'debug_toolbar',  # TODO: refactor
+
+    'wiki_news',
 )
 
 # Environment specific settings
