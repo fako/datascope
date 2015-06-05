@@ -5,8 +5,7 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 
 import core.processors
-from datascope.configuration import PROCESS_CHOICE_LIST
-from core.models.organisms.community import Community
+from datascope.configuration import PROCESS_CHOICE_LIST, DEFAULT_CONFIGURATION
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
 from core.exceptions import DSProcessError
@@ -35,18 +34,24 @@ CONTRIBUTE_TYPE_CHOICES = [
 
 class Growth(models.Model):
 
-    #community = models.ForeignKey(Community)
+    community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
+    community_type = models.ForeignKey(ContentType, related_name="+")
+    community_id = models.PositiveIntegerField()
 
     type = models.CharField(max_length=255)
-    config = ConfigurationField()
+    config = ConfigurationField(
+        config_defaults=DEFAULT_CONFIGURATION,
+        namespace="growth",
+        private=["args", "kwargs"]
+    )
 
     process = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST)
     contribute = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST)
     contribute_type = models.CharField(max_length=255, choices=CONTRIBUTE_TYPE_CHOICES)
 
     input = GenericForeignKey(ct_field="input_type", fk_field="input_id")
-    input_type = models.ForeignKey(ContentType, related_name="+")
-    input_id = models.PositiveIntegerField()
+    input_type = models.ForeignKey(ContentType, related_name="+", null=True)
+    input_id = models.PositiveIntegerField(null=True)
     output = GenericForeignKey(ct_field="output_type", fk_field="output_id")
     output_type = models.ForeignKey(ContentType, related_name="+")
     output_id = models.PositiveIntegerField()

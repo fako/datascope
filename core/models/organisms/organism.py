@@ -2,6 +2,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 from django.utils.encoding import python_2_unicode_compatible
 
 from django.db import models
+from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 
 from jsonfield import JSONField
 
@@ -9,7 +10,10 @@ from jsonfield import JSONField
 @python_2_unicode_compatible
 class Organism(models.Model):
 
-    #community = models.ForeignKey('Community')
+    community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
+    community_type = models.ForeignKey(ContentType, related_name="+")
+    community_id = models.PositiveIntegerField()
+
     schema = JSONField(default=None, null=False, blank=False)  # BUG: schema does not throw IntegrityError on None
 
     created_at = models.DateTimeField(auto_now_add=True)

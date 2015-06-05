@@ -3,11 +3,12 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 from collections import OrderedDict
 
 from django.db import models
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, ContentType
 
-import jsonfield
-
+from datascope.configuration import DEFAULT_CONFIGURATION
+from core.models.organisms import Growth, Collective, Individual
 from core.models.user import DataScopeUser
+from core.utils.configuration import ConfigurationField
 
 
 class CommunityManager(models.Manager):
@@ -18,32 +19,27 @@ class CommunityManager(models.Manager):
         )
 
 
-class CommunitySpirit(object):
-    def setup_growth(self):
-        """
-        Will create all Growth objects based on the community_spirit
-        """
-        pass
 
-    def next_growth(self):
-        """
-        Returns the first is_finished=False Growth on the community
-        """
-        pass
 
 
 class Community(models.Model):
     """
 
     """
-    user = models.ForeignKey(DataScopeUser, null=True)
-    predecessor = models.ForeignKey('Community', null=True)
+    #user = models.ForeignKey(DataScopeUser, null=True)
+    #predecessor = models.ForeignKey('Community', null=True)
 
-    config = jsonfield.JSONField(db_index=True)  # TODO: should become a ConfigurationField
+    config = ConfigurationField(
+        config_defaults=DEFAULT_CONFIGURATION
+    )
+
+    growth_set = GenericRelation(Growth, content_type_field="community_type", object_id_field="community_id")
+    collective_set = GenericRelation(Collective, content_type_field="community_type", object_id_field="community_id")
+    individual_set = GenericRelation(Individual, content_type_field="community_type", object_id_field="community_id")
 
     current_growth = models.ForeignKey('Growth', null=True)
     kernel = GenericForeignKey(ct_field="kernel_type", fk_field="kernel_id")
-    kernel_type = models.CharField(max_length=255, null=True)
+    kernel_type = models.ForeignKey(ContentType, null=True)
     kernel_id = models.PositiveIntegerField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -62,6 +58,18 @@ class Community(models.Model):
         return None
     @spirit.setter
     def spirit(self, community_spirit):
+        pass
+
+    def setup_growth(self):
+        """
+        Will create all Growth objects based on the community_spirit
+        """
+        pass
+
+    def next_growth(self):
+        """
+        Returns the first is_finished=False Growth on the community
+        """
         pass
 
     def set_kernel(self):
