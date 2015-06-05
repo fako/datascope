@@ -4,7 +4,7 @@ import json
 
 from django.contrib import admin
 
-from core.models.organisms import Individual
+from core.models.organisms import Individual, Growth
 
 
 class IndividualInline(admin.StackedInline):
@@ -24,3 +24,17 @@ class OrganismAdmin(admin.ModelAdmin):
 class CollectiveAdmin(OrganismAdmin):
     inlines = [IndividualInline]
 
+
+class GrowthInline(admin.StackedInline):
+    model = Growth
+    fields = ("type, state, config",)
+    extra = 0
+
+
+class GrowthAdmin(admin.ModelAdmin):
+    list_display = ["type", "state", "config"]
+
+
+class CommunityAdmin(admin.ModelAdmin):
+    list_display = ["spirit", "state", "views", "config"]
+    inlines = [GrowthInline]

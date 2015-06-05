@@ -1,7 +1,7 @@
 from django.contrib import admin
 
 from .organisms import OrganismAdmin, CollectiveAdmin
-from core.models.organisms import Individual, Collective
+from core.models.organisms import Individual, Collective, Growth
 
 
 admin.site.register(Individual, OrganismAdmin)
