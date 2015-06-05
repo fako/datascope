@@ -4,7 +4,7 @@ from core.models.organisms.community import Community
 
 
 class WikiNewsCommunity(Community):
-    
+
     COMMUNITY_SPIRIT = OrderedDict([
         ("wikipedia",  {
             "process": "HttpResourceProcessor.fetch_mass",

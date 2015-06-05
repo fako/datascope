@@ -37,6 +37,7 @@ class Collective(Organism):
             pk = data.pop("ds_id", None)
             if pk is None:
                 individual = self.individual_set.create(
+                    community=self.community,
                     schema=self.schema,
                     properties=data
                 )

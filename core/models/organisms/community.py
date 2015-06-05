@@ -1,14 +1,18 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
+import six
 
 from collections import OrderedDict
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, ContentType
+from django.core.exceptions import ObjectDoesNotExist
 
 from datascope.configuration import DEFAULT_CONFIGURATION
-from core.models.organisms import Growth, Collective, Individual
+from core.models.organisms import Growth, Collective, Individual, Organism
 from core.models.user import DataScopeUser
 from core.utils.configuration import ConfigurationField
+from core.utils.helpers import get_any_model
+from core.exceptions import DSProcessUnfinished
 
 
 class CommunityManager(models.Manager):
@@ -17,9 +21,6 @@ class CommunityManager(models.Manager):
         super(CommunityManager, self).get_queryset(*args, **kwargs).select_related(
             "current_growth"
         )
-
-
-
 
 
 class Community(models.Model):
@@ -60,17 +61,70 @@ class Community(models.Model):
     def spirit(self, community_spirit):
         pass
 
+    # def get_last_for_phase(self, phase, key):
+    #     result_raw = self.COMMUNITY_SPIRIT[phase][key]
+    #     if result_raw.startswith("@"):
+    #         return self.get_last_for_phase(result_raw[1:], "output")
+    #     elif result_raw in ["Individual", "Collective"]:
+    #         try:
+    #             growth = self.growth_set.filter(type=phase).last()
+    #             return getattr(growth, key)
+    #         except ObjectDoesNotExist:
+    #             return result_raw
+    #     else:
+    #         return result_raw
+
+    def call_finish_callback(self, phase, output, errors):
+        callback_name = "finish_" + phase
+        callback = getattr(self, callback_name, None)
+        if callback is not None and callable(callback):
+            callback(output, errors)
+
+    def call_begin_callback(self, phase, output, errors):
+        callback_name = "begin_" + phase
+        callback = getattr(self, callback_name, None)
+        if callback is not None and callable(callback):
+            callback(output, errors)
+
+    def create_organism(self, organism_type, schema):
+        model = get_any_model(organism_type)
+        org = model(community=self, schema=schema)
+        org.save()
+        return org
+
     def setup_growth(self):
         """
         Will create all Growth objects based on the community_spirit
         """
-        pass
+        for growth_type, growth_config in six.iteritems(self.COMMUNITY_SPIRIT):
+            sch = growth_config["schema"]
+            cnf = growth_config["config"]
+            prc = growth_config["process"]
+            cont, con = growth_config["contribute"].split(":")
+            inp = growth_config["input"]
+            out = growth_config["output"]
+            if inp is not None and inp.startswith("@"):
+                inp = self.growth_set.filter(type=growth_type).last().input
+            if out.startswith("@"):
+                out = self.growth_set.filter(type=growth_type).last().output
+            if inp in ["Individual", "Collective"]:
+                inp = self.create_organism(inp, sch)
+            if out in ["Individual", "Collective"]:
+                out = self.create_organism(out, sch)
+            growth = Growth(
+                community=self,
+                type=growth_type,
+                config=cnf,
+                process=prc,
+                contribute=con,
+                contribute_type=cont,
+                input=inp,
+                output=out
+            )
+            growth.save()
 
     def next_growth(self):
-        """
-        Returns the first is_finished=False Growth on the community
-        """
-        pass
+        return self.growth_set.filter(is_finished=False).first()
 
     def set_kernel(self):
         """
@@ -90,25 +144,29 @@ class Community(models.Model):
         """
         return None
 
-    def grow(self, *args, **kwargs):
+    def grow(self):
         """
 
         :return:
-
-        - If there is no current_growth: spirit.setup_growth(); spirit.next_growth(); growth.begin()
-        - If current_growth.is_finished: exit
-        - Calls current_growth.finish which raises on not ready or error
-
-        - Call Community.error_PHASE_X(errors, output) for erroneous results
-        - Call Community.finish_PHASE (optional)
-        - current_growth = spirit.next_growth() under try statement
-        - If there is no next growth: self.set_kernel(); exit
-        - Call Community.begin_PHASE (optional)
-        - current_growth.begin()
-        - raise in progress
         """
-        if self.enlightened:
+        if self.current_growth is None:
+            self.setup_growth()
+            self.current_growth = self.next_growth()
+            self.call_begin_callback()
+            self.current_growth.begin()
+        if self.current_growth.is_finished():
             return
+
+        while True:
+            output, errors = self.current_growth.finish()  # will raise when Growth is not finished
+            self.call_finish_callback(self.current_growth.type, output, errors)
+            try:
+                self.current_growth = self.next_growth()
+            except Growth.DoesNotExist:
+                self.set_kernel()
+                return
+            self.call_begin_callback()
+            self.current_growth.begin()
 
     def results(self, depth=None):
         """
