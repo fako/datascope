@@ -16,6 +16,8 @@ class Migration(migrations.Migration):
             name='Collective',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('community_type', models.ForeignKey(related_name='+', to='contenttypes.ContentType')),
+                ('community_id', models.PositiveIntegerField()),
                 ('schema', jsonfield.fields.JSONField(default=None)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('modified_at', models.DateTimeField(auto_now=True)),
@@ -28,10 +30,12 @@ class Migration(migrations.Migration):
             name='Individual',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('community_type', models.ForeignKey(related_name='+', to='contenttypes.ContentType')),
+                ('community_id', models.PositiveIntegerField()),
                 ('schema', jsonfield.fields.JSONField(default=None)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('modified_at', models.DateTimeField(auto_now=True)),
-                ('properties', jsonfield.fields.JSONField()),
+                ('properties', jsonfield.fields.JSONField(default={})),
                 ('collective', models.ForeignKey(to='core.Collective', null=True)),
             ],
             options={

@@ -17,6 +17,8 @@ class Migration(migrations.Migration):
             name='Growth',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('community_type', models.ForeignKey(related_name='+', to='contenttypes.ContentType')),
+                ('community_id', models.PositiveIntegerField()),
                 ('type', models.CharField(max_length=255)),
                 ('config', core.utils.configuration.ConfigurationField(default={})),
                 ('process', models.CharField(max_length=255, choices=[('HttpResourceProcessor.fetch', 'Fetch content from HTTP resource'), ('HttpResourceProcessor.fetch_mass', 'Fetch content from multiple HTTP resources')])),

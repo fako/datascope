@@ -15,7 +15,7 @@ from core.models.organisms import Organism
 class Individual(Organism):
 
     collective = models.ForeignKey('Collective', null=True)
-    properties = jsonfield.JSONField()
+    properties = jsonfield.JSONField(default={})
 
     def __getitem__(self, item):
         return self.properties[item]
@@ -34,17 +34,12 @@ class Individual(Organism):
                 "An Individual can only work with a dict as data and got {} instead".format(type(data))
             )
         pk = data.pop("ds_id", None)
-        spirit = data.pop("ds_spirit", "")
 
         try:
             jsonschema.validate(data, schema)
         except SchemaValidationError as exc:
             raise ValidationError(exc)
 
-        if spirit and not isinstance(spirit, six.string_types):
-            raise ValidationError("The spirit of an individual needs to be a string not {}.".format(type(spirit)))
-        elif spirit:
-            data["ds_spirit"] = spirit
         if pk and not isinstance(pk, six.integer_types):
             raise ValidationError("The id of an individual needs to be an integer not {}.".format(type(spirit)))
         elif pk:
