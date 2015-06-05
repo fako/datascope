@@ -192,7 +192,7 @@ class HttpResource(models.Model):
         url = URLObject(url_template.format(*args))
         params = url.query.dict
         params.update(self.parameters())
-        url.query.set_params(params)
+        url = url.set_query_params(params)
         return unicode(url)
 
     def headers(self):

@@ -222,18 +222,19 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         }
 
     def assert_call_args_get(self, call_args, term):
-        expected_url = "http://localhost:8000/en/?q={}&key=oehhh&auth=1".format(term)
+        expected_url = "http://localhost:8000/en/?q={}&key=oehhh&auth=1&param=1".format(term)
         args, kwargs = call_args
         preq = args[0]
         self.assertTrue(preq.url.startswith("http://localhost:8000/en/?"))
         self.assertIn("q={}".format(term), preq.url)
         self.assertIn("key=oehhh", preq.url)
         self.assertIn("auth=1", preq.url)
+        self.assertIn("param=1", preq.url)
         self.assertEqual(len(expected_url), len(preq.url))
         self.assertEqual(preq.headers, {"Accept": "application/json"})
 
     def assert_call_args_post(self, call_args, term):
-        expected_url = "http://localhost:8000/en/?q={}&key=oehhh&auth=1".format(term)
+        expected_url = "http://localhost:8000/en/?q={}&key=oehhh&auth=1&param=1".format(term)
         expected_body = "test={}".format(term)
         expected_length = len(expected_body)
         args, kwargs = call_args
@@ -242,6 +243,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertIn("q={}".format(term), preq.url)
         self.assertIn("key=oehhh", preq.url)
         self.assertIn("auth=1", preq.url)
+        self.assertIn("param=1", preq.url)
         self.assertEqual(len(expected_url), len(preq.url))
         self.assertEqual(preq.headers, {'Content-Length': str(expected_length), 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json'})
         self.assertEqual(preq.body, expected_body)
