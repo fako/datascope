@@ -5,3 +5,4 @@ from core.processors.tests.resources import (TestHttpResourceProcessor, TestHttp
 from core.processors.tests.extraction import TestExtractProcessorHTML
 
 from core.models.organisms.tests.growth import TestGrowth
+from core.models.resources.tests.http import TestHttpResourceMock

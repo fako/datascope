@@ -8,8 +8,9 @@ from django.utils import six
 from datascope.configuration import MOCK_CONFIGURATION
 from core.processors.resources import HttpResourceProcessor
 from core.utils.configuration import ConfigurationType
-from core.tests.mocks import MockRequestsWithAgent, MockRequests, MockTask
-from sources.models.local import HttpResourceMock
+from core.tests.mocks.requests import MockRequestsWithAgent, MockRequests
+from core.tests.mocks.celery import MockTask
+from core.tests.mocks.http import HttpResourceMock
 
 
 class TestHttpResourceProcessorMixin(TestCase):

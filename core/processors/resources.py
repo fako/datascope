@@ -6,13 +6,12 @@ from time import sleep
 
 import requests
 
-from django.apps import apps as django_apps
-
 from celery import current_app as app
 from celery.result import AsyncResult, states as TaskStates
 
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.utils.configuration import ConfigurationProperty, ConfigurationType, load_config
+from core.utils.helpers import get_any_model
 from core.exceptions import DSHttpResourceException, DSProcessUnfinished, DSProcessError
 
 
@@ -42,7 +41,7 @@ class HttpResourceProcessor(object):
     @staticmethod
     def get_link(config, session=None):
         assert isinstance(config, ConfigurationType), "get_link expects a fully prepared ConfigurationType for config"
-        Resource = django_apps.get_model("sources", config.resource)
+        Resource = get_any_model(config.resource)
         link = Resource(config=config.to_dict(protected=True))
         if session is not None:
             link.session = session
@@ -51,7 +50,7 @@ class HttpResourceProcessor(object):
         return link
 
     def get_resources_by_ids(self, ids):  # TODO: test
-        Resource = django_apps.get_model("sources", self.config.resource)
+        Resource = get_any_model(self.config.resource)
         return Resource.objects.filter(id__in=ids)
 
     def get_results(self, result_id):  # TODO: test

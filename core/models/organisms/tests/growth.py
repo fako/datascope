@@ -7,10 +7,10 @@ from django.test import TestCase
 
 from core.models.organisms.growth import Growth, GrowthState
 from core.processors.resources import HttpResourceProcessor
-from core.tests.mocks import (MockTask, MockAsyncResultSuccess, MockAsyncResultPartial,
-                              MockAsyncResultError, MockAsyncResultWaiting)
+from core.tests.mocks.celery import (MockTask, MockAsyncResultSuccess, MockAsyncResultPartial,
+                                    MockAsyncResultError, MockAsyncResultWaiting)
 from core.exceptions import DSProcessError, DSProcessUnfinished
-from sources.models.local import HttpResourceMock
+from core.tests.mocks.http import HttpResourceMock
 
 
 class TestGrowth(TestCase):

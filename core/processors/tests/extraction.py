@@ -1,14 +1,12 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
-from copy import copy
-
 from bs4 import BeautifulSoup
 from mock import Mock
 
 from django.test import TestCase
 
 from core.processors.extraction import ExtractProcessor
-from core.tests.mocks import MOCK_HTML, MOCK_SCRAPE_DATA, MOCK_DATA_WITH_RECORDS, MOCK_JSON_DATA
+from core.tests.mocks.data import MOCK_HTML, MOCK_SCRAPE_DATA, MOCK_DATA_WITH_RECORDS, MOCK_JSON_DATA
 
 
 class TestExtractProcessorHTML(TestCase):

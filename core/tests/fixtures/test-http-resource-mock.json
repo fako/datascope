@@ -12,7 +12,7 @@
         "config": "{}",
         "purge_at": null
     },
-    "model": "sources.httpresourcemock",
+    "model": "core.httpresourcemock",
     "pk": 1
 },
 {
@@ -28,7 +28,7 @@
         "config": "{}",
         "purge_at": null
     },
-    "model": "sources.httpresourcemock",
+    "model": "core.httpresourcemock",
     "pk": 2
 },
 {
@@ -44,7 +44,7 @@
         "config": "{}",
         "purge_at": null
     },
-    "model": "sources.httpresourcemock",
+    "model": "core.httpresourcemock",
     "pk": 3
 },
 {
@@ -60,7 +60,7 @@
         "config": "{}",
         "purge_at": null
     },
-    "model": "sources.httpresourcemock",
+    "model": "core.httpresourcemock",
     "pk": 4
 },
 {
@@ -76,7 +76,7 @@
         "config": "{}",
         "purge_at": null
     },
-    "model": "sources.httpresourcemock",
+    "model": "core.httpresourcemock",
     "pk": 5
 },
 {
@@ -92,7 +92,7 @@
         "config": "{}",
         "purge_at": null
     },
-    "model": "sources.httpresourcemock",
+    "model": "core.httpresourcemock",
     "pk": 6
 }
 ]

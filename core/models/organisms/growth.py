@@ -1,7 +1,6 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 import six
 
-from django.apps import apps as django_apps
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 
@@ -9,6 +8,7 @@ import core.processors
 from datascope.configuration import PROCESS_CHOICE_LIST
 from core.models.organisms.community import Community
 from core.utils.configuration import ConfigurationField
+from core.utils.helpers import get_any_model
 from core.exceptions import DSProcessError
 
 
@@ -132,6 +132,6 @@ class Growth(models.Model):
 
     @property
     def resources(self):
-        Resource = django_apps.get_model("sources", self.config.resource)
+        Resource = get_any_model(self.config.resource)
         Type = ContentType.objects.get_for_model(self)
         return Resource.objects.filter(retainer_type__pk=Type.id, retainer_id=self.id)
