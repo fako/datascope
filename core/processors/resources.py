@@ -12,7 +12,7 @@ from celery.result import AsyncResult, states as TaskStates
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.utils.configuration import ConfigurationProperty, ConfigurationType, load_config
 from core.utils.helpers import get_any_model
-from core.exceptions import DSHttpResourceException, DSProcessUnfinished, DSProcessError
+from core.exceptions import DSResourceException, DSProcessUnfinished, DSProcessError
 
 
 class HttpResourceProcessor(object):
@@ -91,7 +91,7 @@ class HttpResourceProcessor(object):
                 link = link.send(method, *args, **kwargs)
                 link.save()
                 success.append(link.id)
-            except DSHttpResourceException as exc:
+            except DSResourceException as exc:
                 link = exc.resource
                 link.save()
                 errors.append(link.id)

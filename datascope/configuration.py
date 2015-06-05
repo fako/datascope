@@ -16,6 +16,9 @@ DEFAULT_CONFIGURATION = {
     "http_resource_continuation_limit": 1,
     "http_resource_interval_duration": 0,  # NB: milliseconds!
 
+    "wikipedia_wiki_country": "en",
+    "wikipedia_wiki_query_param": "titles",
+    "wikipedia_wiki_full_extracts": False
 }
 
 
