@@ -176,7 +176,9 @@ class Community(models.Model):
         if self.current_growth.is_finished:
             return
 
+        from datetime import datetime
         # FEATURE: wrap rest of function in while True for synchronous handling
+        print(datetime.now())
         output, errors = self.current_growth.finish()  # will raise when Growth is not finished
         self.call_finish_callback(self.current_growth.type, output, errors)
         try:
@@ -184,6 +186,7 @@ class Community(models.Model):
         except Growth.DoesNotExist:
             self.set_kernel()
             self.save()
+            print(datetime.now())
             return
         self.call_begin_callback(self.current_growth.type, self.current_growth.input)
         self.current_growth.begin()

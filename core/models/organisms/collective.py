@@ -32,25 +32,37 @@ class Collective(Organism):
         assert isinstance(data, (list, dict,)), \
             "Collective.update expects data to be formatted as list or dict not {}".format(type(data))
 
-        updates = []
-        if isinstance(data, dict):
-            pk = data.pop("ds_id", None)
-            if pk is None:
-                individual = self.individual_set.create(
-                    community=self.community,
-                    schema=self.schema,
-                    properties=data
-                )
-            else:
-                individual = Individual.objects.get(pk=pk)
-                individual.update(data)
-                individual.collective = self
-                individual.save()
-            updates.append(individual)
-        elif isinstance(data, list):
-            for instance in data:
-                updates += self.update(instance, validate=False)
-        return updates
+        def prepare_updates(data):
+
+            bulk = []
+            save = []
+            if isinstance(data, dict):
+                pk = data.pop("ds_id", None)
+                if pk is None:
+                    individual = Individual(
+                        community=self.community,
+                        collective=self,
+                        schema=self.schema,
+                        properties=data
+                    )
+                    bulk.append(individual)
+                else:
+                    individual = Individual.objects.get(pk=pk)
+                    individual.update(data)
+                    individual.collective = self
+                    save.append(individual)
+            else:  # type is list
+                for instance in data:
+                    extra_bulk, extra_save = prepare_updates(instance)
+                    bulk += extra_bulk
+                    save += extra_save
+            return bulk, save
+
+        bulks, saves = prepare_updates(data)
+        Individual.objects.bulk_create(bulks)
+        print("Out count", self.individual_set.count())
+        for organism in saves:
+            organism.save()
 
     @property
     def content(self):

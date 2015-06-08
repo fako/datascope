@@ -118,7 +118,9 @@ class Growth(models.Model):
         for contribution in contributions:
             callback = getattr(contribute_processor, contribute_method)
             results += callback(contribution)
+        print("before update")
         self.output.update(results)
+        print("after update")
 
     def prepare_process(self, process):
         """
