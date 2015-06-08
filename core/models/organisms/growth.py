@@ -14,7 +14,7 @@ from core.exceptions import DSProcessError
 class GrowthState(object):
     NEW = "New"
     PROCESSING = "Processing"
-    FINISHED = "Finished"
+    COMPLETE = "Complete"
     PARTIAL = "Partial"
     ERROR = "Error"
     RETRY = "Retry"
@@ -83,7 +83,7 @@ class Growth(models.Model):
 
         :return: the output Organism and unprocessed errors
         """
-        assert self.state in [GrowthState.PROCESSING, GrowthState.FINISHED, GrowthState.PARTIAL], \
+        assert self.state in [GrowthState.PROCESSING, GrowthState.COMPLETE, GrowthState.PARTIAL], \
             "Can't finish a growth that is in state {}".format(self.state)
 
         if self.state in [GrowthState.PROCESSING]:
@@ -100,7 +100,7 @@ class Growth(models.Model):
                 raise AssertionError("Growth.finish did not act on contribute_type {}".format(self.contribute_type))
             for error in errors:
                 error.retain(self)
-            self.state = GrowthState.FINISHED if not len(errors) else GrowthState.PARTIAL
+            self.state = GrowthState.COMPLETE if not len(errors) else GrowthState.PARTIAL
             self.save()
         return self.output, self.resources
 
@@ -132,7 +132,7 @@ class Growth(models.Model):
         return processor, method_name
 
     def save(self, *args, **kwargs):
-        self.is_finished = self.state == GrowthState.FINISHED
+        self.is_finished = self.state in [GrowthState.COMPLETE, GrowthState.PARTIAL]
         super(Growth, self).save(*args, **kwargs)
 
     @property

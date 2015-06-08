@@ -63,7 +63,7 @@
         "contribute_type": "Append",
         "process": "HttpResourceProcessor.fetch_mass",
         "type": "test_finished",
-        "state": "Finished",
+        "state": "Complete",
         "input_id": 1,
         "input_type": 17,
         "output_type": 18,

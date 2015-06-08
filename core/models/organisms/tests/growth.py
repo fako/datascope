@@ -62,7 +62,7 @@ class TestGrowth(TestCase):
     def test_finish_with_errors(self, async_result):
         output, errors = self.processing.finish()
         self.assertTrue(async_result.called)
-        self.assertFalse(self.processing.is_finished)
+        self.assertTrue(self.processing.is_finished)
         self.assertEqual(self.processing.state, GrowthState.PARTIAL)
         self.assertEqual(output.content, self.expected_append_output)
         self.assertEqual(self.processing.resources.count(), 2)
@@ -75,7 +75,7 @@ class TestGrowth(TestCase):
         output, errors = self.processing.finish()
         self.assertTrue(async_result.called)
         self.assertTrue(self.processing.is_finished)
-        self.assertEqual(self.processing.state, GrowthState.FINISHED)
+        self.assertEqual(self.processing.state, GrowthState.COMPLETE)
         self.assertEqual(output.content, self.expected_append_output)
         self.assertEqual(len(errors), 0)
         self.assertEqual(self.processing.resources.count(), 0)
@@ -96,7 +96,7 @@ class TestGrowth(TestCase):
         output, errors = self.finished.finish()
         self.assertFalse(async_result.called)
         self.assertTrue(self.finished.is_finished)
-        self.assertEqual(self.finished.state, GrowthState.FINISHED)
+        self.assertEqual(self.finished.state, GrowthState.COMPLETE)
         self.assertEqual(output.content, self.expected_finished_output)
         self.assertEqual(len(errors), 0)
         self.assertEqual(self.finished.resources.count(), 0)
@@ -106,7 +106,7 @@ class TestGrowth(TestCase):
         self.finished.save()
         output, errors = self.finished.finish()
         self.assertFalse(async_result.called)
-        self.assertFalse(self.finished.is_finished)
+        self.assertTrue(self.finished.is_finished)
         self.assertEqual(self.finished.state, GrowthState.PARTIAL)
         self.assertEqual(output.content, self.expected_finished_output)
         self.assertEqual(len(errors), 1)
@@ -136,7 +136,7 @@ class TestGrowth(TestCase):
         self.assertTrue(hasattr(process, method))
 
     def test_is_finished(self):
-        self.new.state = GrowthState.FINISHED
+        self.new.state = GrowthState.COMPLETE
         self.new.save()
         self.assertTrue(self.new.is_finished)
         self.new.state = GrowthState.PROCESSING
