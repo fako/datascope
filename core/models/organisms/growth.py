@@ -9,6 +9,7 @@ from datascope.configuration import PROCESS_CHOICE_LIST, DEFAULT_CONFIGURATION
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
 from core.exceptions import DSProcessError
+from core.models.organisms import Individual, Collective
 
 
 class GrowthState(object):
@@ -60,7 +61,7 @@ class Growth(models.Model):
     state = models.CharField(max_length=255, choices=GROWTH_STATE_CHOICES, default=GrowthState.NEW, db_index=True)
     is_finished = models.BooleanField(default=False, db_index=True)
 
-    def begin(self, *args, **kwargs):
+    def begin(self):
         """
         Starts the Celery task that provides growth of the data pool and is stored under self.process.
 
@@ -73,7 +74,14 @@ class Growth(models.Model):
 
         processor, method = self.prepare_process(self.process)
         task = getattr(processor, method)
-        result = task.delay(*args, **kwargs)
+        if isinstance(self.input, Individual):
+            args, kwargs = self.input.output(self.config.args, self.config.kwargs)
+            result = task.delay(*args, **kwargs)
+        elif isinstance(self.input, Collective):
+            args, kwargs = self.input.output([self.config.args], [self.config.kwargs])
+            result = task.delay(args, kwargs)
+        else:
+            raise AssertionError("Growth.input is of unexpected type {}".format(type(self.input)))
         self.result_id = result.id
         self.state = GrowthState.PROCESSING
         self.save()

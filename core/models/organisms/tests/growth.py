@@ -22,7 +22,7 @@ class TestGrowth(TestCase):
         super(TestGrowth, cls).setUpClass()
         cls.expected_append_output = [
             {
-                "ds_id": index + 3,
+                "ds_id": index + 6,
                 "context": "nested value",
                 "value": "nested value {}".format(index % 3)
             }
@@ -38,6 +38,7 @@ class TestGrowth(TestCase):
 
     def setUp(self):
         self.new = Growth.objects.get(type="test_new")
+        self.collective_input = Growth.objects.get(type="test_col_input")
         self.processing = Growth.objects.get(type="test_processing")
         self.finished = Growth.objects.get(type="test_finished")
         MockTask.reset_mock()
@@ -47,16 +48,26 @@ class TestGrowth(TestCase):
 
     @patch('core.processors.HttpResourceProcessor._send_mass.s', return_value=MockTask)
     def test_begin(self, send_mass_s):
-        self.new.begin("test", test="test")  # TODO: get arguments from configuration instead
-        MockTask.delay.assert_called_once_with("test", test="test")
+        self.new.begin()
+        MockTask.delay.assert_called_once_with(1024, 768, name="modest")
         self.assertEqual(self.new.result_id, "result-id")
         self.assertEqual(self.new.state, GrowthState.PROCESSING)
         self.assertFalse(self.new.is_finished)
         try:
-            self.processing.begin("test", test="test")
+            self.processing.begin()
             self.fail("Growth.begin did not warn against 'beginning' an already started growth.")
         except AssertionError:
             pass
+        MockTask.reset_mock()
+        self.collective_input.begin()
+        MockTask.delay.assert_called_once_with(
+            ["nested value 0", "nested value 1", "nested value 2"],
+            [{"context": "nested value"}, {"context": "nested value"}, {"context": "nested value"}]
+        )
+        self.assertEqual(self.new.result_id, "result-id")
+        self.assertEqual(self.new.state, GrowthState.PROCESSING)
+        self.assertFalse(self.new.is_finished)
+
 
     @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultPartial)
     def test_finish_with_errors(self, async_result):

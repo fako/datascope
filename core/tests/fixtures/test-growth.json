@@ -28,7 +28,7 @@
         "input_type": 17,
         "output_type": 18,
         "is_finished": false,
-        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\", \"args\": [\"$.width\", \"$.height\"], \"kwargs\": {\"name\": \"$.name\"}}",
         "community_type": 21,
         "community_id": 1
     },
@@ -97,6 +97,26 @@
 },
 {
     "fields": {
+        "output_id": 1,
+        "result_id": null,
+        "contribute": "ExtractProcessor.extract_from_resource",
+        "contribute_type": "Append",
+        "process": "HttpResourceProcessor.fetch_mass",
+        "type": "test_col_input",
+        "state": "New",
+        "input_id": 3,
+        "input_type": 18,
+        "output_type": 18,
+        "is_finished": false,
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\", \"args\": [\"$.value\"], \"kwargs\": {\"context\": \"$.context\"}}",
+        "community_type": 21,
+        "community_id": 1
+    },
+    "model": "core.growth",
+    "pk": 5
+},
+{
+    "fields": {
         "created_at": "2015-06-04T11:31:27.940",
         "modified_at": "2015-06-04T11:34:06.960",
         "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}",
@@ -116,6 +136,17 @@
     },
     "model": "core.collective",
     "pk": 2
+},
+{
+    "fields": {
+        "created_at": "2015-06-04T11:31:27.940",
+        "modified_at": "2015-06-04T11:34:06.960",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}",
+        "community_type": 21,
+        "community_id": 1
+    },
+    "model": "core.collective",
+    "pk": 3
 },
 {
     "fields": {
@@ -142,6 +173,45 @@
     },
     "model": "core.individual",
     "pk": 2
+},
+{
+    "fields": {
+        "properties": "{\"context\":\"nested value\",\"value\":\"nested value 0\"}",
+        "collective": 3,
+        "modified_at": "2015-06-02T10:01:47.572",
+        "created_at": "2015-06-02T10:00:20.247",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}",
+        "community_type": 21,
+        "community_id": 1
+    },
+    "model": "core.individual",
+    "pk": 3
+},
+{
+    "fields": {
+        "properties": "{\"context\":\"nested value\",\"value\":\"nested value 1\"}",
+        "collective": 3,
+        "modified_at": "2015-06-02T10:01:47.572",
+        "created_at": "2015-06-02T10:00:20.247",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}",
+        "community_type": 21,
+        "community_id": 1
+    },
+    "model": "core.individual",
+    "pk": 4
+},
+{
+    "fields": {
+        "properties": "{\"context\":\"nested value\",\"value\":\"nested value 2\"}",
+        "collective": 3,
+        "modified_at": "2015-06-02T10:01:47.572",
+        "created_at": "2015-06-02T10:00:20.247",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}",
+        "community_type": 21,
+        "community_id": 1
+    },
+    "model": "core.individual",
+    "pk": 5
 },
 {
     "fields": {

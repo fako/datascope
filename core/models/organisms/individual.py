@@ -3,7 +3,6 @@ import six
 
 import jsonschema
 from jsonschema.exceptions import ValidationError as SchemaValidationError
-from jsonpath_rw import parse as jsonpath_parse
 
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -11,6 +10,7 @@ from django.core.exceptions import ValidationError
 import jsonfield
 
 from core.models.organisms import Organism
+from core.utils.helpers import reach
 
 
 class Individual(Organism):
@@ -88,8 +88,7 @@ class Individual(Organism):
         if not frm:
             return frm
         if isinstance(frm, six.string_types):
-            output_expr = jsonpath_parse(frm)
-            return output_expr.find(self.content)[0].value
+            return reach(frm, self.properties)
         elif isinstance(frm, list):
             return self.output(*frm) if len(frm) > 1 else [self.output(*frm)]
         elif isinstance(frm, dict):
