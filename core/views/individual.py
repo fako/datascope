@@ -19,7 +19,6 @@ class IndividualSerializer(serializers.ModelSerializer):
             "id",
             "created_at",
             "modified_at",
-            "spirit",
             "properties",
         )
 

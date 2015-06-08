@@ -4,6 +4,7 @@ from django.test import TestCase
 
 from wiki_news.models import WikiNewsCommunity
 
+
 class TestWikiNewsCommunity(TestCase):
 
     def setUp(self):
@@ -18,4 +19,4 @@ class TestWikiNewsCommunity(TestCase):
     def test_next_growth(self):
         self.instance.setup_growth()
         growth = self.instance.next_growth()
-        self.assertEqual(growth.type, "wikipedia")
+        self.assertEqual(growth.type, "revisions")
