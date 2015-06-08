@@ -27,7 +27,7 @@ class Migration(migrations.Migration):
                 ('input_id', models.PositiveIntegerField(null=True)),
                 ('output_id', models.PositiveIntegerField()),
                 ('result_id', models.CharField(max_length=255, null=True, blank=True)),
-                ('state', models.CharField(default='New', max_length=255, db_index=True, choices=[(b'RETRY', 'Retry'), (b'PARTIAL', 'Partial'), (b'ERROR', 'Error'), (b'NEW', 'New'), (b'PROCESSING', 'Processing'), (b'FINISHED', 'Finished')])),
+                ('state', models.CharField(default='New', max_length=255, db_index=True, choices=[(b'RETRY', 'Retry'), (b'PARTIAL', 'Partial'), (b'COMPLETE', 'Complete'), (b'ERROR', 'Error'), (b'NEW', 'New'), (b'PROCESSING', 'Processing')])),
                 ('is_finished', models.BooleanField(default=False, db_index=True)),
                 ('input_type', models.ForeignKey(related_name='+', to='contenttypes.ContentType', null=True)),
                 ('output_type', models.ForeignKey(related_name='+', to='contenttypes.ContentType')),
