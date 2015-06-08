@@ -17,6 +17,7 @@ class Migration(migrations.Migration):
             name='CommunityMock',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('identity', models.CharField(max_length=255)),
                 ('config', core.utils.configuration.ConfigurationField(default={})),
                 ('kernel_id', models.PositiveIntegerField(null=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),

@@ -28,6 +28,7 @@ class Community(models.Model):
     #user = models.ForeignKey(DataScopeUser, null=True)
     #predecessor = models.ForeignKey('Community', null=True)
 
+    identity = models.CharField(max_length=255)
     config = ConfigurationField(
         config_defaults=DEFAULT_CONFIGURATION
     )
@@ -51,6 +52,11 @@ class Community(models.Model):
 
     COMMUNITY_SPIRIT = OrderedDict()
     COMMUNITY_BODY = []
+
+    @classmethod
+    def get_or_create_by_input(cls, *args, **kwargs):
+        # TODO: implement
+        pass
 
     @property
     def spirit(self):
