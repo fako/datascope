@@ -5,14 +5,12 @@ from collections import OrderedDict
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, ContentType
-from django.core.exceptions import ObjectDoesNotExist
 
 from datascope.configuration import DEFAULT_CONFIGURATION
-from core.models.organisms import Growth, Collective, Individual, Organism
+from core.models.organisms import Growth, Collective, Individual
 from core.models.user import DataScopeUser
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
-from core.exceptions import DSProcessUnfinished
 
 
 class CommunityManager(models.Manager):
@@ -74,17 +72,17 @@ class Community(models.Model):
     #     else:
     #         return result_raw
 
-    def call_finish_callback(self, phase, output, errors):
+    def call_finish_callback(self, phase, out, errors):
         callback_name = "finish_" + phase
         callback = getattr(self, callback_name, None)
         if callback is not None and callable(callback):
-            callback(output, errors)
+            callback(out, errors)
 
-    def call_begin_callback(self, phase, output, errors):
+    def call_begin_callback(self, phase, inp):
         callback_name = "begin_" + phase
         callback = getattr(self, callback_name, None)
         if callback is not None and callable(callback):
-            callback(output, errors)
+            callback(inp)
 
     def create_organism(self, organism_type, schema):
         model = get_any_model(organism_type)
@@ -104,10 +102,15 @@ class Community(models.Model):
             inp = growth_config["input"]
             out = growth_config["output"]
             if inp is not None and inp.startswith("@"):
-                inp = self.growth_set.filter(type=growth_type).last().input
+                grw = self.growth_set.filter(type=inp[1:]).last()
+                inp = grw.output
+            elif inp is None:
+                inp = self.initial_input()
             if out.startswith("@"):
-                out = self.growth_set.filter(type=growth_type).last().output
+                grw = self.growth_set.filter(type=out[1:]).last()
+                out = grw.output
             if inp in ["Individual", "Collective"]:
+                print("New input")
                 inp = self.create_organism(inp, sch)
             if out in ["Individual", "Collective"]:
                 out = self.create_organism(out, sch)
@@ -124,16 +127,19 @@ class Community(models.Model):
             growth.save()
 
     def next_growth(self):
-        return self.growth_set.filter(is_finished=False).first()
+        growth = self.growth_set.filter(is_finished=False).first()
+        if growth is None:
+            raise Growth.DoesNotExist("Community.next_growth did not find a next growth.")
+        return growth
 
     def set_kernel(self):
         """
 
         :return:
         """
-        pass
+        return None
 
-    def capture_initial_input(self, *args, **kwargs):
+    def initial_input(self, *args, **kwargs):
         """
         For visual-translations this would return a Collective with {"locale": X, "query": Y} Individuals.
         Their spirits should be init-Y-X and init-Y for the Collective
@@ -152,39 +158,31 @@ class Community(models.Model):
         if self.current_growth is None:
             self.setup_growth()
             self.current_growth = self.next_growth()
-            self.call_begin_callback()
+            self.call_begin_callback(self.current_growth.type, self.current_growth.input)
             self.current_growth.begin()
-        if self.current_growth.is_finished():
+        if self.current_growth.is_finished:
             return
 
-        while True:
-            output, errors = self.current_growth.finish()  # will raise when Growth is not finished
-            self.call_finish_callback(self.current_growth.type, output, errors)
-            try:
-                self.current_growth = self.next_growth()
-            except Growth.DoesNotExist:
-                self.set_kernel()
-                return
-            self.call_begin_callback()
-            self.current_growth.begin()
+        # FEATURE: wrap rest of function in while True for synchronous handling
+        output, errors = self.current_growth.finish()  # will raise when Growth is not finished
+        self.call_finish_callback(self.current_growth.type, output, errors)
+        try:
+            self.current_growth = self.next_growth()
+        except Growth.DoesNotExist:
+            self.set_kernel()
+            self.save()
+            return
+        self.call_begin_callback(self.current_growth.type, self.current_growth.input)
+        self.current_growth.begin()
+        self.save()
 
-    def results(self, depth=None):
+    def manifestation(self):
         """
-        Return content of the self.kernel Individual or Collective.
+        Return content of the self.kernel processed through self.contribution.
 
-        :param depth: (optional) indicates the level of recursion that should be used to inline nested Individuals and or Collectives.
         :return:
         """
-        # TODO: should set a default depth from self.config
         pass
-
-    def load_organism_from_spirit(self, json_path):
-        """
-        Query Organism assigned to key at json_path.
-
-        :param json_path:
-        :return:
-        """
 
     class Meta:
         abstract = True

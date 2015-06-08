@@ -24,7 +24,7 @@
         "modified_at": "2015-06-05T16:17:54.436",
         "completed_at": null,
         "state": "",
-        "current_growth": null,
+        "current_growth": 1,
         "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
         "purge_at": null
     },
