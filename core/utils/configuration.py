@@ -170,25 +170,33 @@ class ConfigurationProperty(object):
         assert storage_attribute, \
             "Specify a storage_attribute to store the configuration in."
         self._storage_attribute = storage_attribute
-        self._config_instance = ConfigurationType(
-            defaults=defaults,
-            namespace=namespace,
-            private=private
-        )
+        self._defaults = defaults
+        self._namespace = namespace
+        self._private = private
 
     def __get__(self, obj, cls=None):
         if obj is None:
             log.warning("ConfigurationType not bound to an owner.")
             return self
         elif not self._storage_attribute in obj.__dict__ or not obj.__dict__[self._storage_attribute]:
-            obj.__dict__[self._storage_attribute] = self._config_instance
+            obj.__dict__[self._storage_attribute] = ConfigurationType(
+                defaults=self._defaults,
+                namespace=self._namespace,
+                private=self._private
+            )
         return obj.__dict__[self._storage_attribute]
 
     def __set__(self, obj, new):
         if self._storage_attribute not in obj.__dict__:
-            obj.__dict__[self._storage_attribute] = self._config_instance
-        if isinstance(new, ConfigurationType):  # TODO: test
-            obj.__dict__[self._storage_attribute] = new
+            obj.__dict__[self._storage_attribute] = ConfigurationType(
+                defaults=self._defaults,
+                namespace=self._namespace,
+                private=self._private
+            )
+        if isinstance(new, ConfigurationType):
+            obj.__dict__[self._storage_attribute].set_configuration(
+                new.to_dict(private=True, protected=True)
+            )
         else:
             obj.__dict__[self._storage_attribute].set_configuration(new)
 

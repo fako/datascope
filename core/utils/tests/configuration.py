@@ -120,6 +120,15 @@ class TestConfigurationType(TestCase):
             pass
 
 
+class ConfigurationPropertyHolder(object):
+    property = ConfigurationProperty(
+        "storage",
+        namespace="name",
+        private=["_test3"],
+        defaults=MOCK_CONFIGURATION
+    )
+
+
 class TestConfigurationProperty(TestCase):
 
     @classmethod
@@ -132,6 +141,11 @@ class TestConfigurationProperty(TestCase):
             defaults=MOCK_CONFIGURATION
         )
 
+    def setUp(self):
+        super(TestConfigurationProperty, self).setUp()
+        self.holder1 = ConfigurationPropertyHolder()
+        self.holder2 = ConfigurationPropertyHolder()
+
     def test_getter(self):
         self.assertFalse(hasattr(self, "storage"))
         self.assertIsInstance(self.property, ConfigurationType)
@@ -142,6 +156,17 @@ class TestConfigurationProperty(TestCase):
         self.property = {}
         self.assertIsInstance(self.property, ConfigurationType)
         self.assertTrue(hasattr(self, "storage"))
+
+    def test_doubles(self):
+        self.holder1.property = {"test": "test"}
+        self.assertNotEqual(self.holder1.property, self.holder2.property)  # instances should not share configurations
+
+    def test_set_with_type(self):
+        self.holder1.property = {"test": "test"}
+        self.holder2.property = self.holder1.property
+        self.assertEqual(self.holder2.property.test, "test")
+        self.assertNotEqual(self.holder1.property, self.holder2.property)  # instances should not share configurations
+
 
 
 class TestLoadConfigDecorator(TestCase):
