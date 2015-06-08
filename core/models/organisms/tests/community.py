@@ -20,7 +20,7 @@ class CommunityTestMixin(TestCase):
 
 
 class TestCommunityMock(CommunityTestMixin):
-    
+
     fixtures = ["test-community"]
 
     def setUp(self):
@@ -30,11 +30,6 @@ class TestCommunityMock(CommunityTestMixin):
 
     def raise_unfinished(self):
         raise DSProcessUnfinished("Raised for test")
-
-    @staticmethod
-    def finish_side_effects(self):
-        self.is_finished = True
-        return self.output, []
 
     def set_instance_mocks(self):
         self.instance.call_begin_callback = Mock()
@@ -80,6 +75,10 @@ class TestCommunityMock(CommunityTestMixin):
             self.fail("Community.next_growth did not raise when all growth is finished")
         except Growth.DoesNotExist:
             pass
+
+    def test_error_callback(self):
+        # TODO: write test
+        pass
 
     @patch("core.models.organisms.community.Growth.begin")
     def test_grow(self, begin_growth):
