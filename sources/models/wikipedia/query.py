@@ -1,7 +1,5 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
-import hashlib
-
 from core.models.resources.http import HttpResource
 from core.exceptions import DSInvalidResource, DSHttpError40X
 
@@ -67,16 +65,6 @@ class WikipediaQuery(HttpResource):
     def next_parameters(self):
         content_type, data = self.content
         return data.get("continue", {})
-
-    @staticmethod
-    def get_wiki_image(file_name):
-        md5 = hashlib.md5(file_name.encode("utf-8"))
-        hexhash = md5.hexdigest()
-        return 'http://upload.wikimedia.org/wikipedia/commons/{}/{}/{}'.format(
-            hexhash[:1],
-            hexhash[:2],
-            file_name
-        )
 
     class Meta:
         abstract = True
