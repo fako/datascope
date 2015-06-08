@@ -59,6 +59,9 @@ class Organism(models.Model):
     def content(self):
         raise NotImplementedError()
 
+    def output(self, *args):
+        raise NotImplementedError()
+
     @property
     def url(self):  # TODO: implement?
         """

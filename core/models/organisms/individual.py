@@ -3,6 +3,7 @@ import six
 
 import jsonschema
 from jsonschema.exceptions import ValidationError as SchemaValidationError
+from jsonpath_rw import parse as jsonpath_parse
 
 from django.db import models
 from django.core.exceptions import ValidationError
@@ -79,3 +80,20 @@ class Individual(Organism):
             {key: value for key, value in six.iteritems(self.properties) if not key.startswith('_')},
             **meta
         )
+
+    def output(self, *args):
+        if len(args) > 1:
+            return map(self.output, args)
+        frm = args[0]
+        if not frm:
+            return frm
+        if isinstance(frm, six.string_types):
+            output_expr = jsonpath_parse(frm)
+            return output_expr.find(self.content)[0].value
+        elif isinstance(frm, list):
+            return self.output(*frm) if len(frm) > 1 else [self.output(*frm)]
+        elif isinstance(frm, dict):
+            return {key: self.output(value) for key, value in six.iteritems(frm)}
+        else:
+            raise AssertionError("Expected a string, list or dict as argument got {} instead".format(type(frm)))
+

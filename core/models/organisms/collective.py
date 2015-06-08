@@ -61,6 +61,17 @@ class Collective(Organism):
         """
         return [ind.content for ind in self.individual_set.all()]
 
+    def output(self, *args):
+        if len(args) > 1:
+            return map(self.output, args)
+        frm = args[0]
+        if not frm:
+            return [frm for ind in self.individual_set.all()]
+        elif isinstance(frm, list):
+            return self.output(*frm)
+        else:
+            return [ind.output(frm) for ind in self.individual_set.all()]
+
     def group_by_collectives(self, key=None):
         """
         Outputs a dict with Collectives. The Collectives are filled with Individuals that hold the same value for key.
