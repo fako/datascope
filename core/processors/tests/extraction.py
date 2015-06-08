@@ -24,7 +24,7 @@ class TestExtractProcessorHTML(TestCase):
         self.soup = BeautifulSoup(MOCK_HTML)
         self.json_obj = {
             "@": "$.records",
-            "#unicode": "$.unicode[0]",
+            "#unicode": "$.unicode.0",
             "#goal": "$.dict.dict.test",
             "id": "$.id",
             "record": "$.record"

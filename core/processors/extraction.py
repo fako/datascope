@@ -3,10 +3,10 @@ import six
 
 from copy import copy
 
-from jsonpath_rw import parse as jsonpath_parse
-
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.utils.configuration import ConfigurationProperty
+from core.utils.data import reach
+
 
 class ExtractProcessor(object):
 
@@ -53,22 +53,17 @@ class ExtractProcessor(object):
             raise TypeError("Extract processor does not support content_type {}".format(content_type))
 
     def application_json(self, data):
-
         context = {}
         for name, objective in six.iteritems(self._context):
-            context_expr = jsonpath_parse(objective)
-            context[name] = context_expr.find(data)[0].value
+            context[name] = reach(objective, data)
 
-        at_expr = jsonpath_parse(self._at)
-        #nodes = next(match.value for match in at_expr.find(data))
-        nodes = at_expr.find(data)[0].value
+        nodes = reach(self._at, data)
 
         results = []
         for node in nodes:
             result = copy(context)
             for name, objective in six.iteritems(self._objective):
-                obj_expr = jsonpath_parse(objective)
-                result[name] = obj_expr.find(node)[0].value
+                result[name] = reach(objective, node)
             results.append(result)
 
         return results

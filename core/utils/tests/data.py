@@ -43,7 +43,7 @@ class TestPythonReach(TestCase):
             reach("irrelevant", "invalid-input")
             self.fail("Reach did not throw a TypeError after getting invalid input")
         except TypeError as exception:
-            self.assertEqual(str(exception), "Reach needs dict as input, got <type 'str'> instead")
+            self.assertEqual(str(exception), "Reach needs dict, list or tuple as input, got <type 'str'> instead")
 
 
 class TestPythonExtractor(TestCase):

@@ -154,20 +154,20 @@ class Community(models.Model):
 
     def initial_input(self, *args, **kwargs):
         """
-        For visual-translations this would return a Collective with {"locale": X, "query": Y} Individuals.
-        Their spirits should be init-Y-X and init-Y for the Collective
 
         :param args:
         :param kwargs:
         :return: Collective or Individual
         """
-        return None
+        raise NotImplementedError()
 
     def grow(self):
         """
 
         :return:
         """
+        assert self.id, "A community can only be grown after an initial save."
+
         if self.current_growth is None:
             self.setup_growth()
             self.current_growth = self.next_growth()

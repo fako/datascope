@@ -10,7 +10,7 @@ from django.core.exceptions import ValidationError
 import jsonfield
 
 from core.models.organisms import Organism
-from core.utils.helpers import reach
+from core.utils.data import reach
 
 
 class Individual(Organism):
