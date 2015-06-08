@@ -109,14 +109,21 @@ class Community(models.Model):
             out = growth_config["output"]
             if inp is not None and inp.startswith("@"):
                 grw = self.growth_set.filter(type=inp[1:]).last()
+                if grw is None:
+                    raise AssertionError(
+                        "Could not find growth with type {} for input of {}".format(inp[1:], growth_type)
+                    )
                 inp = grw.output
             elif inp is None:
                 inp = self.initial_input()
             if out.startswith("@"):
                 grw = self.growth_set.filter(type=out[1:]).last()
+                if grw is None:
+                    raise AssertionError(
+                        "Could not find growth with type {} for output of {}".format(out[1:], growth_type)
+                    )
                 out = grw.output
             if inp in ["Individual", "Collective"]:
-                print("New input")
                 inp = self.create_organism(inp, sch)
             if out in ["Individual", "Collective"]:
                 out = self.create_organism(out, sch)
