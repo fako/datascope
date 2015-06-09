@@ -4,11 +4,12 @@ from sources.models.wikipedia.query import WikipediaQuery
 from sources.models.wikipedia.mixins import WikipediaImagesMixin
 
 
-class WikipediaListPages(WikipediaQuery, WikipediaImagesMixin):
+class WikipediaCategories(WikipediaQuery, WikipediaImagesMixin):
 
     PARAMETERS = override_dict(WikipediaQuery.PARAMETERS, {
-        "prop": "info|pageprops|extracts",
-        "exintro": 1,
+        "prop": "info|pageprops|categories",
+        "clshow": "!hidden",
+        "cllimit": 500
     })
     GET_SCHEMA = {
         "args": {

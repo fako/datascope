@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import requests
+from mock import patch
 
 from django.test import TestCase
 from django.utils import six
@@ -149,6 +150,12 @@ class TestHttpResourceProcessorBase(TestHttpResourceProcessorMixin, TestCase):
         self.check_results(scc, 3)
         self.check_results(err, 1)
 
+    @patch("core.processors.resources.HttpResourceProcessor._send_serie", return_value=([], [],))
+    def test_send_mass_concat_arguments(self, send_serie):
+        self.config.concat_args_size = 3
+        self.config.concat_args_symbol = "|"
+        scc, err = HttpResourceProcessor._send_mass([1, 2, 3, 4, 5, 6, 7], [{}, {}, {}, {}, {}, {}, {}], method=self.method, config=self.config, session=MockRequests)
+        send_serie.assert_called_with(["1|2|3", "4|5|6", "7"], [{}, {}, {}], method=self.method, config=self.config, session=MockRequests)
 
 class TestHttpResourceProcessorGet(TestHttpResourceProcessorBase):
 

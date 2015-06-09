@@ -1,6 +1,6 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 # noinspection PyUnresolvedReferences
-from six.moves import zip
+from six.moves import zip, range
 
 from time import sleep
 
@@ -106,8 +106,34 @@ class HttpResourceProcessor(object):
     @load_config(defaults=DEFAULT_CONFIGURATION)
     def _send_mass(config, args_list, kwargs_list, session=None, method=None):
         # FEATURE: chain "batches" of fetch_mass if configured through batch_size
-        # FEATURE: concat requests using concat_args_with configuration
-        return HttpResourceProcessor._send_serie(args_list, kwargs_list, config=config, method=method, session=session)
+
+        if config.concat_args_size:
+            # Set some vars based on config
+            symbol = config.concat_args_symbol
+            concat_size = config.concat_args_size
+            args_list_size = int(len(args_list) / concat_size) + 1
+            # Calculate new args_list and kwargs_list
+            prc_args_list = []
+            prc_kwargs_list = []
+            for index in range(0, args_list_size):
+                args_slice = args_list[index*concat_size:index*concat_size+concat_size]
+                prc_args_list.append(
+                    symbol.join(
+                        map(str, args_slice)
+                    )
+                )
+                prc_kwargs_list.append(kwargs_list[index*config.concat_args_size])
+        else:
+            prc_args_list = args_list
+            prc_kwargs_list = kwargs_list
+
+        return HttpResourceProcessor._send_serie(
+            prc_args_list,
+            prc_kwargs_list,
+            config=config,
+            method=method,
+            session=session
+        )
 
     @staticmethod
     @app.task(name="HttpFetch.send_serie")
