@@ -60,7 +60,6 @@ class Collective(Organism):
 
         bulks, saves = prepare_updates(data)
         Individual.objects.bulk_create(bulks)
-        print("Out count", self.individual_set.count())
         for organism in saves:
             organism.save()
 

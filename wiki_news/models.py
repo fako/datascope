@@ -36,7 +36,6 @@ class WikiNewsCommunity(Community):
         return Individual.objects.create(community=self, properties={}, schema={})
 
     def finish_revisions(self, out, err):
-        print("inside finish callback")
         pages = {}
         deletes = []
         for ind in out.individual_set.all():
@@ -49,10 +48,8 @@ class WikiNewsCommunity(Community):
             else:
                 pages[ind.properties["pageid"]]["revisions"].append(ind.content)
                 deletes.append(ind.id)
-        print("before database update")
         out.individual_set.all().delete()
         out.individual_set.bulk_create(six.itervalues(pages))
-        print("exiting finish callback")
 
     def set_kernel(self):
-        print("inside set kernel")
+        self.kernel = self.current_growth.output

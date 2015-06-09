@@ -58,26 +58,6 @@ class Community(models.Model):
         # TODO: implement
         pass
 
-    @property
-    def spirit(self):
-        return None
-    @spirit.setter
-    def spirit(self, community_spirit):
-        pass
-
-    # def get_last_for_phase(self, phase, key):
-    #     result_raw = self.COMMUNITY_SPIRIT[phase][key]
-    #     if result_raw.startswith("@"):
-    #         return self.get_last_for_phase(result_raw[1:], "output")
-    #     elif result_raw in ["Individual", "Collective"]:
-    #         try:
-    #             growth = self.growth_set.filter(type=phase).last()
-    #             return getattr(growth, key)
-    #         except ObjectDoesNotExist:
-    #             return result_raw
-    #     else:
-    #         return result_raw
-
     def call_finish_callback(self, phase, out, errors):
         callback_name = "finish_" + phase
         callback = getattr(self, callback_name, None)
@@ -150,7 +130,7 @@ class Community(models.Model):
 
         :return:
         """
-        return None
+        raise NotImplementedError()
 
     def initial_input(self, *args, **kwargs):
         """
@@ -176,9 +156,8 @@ class Community(models.Model):
         if self.current_growth.is_finished:
             return
 
-        from datetime import datetime
+
         # FEATURE: wrap rest of function in while True for synchronous handling
-        print(datetime.now())
         output, errors = self.current_growth.finish()  # will raise when Growth is not finished
         self.call_finish_callback(self.current_growth.type, output, errors)
         try:
@@ -186,7 +165,6 @@ class Community(models.Model):
         except Growth.DoesNotExist:
             self.set_kernel()
             self.save()
-            print(datetime.now())
             return
         self.call_begin_callback(self.current_growth.type, self.current_growth.input)
         self.current_growth.begin()
