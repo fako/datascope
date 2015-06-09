@@ -28,7 +28,7 @@ class Community(models.Model):
     #user = models.ForeignKey(DataScopeUser, null=True)
     #predecessor = models.ForeignKey('Community', null=True)
 
-    identity = models.CharField(max_length=255)
+    signature = models.CharField(max_length=255, db_index=True)
     config = ConfigurationField(
         config_defaults=DEFAULT_CONFIGURATION
     )
@@ -47,16 +47,30 @@ class Community(models.Model):
     completed_at = models.DateTimeField(null=True, blank=True)
     purge_at = models.DateTimeField(null=True, blank=True)
 
-    views = models.IntegerField(default=1)
+    views = models.IntegerField(default=0)
     state = models.CharField(max_length=255)  # TODO: set choices
 
     COMMUNITY_SPIRIT = OrderedDict()
     COMMUNITY_BODY = []
+    PUBLIC_CONFIG = {}
 
     @classmethod
     def get_or_create_by_input(cls, *args, **kwargs):
-        # TODO: implement
-        pass
+        signature = list(args) + [
+            "{}={}".format(key, value)
+            for key, value in six.iteritems(kwargs)
+            if key in cls.PUBLIC_CONFIG and not key.startswith("$")
+        ]
+        signature.sort()
+        try:
+            community = cls.objects.get(signature="&".join(signature))
+        except cls.DoesNotExist:
+            community = cls(
+                signature="&".join(signature),
+                config={key: value for key, value in kwargs if key in cls.PUBLIC_CONFIG}
+            )
+            community.save()
+        return community
 
     def call_finish_callback(self, phase, out, errors):
         callback_name = "finish_" + phase
@@ -148,14 +162,15 @@ class Community(models.Model):
         """
         assert self.id, "A community can only be grown after an initial save."
 
+        if self.kernel is not None:
+            return True
+
         if self.current_growth is None:
             self.setup_growth()
             self.current_growth = self.next_growth()
             self.call_begin_callback(self.current_growth.type, self.current_growth.input)
             self.current_growth.begin()
-        if self.current_growth.is_finished:
-            return
-
+            self.save()
 
         # FEATURE: wrap rest of function in while True for synchronous handling
         output, errors = self.current_growth.finish()  # will raise when Growth is not finished
@@ -165,10 +180,11 @@ class Community(models.Model):
         except Growth.DoesNotExist:
             self.set_kernel()
             self.save()
-            return
+            return True
         self.call_begin_callback(self.current_growth.type, self.current_growth.input)
         self.current_growth.begin()
         self.save()
+        return False
 
     def manifestation(self):
         """

@@ -86,11 +86,13 @@ class TestCommunityMock(CommunityTestMixin):
         growth_finish_method = "core.models.organisms.community.Growth.finish"
         with patch(growth_finish_method, side_effect=self.raise_unfinished) as finish_growth:
             try:
-                self.instance.grow()
+                done = False
+                done = self.instance.grow()
                 self.fail("Growth.finish not patched")
             except DSProcessUnfinished:
                 pass
             first_growth = self.instance.growth_set.first()
+            self.assertFalse(done)
             self.assertEqual(self.instance.growth_set.count(), 2)
             self.assertIsInstance(self.instance.current_growth, Growth)
             self.assertEqual(self.instance.current_growth.id, first_growth.id)  # first new Growth
@@ -101,9 +103,11 @@ class TestCommunityMock(CommunityTestMixin):
             self.set_instance_mocks()
             begin_growth.reset_mock()
             try:
-                self.instance.grow()
+                done = False
+                done = self.instance.grow()
             except DSProcessUnfinished:
                 pass
+            self.assertFalse(done)
             self.assertEqual(self.instance.growth_set.count(), 2)
             self.assertIsInstance(self.instance.current_growth, Growth)
             self.assertFalse(self.instance.call_begin_callback.called)
@@ -126,7 +130,8 @@ class TestCommunityMock(CommunityTestMixin):
         with patch(growth_finish_method, return_value=(second_growth.output, [])) as finish_growth:
             self.set_instance_mocks()
             with patch("core.models.organisms.community.Community.next_growth", side_effect=Growth.DoesNotExist):
-                self.instance.grow()
+                done = self.instance.grow()
+            self.assertTrue(done)
             self.assertEqual(self.instance.growth_set.count(), 2)
             self.assertIsInstance(self.instance.current_growth, Growth)
             self.assertEqual(self.instance.current_growth.id, second_growth.id)
@@ -141,12 +146,13 @@ class TestCommunityMock(CommunityTestMixin):
 
         self.set_instance_mocks()
         with patch(growth_finish_method) as finish_growth:
-            self.instance.grow()
-            self.assertEqual(self.instance.growth_set.count(), 2)
-            self.assertIsInstance(self.instance.current_growth, Growth)
-            self.assertEqual(self.instance.current_growth.id, second_growth.id)
-            self.assertFalse(self.instance.call_finish_callback.called)
-            self.assertFalse(self.instance.call_begin_callback.called)
-            self.assertFalse(begin_growth.called)
-            self.assertFalse(finish_growth.called)
+            done = self.instance.grow()
+        self.assertTrue(done)
+        self.assertEqual(self.instance.growth_set.count(), 2)
+        self.assertIsInstance(self.instance.current_growth, Growth)
+        self.assertEqual(self.instance.current_growth.id, second_growth.id)
+        self.assertFalse(self.instance.call_finish_callback.called)
+        self.assertFalse(self.instance.call_begin_callback.called)
+        self.assertFalse(begin_growth.called)
+        self.assertFalse(finish_growth.called)
 
