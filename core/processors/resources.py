@@ -113,15 +113,17 @@ class HttpResourceProcessor(object):
             concat_size = config.concat_args_size
             args_list_size = int(len(args_list) / concat_size) + 1
             # Calculate new args_list and kwargs_list
+            # Arg list that are of the form [[1],[2],[3], ...] should become [[1|2|3], ...]
+            # Kwargs are assumed to remain similar across the list
             prc_args_list = []
             prc_kwargs_list = []
             for index in range(0, args_list_size):
                 args_slice = args_list[index*concat_size:index*concat_size+concat_size]
-                prc_args_list.append(
-                    symbol.join(
-                        map(str, args_slice)
-                    )
-                )
+                joined_slice = []
+                for args in args_slice:
+                    joined = symbol.join(map(str, args))
+                    joined_slice.append(joined)
+                prc_args_list.append([symbol.join(joined_slice)])
                 prc_kwargs_list.append(kwargs_list[index*config.concat_args_size])
         else:
             prc_args_list = args_list

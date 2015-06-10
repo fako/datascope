@@ -79,7 +79,12 @@ class Collective(Organism):
         if not frm:
             return [frm for ind in self.individual_set.all()]
         elif isinstance(frm, list):
-            return self.output(*frm)
+            output = self.output(*frm)
+            if len(frm) > 1:
+                output = [list(zipped) for zipped in zip(*output)]
+            else:
+                output = [[out] for out in output]
+            return output
         else:
             return [ind.output(frm) for ind in self.individual_set.all()]
 

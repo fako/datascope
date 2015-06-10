@@ -4,7 +4,7 @@ from sources.models.wikipedia.query import WikipediaQuery
 from sources.models.wikipedia.mixins import WikipediaImagesMixin
 
 
-class WikipediaCategories(WikipediaQuery, WikipediaImagesMixin):
+class WikipediaListPages(WikipediaQuery, WikipediaImagesMixin):
 
     PARAMETERS = override_dict(WikipediaQuery.PARAMETERS, {
         "prop": "info|pageprops|categories",

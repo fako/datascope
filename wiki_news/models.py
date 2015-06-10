@@ -11,6 +11,9 @@ class WikiNewsCommunity(Community):
     COMMUNITY_SPIRIT = OrderedDict([
         ("revisions", {
             "process": "HttpResourceProcessor.fetch",
+            "input": None,
+            "contribute": "Append:ExtractProcessor.extract_from_resource",
+            "output": "Collective",
             "config": {
                 "_args": [],
                 "_kwargs": {},
@@ -24,11 +27,30 @@ class WikiNewsCommunity(Community):
                 },
                 "_continuation_limit": 1000,
             },
-            "input": None,
-            "contribute": "Append:ExtractProcessor.extract_from_resource",
-            "errors": {},
             "schema": {},
+            "errors": {},
+        }),
+        ("pages", {
+            "process": "HttpResourceProcessor.fetch_mass",
+            "input": "@revisions",
+            "contribute": "Append:ExtractProcessor.extract_from_resource",
             "output": "Collective",
+            "config": {
+                "_args": ["$.pageid"],
+                "_kwargs": {},
+                "_resource": "WikipediaListPages",
+                "_objective": {
+                    "@": "$.query.pages",
+                    "pageid": "$.pageid",
+                    "categories": "$.categories",
+                    "image": "$.pageprops.page_image",
+                    "wikidata": "$.pageprops.wikibase_item"
+                },
+                "_concat_args_size": 50,
+                "_continuation_limit": 1000,
+            },
+            "schema": {},
+            "errors": {},
         })
     ])
 
@@ -37,7 +59,6 @@ class WikiNewsCommunity(Community):
 
     def finish_revisions(self, out, err):
         pages = {}
-        deletes = []
         for ind in out.individual_set.all():
             if ind.properties["pageid"] not in pages:
                 pages[ind.properties["pageid"]] = ind
@@ -47,7 +68,27 @@ class WikiNewsCommunity(Community):
                 }
             else:
                 pages[ind.properties["pageid"]]["revisions"].append(ind.content)
-                deletes.append(ind.id)
+        out.individual_set.all().delete()
+        out.individual_set.bulk_create(six.itervalues(pages))
+
+    def finish_pages(self, out, err):
+        pages = {}
+        for ind in out.individual_set.all():
+            if ind.properties["pageid"] not in pages:
+                pages[ind.properties["pageid"]] = ind
+                if ind.properties["categories"] is None:
+                    ind.properties["categories"] = []
+            else:
+                if "categories" in ind.properties and ind.properties["categories"]:
+                    pages[ind.properties["pageid"]].properties["categories"] += ind.properties["categories"]
+
+        revisions = self.growth_set.filter(type="revisions").last().output
+        for page in revisions.individual_set.all():
+            try:
+                pages[page.properties["pageid"]].properties.update(page.properties)
+            except KeyError:
+                print("KeyError:", page.properties["pageid"])
+
         out.individual_set.all().delete()
         out.individual_set.bulk_create(six.itervalues(pages))
 

@@ -58,6 +58,8 @@ class ExtractProcessor(object):
             context[name] = reach(objective, data)
 
         nodes = reach(self._at, data)
+        if isinstance(nodes, dict):  # TODO: test this case
+            nodes = six.itervalues(nodes)
 
         results = []
         for node in nodes:

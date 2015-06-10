@@ -146,7 +146,13 @@ class TestHttpResourceProcessorBase(TestHttpResourceProcessorMixin, TestCase):
         self.config.continuation_limit = 10
         args_list = self.get_args_list(["test", "next", "404"])
         kwargs_list = self.get_kwargs_list(["test", "next", "404"])
-        scc, err = HttpResourceProcessor._send_mass(args_list, kwargs_list, method=self.method, config=self.config, session=MockRequests)
+        scc, err = HttpResourceProcessor._send_mass(
+            args_list,
+            kwargs_list,
+            method=self.method,
+            config=self.config,
+            session=MockRequests
+        )
         self.check_results(scc, 3)
         self.check_results(err, 1)
 
@@ -154,8 +160,14 @@ class TestHttpResourceProcessorBase(TestHttpResourceProcessorMixin, TestCase):
     def test_send_mass_concat_arguments(self, send_serie):
         self.config.concat_args_size = 3
         self.config.concat_args_symbol = "|"
-        scc, err = HttpResourceProcessor._send_mass([1, 2, 3, 4, 5, 6, 7], [{}, {}, {}, {}, {}, {}, {}], method=self.method, config=self.config, session=MockRequests)
-        send_serie.assert_called_with(["1|2|3", "4|5|6", "7"], [{}, {}, {}], method=self.method, config=self.config, session=MockRequests)
+        scc, err = HttpResourceProcessor._send_mass(
+            [[1], [2], [3], [4], [5, 5], [6], [7]],
+            [{}, {}, {}, {}, {}, {}, {}],
+            method=self.method,
+            config=self.config,
+            session=MockRequests
+        )
+        send_serie.assert_called_with([["1|2|3"], ["4|5|5|6"], ["7"]], [{}, {}, {}], method=self.method, config=self.config, session=MockRequests)
 
 class TestHttpResourceProcessorGet(TestHttpResourceProcessorBase):
 
@@ -235,5 +247,3 @@ class TestHttpResourceProcessorPost(TestHttpResourceProcessorBase):
         self.check_results(err, 0)
         link = HttpResourceMock.objects.get(id=scc[0])
         self.assertIn("User-Agent", link.head)
-
-

@@ -250,12 +250,12 @@ class HttpResource(models.Model):
             try:
                 jsonschema.validate(list(args), args_schema)
             except SchemaValidationError as ex:
-                raise ValidationError(ex)
+                raise ValidationError(str(ex))
         if kwargs_schema:
             try:
                 jsonschema.validate(kwargs, kwargs_schema)
             except SchemaValidationError as ex:
-                raise ValidationError(ex)
+                raise ValidationError(str(ex))
 
     #######################################################
     # AUTH LOGIC

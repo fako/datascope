@@ -78,7 +78,7 @@ class Growth(models.Model):
             args, kwargs = self.input.output(self.config.args, self.config.kwargs)
             result = task.delay(*args, **kwargs)
         elif isinstance(self.input, Collective):
-            args, kwargs = self.input.output([self.config.args], [self.config.kwargs])
+            args, kwargs = self.input.output(self.config.args, self.config.kwargs)
             result = task.delay(args, kwargs)
         else:
             raise AssertionError("Growth.input is of unexpected type {}".format(type(self.input)))

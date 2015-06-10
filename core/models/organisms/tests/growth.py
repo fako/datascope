@@ -61,7 +61,7 @@ class TestGrowth(TestCase):
         MockTask.reset_mock()
         self.collective_input.begin()
         MockTask.delay.assert_called_once_with(
-            ["nested value 0", "nested value 1", "nested value 2"],
+            [["nested value 0"], ["nested value 1"], ["nested value 2"]],
             [{"context": "nested value"}, {"context": "nested value"}, {"context": "nested value"}]
         )
         self.assertEqual(self.new.result_id, "result-id")
