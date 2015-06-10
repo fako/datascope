@@ -13,11 +13,10 @@ class ProcessorMixin(object):
         import sources.processors
 
         processor_name, method_name = process.split(".")
-        try:
-            core_class = getattr(core.processors, processor_name)
-            sources_class = getattr(sources.processors, processor_name, None)
-            processor_class = sources_class if sources_class else core_class
-        except AttributeError:
+        core_class = getattr(core.processors, processor_name, None)
+        sources_class = getattr(sources.processors, processor_name, None)
+        processor_class = sources_class if sources_class else core_class
+        if processor_class is None:
             raise AssertionError(
                 "Could not import a processor named {} "
                 "from core.processors or sources.processors.".format(processor_name)

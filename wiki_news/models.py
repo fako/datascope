@@ -55,6 +55,18 @@ class WikiNewsCommunity(Community):
         })
     ])
 
+    COMMUNITY_BODY = [
+        {
+            "process": "WikipediaRankProcessor.hooks",
+            "config": {}
+        }
+    ]
+
+    PUBLIC_CONFIG = {
+        "$revision_count": 1,
+        "$category_count": 1,
+    }
+
     def initial_input(self, *args, **kwargs):
         return Individual.objects.create(community=self, properties={}, schema={})
 
