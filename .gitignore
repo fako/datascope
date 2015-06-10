@@ -6,6 +6,7 @@
 
 logs/
 docs/_build/
+meta/*
 
 secrets.py
 server.py
