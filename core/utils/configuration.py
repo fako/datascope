@@ -1,7 +1,10 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
+# noinspection PyUnresolvedReferences
+from six.moves.urllib.parse import parse_qsl
 
 import json
 import logging
+import argparse
 from copy import copy
 
 from django.db.models import fields
@@ -264,3 +267,10 @@ def load_config(defaults):
 
         return config_func
     return wrap
+
+
+class DecodeConfigAction(argparse.Action):
+
+    def __call__(self, parser, namespace, values, option_string=None):
+        values = dict(parse_qsl(values))
+        setattr(namespace, self.dest, values)
