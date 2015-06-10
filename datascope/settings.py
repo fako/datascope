@@ -31,6 +31,7 @@ INSTALLED_APPS = (
     'legacy',
 
     'debug_toolbar',  # TODO: refactor
+    'django_extensions',
 
     'wiki_news',
 )

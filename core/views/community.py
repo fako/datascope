@@ -1,3 +1,5 @@
+from __future__ import unicode_literals, absolute_import, print_function, division
+
 from copy import copy
 
 from django.core.exceptions import ValidationError
@@ -23,7 +25,7 @@ class CommunityView(APIView):
         "error": None
     }
 
-    def get(self, request, path, community_class, *args, **kwargs):
+    def get(self, request, community_class, path="", *args, **kwargs):
         response_data = copy(self.RESPONSE_DATA)
         community, created = community_class.get_or_create_by_input(*path.split('/'), **request.GET.dict())
         try:
@@ -38,7 +40,7 @@ class CommunityView(APIView):
             # FEATURE: set errors
             return Response(response_data, HTTP_500_INTERNAL_SERVER_ERROR)
 
-        manifestation = community.manifestation()
+        manifestation = community.manifestation
         if not manifestation:
             return Response(None, HTTP_204_NO_CONTENT)
         results_key = "results" if isinstance(manifestation, list) else "result"

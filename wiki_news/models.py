@@ -107,3 +107,7 @@ class WikiNewsCommunity(Community):
 
     def set_kernel(self):
         self.kernel = self.current_growth.output
+
+    @property
+    def manifestation(self):
+        return super(WikiNewsCommunity, self).manifestation[:20]

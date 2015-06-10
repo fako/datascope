@@ -63,6 +63,7 @@ class Community(models.Model, ProcessorMixin):
             if key in cls.PUBLIC_CONFIG and not key.startswith("$")
         ]
         signature.sort()
+        created = False
         try:
             community = cls.objects.get(signature="&".join(signature))
             community.config = {key: value for key, value in six.iteritems(kwargs) if key in cls.PUBLIC_CONFIG}
@@ -72,7 +73,8 @@ class Community(models.Model, ProcessorMixin):
                 config={key: value for key, value in six.iteritems(kwargs) if key in cls.PUBLIC_CONFIG}
             )
             community.save()
-        return community
+            created = True
+        return community, created
 
     def call_finish_callback(self, phase, out, errors):
         callback_name = "finish_" + phase
@@ -197,12 +199,10 @@ class Community(models.Model, ProcessorMixin):
         :return:
         """
         content = self.kernel.content
-        print("config", self.config.to_dict(protected=True, private=True))
         for part in self.COMMUNITY_BODY:
             processor, method = self.prepare_process(part["process"])
             content = method(content)
         return content
-
 
     class Meta:
         abstract = True
