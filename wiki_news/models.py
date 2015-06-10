@@ -42,6 +42,7 @@ class WikiNewsCommunity(Community):
                 "_objective": {
                     "@": "$.query.pages",
                     "pageid": "$.pageid",
+                    "title": "$.title",
                     "categories": "$.categories",
                     "image": "$.pageprops.page_image",
                     "wikidata": "$.pageprops.wikibase_item"
