@@ -143,8 +143,7 @@ class TestGrowth(TestCase):
     def test_prepare_process(self):
         process, method = self.new.prepare_process(self.new.process)
         self.assertIsInstance(process, HttpResourceProcessor)
-        self.assertIsInstance(method, six.string_types)
-        self.assertTrue(hasattr(process, method))
+        self.assertTrue(callable(method))
 
     def test_is_finished(self):
         self.new.state = GrowthState.COMPLETE

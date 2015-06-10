@@ -4,12 +4,12 @@ import six
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 
-import core.processors
 from datascope.configuration import PROCESS_CHOICE_LIST, DEFAULT_CONFIGURATION
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
 from core.exceptions import DSProcessError
 from core.models.organisms import Individual, Collective
+from core.models.organisms.mixins import ProcessorMixin
 
 
 class GrowthState(object):
@@ -33,7 +33,7 @@ CONTRIBUTE_TYPE_CHOICES = [
 ]
 
 
-class Growth(models.Model):
+class Growth(models.Model, ProcessorMixin):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+")
@@ -72,8 +72,7 @@ class Growth(models.Model):
         assert self.state in [GrowthState.NEW, GrowthState.RETRY], \
             "Can't begin a growth that is in state {}".format(self.state)
 
-        processor, method = self.prepare_process(self.process)
-        task = getattr(processor, method)
+        processor, task = self.prepare_process(self.process)
         if isinstance(self.input, Individual):
             args, kwargs = self.input.output(self.config.args, self.config.kwargs)
             result = task.delay(*args, **kwargs)
@@ -113,31 +112,11 @@ class Growth(models.Model):
         return self.output, self.resources
 
     def append_to_output(self, contributions):
-        contribute_processor, contribute_method = self.prepare_process(self.contribute)
+        contribute_processor, callback = self.prepare_process(self.contribute)
         results = []
         for contribution in contributions:
-            callback = getattr(contribute_processor, contribute_method)
             results += callback(contribution)
         self.output.update(results)
-
-    def prepare_process(self, process):
-        """
-        Creates an instance of the processor based on requested process with a correct config set.
-        Processors get loaded from core.processors
-        It returns the processor and the method that should be invoked.
-
-        :param process: A dotted string indicating the processor and method that represent the process.
-        :return: processor, method
-        """
-        processor_name, method_name = process.split(".")
-        try:
-            processor_class = getattr(core.processors, processor_name)
-        except AttributeError:
-            raise AssertionError(
-                "Could not import a processor named {} from core.processors".format(processor_name)
-            )
-        processor = processor_class(config=self.config.to_dict(protected=True))
-        return processor, method_name
 
     def save(self, *args, **kwargs):
         self.is_finished = self.state in [GrowthState.COMPLETE, GrowthState.PARTIAL]

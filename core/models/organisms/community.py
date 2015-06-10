@@ -8,6 +8,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.models.organisms import Growth, Collective, Individual
+from core.models.organisms.mixins import ProcessorMixin
 from core.models.user import DataScopeUser
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
@@ -21,7 +22,7 @@ class CommunityManager(models.Manager):
         )
 
 
-class Community(models.Model):
+class Community(models.Model, ProcessorMixin):
     """
 
     """
@@ -55,7 +56,7 @@ class Community(models.Model):
     PUBLIC_CONFIG = {}
 
     @classmethod
-    def get_or_create_by_input(cls, *args, **kwargs):
+    def get_or_create_by_input(cls, *args, **kwargs):  # TODO: test
         signature = list(args) + [
             "{}={}".format(key, value)
             for key, value in six.iteritems(kwargs)
@@ -64,10 +65,11 @@ class Community(models.Model):
         signature.sort()
         try:
             community = cls.objects.get(signature="&".join(signature))
+            community.config = {key: value for key, value in six.iteritems(kwargs) if key in cls.PUBLIC_CONFIG}
         except cls.DoesNotExist:
             community = cls(
                 signature="&".join(signature),
-                config={key: value for key, value in kwargs if key in cls.PUBLIC_CONFIG}
+                config={key: value for key, value in six.iteritems(kwargs) if key in cls.PUBLIC_CONFIG}
             )
             community.save()
         return community
@@ -96,7 +98,8 @@ class Community(models.Model):
         """
         for growth_type, growth_config in six.iteritems(self.COMMUNITY_SPIRIT):
             sch = growth_config["schema"]
-            cnf = growth_config["config"]
+            cnf = self.config.to_dict(protected=True)
+            cnf.update(growth_config["config"])
             prc = growth_config["process"]
             cont, con = growth_config["contribute"].split(":")
             inp = growth_config["input"]
@@ -186,13 +189,20 @@ class Community(models.Model):
         self.save()
         return False
 
+    @property
     def manifestation(self):
         """
         Return content of the self.kernel processed through self.contribution.
 
         :return:
         """
-        pass
+        content = self.kernel.content
+        print("config", self.config.to_dict(protected=True, private=True))
+        for part in self.COMMUNITY_BODY:
+            processor, method = self.prepare_process(part["process"])
+            content = method(content)
+        return content
+
 
     class Meta:
         abstract = True
