@@ -36,7 +36,7 @@ class WikipediaRecentChanges(WikipediaQuery):
     WIKI_RESULTS_KEY = "recentchanges"
 
     def send(self, method, *args, **kwargs):
-        now = 1433495844 #int(time.time())
+        now = 1434019011 # int(time.time()) don't enable ... put one level higher
         past = now - (60 * 60 * 24)
         args = (self.config.wiki_country, past, now)
         return super(WikipediaQuery, self).send(method, *args, **kwargs)
