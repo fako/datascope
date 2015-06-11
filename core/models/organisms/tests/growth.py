@@ -53,6 +53,7 @@ class TestGrowth(TestCase):
         self.assertEqual(self.new.result_id, "result-id")
         self.assertEqual(self.new.state, GrowthState.PROCESSING)
         self.assertFalse(self.new.is_finished)
+        self.assertTrue(self.new.config.test_flag)
         try:
             self.processing.begin()
             self.fail("Growth.begin did not warn against 'beginning' an already started growth.")

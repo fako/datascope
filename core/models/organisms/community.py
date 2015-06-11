@@ -100,8 +100,7 @@ class Community(models.Model, ProcessorMixin):
         """
         for growth_type, growth_config in six.iteritems(self.COMMUNITY_SPIRIT):
             sch = growth_config["schema"]
-            cnf = self.config.to_dict(protected=True)
-            cnf.update(growth_config["config"])
+            cnf = growth_config["config"]
             prc = growth_config["process"]
             cont, con = growth_config["contribute"].split(":")
             inp = growth_config["input"]

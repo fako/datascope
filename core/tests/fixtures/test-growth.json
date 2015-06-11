@@ -9,7 +9,7 @@
         "completed_at": null,
         "state": "",
         "current_growth": null,
-        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
+        "config": "{\"test_flag\": true}",
         "purge_at": null
     },
     "model": "core.CommunityMock",
