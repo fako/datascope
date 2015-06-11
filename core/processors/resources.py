@@ -37,6 +37,32 @@ class HttpResourceProcessor(object):
         assert isinstance(config, dict) and ("_resource" in config or "resource" in config), \
             "HttpResourceProcessor expects a resource that it should fetch in the configuration."
         self.config = config
+        self._resource = None
+
+    #######################################################
+    # Interface
+    #######################################################
+
+    def results(self, result_id):  # TODO: test
+        async_result = AsyncResult(result_id)
+        if not async_result.ready():
+            raise DSProcessUnfinished("Result with id {} is not ready.".format(result_id))
+        if async_result.status != TaskStates.SUCCESS:
+            raise DSProcessError("An error occurred during background processing.")  # TODO: reraise with celery trace?
+        scc_ids, err_ids = async_result.result
+        scc = self.resource.objects.filter(id__in=scc_ids)
+        err = self.resource.objects.filter(id__in=err_ids)
+        return scc, err
+
+    #######################################################
+    # Getters
+    #######################################################
+
+    @property
+    def resource(self):
+        if not self._resource:
+            self._resource = get_any_model(self.config.resource)
+        return self._resource
 
     @staticmethod
     def get_link(config, session=None):
@@ -48,21 +74,6 @@ class HttpResourceProcessor(object):
         # FEATURE: update session to use proxy when configured
         # FEATURE: update session to use custom user agents when configured
         return link
-
-    def get_resources_by_ids(self, ids):  # TODO: test
-        Resource = get_any_model(self.config.resource)
-        return Resource.objects.filter(id__in=ids)
-
-    def get_results(self, result_id):  # TODO: test
-        async_result = AsyncResult(result_id)
-        if not async_result.ready():
-            raise DSProcessUnfinished("Result with id {} is not ready.".format(result_id))
-        if async_result.status != TaskStates.SUCCESS:
-            raise DSProcessError("An error occurred during background processing.")  # TODO: reraise with celery trace?
-        scc_ids, err_ids = async_result.result
-        scc = self.get_resources_by_ids(scc_ids)
-        err = self.get_resources_by_ids(err_ids)
-        return scc, err
 
     #######################################################
     # PRIVATE
@@ -157,7 +168,7 @@ class HttpResourceProcessor(object):
         return [success, errors]
 
     #######################################################
-    # PUBLIC
+    # TASKS
     #######################################################
     # Wrappers that act as an interface
     # to background retrieval of resources

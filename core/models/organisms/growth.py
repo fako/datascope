@@ -95,9 +95,9 @@ class Growth(models.Model, ProcessorMixin):
             "Can't finish a growth that is in state {}".format(self.state)
 
         if self.state in [GrowthState.PROCESSING]:
-            processor, method = self.prepare_process(self.process)
+            processor, method = self.prepare_process(self.process, async=self.config.async)
             try:
-                successes, errors = processor.get_results(self.result_id)
+                successes, errors = processor.results(self.result_id)
             except DSProcessError as exc:
                 self.state = GrowthState.ERROR
                 self.save()
