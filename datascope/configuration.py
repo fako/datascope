@@ -11,6 +11,7 @@ DEFAULT_CONFIGURATION = {
         'http://globe-scope.com',
         'http://globe-scope.org',
     ],
+    "global_async": True,  # by default offload to celery where possible
 
     "http_resource_batch_size": 0,
     "http_resource_continuation_limit": 1,

@@ -43,7 +43,7 @@ class Growth(models.Model, ProcessorMixin):
     config = ConfigurationField(
         config_defaults=DEFAULT_CONFIGURATION,
         namespace="growth",
-        private=["args", "kwargs"]
+        private=["args", "kwargs", "async"]
     )
 
     process = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST)
@@ -72,13 +72,14 @@ class Growth(models.Model, ProcessorMixin):
         assert self.state in [GrowthState.NEW, GrowthState.RETRY], \
             "Can't begin a growth that is in state {}".format(self.state)
 
-        processor, task = self.prepare_process(self.process)
+        self.config = self.community.config.to_dict(protected=True)  # TODO: make this += operation instead
+
+        processor, method = self.prepare_process(self.process, async=self.config.async)  # TODO: unit test async
+        args, kwargs = self.input.output(self.config.args, self.config.kwargs)
         if isinstance(self.input, Individual):
-            args, kwargs = self.input.output(self.config.args, self.config.kwargs)
-            result = task.delay(*args, **kwargs)
+            result = method(*args, **kwargs)
         elif isinstance(self.input, Collective):
-            args, kwargs = self.input.output(self.config.args, self.config.kwargs)
-            result = task.delay(args, kwargs)
+            result = method(args, kwargs)
         else:
             raise AssertionError("Growth.input is of unexpected type {}".format(type(self.input)))
         self.result_id = result.id

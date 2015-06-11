@@ -1,9 +1,6 @@
+class ProcessorMixin(object):  # TODO: move test to mixin
 
-
-
-class ProcessorMixin(object):
-
-    def prepare_process(self, process):
+    def prepare_process(self, process, async=False):  # TODO: test async
         """
         Creates an instance of the processor based on requested process with a correct config set.
         Processors get loaded from core.processors
@@ -26,6 +23,8 @@ class ProcessorMixin(object):
             )
         processor = processor_class(config=self.config.to_dict(protected=True))
         method = getattr(processor, method_name)
+        if async:
+            method = getattr(method, "delay")
         if not callable(method):
             raise AssertionError("{} is not a callable property on {}.".format(method_name, processor))
         return processor, method
