@@ -9,4 +9,4 @@ deploy-transip: clean
 	sudo /etc/init.d/celeryd restart
 
 deploy-wiki-labs: clean
-    webservice2 uwsgi-python restart
+	webservice2 uwsgi-python restart
