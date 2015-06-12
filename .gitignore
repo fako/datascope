@@ -4,12 +4,12 @@
 *.pyc
 *.db
 
-logs/
-docs/_build/
-meta/*
+development/docs/_build/
+development/coverage/
+development/profile/
 
-secrets.py
-server.py
+*/settings/secrets.py
+*/settings/setup.py
 
 *.warc.gz
 *.megawarc.warc.os.cdx

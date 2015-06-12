@@ -25,10 +25,10 @@ NEW STYLE OBJECTS
 + Make individuals and collectives collect data from a source
 
 COMMUNITY
-- Create the Community
-- Create Growth
-- Make a spirit provide growth for a community
-- See how scraping will fit into the picture
++ Create the Community
++ Create Growth
++ Make a spirit provide growth for a community
++ See how scraping will fit into the picture
 
 FACEBOOK PROFILE
 - Provide a way to use OAuth as a process

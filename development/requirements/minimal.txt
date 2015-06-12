@@ -1,0 +1,13 @@
+Django==1.8.2
+URLObject==2.4.0
+celery==3.1.18
+django-celery==3.1.16
+djangorestframework==3.1.1
+requests==2.7.0
+six==1.9.0
+jsonfield==1.0.3
+jsonschema==2.4.0
+
+ipdb==0.8
+ipython==3.1.0
+mock==1.0.1
