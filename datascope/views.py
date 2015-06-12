@@ -6,6 +6,10 @@ from sources.management.commands.moeder_anne_casting import Command as MoederAnn
 from pandas import DataFrame
 
 
+def home(request):
+    return HttpResponse("Datascope verion 0.3")
+
+
 def casting_comparison_by_face(request):
     moeder_anne = DataFrame.from_records(
         MoederAnneCommand.extract(limit=0)

@@ -12,5 +12,6 @@ urlpatterns = [
     url(r'^data/v1/', include('core.urls', namespace="v1")),
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^intersection/$', views.casting_comparison_by_face)
+    url(r'^intersection/$', views.casting_comparison_by_face),
+    url(r'^$', views.home)
 ]
