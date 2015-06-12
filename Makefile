@@ -2,7 +2,7 @@ clean:
 	find . -type f -name "*.pyc" -delete;
 
 docs:
-	cd development/docs && make html
+	cd system/docs && make html
 
 deploy-transip: clean
 	sudo service uwsgi restart
