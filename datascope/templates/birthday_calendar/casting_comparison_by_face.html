@@ -1,0 +1,20 @@
+<html>
+
+<head>
+    <title>Casting comparison by face</title>
+</head>
+
+<body>
+    <table>
+        {% for row in data %}
+            <tr>
+                <td>{{ row.achternaam }}</td>
+                <td>{{ row.geboortedatum }}</td>
+                <td><img src="{{ row.afbeelding_x }}"/></td>
+                <td><img width="150px" src="{{ row.afbeelding_y }}"/></td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+
+</html>

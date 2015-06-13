@@ -1,0 +1,98 @@
+[
+{
+    "fields": {
+        "body": "{\"list\": [\"value 0\", \"value 1\", \"value 2\"], \"dict\": {\"test\": \"nested value\", \"dict\": {\"test\": \"test\"}, \"list\": [\"nested value 0\", \"nested value 1\", \"nested value 2\"]}, \"unicode\": [\"\\u00fcberhaupt\"], \"dotted.key\": \"another value\"}",
+        "status": 200,
+        "head": "{\"content-type\":\"application/json\"}",
+        "modified_at": "2015-05-12T18:45:22.105",
+        "created_at": "2015-05-12T18:45:22.105",
+        "request": "{\"url\":\"http://localhost:8000/en/?q=success&param=1\",\"args\":[\"en\",\"success\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{},\"data\":{},\"method\":\"get\"}",
+        "uri": "localhost:8000/en/?q=success&param=1",
+        "data_hash": "",
+        "config": "{}",
+        "purge_at": null
+    },
+    "model": "core.httpresourcemock",
+    "pk": 1
+},
+{
+    "fields": {
+        "body": "{\"error\": \"failure\"}",
+        "status": 502,
+        "head": "{\"content-type\":\"application/json\"}",
+        "modified_at": "2015-05-12T18:45:22.105",
+        "created_at": "2015-05-12T18:45:22.105",
+        "request": "{\"url\":\"http://localhost:8000/en/?q=fail&param=1\",\"args\":[\"en\",\"fail\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{},\"data\":{},\"method\":\"get\"}",
+        "uri": "localhost:8000/en/?q=fail&param=1",
+        "data_hash": "",
+        "config": "{}",
+        "purge_at": null
+    },
+    "model": "core.httpresourcemock",
+    "pk": 2
+},
+{
+    "fields": {
+        "body": "{\"list\": [\"value 0\", \"value 1\", \"value 2\"], \"next\": 1, \"dict\": {\"test\": \"nested value\", \"dict\": {\"test\": \"test\"}, \"list\": [\"nested value 0\", \"nested value 1\", \"nested value 2\"]}, \"dotted.key\": \"another value\"}",
+        "status": 200,
+        "head": "{\"content-type\":\"application/json\"}",
+        "modified_at": "2015-05-12T18:45:22.105",
+        "created_at": "2015-05-12T18:45:22.105",
+        "request": "{\"url\":\"http://localhost:8000/en/?q=next&param=1\",\"args\":[\"en\",\"next\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{},\"data\":{},\"method\":\"get\"}",
+        "uri": "localhost:8000/en/?q=next&param=1",
+        "data_hash": "",
+        "config": "{}",
+        "purge_at": null
+    },
+    "model": "core.httpresourcemock",
+    "pk": 3
+},
+{
+    "fields": {
+        "body": "{\"list\": [\"value 0\", \"value 1\", \"value 2\"], \"dict\": {\"test\": \"nested value\", \"dict\": {\"test\": \"test\"}, \"list\": [\"nested value 0\", \"nested value 1\", \"nested value 2\"]}, \"unicode\": [\"\\u00fcberhaupt\"], \"dotted.key\": \"another value\"}",
+        "status": 200,
+        "head": "{\"content-type\":\"application/json\"}",
+        "modified_at": "2015-05-12T18:45:22.105",
+        "created_at": "2015-05-12T18:45:22.105",
+        "request": "{\"url\":\"http://localhost:8000/en/?q=success&param=1\",\"args\":[\"en\",\"success\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{\"query\":\"success\"},\"data\":{\"test\":\"success\"},\"method\":\"post\"}",
+        "uri": "localhost:8000/en/?q=success&param=1",
+        "data_hash": "a74bc31dc4569bd2dcf3a37cab2c335c9d4f9eb9",
+        "config": "{}",
+        "purge_at": null
+    },
+    "model": "core.httpresourcemock",
+    "pk": 4
+},
+{
+    "fields": {
+        "body": "{\"error\": \"failure\"}",
+        "status": 502,
+        "head": "{\"content-type\":\"application/json\"}",
+        "modified_at": "2015-05-12T18:45:22.105",
+        "created_at": "2015-05-12T18:45:22.105",
+        "request": "{\"url\":\"http://localhost:8000/en/?q=fail&param=1\",\"args\":[\"en\",\"fail\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{\"query\":\"fail\"},\"data\":{\"test\":\"fail\"},\"method\":\"post\"}",
+        "uri": "localhost:8000/en/?q=fail&param=1",
+        "data_hash": "986d1f05a69243c11d8cbcea1771106cbdeccc0c",
+        "config": "{}",
+        "purge_at": null
+    },
+    "model": "core.httpresourcemock",
+    "pk": 5
+},
+{
+    "fields": {
+        "body": "{\"list\": [\"value 0\", \"value 1\", \"value 2\"], \"next\": 1, \"dict\": {\"test\": \"nested value\", \"dict\": {\"test\": \"test\"}, \"list\": [\"nested value 0\", \"nested value 1\", \"nested value 2\"]}, \"unicode\": [\"\\u00fcberhaupt\"], \"dotted.key\": \"another value\"}",
+        "status": 200,
+        "head": "{\"content-type\":\"application/json\"}",
+        "modified_at": "2015-05-12T18:45:22.105",
+        "created_at": "2015-05-12T18:45:22.105",
+        "request": "{\"url\":\"http://localhost:8000/en/?q=next&param=1\",\"args\":[\"en\",\"next\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{\"query\":\"next\"},\"data\":{\"test\":\"next\"},\"method\":\"post\"}",
+        "uri": "localhost:8000/en/?q=next&param=1",
+        "data_hash": "3c1e557aa25d12ab88d62c91b91810e73babed7c",
+        "config": "{}",
+        "purge_at": null
+    },
+    "model": "core.httpresourcemock",
+    "pk": 6
+}
+]

@@ -4,13 +4,19 @@
 *.pyc
 *.db
 
-logs/
-docs/_build/
 
-secrets.py
-server.py
+development/docs/_build/
+development/coverage/
+development/profile/
 
+*/settings/secrets.py
+*/settings/setup.py
+
+# Internet Archive files
 *.warc.gz
 *.megawarc.warc.os.cdx
 *.megawarc.warc.os.cdx.gz
 nl-hyves*.html
+
+# Wikipedia labs specific file
+app.py
