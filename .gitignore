@@ -5,9 +5,9 @@
 *.db
 
 
-development/docs/_build/
-development/coverage/
-development/profile/
+system/docs/_build/
+system/coverage/
+system/profile/
 
 */settings/secrets.py
 */settings/setup.py
