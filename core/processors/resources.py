@@ -43,13 +43,17 @@ class HttpResourceProcessor(object):
     # Interface
     #######################################################
 
-    def results(self, result_id):  # TODO: test
+    @staticmethod
+    def async_results(result_id):  # TODO: test
         async_result = AsyncResult(result_id)
         if not async_result.ready():
             raise DSProcessUnfinished("Result with id {} is not ready.".format(result_id))
         if async_result.status != TaskStates.SUCCESS:
             raise DSProcessError("An error occurred during background processing.")  # TODO: reraise with celery trace?
-        scc_ids, err_ids = async_result.result
+        return async_result.result
+
+    def results(self, result):  # TODO: test
+        scc_ids, err_ids = result
         scc = self.resource.objects.filter(id__in=scc_ids)
         err = self.resource.objects.filter(id__in=err_ids)
         return scc, err

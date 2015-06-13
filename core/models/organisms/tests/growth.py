@@ -72,7 +72,7 @@ class TestGrowth(TestCase):
 
     @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultPartial)
     def test_finish_with_errors(self, async_result):
-        output, errors = self.processing.finish()
+        output, errors = self.processing.finish("result")
         self.assertTrue(async_result.called)
         self.assertTrue(self.processing.is_finished)
         self.assertEqual(self.processing.state, GrowthState.PARTIAL)
@@ -84,7 +84,7 @@ class TestGrowth(TestCase):
 
     @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultSuccess)
     def test_finish_without_errors(self, async_result):
-        output, errors = self.processing.finish()
+        output, errors = self.processing.finish("result")
         self.assertTrue(async_result.called)
         self.assertTrue(self.processing.is_finished)
         self.assertEqual(self.processing.state, GrowthState.COMPLETE)
@@ -95,7 +95,7 @@ class TestGrowth(TestCase):
     @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultError)
     def test_finish_error(self, async_result):
         try:
-            self.processing.finish()
+            self.processing.finish("result")
             self.fail("Growth.finish did not raise an error when the background process failed.")
         except DSProcessError:
             pass
@@ -105,7 +105,7 @@ class TestGrowth(TestCase):
 
     @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultSuccess)
     def test_finish_finished_and_partial(self, async_result):
-        output, errors = self.finished.finish()
+        output, errors = self.finished.finish("result")
         self.assertFalse(async_result.called)
         self.assertTrue(self.finished.is_finished)
         self.assertEqual(self.finished.state, GrowthState.COMPLETE)
@@ -116,7 +116,7 @@ class TestGrowth(TestCase):
         hrm = HttpResourceMock.objects.get(id=4)
         hrm.retain(self.finished)
         self.finished.save()
-        output, errors = self.finished.finish()
+        output, errors = self.finished.finish("result")
         self.assertFalse(async_result.called)
         self.assertTrue(self.finished.is_finished)
         self.assertEqual(self.finished.state, GrowthState.PARTIAL)
@@ -128,7 +128,7 @@ class TestGrowth(TestCase):
     @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultWaiting)
     def test_finish_pending(self, async_result):
         try:
-            self.processing.finish()
+            self.processing.finish("result")
             self.fail("Growth.finish did not raise an exception when the background process is not ready.")
         except DSProcessUnfinished:
             pass

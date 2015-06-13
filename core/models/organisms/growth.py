@@ -15,6 +15,7 @@ from core.models.organisms.mixins import ProcessorMixin
 class GrowthState(object):
     NEW = "New"
     PROCESSING = "Processing"
+    CONTRIBUTE = "Contribute"
     COMPLETE = "Complete"
     PARTIAL = "Partial"
     ERROR = "Error"
@@ -82,34 +83,46 @@ class Growth(models.Model, ProcessorMixin):
             result = method(args, kwargs)
         else:
             raise AssertionError("Growth.input is of unexpected type {}".format(type(self.input)))
-        self.result_id = result.id
-        self.state = GrowthState.PROCESSING
-        self.save()
 
-    def finish(self):
+        if not self.config.async:
+            self.state = GrowthState.CONTRIBUTE
+        else:
+            self.state = GrowthState.PROCESSING
+            self.result_id = result.id
+        self.save()
+        return result
+
+    def finish(self, result):
         """
 
         :return: the output Organism and unprocessed errors
         """
-        assert self.state in [GrowthState.PROCESSING, GrowthState.COMPLETE, GrowthState.PARTIAL], \
-            "Can't finish a growth that is in state {}".format(self.state)
+        assert self.state in [
+            GrowthState.PROCESSING, GrowthState.COMPLETE, GrowthState.PARTIAL, GrowthState.CONTRIBUTE
+        ], "Can't finish a growth that is in state {}".format(self.state)
 
-        if self.state in [GrowthState.PROCESSING]:
-            processor, method = self.prepare_process(self.process, async=self.config.async)
+        processor, method = self.prepare_process(self.process, async=self.config.async)
+
+        if self.state == GrowthState.PROCESSING:
             try:
-                successes, errors = processor.results(self.result_id)
+                result = processor.async_results(result)
+                self.state = GrowthState.CONTRIBUTE
             except DSProcessError as exc:
                 self.state = GrowthState.ERROR
                 self.save()
                 raise exc  # TODO: reraise?
+
+        if self.state == GrowthState.CONTRIBUTE:
+            scc, err = processor.results(result)
             if self.contribute_type == ContributeType.APPEND:
-                self.append_to_output(successes)
+                self.append_to_output(scc)
             else:
                 raise AssertionError("Growth.finish did not act on contribute_type {}".format(self.contribute_type))
-            for error in errors:
-                error.retain(self)
-            self.state = GrowthState.COMPLETE if not len(errors) else GrowthState.PARTIAL
+            for res in err:
+                res.retain(self)
+            self.state = GrowthState.COMPLETE if not len(err) else GrowthState.PARTIAL
             self.save()
+
         return self.output, self.resources
 
     def append_to_output(self, contributions):

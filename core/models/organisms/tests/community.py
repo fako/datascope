@@ -28,7 +28,7 @@ class TestCommunityMock(CommunityTestMixin):
         self.instance = CommunityMock.objects.get(id=1)
         self.incomplete = CommunityMock.objects.get(id=2)
 
-    def raise_unfinished(self):
+    def raise_unfinished(self, result):
         raise DSProcessUnfinished("Raised for test")
 
     def set_instance_mocks(self):

@@ -169,26 +169,31 @@ class Community(models.Model, ProcessorMixin):
         if self.kernel is not None:
             return True
 
+        result = None
+
         if self.current_growth is None:
             self.setup_growth()
             self.current_growth = self.next_growth()
             self.call_begin_callback(self.current_growth.type, self.current_growth.input)
-            self.current_growth.begin()
+            result = self.current_growth.begin()  # when synchronous result contains actual results
             self.save()
 
-        # FEATURE: wrap rest of function in while True for synchronous handling
-        output, errors = self.current_growth.finish()  # will raise when Growth is not finished
-        self.call_finish_callback(self.current_growth.type, output, errors)
-        try:
-            self.current_growth = self.next_growth()
-        except Growth.DoesNotExist:
-            self.set_kernel()
+        while self.kernel is None:
+
+            output, errors = self.current_growth.finish(result)  # will raise when Growth is not finished
+            self.call_finish_callback(self.current_growth.type, output, errors)
+            try:
+                self.current_growth = self.next_growth()
+            except Growth.DoesNotExist:
+                self.set_kernel()
+                self.save()
+                return True
+            self.call_begin_callback(self.current_growth.type, self.current_growth.input)
+            result = self.current_growth.begin()
             self.save()
-            return True
-        self.call_begin_callback(self.current_growth.type, self.current_growth.input)
-        self.current_growth.begin()
-        self.save()
-        return False
+
+            if self.config.async:
+                return False
 
     @property
     def manifestation(self):
