@@ -1,0 +1,19 @@
++ Allow better batch processing (Mysql has gone away bug)
++ Allow partial POST (Construct a resource bit by bit)
++ Allow actions on parts of results (fetch more images)
+- Allow data private for user
++ Support partial results
++ Support existing algorithms (ImageTranslations, PeopleSuggestions, CityCelebrities)
+- Store history
+- Integrate with BeautifulSoup
+- Integrate with pattern
+- Prepare Facebook functionality
+- Support oauth mechanism
+- Think about different views upon the same results
+- Prepare website scraping (president-death statistics)
+
+- Use rest_framework 3
+- Use Python 3
+- Use Django 1.8 or 1.7
+- Use JSON path
+- Use JSON schema

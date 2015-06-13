@@ -1,0 +1,40 @@
+PREPARATION
++ Rename core to legacy
++ Update all packages to latest version (mainly: Django, DRF and Celery)
+- Full test and deploy
+
+STORAGE
+- Simplify existing storage functionality in new "core"
+- Keep documentation and tests intact as much as possible
+
+EXTERNAL RESOURCES
+- Rename HttpLink to HttpResource and move to new "core"
+- Make resources use simplified storage
+- Provide a POST mechanism
+
+PROCESSES
+- Simplify processes (mainly: Retrieve) and move it to new "core"
+- Rename Retrieve to Fetch
+- Provide a Submit process
+
+NEW STYLE OBJECTS
+- Create the Individual
+- Create the Collective
+- Create the Community
+- Create an Individual resource
+- Create a Collective resource
+
+PORT ALGORITHMS
+- Create new style visual-translations
+- Test and deploy
+- Create new style people-suggestions
+- Test and deploy
+- Create new style city-celebrities
+- Test and deploy
+
+DEPRECATE LEGACY
+- Remove all legacy code
+- Update to Python3
+
+FACEBOOK PROFILE
+- Provide a

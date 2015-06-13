@@ -6,7 +6,7 @@ admin.autodiscover()
 urlpatterns = patterns('',
     # Examples:
     # url(r'^$', 'datascope.views.home', name='home'),
-    url(r'', include('core.urls')),
+    url(r'', include('legacy.urls')),
 
     url(r'^admin/', include(admin.site.urls)),
 )
