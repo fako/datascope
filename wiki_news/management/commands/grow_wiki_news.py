@@ -13,13 +13,13 @@ class Command(GrowCommand):
         parser.add_argument('community', type=unicode, nargs="?", default="WikiNewsCommunity")
         parser.add_argument('-c', '--config', type=unicode, action=DecodeConfigAction, nargs="?", default={})
 
-    def clear_database(self):
+    @staticmethod
+    def clear_database():
         WikiNewsCommunity.objects.all().delete()
         WikipediaRecentChanges.objects.all().delete()
         WikipediaListPages.objects.all().delete()
 
     def handle_community(self, community, **options):
-        self.clear_database()
         today_at_midnight = (date.today() - date(1970, 1, 1)).total_seconds()
         yesterday_at_midnight = today_at_midnight - 60 * 60 * 24
         community.config = {
@@ -27,3 +27,7 @@ class Command(GrowCommand):
             "end_time": today_at_midnight
         }
         super(Command, self).handle_community(community, **options)
+
+    def handle(self, *args, **options):
+        self.clear_database()
+        super(Command, self).handle(*args, **options)
