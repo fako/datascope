@@ -33,7 +33,7 @@ class RankProcessor(object):
             if not total:
                 return individuals
             for individual in individuals:
-                weight = hook(individual) / total * int(config_dict["$"+hook.__name__])
+                weight = hook(individual) / total * float(config_dict["$"+hook.__name__])
                 if "ds_rank" not in individual:
                     individual["ds_rank"] = weight
                 else:
