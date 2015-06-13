@@ -1,6 +1,8 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 import six
 
+from django.conf import settings
+
 from collections import OrderedDict
 
 from core.models.organisms import Community, Individual
@@ -82,7 +84,7 @@ class WikiNewsCommunity(Community):
             else:
                 pages[ind.properties["pageid"]]["revisions"].append(ind.content)
         out.individual_set.all().delete()
-        out.individual_set.bulk_create(six.itervalues(pages))
+        out.individual_set.bulk_create(six.itervalues(pages), batch_size=settings.MAX_BATCH_SIZE)
 
     def finish_pages(self, out, err):
         pages = {}
@@ -103,7 +105,7 @@ class WikiNewsCommunity(Community):
                 print("KeyError:", page.properties["pageid"])
 
         out.individual_set.all().delete()
-        out.individual_set.bulk_create(six.itervalues(pages))
+        out.individual_set.bulk_create(six.itervalues(pages), batch_size=settings.MAX_BATCH_SIZE)
 
     def set_kernel(self):
         self.kernel = self.current_growth.output

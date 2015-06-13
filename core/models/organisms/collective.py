@@ -1,5 +1,7 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
+from django.conf import settings
+
 from core.models.organisms import Organism, Individual
 
 
@@ -59,7 +61,7 @@ class Collective(Organism):
             return bulk, save
 
         bulks, saves = prepare_updates(data)
-        Individual.objects.bulk_create(bulks)
+        Individual.objects.bulk_create(bulks, batch_size=settings.MAX_BATCH_SIZE)
         for organism in saves:
             organism.save()
 
