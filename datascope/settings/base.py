@@ -226,6 +226,9 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.fakoberkers.nl"
 EMAIL_PORT = 587
 
+import requests.packages.urllib3.contrib.pyopenssl
+requests.packages.urllib3.contrib.pyopenssl.inject_into_urllib3()
+
 #######################################################
 # LEGACY SETTINGS
 #######################################################
