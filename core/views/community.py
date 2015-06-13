@@ -9,6 +9,7 @@ from rest_framework.response import Response
 from rest_framework.status import (HTTP_200_OK, HTTP_202_ACCEPTED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST,
                                    HTTP_500_INTERNAL_SERVER_ERROR)
 
+from core.models.organisms.community import CommunityState
 from core.exceptions import DSProcessUnfinished, DSProcessError
 
 
@@ -28,6 +29,10 @@ class CommunityView(APIView):
     def get(self, request, community_class, path="", *args, **kwargs):
         response_data = copy(self.RESPONSE_DATA)
         community, created = community_class.get_or_create_by_input(*path.split('/'), **request.GET.dict())
+
+        if community.state == CommunityState.SYNC:
+            # FEATURE: set status
+            return Response(response_data, HTTP_202_ACCEPTED)
         try:
             community.grow()
         except ValidationError as exc:

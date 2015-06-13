@@ -14,12 +14,16 @@ from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
 
 
-class CommunityManager(models.Manager):
+class CommunityState(object):
+    NEW = "New"
+    ASYNC = "Asynchronous"
+    SYNC = "Synchronous"
+    READY = "Ready"
+    EXPAND = "Expand"
 
-    def get_queryset(self, *args, **kwargs):
-        super(CommunityManager, self).get_queryset(*args, **kwargs).select_related(
-            "current_growth"
-        )
+COMMUNITY_STATE_CHOICES = [
+    (attr, value) for attr, value in six.iteritems(CommunityState.__dict__) if not attr.startswith("_")
+]
 
 
 class Community(models.Model, ProcessorMixin):
@@ -49,7 +53,7 @@ class Community(models.Model, ProcessorMixin):
     purge_at = models.DateTimeField(null=True, blank=True)
 
     views = models.IntegerField(default=0)
-    state = models.CharField(max_length=255)  # TODO: set choices
+    state = models.CharField(max_length=255, choices=COMMUNITY_STATE_CHOICES, default=CommunityState.NEW)
 
     COMMUNITY_SPIRIT = OrderedDict()
     COMMUNITY_BODY = []
@@ -166,14 +170,17 @@ class Community(models.Model, ProcessorMixin):
         """
         assert self.id, "A community can only be grown after an initial save."
 
-        if self.kernel is not None:
+        if self.state == CommunityState.READY:
             return True
+        elif self.state == CommunityState.SYNC:
+            return False
 
         result = None
-
-        if self.current_growth is None:
+        if self.state in [CommunityState.NEW, CommunityState.EXPAND]:
+            self.state = CommunityState.ASYNC if self.config.async else CommunityState.SYNC
             self.setup_growth()
             self.current_growth = self.next_growth()
+            self.save()  # in between save because next operations may take long and community needs to be claimed.
             self.call_begin_callback(self.current_growth.type, self.current_growth.input)
             result = self.current_growth.begin()  # when synchronous result contains actual results
             self.save()
@@ -186,13 +193,14 @@ class Community(models.Model, ProcessorMixin):
                 self.current_growth = self.next_growth()
             except Growth.DoesNotExist:
                 self.set_kernel()
+                self.state = CommunityState.READY
                 self.save()
                 return True
             self.call_begin_callback(self.current_growth.type, self.current_growth.input)
             result = self.current_growth.begin()
             self.save()
 
-            if self.config.async:
+            if self.state == CommunityState.ASYNC:
                 return False
 
     @property

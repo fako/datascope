@@ -1,7 +1,5 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
-import json
-
 from core.management.commands._community import CommunityCommand
 
 
@@ -11,4 +9,8 @@ class Command(CommunityCommand):
     """
 
     def handle_community(self, community, **options):
-        print(json.dumps([[page["title"], len(page["revisions"]), len(page.get("categories", [])), page["ds_rank"]] for page in community.manifestation[:10]], indent=4))
+        for page in community.manifestation[:10]:
+            print("Title:", page["title"])
+            print("Categories count:", page.get("categories", []))
+            print("Revision count:", page["revisions"])
+            print("Rank:", page["ds_rank"])

@@ -105,7 +105,7 @@ class Growth(models.Model, ProcessorMixin):
 
         if self.state == GrowthState.PROCESSING:
             try:
-                result = processor.async_results(result)
+                result = processor.async_results(self.result_id)
                 self.state = GrowthState.CONTRIBUTE
             except DSProcessError as exc:
                 self.state = GrowthState.ERROR
