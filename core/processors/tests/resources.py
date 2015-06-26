@@ -247,3 +247,9 @@ class TestHttpResourceProcessorPost(TestHttpResourceProcessorBase):
         self.check_results(err, 0)
         link = HttpResourceMock.objects.get(id=scc[0])
         self.assertIn("User-Agent", link.head)
+
+    def test_async_results(self):
+        self.skipTest("not tested")
+
+    def test_results(self):
+        self.skipTest("not tested")

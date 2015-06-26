@@ -41,7 +41,7 @@ class ExtractProcessor(object):
             "Make sure that '@' is specified".format(objective)
         assert self._objective, "No objectives loaded from objective {}".format(objective)
 
-    def extract_from_resource(self, resource):  # TODO: test
+    def extract_from_resource(self, resource):
         return self.extract(*resource.content)
 
     def extract(self, content_type, data):
@@ -58,7 +58,7 @@ class ExtractProcessor(object):
             context[name] = reach(objective, data)
 
         nodes = reach(self._at, data)
-        if isinstance(nodes, dict):  # TODO: test this case
+        if isinstance(nodes, dict):
             nodes = six.itervalues(nodes)
 
         results = []

@@ -32,4 +32,3 @@ class IndividualContentView(ContentView, generics.UpdateAPIView):
     queryset = Individual.objects.all()
     serializer_class = ContentSerializer
     content_class = Individual
-

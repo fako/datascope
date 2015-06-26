@@ -3,11 +3,13 @@ from django.test import TestCase
 from mock import Mock, patch
 
 from core.models.organisms import Individual, Collective, Growth
+from core.models.organisms.tests.mixins import TestProcessorMixin
 from core.tests.mocks.community import CommunityMock
 from core.exceptions import DSProcessUnfinished
 
 
-class CommunityTestMixin(TestCase):
+
+class CommunityTestMixin(TestProcessorMixin):
 
     def test_set_kernel(self):
         # Test that return type is an organism
@@ -34,6 +36,9 @@ class TestCommunityMock(CommunityTestMixin):
     def set_instance_mocks(self):
         self.instance.call_begin_callback = Mock()
         self.instance.call_finish_callback = Mock()
+
+    def test_get_or_create_by_input(self):
+        self.skipTest("not tested")
 
     def test_callbacks(self):
         self.instance.begin_phase1 = Mock()
@@ -77,8 +82,7 @@ class TestCommunityMock(CommunityTestMixin):
             pass
 
     def test_error_callback(self):
-        # TODO: write test
-        pass
+        self.skipTest("not tested")
 
     @patch("core.models.organisms.community.Growth.begin")
     def test_grow(self, begin_growth):
@@ -156,3 +160,17 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertFalse(begin_growth.called)
         self.assertFalse(finish_growth.called)
 
+        self.skipTest("update test for sync flow")
+        self.skipTest("test with states")
+
+    def test_manifestation(self):
+        self.skipTest("not tested")
+
+
+class CommunityTestMixin(TestCase):
+
+    def test_set_kernel(self):
+        self.skipTest("not tested")
+
+    def test_initial_input(self):
+        self.skipTest("not tested")

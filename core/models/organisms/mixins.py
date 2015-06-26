@@ -1,6 +1,6 @@
-class ProcessorMixin(object):  # TODO: move test to mixin
+class ProcessorMixin(object):
 
-    def prepare_process(self, process, async=False):  # TODO: test async
+    def prepare_process(self, process, async=False):
         """
         Creates an instance of the processor based on requested process with a correct config set.
         Processors get loaded from core.processors

@@ -32,3 +32,9 @@ class TestIndividual(TestCase):
         self.assertEqual(results, [self.dict_outcome, self.dict_outcome])
         results = self.instance.output({})
         self.assertEqual(results, {})
+
+    def test_update(self):
+        self.skipTest("not tested")
+
+    def test_validate(self):
+        self.skipTest("not tested")

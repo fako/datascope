@@ -60,7 +60,7 @@ class Community(models.Model, ProcessorMixin):
     PUBLIC_CONFIG = {}
 
     @classmethod
-    def get_or_create_by_input(cls, *args, **kwargs):  # TODO: test
+    def get_or_create_by_input(cls, *args, **kwargs):
         signature = list(args) + [
             "{}={}".format(key, value)
             for key, value in six.iteritems(kwargs)

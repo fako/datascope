@@ -9,7 +9,7 @@ from core.processors.extraction import ExtractProcessor
 from core.tests.mocks.data import MOCK_HTML, MOCK_SCRAPE_DATA, MOCK_DATA_WITH_RECORDS, MOCK_JSON_DATA
 
 
-class TestExtractProcessorHTML(TestCase):
+class TestExtractProcessor(TestCase):
 
     def setUp(self):
         super(TestCase, self).setUp()
@@ -51,6 +51,9 @@ class TestExtractProcessorHTML(TestCase):
         self.assertTrue(self.html_prc.text_html.called)
         self.assertTrue(self.html_prc.application_json.called)
 
+    def test_extract_from_resource(self):
+        self.skipTest("not tested")
+
     def test_html_text(self):
         rsl = self.html_prc.text_html(self.soup)
         self.assertEqual(rsl, MOCK_SCRAPE_DATA)
@@ -60,3 +63,4 @@ class TestExtractProcessorHTML(TestCase):
         rsl = self.json_prc.application_json(self.json)
         self.assertEqual(rsl, MOCK_JSON_DATA)
         self.assertIsInstance(rsl, list, "Extractors are expected to return lists with 0 or more elements inside.")
+        self.skipTest("test with nodes being a dict")

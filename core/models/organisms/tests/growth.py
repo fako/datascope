@@ -1,19 +1,18 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
-import six
 
 from mock import patch
 
 from django.test import TestCase
 
 from core.models.organisms.growth import Growth, GrowthState
-from core.processors.resources import HttpResourceProcessor
 from core.tests.mocks.celery import (MockTask, MockAsyncResultSuccess, MockAsyncResultPartial,
                                     MockAsyncResultError, MockAsyncResultWaiting)
-from core.exceptions import DSProcessError, DSProcessUnfinished
 from core.tests.mocks.http import HttpResourceMock
+from core.models.organisms.tests.mixins import TestProcessorMixin
+from core.exceptions import DSProcessError, DSProcessUnfinished
 
 
-class TestGrowth(TestCase):
+class TestGrowth(TestProcessorMixin):
 
     fixtures = ["test-growth"]
 
@@ -69,6 +68,7 @@ class TestGrowth(TestCase):
         self.assertEqual(self.new.state, GrowthState.PROCESSING)
         self.assertFalse(self.new.is_finished)
 
+        self.skipTest("test contribute state (sync processing)")
 
     @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultPartial)
     def test_finish_with_errors(self, async_result):
@@ -136,15 +136,13 @@ class TestGrowth(TestCase):
         self.assertFalse(self.processing.is_finished)
         self.assertEqual(self.processing.state, GrowthState.PROCESSING)
 
+    def test_finish_synchronous(self):
+        self.skipTest("not tested")
+
     def test_append_to_output(self):
         qs = HttpResourceMock.objects.filter(id=1)
         self.new.append_to_output(qs)
         self.assertEqual(self.new.output.content, self.expected_append_output[:3])
-
-    def test_prepare_process(self):
-        process, method = self.new.prepare_process(self.new.process)
-        self.assertIsInstance(process, HttpResourceProcessor)
-        self.assertTrue(callable(method))
 
     def test_is_finished(self):
         self.new.state = GrowthState.COMPLETE
