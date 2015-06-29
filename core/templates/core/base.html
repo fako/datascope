@@ -1,0 +1,27 @@
+{% load static %}
+<!DOCTYPE HTML>
+<html>
+<head>
+    <title>{% block title %}Data Scope{% endblock %}</title>
+
+    {% block css %}
+        <link href="{% static "core/css/bootstrap.min.css" %}" rel="stylesheet" />
+        <link href="{% static "core/css/style.css" %}" rel="stylesheet" />
+    {% endblock %}
+
+    {% block head-js %}
+        <script src="{% static "core/js/jquery-1.11.1.min.js" %}"></script>
+        <script src="{% static "core/js/uri.js" %}"></script>
+    {% endblock %}
+
+</head>
+
+<body>
+    {% block header %}{% endblock %}
+    {% block body %}{% endblock %}
+    {% block footer %}{% endblock %}
+
+    {% block body-js %}{% endblock %}
+</body>
+
+</html>

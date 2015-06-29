@@ -1,0 +1,19 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block body %}
+
+    <div>
+        {% for page in response.results %}
+            <h4>{{ page.title }}</h4>
+            <p>
+                Revisions: {{ page.revisions | length }}<br/>
+                Categories: {{ page.categories | length }}<br/>
+                Rank: {{ page.ds_rank }}<br/>
+                Wikipedia: <a href="https://en.wikipedia.org/wiki/{{ page.title }}">{{ page.title }}</a><br/>
+                Wikidata: <a href="https://www.wikidata.org/wiki/{{ page.wikidata }}">{{ page.wikidata }}</a>
+            </p>
+        {% endfor %}
+    </div>
+
+{% endblock %}

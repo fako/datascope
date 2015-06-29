@@ -3,6 +3,8 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 from copy import copy
 
 from django.core.exceptions import ValidationError
+from django.shortcuts import render_to_response, RequestContext
+from django.views.generic import View
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -57,5 +59,47 @@ class CommunityView(APIView):
     #     pass
 
 
-class PlainCommunityView(CommunityView):
-    pass
+class HtmlCommunityView(View):
+
+    INDEX = "index.html"
+    ACCEPTED = "accepted.html"
+    OK = "ok.html"
+    NO_CONTENT = "no-content.html"
+    BAD_REQUEST = "bad-request.html"
+    MULTIPLE_CHOICES = "multiple-choices.html"
+
+    @staticmethod
+    def html_template_for(community_class, response):
+        if response.status_code == 200:
+            template = HtmlCommunityView.OK
+        elif response.status_code == 202:
+            template = HtmlCommunityView.ACCEPTED
+        elif response.status_code in [204, 404]:
+            template = HtmlCommunityView.NO_CONTENT
+        elif response.status_code == 300:
+            template = HtmlCommunityView.MULTIPLE_CHOICES
+        elif response.status_code == 400:
+            template = HtmlCommunityView.BAD_REQUEST
+        else:
+            template = HtmlCommunityView.INDEX
+        return '{}/{}'.format(community_class.get_name(), template)
+
+    @staticmethod
+    def data_for(community_class, response):
+        if response.status_code == 200:
+            return response.data
+        elif response.status_code == 300:
+            return response.data
+        return None
+
+    def get(self, request, community_class, path="", *args, **kwargs):
+        api_response = CommunityView().get(request, community_class, path, *args, **kwargs)
+        template_context = {
+            'self_reverse': community_class.get_name() + '-plain',
+            'response': self.data_for(community_class, api_response)
+        }
+        return render_to_response(
+            self.html_template_for(community_class, api_response),
+            template_context,
+            RequestContext(request)
+        )

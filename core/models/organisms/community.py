@@ -216,5 +216,18 @@ class Community(models.Model, ProcessorMixin):
             content = method(content)
         return content
 
+    @classmethod
+    def get_name(cls):
+        word_separator = '-'
+        class_name = cls.__name__
+        class_name = class_name.replace('Community', '')
+        name = ''
+        for index, char in enumerate(class_name):
+            if char.isupper():
+                name += word_separator + char.lower() if not index == 0 else char.lower()
+            else:
+                name += char
+        return name
+
     class Meta:
         abstract = True
