@@ -1,6 +1,7 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
 from django.core.exceptions import ValidationError
+from django.shortcuts import Http404
 
 from rest_framework import serializers, pagination, generics
 from rest_framework.response import Response
@@ -36,7 +37,10 @@ class ContentView(generics.RetrieveAPIView):
     content_class = None
 
     def dispatch(self, request, *args, **kwargs):
-        request.organism = self.get_object()
+        try:
+            request.organism = self.get_object()
+        except Http404:
+            pass  # slightly suboptimal with an extra query on 404
         return super(ContentView, self).dispatch(request, *args, **kwargs)
 
     def get_serializer(self, *args, **kwargs):
