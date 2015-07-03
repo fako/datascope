@@ -1,6 +1,7 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
 from django.core.exceptions import ValidationError
+from django.shortcuts import Http404
 
 from rest_framework import generics, serializers, status
 from rest_framework.response import Response
@@ -53,6 +54,8 @@ class CollectiveContentView(ContentView):
         :return: Response
         """
         # TODO: allow filtering based on GET parameters prefixed with $
+        if request.organism is None:
+            raise Http404("Not found")
 
         page = self.paginate_queryset(request.organism.individual_set.all())
         if page is not None:

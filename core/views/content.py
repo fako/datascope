@@ -40,7 +40,7 @@ class ContentView(generics.RetrieveAPIView):
         try:
             request.organism = self.get_object()
         except Http404:
-            pass  # slightly suboptimal with an extra query on 404
+            request.organism = None  # slightly suboptimal with an extra query on 404
         return super(ContentView, self).dispatch(request, *args, **kwargs)
 
     def get_serializer(self, *args, **kwargs):
