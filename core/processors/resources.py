@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 from six.moves import zip, range
 
 from time import sleep
+import logging
 
 import requests
 
@@ -13,6 +14,8 @@ from datascope.configuration import DEFAULT_CONFIGURATION
 from core.utils.configuration import ConfigurationProperty, ConfigurationType, load_config
 from core.utils.helpers import get_any_model
 from core.exceptions import DSResourceException, DSProcessUnfinished, DSProcessError
+
+log = logging.getLogger("datascope")
 
 
 class HttpResourceProcessor(object):
@@ -107,6 +110,7 @@ class HttpResourceProcessor(object):
                 link.save()
                 success.append(link.id)
             except DSResourceException as exc:
+                log.debug(exc)
                 link = exc.resource
                 link.save()
                 errors.append(link.id)
