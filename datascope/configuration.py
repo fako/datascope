@@ -1,5 +1,7 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
+from django.conf import settings
+
 
 DEFAULT_CONFIGURATION = {
     "global_allowed_origins": [
@@ -21,7 +23,10 @@ DEFAULT_CONFIGURATION = {
 
     "wikipedia_wiki_country": "en",
     "wikipedia_wiki_query_param": "titles",
-    "wikipedia_wiki_full_extracts": False
+    "wikipedia_wiki_full_extracts": False,
+
+    "google_api_key": settings.GOOGLE_API_KEY,
+    "google_cx": "004613812033868156538:5pcwbuudj1m"
 }
 
 
