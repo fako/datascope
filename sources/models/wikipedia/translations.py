@@ -1,7 +1,7 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
 from core.utils.helpers import override_dict
-from core.exceptions import DSHttpError40X
+from core.exceptions import DSHttpError40X, DSInvalidResource
 from sources.models.wikipedia.query import WikipediaQuery
 
 
@@ -14,25 +14,24 @@ class WikipediaTranslate(WikipediaQuery):
         'iwprop': 'url',
     })
 
-    # HIF_objective = {
-    #     "url": None,
-    #     "*": None,
-    #     "prefix": None
-    # }
-    # HIF_translations = {
-    #     "*": "translation",
-    #     "prefix": "language"
-    # }
-
-    def send(self, method, *args, **kwargs):
-        args += (self.config.translate_to,)
-        return super(WikipediaTranslate, self).send(method, *args, **kwargs)
-
     def _handle_errors(self):
         super(WikipediaTranslate, self)._handle_errors()
         if not "iwlinks" in self.body:
             self.status = 404
             raise DSHttpError40X("No translations found in {} for {}".format(self.meta), resource=self)
+
+    @property
+    def content(self):
+        content_type, data = super(WikipediaQuery, self).content
+        try:
+            page = data["query"]["pages"].values()[0]
+        except (KeyError, IndexError):
+            raise DSInvalidResource(
+                "Translate resource did not contain 'query', 'pages' or a first page",
+                resource=self
+            )
+        data["page"] = page
+        return content_type, data
 
     @property
     def meta(self):
