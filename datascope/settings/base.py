@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'legacy',
     # Algorithms
     'wiki_news',
+    'visual_translations',
 )
 
 DATABASES = {

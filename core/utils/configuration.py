@@ -180,8 +180,7 @@ class ConfigurationProperty(object):
         self._private = private
 
     def __get__(self, obj, cls=None):
-        if obj is None:
-            log.warning("ConfigurationType not bound to an owner.")
+        if obj is None:  # happens with system checks
             return self
         elif not self._storage_attribute in obj.__dict__ or not obj.__dict__[self._storage_attribute]:
             obj.__dict__[self._storage_attribute] = ConfigurationType(

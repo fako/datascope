@@ -95,4 +95,3 @@ class Individual(Organism):
             return {key: self.output(value) for key, value in six.iteritems(frm)}
         else:
             raise AssertionError("Expected a string, list or dict as argument got {} instead".format(type(frm)))
-
