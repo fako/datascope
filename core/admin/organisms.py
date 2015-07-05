@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 import json
 
 from django.contrib import admin
+from django.contrib.contenttypes.admin import GenericStackedInline
 
 from core.models.organisms import Individual, Growth
 
@@ -25,10 +26,12 @@ class CollectiveAdmin(OrganismAdmin):
     inlines = [IndividualInline]
 
 
-class GrowthInline(admin.StackedInline):
+class GrowthInline(GenericStackedInline):
     model = Growth
-    fields = ("type, state, config",)
+    fields = ("type", "state", "config",)
     extra = 0
+    ct_field = "community_type"
+    ct_fk_field = "community_id"
 
 
 class GrowthAdmin(admin.ModelAdmin):
@@ -36,5 +39,5 @@ class GrowthAdmin(admin.ModelAdmin):
 
 
 class CommunityAdmin(admin.ModelAdmin):
-    list_display = ["spirit", "state", "views", "config"]
+    list_display = ["signature", "state", "views", "config"]
     inlines = [GrowthInline]

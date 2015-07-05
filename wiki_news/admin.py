@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from core.admin.organisms import CommunityAdmin
+from wiki_news.models import WikiNewsCommunity
+
+
+admin.site.register(WikiNewsCommunity, CommunityAdmin)
