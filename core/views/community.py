@@ -36,7 +36,7 @@ class CommunityView(APIView):
             # FEATURE: set status
             return Response(response_data, HTTP_202_ACCEPTED)
         try:
-            community.grow()
+            community.grow(*path.split('/'))
         except ValidationError as exc:
             response_data["error"] = exc
             return Response(response_data, HTTP_400_BAD_REQUEST)

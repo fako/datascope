@@ -98,7 +98,7 @@ class Community(models.Model, ProcessorMixin):
         org.save()
         return org
 
-    def setup_growth(self):
+    def setup_growth(self, *args):
         """
         Will create all Growth objects based on the community_spirit
         """
@@ -117,7 +117,7 @@ class Community(models.Model, ProcessorMixin):
                     )
                 inp = grw.output
             elif inp is None:
-                inp = self.initial_input()
+                inp = self.initial_input(*args)
             if out.startswith("@"):
                 grw = self.growth_set.filter(type=out[1:]).last()
                 if grw is None:
@@ -154,7 +154,7 @@ class Community(models.Model, ProcessorMixin):
         """
         raise NotImplementedError()
 
-    def initial_input(self, *args, **kwargs):
+    def initial_input(self, *args):
         """
 
         :param args:
@@ -163,12 +163,13 @@ class Community(models.Model, ProcessorMixin):
         """
         raise NotImplementedError()
 
-    def grow(self):
+    def grow(self, *args):
         """
 
         :return:
         """
         assert self.id, "A community can only be grown after an initial save."
+        args = args or []
 
         if self.state == CommunityState.READY:
             return True
@@ -178,7 +179,7 @@ class Community(models.Model, ProcessorMixin):
         result = None
         if self.state in [CommunityState.NEW, CommunityState.EXPAND]:
             self.state = CommunityState.ASYNC if self.config.async else CommunityState.SYNC
-            self.setup_growth()
+            self.setup_growth(*args)
             self.current_growth = self.next_growth()
             self.save()  # in between save because next operations may take long and community needs to be claimed.
             self.call_begin_callback(self.current_growth.type, self.current_growth.input)
