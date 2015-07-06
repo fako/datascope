@@ -113,3 +113,7 @@ class WikiNewsCommunity(Community):
     @property
     def manifestation(self):
         return super(WikiNewsCommunity, self).manifestation[:20]
+
+    class Meta:
+        verbose_name = "Wiki news"
+        verbose_name_plural = "Wiki news"

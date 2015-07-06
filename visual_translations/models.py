@@ -29,29 +29,27 @@ class VisualTranslationCommunity(Community):
             "schema": {},
             "errors": {},
         }),
-        # ("pages", {
-        #     "process": "HttpResourceProcessor.fetch_mass",
-        #     "input": "@revisions",
-        #     "contribute": "Append:ExtractProcessor.extract_from_resource",
-        #     "output": "Collective",
-        #     "config": {
-        #         "_args": ["$.pageid"],
-        #         "_kwargs": {},
-        #         "_resource": "WikipediaListPages",
-        #         "_objective": {
-        #             "@": "$.query.pages",
-        #             "pageid": "$.pageid",
-        #             "title": "$.title",
-        #             "categories": "$.categories",
-        #             "image": "$.pageprops.page_image",
-        #             "wikidata": "$.pageprops.wikibase_item"
-        #         },
-        #         "_concat_args_size": 50,
-        #         "_continuation_limit": 1000,
-        #     },
-        #     "schema": {},
-        #     "errors": {},
-        # })
+        ("images", {
+            "process": "HttpResourceProcessor.fetch_mass",
+            "input": "@translations",
+            "contribute": "Append:ExtractProcessor.extract_from_resource",
+            "output": "Collective",
+            "config": {
+                "_args": ["$.word", "$.country"],
+                "_kwargs": {},
+                "_resource": "GoogleImage",
+                "_objective": {
+                    "@": "$.items",
+                    "#word": "$.queries.request.0.searchTerms",
+                    "url": "$.link",
+                    "width": "$.image.width",
+                    "height": "$.image.height",
+                    "thumbnail": "$.image.thumbnailLink",
+                },
+            },
+            "schema": {},
+            "errors": {},
+        })
     ])
 
     # COMMUNITY_BODY = [
@@ -79,7 +77,7 @@ class VisualTranslationCommunity(Community):
                 properties={
                     "query": args[0],
                     "translate_to": language,
-                    "country": "country" + country
+                    "country": country
                 },
                 schema={}
             )
@@ -96,14 +94,14 @@ class VisualTranslationCommunity(Community):
                     for ind in individuals:
                         if ind.properties["language"] != language:
                             continue
-                        ind.properties["country"] = "country" + country
+                        ind.properties["country"] = country
                         ind.save()
                 else:  # new individuals need to be created
                     for ind in individuals:
                         if ind.properties["language"] != language:
                             continue
                         properties = copy(ind.properties)
-                        properties["country"] = "country" + country
+                        properties["country"] = country
                         new.append(properties)
             if new:
                 out.update(new)

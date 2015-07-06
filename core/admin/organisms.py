@@ -39,5 +39,5 @@ class GrowthAdmin(admin.ModelAdmin):
 
 
 class CommunityAdmin(admin.ModelAdmin):
-    list_display = ["signature", "state", "views", "config"]
+    list_display = ["__str__", "signature", "state", "views", "config"]
     inlines = [GrowthInline]
