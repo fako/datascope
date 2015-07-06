@@ -38,3 +38,9 @@ class TestCollective(TestCase):
 
     def test_validate(self):
         self.skipTest("not tested")
+
+    def test_group_by(self):
+        self.skipTest("not tested")
+
+    def test_url(self):
+        self.skipTest("not tested")

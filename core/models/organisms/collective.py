@@ -1,11 +1,18 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
 from django.conf import settings
+from django.core.urlresolvers import reverse
 
 from core.models.organisms import Organism, Individual
 
 
 class Collective(Organism):
+
+    @property
+    def url(self):
+        if not self.id:
+            raise ValueError("Can't get url for unsaved Collective")
+        return reverse("v1:collective-content", args=[self.id])
 
     @staticmethod
     def validate(data, schema):
@@ -90,11 +97,20 @@ class Collective(Organism):
         else:
             return [ind.output(frm) for ind in self.individual_set.all()]
 
-    def group_by_collectives(self, key=None):
+    def group_by(self, key):
         """
-        Outputs a dict with Collectives. The Collectives are filled with Individuals that hold the same value for key.
+        Outputs a dict with lists. The lists are filled with Individuals that hold the same value for key.
 
         :param key:
         :return:
         """
-        pass
+        grouped = {}
+        for ind in self.individual_set.all():
+            assert key in ind.properties, \
+                "Can't group by {}, because it is missing from an individual on collective {}".format(key, self.id)
+            value = ind.properties[key]
+            if value not in grouped:
+                grouped[value] = [ind]
+            else:
+                grouped[value].append(ind)
+        return grouped

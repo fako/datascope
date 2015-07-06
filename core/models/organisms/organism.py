@@ -63,15 +63,8 @@ class Organism(models.Model):
         raise NotImplementedError()
 
     @property
-    def url(self):  # TODO: implement?
-        """
-        TODO: Uses Django reverse
-
-        :return:
-        """
-        if not self.id:
-            raise ValueError("Can't get path for unsaved Collective")
-        return "ind|col/{}/".format(self.id)
+    def url(self):
+        raise NotImplementedError
 
     def __str__(self):
         return "{} {}".format(self.__class__.__name__, self.id)
