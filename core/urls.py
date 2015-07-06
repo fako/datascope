@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 from django.conf.urls import url
 
 from wiki_news.urls import urlpatterns as wiki_news_patterns
+from visual_translations.urls import urlpatterns as visual_translations_patterns
 from . import views
 
 urlpatterns = [
@@ -13,3 +14,4 @@ urlpatterns = [
 ]
 
 urlpatterns += wiki_news_patterns
+urlpatterns += visual_translations_patterns
