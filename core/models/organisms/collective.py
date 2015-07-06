@@ -12,7 +12,7 @@ class Collective(Organism):
     def url(self):
         if not self.id:
             raise ValueError("Can't get url for unsaved Collective")
-        return reverse("v1:collective-content", args=[self.id])
+        return reverse("v1:collective-content", args=[self.id])  # TODO: make version aware
 
     @staticmethod
     def validate(data, schema):

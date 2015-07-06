@@ -53,12 +53,12 @@ class VisualTranslationCommunity(Community):
         })
     ])
 
-    # COMMUNITY_BODY = [
-    #     {
-    #         "process": "WikipediaRankProcessor.hooks",
-    #         "config": {}
-    #     }
-    # ]
+    COMMUNITY_BODY = [
+        {
+            "process": "ExpansionProcessor.collective_content",
+            "config": {}
+        }
+    ]
     #
     # PUBLIC_CONFIG = {
     #     "$revision_count": 1,
@@ -124,7 +124,7 @@ class VisualTranslationCommunity(Community):
             ind.save()
 
     def set_kernel(self):
-        self.kernel = self.current_growth.output
+        self.kernel = self.growth_set.filter(type="translations").last().output
 
     class Meta:
         verbose_name = "Visual translation"
