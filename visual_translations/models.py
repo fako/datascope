@@ -41,6 +41,7 @@ class VisualTranslationCommunity(Community):
                 "_objective": {
                     "@": "$.items",
                     "#word": "$.queries.request.0.searchTerms",
+                    "#country": "$.queries.request.0.cr",
                     "url": "$.link",
                     "width": "$.image.width",
                     "height": "$.image.height",
@@ -77,7 +78,7 @@ class VisualTranslationCommunity(Community):
                 properties={
                     "query": args[0],
                     "translate_to": language,
-                    "country": country
+                    "country": "country" + country
                 },
                 schema={}
             )
@@ -94,39 +95,33 @@ class VisualTranslationCommunity(Community):
                     for ind in individuals:
                         if ind.properties["language"] != language:
                             continue
-                        ind.properties["country"] = country
+                        ind.properties["country"] = "country" + country
                         ind.save()
                 else:  # new individuals need to be created
                     for ind in individuals:
                         if ind.properties["language"] != language:
                             continue
                         properties = copy(ind.properties)
-                        properties["country"] = country
+                        properties["country"] = "country" + country
                         new.append(properties)
             if new:
                 out.update(new)
 
-    #
-    # def finish_pages(self, out, err):
-    #     pages = {}
-    #     for ind in out.individual_set.all():
-    #         if ind.properties["pageid"] not in pages:
-    #             pages[ind.properties["pageid"]] = ind
-    #             if ind.properties["categories"] is None:
-    #                 ind.properties["categories"] = []
-    #         else:
-    #             if "categories" in ind.properties and ind.properties["categories"]:
-    #                 pages[ind.properties["pageid"]].properties["categories"] += ind.properties["categories"]
-    #
-    #     revisions = self.growth_set.filter(type="revisions").last().output
-    #     for page in revisions.individual_set.all():
-    #         try:
-    #             pages[page.properties["pageid"]].properties.update(page.properties)
-    #         except KeyError:
-    #             print("KeyError:", page.properties["pageid"])
-    #
-    #     out.individual_set.all().delete()
-    #     out.individual_set.bulk_create(six.itervalues(pages), batch_size=settings.MAX_BATCH_SIZE)
+    def finish_images(self, out, err):
+        translations = self.growth_set.filter(type="translations").last()
+        grouped_images = out.group_by("word")
+        for ind in translations.output.individual_set.all():
+            images = [
+                image.properties for image in grouped_images[ind.properties["word"]]
+                if image.properties["country"] == ind.properties["country"]
+            ]
+            col = Collective.objects.create(
+                community=self,
+                schema=out.schema
+            )
+            col.update(images)
+            ind.properties["images"] = col.url
+            ind.save()
 
     def set_kernel(self):
         self.kernel = self.current_growth.output

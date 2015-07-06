@@ -22,7 +22,7 @@ class GoogleImage(GoogleQuery):
 
     def parameters(self):
         params = copy(self.PARAMETERS)
-        params["cr"] = "country" + self.config.country
+        params["cr"] = self.config.country
         return params
 
     def auth_parameters(self):
