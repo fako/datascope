@@ -12,6 +12,7 @@ from core.models.organisms.mixins import ProcessorMixin
 from core.models.user import DataScopeUser
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
+from core.exceptions import DSProcessUnfinished
 
 
 class CommunityState(object):
@@ -65,6 +66,7 @@ class Community(models.Model, ProcessorMixin):
             for key, value in six.iteritems(kwargs)
             if key in cls.PUBLIC_CONFIG and not key.startswith("$")
         ]
+        signature = filter(bool, signature)
         signature.sort()
         created = False
         try:
@@ -201,7 +203,7 @@ class Community(models.Model, ProcessorMixin):
             self.save()
 
             if self.state == CommunityState.ASYNC:
-                return False
+                raise DSProcessUnfinished("Community starts another Growth.")
 
     @property
     def manifestation(self):
@@ -218,7 +220,7 @@ class Community(models.Model, ProcessorMixin):
 
     @classmethod
     def get_name(cls):
-        word_separator = '-'
+        word_separator = '_'
         class_name = cls.__name__
         class_name = class_name.replace('Community', '')
         name = ''

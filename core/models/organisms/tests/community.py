@@ -121,7 +121,11 @@ class TestCommunityMock(CommunityTestMixin):
         with patch(growth_finish_method, return_value=(first_growth.output, [])) as finish_growth:
             second_growth = self.instance.growth_set.last()
             with patch("core.models.organisms.community.Community.next_growth", return_value=second_growth):
-                self.instance.grow()
+                try:
+                    self.instance.grow()
+                    self.fail("Unfinished community didn't raise any exception.")
+                except DSProcessUnfinished:
+                    pass
             self.assertEqual(self.instance.growth_set.count(), 2)
             self.assertIsInstance(self.instance.current_growth, Growth)
             self.assertEqual(self.instance.current_growth.id, second_growth.id)
