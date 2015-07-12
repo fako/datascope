@@ -1,0 +1,22 @@
+{% load i18n %}
+
+<div id="search-container">
+    <form method="GET" action="#">
+        <p><input type="text" name="q"/></p>
+        <p><input type="submit" name="button" value="{% trans "search" %}"/></p>
+    </form>
+</div>
+<script>
+    $(function(){
+        $("#search-container").submit(function(event){
+            event.preventDefault();
+            var uri = new URI(window.location);
+            var service = (uri.segment().length > 5) ? URI(uri.pathname() + "../").normalizePathname() : uri.pathname();
+            var search = $(this).find("[name=q]").first().val();
+            if(search) {
+                var target = URI.expand(service + "{search}/", {"search": search});
+                window.location = target.toString();
+            }
+        })
+    });
+</script>

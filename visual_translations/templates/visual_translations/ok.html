@@ -1,0 +1,38 @@
+{% extends "core/base.html" %}
+{% load bootstrap_tags i18n %}
+
+{% block body %}
+    <div class="container-fluid">
+        {% for language, words in response.results %}
+
+            <div class="row">
+                <div class="col-md-12"><h2>{{ language }}</h2></div>
+            </div>
+
+            <div class="row">
+                {% for word in words %}
+                    <div class="{{ words|col_md }}">
+
+                        <h3>{{ word.word }}</h3>
+                        {% for image in word.images %}
+                            <p><a href="{{ image.url }}"><img src="{{ image.thumbnail }}"/></a></p>
+                        {% endfor %}
+                        {% for video in word.videos %}
+                            <p><a target="_blank" href="http://www.youtube.com/watch?v={{ video.vid }}">
+                                <img src="{{ video.thumbnail }}"/>
+                            </a></p>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endblock %}
+
+{% block footer %}
+    <p>{% trans "Search for a single word and see the canonical images for that word in Chinese, Russian and Portuguese." %}</p>
+    {% include "core/components/search.html" %}
+{% endblock %}

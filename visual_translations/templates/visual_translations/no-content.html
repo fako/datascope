@@ -1,0 +1,10 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block body %}
+    <p>{% trans "No results found for" %} '{{ query }}'. {% trans "Please try with another word." %}</p>
+{% endblock %}
+
+{% block footer %}
+    {% include "core/components/search.html" %}
+{% endblock %}
