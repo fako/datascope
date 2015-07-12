@@ -44,8 +44,8 @@ class Community(models.Model, ProcessorMixin):
 
     current_growth = models.ForeignKey('Growth', null=True)
     kernel = GenericForeignKey(ct_field="kernel_type", fk_field="kernel_id")
-    kernel_type = models.ForeignKey(ContentType, null=True)
-    kernel_id = models.PositiveIntegerField(null=True)
+    kernel_type = models.ForeignKey(ContentType, null=True, blank=True)
+    kernel_id = models.PositiveIntegerField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
