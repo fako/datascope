@@ -49,4 +49,5 @@ MOCK_CONFIGURATION = {
 PROCESS_CHOICE_LIST = [
     ("HttpResourceProcessor.fetch", "Fetch content from HTTP resource"),
     ("HttpResourceProcessor.fetch_mass", "Fetch content from multiple HTTP resources"),
+    ("ExtractProcessor.extract_from_resource", "Extract content from one or more resources"),
 ]
