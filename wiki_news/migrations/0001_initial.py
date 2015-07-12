@@ -25,7 +25,7 @@ class Migration(migrations.Migration):
                 ('completed_at', models.DateTimeField(null=True, blank=True)),
                 ('purge_at', models.DateTimeField(null=True, blank=True)),
                 ('views', models.IntegerField(default=0)),
-                ('state', models.CharField(default='New', max_length=255, choices=[(b'NEW', 'New'), (b'READY', 'Ready'), (b'ASYNC', 'Asynchronous'), (b'SYNC', 'Synchronous'), (b'EXPAND', 'Expand')])),
+                ('state', models.CharField(default='New', max_length=255, choices=[('New', 'New'), ('Ready', 'Ready'), ('Asynchronous', 'Asynchronous'), ('Synchronous', 'Synchronous')])),
                 ('current_growth', models.ForeignKey(to='core.Growth', null=True)),
                 ('kernel_type', models.ForeignKey(blank=True, to='contenttypes.ContentType', null=True)),
             ],

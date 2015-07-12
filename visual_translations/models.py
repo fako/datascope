@@ -7,7 +7,7 @@ from copy import copy
 from core.models.organisms import Community, Collective, Individual
 
 
-class VisualTranslationCommunity(Community):
+class VisualTranslationsCommunity(Community):
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("translations", {

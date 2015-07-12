@@ -19,10 +19,9 @@ class CommunityState(object):
     ASYNC = "Asynchronous"
     SYNC = "Synchronous"
     READY = "Ready"
-    EXPAND = "Expand"
 
 COMMUNITY_STATE_CHOICES = [
-    (attr, value) for attr, value in six.iteritems(CommunityState.__dict__) if not attr.startswith("_")
+    (value, value) for attr, value in six.iteritems(CommunityState.__dict__) if not attr.startswith("_")
 ]
 
 
@@ -177,7 +176,7 @@ class Community(models.Model, ProcessorMixin):
             return False
 
         result = None
-        if self.state in [CommunityState.NEW, CommunityState.EXPAND]:
+        if self.state in [CommunityState.NEW]:
             self.state = CommunityState.ASYNC if self.config.async else CommunityState.SYNC
             self.setup_growth(*args)
             self.current_growth = self.next_growth()
