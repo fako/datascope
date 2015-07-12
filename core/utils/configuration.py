@@ -8,7 +8,11 @@ import argparse
 from copy import copy
 
 from django.db.models import fields
+from django.forms import fields as form_fields
 from django.utils import six
+from django.core.exceptions import ValidationError
+
+from jsonfield.fields import JSONFormField
 
 
 log = logging.getLogger("datascope")
@@ -205,12 +209,23 @@ class ConfigurationProperty(object):
             obj.__dict__[self._storage_attribute].set_configuration(new)
 
 
+class ConfigurationFormField(form_fields.CharField):
+    def to_python(self, value):
+        if isinstance(value, six.string_types):
+            try:
+                return json.loads(value)
+            except ValueError:
+                raise ValidationError("Enter valid JSON")
+        return super(ConfigurationFormField, self).to_python(value)
+
+
 class ConfigurationField(fields.TextField):
     """
     This field creates a property of ConfigurationType on the model.
 
     NB: default that gets stored in the database is always an empty dictionary.
     """
+    form_class = ConfigurationFormField
 
     def __init__(self, config_defaults=None, namespace="", private=tuple(), default=None, *args, **kwargs):
         """
@@ -243,13 +258,35 @@ class ConfigurationField(fields.TextField):
         return json.loads(value)
 
     def to_python(self, value):
-        dictionary = json.loads(value)
-        return super(ConfigurationField, self).to_python(dictionary)
+        if isinstance(value, six.string_types):
+            try:
+                return json.loads(value)
+            except ValueError:
+                raise ValidationError("Enter valid JSON")
+        return super(ConfigurationField, self).to_python(value)
 
     def get_prep_value(self, value):
         if not isinstance(value, dict):
-            value = json.dumps(value.to_dict(protected=True, private=True))
+            value = json.dumps(value.to_dict(private=True, protected=True))
         return super(ConfigurationField, self).get_prep_value(value)
+
+    def value_from_object(self, obj):
+        value = super(ConfigurationField, self).value_from_object(obj)
+        if self.null and value is None:
+            return None
+        return json.dumps(value.to_dict(private=True, protected=True))
+
+    def formfield(self, **kwargs):
+
+        if "form_class" not in kwargs:
+            kwargs["form_class"] = self.form_class
+
+        field = super(ConfigurationField, self).formfield(**kwargs)
+
+        if not field.help_text:
+            field.help_text = "Enter valid JSON"
+
+        return field
 
 
 def load_config(defaults):
