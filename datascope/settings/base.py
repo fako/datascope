@@ -209,6 +209,8 @@ LOGGING = {
     }
 }
 
+TEST_RUNNER = "core.tests.runner.DataScopeDiscoverRunner"
+
 REST_FRAMEWORK = {
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
     #'DEFAULT_PAGINATION_CLASS': 'core.views.content.ContentPagination',
