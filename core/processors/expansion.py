@@ -21,9 +21,14 @@ class ExpansionProcessor(object):
                     if match is not None:
                         updates[(key, match.group("collective_id"),)] = ind
 
-        collectives = Collective.objects.filter(pk__in=[int(pk) for prop, pk in six.iterkeys(updates)])
+        qs = Collective.objects.prefetch_related("individual_set").filter(pk__in=[int(pk) for prop, pk in six.iterkeys(updates)])
+        collectives = {
+            collective.id: collective
+            for collective in qs
+        }
+
         for key, value in six.iteritems(updates):
             prop, pk = key
-            value[prop] = collectives.get(pk=pk).content
+            value[prop] = collectives[int(pk)].content
 
         return individuals
