@@ -292,7 +292,7 @@ class HttpResource(models.Model):
         return {}
 
     def create_next_request(self):
-        if not self.next_parameters():
+        if not self.success or not self.next_parameters():
             return None
         url = URLObject(self.request.get("url"))
         params = url.query.dict
