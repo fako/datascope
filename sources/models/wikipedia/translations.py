@@ -38,6 +38,6 @@ class WikipediaTranslate(WikipediaQuery):
     @property
     def meta(self):
         try:
-            return self.request["args"][0], self.request["args"][1]
+            return self.request["args"][2], self.request["args"][3]
         except (KeyError, IndexError, TypeError):
             return None, None
