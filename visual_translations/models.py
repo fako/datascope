@@ -59,12 +59,18 @@ class VisualTranslationsCommunity(Community):
             "config": {}
         }
     ]
-    #
-    # PUBLIC_CONFIG = {
-    #     "$revision_count": 1,
-    #     "$category_count": 1,
-    # }
-    LOCALES = [("pt", "BR",), ("ru", "RU",), ("zh", "CN",), ("zh", "TW",)]
+
+    LOCALES = [
+        ("pt", "BR",),
+        ("ru", "RU",),
+        ("zh", "CN",),
+        # ("en", "US",),
+        # ("en", "AU",),
+        ("de", "DE",),
+        ("hi", "IN",),
+        ("ar", "SA",),
+        ("el", "GR",),
+    ]
 
     def initial_input(self, *args):
         collective = Collective.objects.create(
