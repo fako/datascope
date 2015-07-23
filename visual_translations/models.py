@@ -61,15 +61,16 @@ class VisualTranslationsCommunity(Community):
     ]
 
     LOCALES = [
-        ("pt", "BR",),
-        ("ru", "RU",),
-        ("zh", "CN",),
-        # ("en", "US",),
-        # ("en", "AU",),
+        ("pt", "PT",),
+        ("se", "SE",),
         ("de", "DE",),
-        ("hi", "IN",),
-        ("ar", "SA",),
+        ("it", "IT",),
+        ("fr", "FR",),
+        ("nl", "NL",),
+        ("pl", "PL",),
+        ("hu", "HU",),
         ("el", "GR",),
+        ("da", "DK",),
     ]
 
     def initial_input(self, *args):
