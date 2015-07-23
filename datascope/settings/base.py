@@ -16,7 +16,8 @@ REQUESTS_VERIFY = True
 REQUESTS_PROXIES_ENABLED = {
     "http": "localhost:8888"
 }
-MAX_BATCH_SIZE = 999
+
+MAX_BATCH_SIZE = 1000
 
 INSTALLED_APPS = (
     'django.contrib.auth',
