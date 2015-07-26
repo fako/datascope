@@ -418,6 +418,7 @@ class BrowserResource(HttpResource):
 
         self.head = dict()
         self.status = 1
+
         self.body = browser.page_source
 
         # unicode(
@@ -434,6 +435,23 @@ class BrowserResource(HttpResource):
         :return: Boolean indicating success
         """
         return self.status == 1
+
+    def transform(self, soup):
+        """
+
+        :return:
+        """
+        raise NotImplementedError()
+
+    @property
+    def content(self):
+        """
+
+        :return: content_type, data
+        """
+        if self.success:
+            return "json/application", self.transform(self.soup)
+        return None, None
 
     def __init__(self, *args, **kwargs):
         super(HttpResource, self).__init__(*args, **kwargs)
