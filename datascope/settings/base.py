@@ -18,6 +18,7 @@ REQUESTS_PROXIES_ENABLED = {
 }
 
 MAX_BATCH_SIZE = 1000
+PATH_TO_LOGS = PATH_TO_PROJECT + "system/logs/"
 
 INSTALLED_APPS = (
     'django.contrib.auth',

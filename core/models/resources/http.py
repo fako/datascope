@@ -9,6 +9,8 @@ import jsonschema
 from jsonschema.exceptions import ValidationError as SchemaValidationError
 from urlobject import URLObject
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -383,6 +385,59 @@ class HttpResource(models.Model):
         hsh = hashlib.sha1()
         hsh.update(json.dumps(data))
         return hsh.hexdigest()
+
+    class Meta:
+        abstract = True
+
+
+class BrowserResource(HttpResource):
+
+    def _send(self):
+        # TODO: handle sessions that are set by the context
+        # TODO: handle POST
+        # TODO: handle set headers
+        assert self.request and isinstance(self.request, dict), \
+            "Trying to make request before having a valid request dictionary."
+
+
+
+        dcap = dict(DesiredCapabilities.PHANTOMJS)
+        dcap["phantomjs.page.settings.userAgent"] = (
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/53 "
+            "(KHTML, like Gecko) Chrome/15.0.87"
+        )
+        browser = webdriver.PhantomJS(
+            desired_capabilities=dcap,
+            service_args=['--ignore-ssl-errors=true'],
+            service_log_path=settings.PATH_TO_LOGS + "ghostdriver.log"
+        )
+
+        url = self.request.get("url")
+        browser.get(url)
+        #browser.get("https://translate.google.nl/#auto/en/vrijheid")
+
+        self.head = dict()
+        self.status = 1
+        self.body = browser.page_source
+
+        # unicode(
+        #     browser.page_source, 'utf-8', errors='replace'  # HTML can have some weird bytes, so replace errors!
+        # )
+        self.soup = BeautifulSoup(self.body)
+
+    @property
+    def success(self):
+        """
+        This needs to be checked per resource based on the returned HTML. Status codes are not available:
+        https://code.google.com/p/selenium/issues/detail?id=141
+
+        :return: Boolean indicating success
+        """
+        return self.status == 1
+
+    def __init__(self, *args, **kwargs):
+        super(HttpResource, self).__init__(*args, **kwargs)
+        self.soup = BeautifulSoup(self.body if self.body else "")
 
     class Meta:
         abstract = True
