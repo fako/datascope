@@ -16,15 +16,17 @@ class VisualTranslationsCommunity(Community):
             "contribute": "Append:ExtractProcessor.extract_from_resource",
             "output": "Collective",
             "config": {
-                "_args": ["$.query", "$.translate_to"],
+                "_args": ["translate_from", "$.translate_to", "$.query"],
                 "_kwargs": {},
-                "_resource": "WikipediaTranslate",
+                "_resource": "GoogleTranslate",
                 "_objective": {
-                    "@": "$.page.iwlinks",
-                    "language": "$.prefix",
-                    "url": "$.url",
-                    "word": "$.*",
+                    "@": "$",
+                    "language": "$.language",
+                    "word": "$.word",
+                    "confidence": "$.confidence",
+                    "meanings": "$.meanings"
                 },
+                "_interval_duration": 2500
             },
             "schema": {},
             "errors": {},
@@ -84,6 +86,7 @@ class VisualTranslationsCommunity(Community):
                 collective=collective,
                 properties={
                     "query": args[0],
+                    "translate_from": "en",
                     "translate_to": language,
                     "country": "country" + country
                 },
