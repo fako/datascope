@@ -450,7 +450,7 @@ class BrowserResource(HttpResource):
         :return: content_type, data
         """
         if self.success:
-            return "json/application", self.transform(self.soup)
+            return "application/json", self.transform(self.soup)
         return None, None
 
     def __init__(self, *args, **kwargs):

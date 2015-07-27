@@ -17,6 +17,7 @@ class GoogleTranslate(BrowserResource):
         meanings = soup.find_all(class_="gt-baf-translations")
         return [
             {
+                "language": self.request["args"][1],
                 "word": word.text,
                 "meanings": meaning.text,
                 "confidence": int(confidence["style"].split(" ")[1][:-3])  # confidence expressed like: "width: 24px;"
