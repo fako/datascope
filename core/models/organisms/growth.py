@@ -1,15 +1,20 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 import six
 
+import logging
+
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 
 from datascope.configuration import PROCESS_CHOICE_LIST, DEFAULT_CONFIGURATION
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
-from core.exceptions import DSProcessError
+from core.exceptions import DSProcessError, DSNoContent
 from core.models.organisms import Individual, Collective
 from core.models.organisms.mixins import ProcessorMixin
+
+
+log = logging.getLogger("datascope")
 
 
 class GrowthState(object):
@@ -129,7 +134,15 @@ class Growth(models.Model, ProcessorMixin):
         contribute_processor, callback = self.prepare_process(self.contribute)
         results = []
         for contribution in contributions:
-            results += callback(contribution)
+            try:
+                results += callback(contribution)
+            except DSNoContent as exc:
+                log.debug("No content for {} with id {}: {}".format(
+                    contribution.__class__.__name__,
+                    contribution.id,
+                    exc
+                ))
+                contribution.retain(self)
         self.output.update(results)
 
     def save(self, *args, **kwargs):

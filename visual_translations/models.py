@@ -64,7 +64,7 @@ class VisualTranslationsCommunity(Community):
 
     LOCALES = [
         ("pt", "PT",),
-        ("se", "SE",),
+        ("se", "SW",),
         ("de", "DE",),
         ("it", "IT",),
         ("fr", "FR",),
@@ -122,9 +122,13 @@ class VisualTranslationsCommunity(Community):
         grouped_images = out.group_by("word")
         for ind in translations.output.individual_set.all():
             images = [
-                image.properties for image in grouped_images[ind.properties["word"]]
+                image.properties for image in grouped_images.get(ind.properties["word"], [])
                 if image.properties["country"] == ind.properties["country"]
             ]
+            if not images:
+                translations.output.individual_set.remove(ind)
+                continue
+
             col = Collective.objects.create(
                 community=self,
                 schema=out.schema
