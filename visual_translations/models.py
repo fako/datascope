@@ -88,7 +88,7 @@ class VisualTranslationsCommunity(Community):
         ("sk", "SK",),
         ("sl", "SI",),
         ("es", "ES",),
-        ("se", "SW",),
+        ("sv", "SE",),
     ]
 
     def initial_input(self, *args):
