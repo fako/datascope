@@ -42,7 +42,7 @@ class Individual(Organism):
             raise ValidationError(exc)
 
         if pk and not isinstance(pk, six.integer_types):
-            raise ValidationError("The id of an individual needs to be an integer not {}.".format(type(spirit)))
+            raise ValidationError("The id of an individual needs to be an integer not {}.".format(type(pk)))
         elif pk:
             data["ds_id"] = pk
 
