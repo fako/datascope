@@ -112,8 +112,10 @@ class VisualTranslationsCommunity(Community):
 
     def finish_translations(self, out, err):  # TODO: optimize using "meta" properties
         new = []
-        for group, values in groupby(self.LOCALES, lambda el: el[0]):
+        group_lambda = lambda el: el[0]
+        for group, values in groupby(sorted(self.LOCALES, key=group_lambda), group_lambda):
             locales = list(values)
+
             individuals = out.individual_set.all()
             for index, value in enumerate(locales):
                 language, country = value
@@ -130,8 +132,8 @@ class VisualTranslationsCommunity(Community):
                         properties = copy(ind.properties)
                         properties["country"] = "country" + country
                         new.append(properties)
-            if new:
-                out.update(new)
+        if new:
+            out.update(new)
 
     def finish_images(self, out, err):
         translations = self.growth_set.filter(type="translations").last()
