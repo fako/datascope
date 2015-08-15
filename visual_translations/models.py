@@ -89,7 +89,11 @@ class VisualTranslationsCommunity(Community):
         ("sl", "SI",),
         ("es", "ES",),
         ("sv", "SE",),
+        ("en", "GB",),
+        ("en", "IR",),
     ]
+
+    # TODO: don't hard code the source language
 
     def initial_input(self, *args):
         collective = Collective.objects.create(
@@ -97,6 +101,8 @@ class VisualTranslationsCommunity(Community):
             schema={}
         )
         for language, country in self.LOCALES:
+            if language == "en":
+                continue
             Individual.objects.create(
                 community=self,
                 collective=collective,
@@ -119,7 +125,18 @@ class VisualTranslationsCommunity(Community):
             individuals = out.individual_set.all()
             for index, value in enumerate(locales):
                 language, country = value
-                if index == 0:  # only an update needed
+
+                if language == "en":  # creating individuals for untranslated words
+                    translations = self.growth_set.filter(type="translations").last()
+                    inp = translations.input.individual_set.first()  # TODO: optimize
+                    new.append({
+                        "country": "country" + country,
+                        "language": "en",
+                        "word": inp.properties["query"],
+                        "confidence": None,
+                        "meanings": None,
+                    })
+                elif index == 0:  # only an update needed
                     for ind in individuals:
                         if ind.properties["language"] != language:
                             continue
