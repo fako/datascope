@@ -28,6 +28,10 @@ class ImageGrid(object):
     def fill_from_src(self, sources):
         pass
 
+    def get_resized_dimension(self, primary_dimension, secondary_dimension, new_size):
+        secondary_dimension *= new_size / primary_dimension
+        return new_size, int(round(secondary_dimension))
+
     def center_image(self, image, delta_width, delta_height, horizontal, vertical):
         assert isinstance(image, Image.Image), "Center image can only be done with a PIL image"
         assert delta_width >= 0, "Can't center an image if its delta_width is {}".format(delta_width)
@@ -72,23 +76,33 @@ class ImageGrid(object):
         if delta_width >= 0 and delta_height >= 0:
             return self.center_image(image, delta_width, delta_height, horizontal, vertical)
 
+        # Image is smaller than cell in at least one dimension.
+        # Correct the delta's to make them easier to work with
+        delta_width *= -1
+        delta_height *= -1
+
         # Reject image if it is smaller than the cell and can't be scaled up within allowed limits
-        if -1 * delta_width > self.scale_margin or -1 * delta_height > self.scale_margin:
+        if delta_width > self.scale_margin or delta_height > self.scale_margin:
+            print(image_width, image_height)
             raise ImageRejected("Image with delta {}/{} is too small for set scale margin {}".format(
                 delta_width,
                 delta_height,
                 self.scale_margin
             ))
 
-        print("Delta: ", delta_width, delta_height)
-        return image, horizontal, vertical
-        # if delta_width < 0 or delta_height < 0 and is_landscape:
-        #     image.resize
+        if delta_width > 0:
+            new_width, new_height = self.get_resized_dimension(image_width, image_height, self.cell_width * horizontal)
+            image.resize((new_width, new_height,))
+            return self.validate_image_size(image, horizontal, vertical)
+        elif delta_height > 0:
+            new_height, new_width = self.get_resized_dimension(image_height, image_width, self.cell_height * vertical)
+            image.resize((new_width, new_height,))
+            return self.validate_image_size(image, horizontal, vertical)
 
+        raise AssertionError("validate_image_size didn't process its image at all")
 
     def cell_image(self, image):
         assert isinstance(image, Image.Image), "Cell image expects a PIL image not {}".format(type(image))
-
 
     def fill(self, images):
         for image in images:
