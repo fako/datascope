@@ -127,3 +127,13 @@ class TestImageGrid(TestCase):
         image.crop.called_once_with((1, 4, 17, 22))
         self.assertEqual(horizontal, 1)
         self.assertEqual(vertical, 2)
+
+    def test_center_image(self):
+        image = self.image_grid.center_image(self.fit, 1, 1)
+        image.crop.assert_called_once_with((0, 0, 16, 9))
+        image = self.image_grid.center_image(self.landscape, 1, 1)
+        image.crop.assert_called_once_with((2, 0, 18, 9))
+        image = self.image_grid.center_image(self.panorama, 2, 1)
+        image.crop.assert_called_once_with((4, 0, 36, 9))
+        image = self.image_grid.center_image(self.portrait, 1, 2)
+        image.crop.assert_called_once_with((1, 6, 17, 24))
