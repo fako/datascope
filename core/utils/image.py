@@ -79,53 +79,8 @@ class ImageGrid(object):
         image.crop(box)
         return image
 
-    def old(self, image, horizontal, vertical):
-        # # Validate grid (TODO: move)
-        # if horizontal > self.columns:
-        #     raise NoCellAvailable("Image spans more columns than available")
-        # if vertical > self.rows:
-        #     raise NoCellAvailable("Image spans more rows than available")
-
-        # Calculate image properties
-
-        is_landscape = image_width >= image_height
-
-        # See if image spans multiple cells or not
-        if delta_width >= self.cell_width * horizontal - self.scale_margin and is_landscape:
-            return self.validate_image_size(image, horizontal+1, 1)
-        elif delta_height >= self.cell_height * vertical - self.scale_margin and not is_landscape:
-            return self.validate_image_size(image, 1, vertical+1)
-
-        # Center image if it overflows the cell(s)
-        if delta_width >= 0 and delta_height >= 0:
-            return self.center_image(image, delta_width, delta_height, horizontal, vertical)
-
-        # Image is smaller than cell in at least one dimension.
-        # Correct the delta's to make them easier to work with
-        delta_width *= -1
-        delta_height *= -1
-
-        # Reject image if it is smaller than the cell and can't be scaled up within allowed limits
-        if delta_width > self.scale_margin or delta_height > self.scale_margin:
-            print(image_width, image_height)
-            raise ImageRejected("Image with delta {}/{} is too small for set scale margin {}".format(
-                delta_width,
-                delta_height,
-                self.scale_margin
-            ))
-
-        if delta_width > 0:
-            new_width, new_height = self.get_resized_dimension(image_width, image_height, self.cell_width * horizontal)
-            image.resize((new_width, new_height,))
-            return self.validate_image_size(image, horizontal, vertical)
-        elif delta_height > 0:
-            new_height, new_width = self.get_resized_dimension(image_height, image_width, self.cell_height * vertical)
-            image.resize((new_width, new_height,))
-            return self.validate_image_size(image, horizontal, vertical)
-
-        raise AssertionError("validate_image_size didn't process its image at all")
-
-    def get_new_size(self, primary_dimension, secondary_dimension, new_size):
+    @staticmethod
+    def get_new_size(primary_dimension, secondary_dimension, new_size):
         secondary_dimension *= new_size / primary_dimension
         return new_size, int(round(secondary_dimension))
 
@@ -160,6 +115,10 @@ class ImageGrid(object):
         free_cell_index = next([index for index, cell in enumerate(self.cells) if cell])
 
         image, horizontal, vertical = self.size_image(image)  # could raise ImageRejected
+        # if horizontal > self.columns:
+        #     raise NoCellAvailable("Image spans more columns than available")
+        # if vertical > self.rows:
+        #     raise NoCellAvailable("Image spans more rows than available")
 
         # Reserve cells for landscape and panorama
         for cell_index_modifier in range(0, horizontal):
