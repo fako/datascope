@@ -1,4 +1,6 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
+# noinspection PyUnresolvedReferences
+from six.moves import range
 
 from PIL import Image
 
@@ -160,15 +162,14 @@ class ImageGrid(object):
         image, horizontal, vertical = self.size_image(image)  # could raise ImageRejected
 
         # Reserve cells for landscape and panorama
-        for cell_index_modifier in xrange(0, horizontal):
+        for cell_index_modifier in range(0, horizontal):
             cell_index = free_cell_index + cell_index_modifier
             self.cells[cell_index] = image
 
         # Reserve cells for portrait
-        for cell_index_modifier in xrange(0, vertical*self.columns, self.columns):
+        for cell_index_modifier in range(0, vertical*self.columns, self.columns):
             cell_index = free_cell_index + cell_index_modifier
             self.cells[cell_index] = image
-
 
     def fill(self, images):  # TODO: add logging
         for image in images:
