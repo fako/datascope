@@ -42,18 +42,22 @@ class ImageGrid(object):
             image_ratio >= portrait_ratio,  # is_portrait
         )
 
-    def validate_image_size(self, image):
+    def validate_image_size(self, image, horizontal=1, vertical=1):
         image_width, image_height = image.size
-        if image_width < self.cell_width or image_height < self.cell_height:
+        if image_width < self.cell_width * horizontal or image_height * vertical < self.cell_height:
             raise ImageRejected("Image with size {}:{} is too small for cell size {}:{}".format(
                 image_width,
                 image_height,
                 self.cell_width,
                 self.cell_height
             ))
+        return image_width == self.cell_width * horizontal and image_height == self.cell_height * vertical
 
-    def center_image(self, image, delta_width, delta_height, horizontal, vertical):
+    def center_image(self, image, horizontal, vertical):
         assert isinstance(image, Image.Image), "Center image can only be done with a PIL image"
+        image_width, image_height = image.size
+        delta_width = image_width - self.cell_width * horizontal
+        delta_height = image_height - self.cell_height * vertical
         assert delta_width >= 0, "Can't center an image if its delta_width is {}".format(delta_width)
         assert delta_height >= 0, "Can't center an image if its delta_height is {}".format(delta_height)
 
@@ -71,9 +75,7 @@ class ImageGrid(object):
             offset_height + self.cell_height * vertical,
         )
         image.crop(box)
-        return image, horizontal, vertical
-
-
+        return image
 
     def old(self, image, horizontal, vertical):
         # # Validate grid (TODO: move)
@@ -83,9 +85,7 @@ class ImageGrid(object):
         #     raise NoCellAvailable("Image spans more rows than available")
 
         # Calculate image properties
-        image_width, image_height = image.size
-        delta_width = image_width - self.cell_width * horizontal
-        delta_height = image_height - self.cell_height * vertical
+
         is_landscape = image_width >= image_height
 
         # See if image spans multiple cells or not
@@ -123,31 +123,40 @@ class ImageGrid(object):
 
         raise AssertionError("validate_image_size didn't process its image at all")
 
-    def get_resized_dimension(self, primary_dimension, secondary_dimension, new_size):
+    def get_new_size(self, primary_dimension, secondary_dimension, new_size):
         secondary_dimension *= new_size / primary_dimension
         return new_size, int(round(secondary_dimension))
 
     def size_image(self, image):
         assert isinstance(image, Image.Image), "Cell image expects a PIL image not {}".format(type(image))
-        self.validate_image_size(image)
+        exact_fit = self.validate_image_size(image)
+        if exact_fit:
+            return image, 1, 1
+
         is_landscape, is_panorama, is_portrait = self.get_image_info(image)
+        image_width, image_height = image.size
 
         if is_landscape:
+            horizontal, vertical = 1, 1
+            new_height, new_width = self.get_new_size(image_height, image_width, self.cell_height)
+        elif is_panorama:
             # Resize to cell height with aspect ratio
             # Center image horizontally
-            horizontal, vertical = 1, 1
-        elif is_panorama:
-            # Resize to cell width with aspect ratio
-            # Center image horizontally
             horizontal, vertical = 2, 1
+            new_height, new_width = 1, 1
             pass
         elif is_portrait:
             # Resize to cell width with aspect ratio
             # Center image vertically
+            new_height, new_width = 1, 1
             horizontal, vertical = 1, 2
             pass
         else:
             raise AssertionError("Image wasn't labeled as any category")
+
+        if new_width >= self.cell_width and new_height >= self.cell_height:
+            image.resize((new_width, new_height,))
+        self.center_image(image, horizontal, vertical)
 
         return image, horizontal, vertical
 
