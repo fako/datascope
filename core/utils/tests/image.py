@@ -89,8 +89,16 @@ class TestImageGrid(TestCase):
         image, horizontal, vertical = self.image_grid.size_image(self.landscape)
         image.resize.assert_called_once_with((18, 9))
         image.crop.called_once_with((1, 0, 17, 9))
+        self.assertEqual(horizontal, 1)
+        self.assertEqual(vertical, 1)
 
         faulty_landscape = Mock(Image.Image, size=(22, 9))
+        image, horizontal, vertical = self.image_grid.size_image(faulty_landscape)
+        image.resize.assert_not_called()
+        image.crop.called_once_with((3, 0, 19, 9))
+        self.assertEqual(horizontal, 1)
+        self.assertEqual(vertical, 1)
+
 
 
         # def test_validate_image_size_fit(self):
