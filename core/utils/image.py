@@ -3,11 +3,15 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 from PIL import Image
 
 
-class NoCellAvailable(Exception):
+class ImageRejected(Exception):
     pass
 
 
-class ImageRejected(Exception):
+class ImageDoesNotFit(Exception):
+    pass
+
+
+class CouldNotFillGrid(Exception):
     pass
 
 
@@ -103,10 +107,23 @@ class ImageGrid(object):
 
     def cell_image(self, image):
         assert isinstance(image, Image.Image), "Cell image expects a PIL image not {}".format(type(image))
+        free_cell_index = next([cell for cell in self.cells if cell])
 
-    def fill(self, images):
+        image, horizontal, vertical = self.validate_image_size(image)  # could raise ImageRejected
+        for cell_index_modifier in xrange(0, horizontal*self.columns, self.columns):
+            cell_index = free_cell_index + cell_index_modifier
+            self.cells[cell_index] = image
+
+
+    def fill(self, images):  # TODO: add logging
         for image in images:
             try:
                 self.images.append(self.cell_image(image))
-            except NoCellAvailable:
+            except ImageRejected:
                 pass
+            except ImageDoesNotFit:
+                pass  # TODO: make sure we get images that do fit
+            except StopIteration:  # raised by next() in cell_image
+                break
+        else:
+            raise CouldNotFillGrid("Unable to fill the grid with provided images")
