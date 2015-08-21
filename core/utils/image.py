@@ -18,6 +18,8 @@ class CouldNotFillGrid(Exception):
 class ImageGrid(object):
 
     def __init__(self, columns, rows, cell_width, cell_height, scale_margin):
+        assert cell_width > cell_height, \
+            "Image grid expect cells to be landscape oriented"
         self.columns = columns
         self.rows = rows
         self.cell_width = cell_width
@@ -37,7 +39,15 @@ class ImageGrid(object):
         return new_size, int(round(secondary_dimension))
 
     def get_image_info(self, image):
-        pass
+        image_width, image_height = image.size
+        image_ratio = image_height / image_width
+        panorama_ratio = self.cell_height / (self.cell_width*2)
+        portrait_ratio = self.cell_height*2 / self.cell_width
+        return (
+            panorama_ratio < image_ratio < portrait_ratio,  # is_landscape
+            image_ratio <= panorama_ratio,  # is_panorama
+            image_ratio >= portrait_ratio,  # is_portrait
+        )
 
     def center_image(self, image, delta_width, delta_height, horizontal, vertical):
         assert isinstance(image, Image.Image), "Center image can only be done with a PIL image"
