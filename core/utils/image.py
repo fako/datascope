@@ -140,17 +140,11 @@ class ImageGrid(object):
             horizontal, vertical = 1, 1
             new_height, new_width = self.get_new_size(image_height, image_width, self.cell_height)
         elif is_panorama:
-            # Resize to cell height with aspect ratio
-            # Center image horizontally
             horizontal, vertical = 2, 1
-            new_height, new_width = 1, 1
-            pass
+            new_height, new_width = self.get_new_size(image_height, image_width, self.cell_height)
         elif is_portrait:
-            # Resize to cell width with aspect ratio
-            # Center image vertically
-            new_height, new_width = 1, 1
             horizontal, vertical = 1, 2
-            pass
+            new_width, new_height = self.get_new_size(image_width, image_height, self.cell_width)
         else:
             raise AssertionError("Image wasn't labeled as any category")
 
