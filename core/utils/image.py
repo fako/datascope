@@ -31,13 +31,6 @@ class ImageGrid(object):
         self.index = 0
         self.scale_margin = scale_margin
 
-    def fill_from_src(self, sources):
-        pass
-
-    def get_resized_dimension(self, primary_dimension, secondary_dimension, new_size):
-        secondary_dimension *= new_size / primary_dimension
-        return new_size, int(round(secondary_dimension))
-
     def get_image_info(self, image):
         image_width, image_height = image.size
         image_ratio = image_height / image_width
@@ -48,6 +41,16 @@ class ImageGrid(object):
             image_ratio <= panorama_ratio,  # is_panorama
             image_ratio >= portrait_ratio,  # is_portrait
         )
+
+    def validate_image_size(self, image):
+        image_width, image_height = image.size
+        if image_width < self.cell_width or image_height < self.cell_height:
+            raise ImageRejected("Image with size {}:{} is too small for cell size {}:{}".format(
+                image_width,
+                image_height,
+                self.cell_width,
+                self.cell_height
+            ))
 
     def center_image(self, image, delta_width, delta_height, horizontal, vertical):
         assert isinstance(image, Image.Image), "Center image can only be done with a PIL image"
@@ -70,15 +73,7 @@ class ImageGrid(object):
         image.crop(box)
         return image, horizontal, vertical
 
-    def validate_image_size(self, image):
-        image_width, image_height = image.size
-        if image_width < self.cell_width or image_height < self.cell_height:
-            raise ImageRejected("Image with size {}:{} is too small for cell size {}:{}".format(
-                image_width,
-                image_height,
-                self.cell_width,
-                self.cell_height
-            ))
+
 
     def old(self, image, horizontal, vertical):
         # # Validate grid (TODO: move)
@@ -127,6 +122,10 @@ class ImageGrid(object):
             return self.validate_image_size(image, horizontal, vertical)
 
         raise AssertionError("validate_image_size didn't process its image at all")
+
+    def get_resized_dimension(self, primary_dimension, secondary_dimension, new_size):
+        secondary_dimension *= new_size / primary_dimension
+        return new_size, int(round(secondary_dimension))
 
     def size_image(self, image):
         assert isinstance(image, Image.Image), "Cell image expects a PIL image not {}".format(type(image))
@@ -180,3 +179,6 @@ class ImageGrid(object):
                 break
         else:
             raise CouldNotFillGrid("Unable to fill the grid with provided images")
+
+    def fill_from_src(self, sources):
+        pass
