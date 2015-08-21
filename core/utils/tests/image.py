@@ -30,34 +30,52 @@ class TestImageGrid(TestCase):
         self.assertEqual(len(ig.cells), 25)
 
     def test_validate_image_size(self):
-        self.fit = Mock(Image.Image, size=(16, 9))
-        self.bigger = Mock(Image.Image, size=(17, 10))
-        self.too_small_x = Mock(Image.Image, size=(12, 9))
-        self.too_small_y = Mock(Image.Image, size=(16, 5))
-        self.too_small_xy = Mock(Image.Image, size=(5, 5))
+        fit = Mock(Image.Image, size=(16, 9))
+        bigger = Mock(Image.Image, size=(17, 10))
+        too_small_x = Mock(Image.Image, size=(12, 9))
+        too_small_y = Mock(Image.Image, size=(16, 5))
+        too_small_xy = Mock(Image.Image, size=(5, 5))
 
-        self.image_grid.validate_image_size(self.fit)
-        self.image_grid.validate_image_size(self.bigger)
+        self.image_grid.validate_image_size(fit)
+        self.image_grid.validate_image_size(bigger)
         try:
-            self.image_grid.validate_image_size(self.too_small_x)
+            self.image_grid.validate_image_size(too_small_x)
             self.fail("Grid didn't reject too narrow image")
         except ImageRejected:
             pass
         try:
-            self.image_grid.validate_image_size(self.too_small_y)
+            self.image_grid.validate_image_size(too_small_y)
             self.fail("Grid didn't reject too short image")
         except ImageRejected:
             pass
         try:
-            self.image_grid.validate_image_size(self.too_small_xy)
+            self.image_grid.validate_image_size(too_small_xy)
             self.fail("Grid didn't reject too narrow and too short image")
         except ImageRejected:
             pass
+    
+    def test_get_image_info(self):
+        landscape = Mock(Image.Image, size=(20, 9))
+        panorama = Mock(Image.Image, size=(40, 10))
+        portrait = Mock(Image.Image, size=(9, 20))
 
-    # def test_validate_image_size_fit(self):
-    #     self.fit = Mock(Image.Image, size=(16, 9))
+        is_landscape, is_panorama, is_portrait = self.image_grid.get_image_info(landscape)
+        self.assertTrue(is_landscape)
+        self.assertFalse(is_panorama)
+        self.assertFalse(is_portrait)
+        is_landscape, is_panorama, is_portrait = self.image_grid.get_image_info(panorama)
+        self.assertFalse(is_landscape)
+        self.assertTrue(is_panorama)
+        self.assertFalse(is_portrait)
+        is_landscape, is_panorama, is_portrait = self.image_grid.get_image_info(portrait)
+        self.assertFalse(is_landscape)
+        self.assertFalse(is_panorama)
+        self.assertTrue(is_portrait)
+
+        # def test_validate_image_size_fit(self):
+    #     fit = Mock(Image.Image, size=(16, 9))
     #
-    #     image, horizontal, vertical = self.image_grid.validate_image_size(self.fit)
+    #     image, horizontal, vertical = self.image_grid.validate_image_size(fit)
     #     image.crop.assert_called_once_with((0, 0, 16, 9,))
     #     self.assertEqual(horizontal, 1)
     #     self.assertEqual(vertical, 1)
