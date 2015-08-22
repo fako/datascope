@@ -31,10 +31,6 @@ class ImageGrid(object):
             [None for cell in range(0, rows) for row in range(0, columns)]
         )
         self.index = 0
-        self.stop = len(self.cells) - 1
-
-    def set_stop(self):
-        self.stop = self.index - 1
 
     def next_carousel_image(self):
         try:
