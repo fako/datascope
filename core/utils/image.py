@@ -117,7 +117,7 @@ class ImageGrid(object):
 
         return image, horizontal, vertical
 
-    def cell_image(self, cell_index, image_info):
+    def _cell_image(self, cell_index, image_info):
         image, horizontal, vertical = image_info
         self.cells[cell_index] = image
 
@@ -146,7 +146,7 @@ class ImageGrid(object):
 
             for attempt in range(0, len(self.images)):
                 try:
-                    self.cell_image(index, self.next_carousel_image())
+                    self._cell_image(index, self.next_carousel_image())
                     break
                 except IndexError:
                     pass
@@ -173,3 +173,4 @@ class ImageGrid(object):
                 (column*self.cell_width, row*self.cell_height)
             )
         output.save(file_name, quality=90)
+        return output
