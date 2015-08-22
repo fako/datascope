@@ -84,7 +84,7 @@ class ImageGrid(object):
             offset_width + self.cell_width * horizontal,
             offset_height + self.cell_height * vertical,
         )
-        image.crop(box)
+        image = image.crop(box)
         return image
 
     @staticmethod
@@ -103,19 +103,21 @@ class ImageGrid(object):
 
         if is_landscape:
             horizontal, vertical = 1, 1
-            new_height, new_width = self.get_new_size(image_height, image_width, self.cell_height)
         elif is_panorama:
             horizontal, vertical = 2, 1
-            new_height, new_width = self.get_new_size(image_height, image_width, self.cell_height)
         elif is_portrait:
             horizontal, vertical = 1, 2
-            new_width, new_height = self.get_new_size(image_width, image_height, self.cell_width)
         else:
             raise AssertionError("Image wasn't labeled as any category")
 
+        if self.cell_width >= self.cell_height:
+            new_width, new_height = self.get_new_size(image_width, image_height, self.cell_width)
+        else:
+            new_height, new_width = self.get_new_size(image_height, image_width, self.cell_height)
+
         if new_width >= self.cell_width and new_height >= self.cell_height:
-            image.resize((new_width, new_height,))
-        self.center_image(image, horizontal, vertical)
+            image = image.resize((new_width, new_height,), Image.ANTIALIAS)
+        image = self.center_image(image, horizontal, vertical)
 
         return image, horizontal, vertical
 
@@ -127,13 +129,13 @@ class ImageGrid(object):
         if horizontal > 1:
             for cell_index_modifier in range(0, horizontal):
                 index = cell_index + cell_index_modifier
-                self.cells[index] = image
+                self.cells[index] = image if not cell_index_modifier else True
 
         # Reserve cells for portrait
         if vertical > 1:
             for cell_index_modifier in range(0, vertical*self.columns, self.columns):
                 index = cell_index + cell_index_modifier
-                self.cells[index] = image
+                self.cells[index] = image if not cell_index_modifier else False
 
     def fill(self, images):
         for image in images:
@@ -157,3 +159,21 @@ class ImageGrid(object):
 
     def fill_from_src(self, sources):
         pass
+
+    def export(self, file_name):
+        assert self.images, "Grid is not filled with any images."
+
+        output = Image.new(
+            "RGB",
+            (self.cell_width * self.columns, self.cell_height * self.rows)
+        )
+        for index, image in enumerate(self.cells):
+            if not image:
+                continue
+            row = int(index/self.columns)
+            column = index % self.columns
+            output.paste(
+                image,
+                (column*self.cell_width, row*self.cell_height)
+            )
+        output.save(file_name, quality=90)
