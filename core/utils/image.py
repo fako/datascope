@@ -9,10 +9,6 @@ class ImageRejected(Exception):
     pass
 
 
-class ImageDoesNotFit(Exception):
-    pass
-
-
 class CouldNotFillGrid(Exception):
     pass
 
