@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 import hashlib
 import json
 from copy import copy, deepcopy
+from StringIO import StringIO
 
 import requests
 import jsonschema
@@ -11,6 +12,7 @@ from urlobject import URLObject
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from PIL import Image
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -459,3 +461,30 @@ class BrowserResource(HttpResource):
 
     class Meta:
         abstract = True
+
+
+class ImageDownload(HttpResource):
+
+    def _validate_input(self, method, *args, **kwargs):
+        # TODO: validate for valid URL in args[0]. Use GET_SCHEMA?
+        pass
+
+    def _create_request(self, method, *args, **kwargs):
+        self._validate_input("get", *args, **kwargs)
+        return self.validate_request({
+            "args": [],
+            "kwargs": {},
+            "method": "get",
+            "url": args[0],
+            "headers": {},
+            "data": None,
+        }, validate_input=False)
+
+    def content(self):
+        if self.success:
+            content_type = self.head["content-type"].split(';')[0]
+            return content_type, Image.open(StringIO(self.body))
+        return None, None
+
+    def post(self, *args, **kwargs):
+        raise NotImplementedError("You can't download an image over POST")
