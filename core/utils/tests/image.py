@@ -5,9 +5,9 @@ import types
 from PIL import Image
 
 from unittest import TestCase
-from mock import Mock, call
+from mock import Mock
 
-from core.utils.image import ImageGrid, ImageRejected
+from core.utils.image import ImageGrid, ImageRejected, CouldNotFillGrid
 
 
 def monkey_patch_mock_image(image):
@@ -23,16 +23,16 @@ class TestImageGrid(TestCase):
     maxDiff = None
 
     def setUp(self):
-        self.image_grid = ImageGrid(4, 3, 16, 9, 3)
+        self.image_grid = ImageGrid(4, 3, 16, 9)
         self.fit = Mock(Image.Image, size=(16, 9))
         self.landscape = Mock(Image.Image, size=(20, 10))
         self.panorama = Mock(Image.Image, size=(40, 10))
         self.portrait = Mock(Image.Image, size=(18, 30))
 
     def test_init(self):
-        ig = ImageGrid(4, 3, 16, 9, 0)
+        ig = ImageGrid(4, 3, 16, 9)
         self.assertEqual(len(ig.cells), 12)
-        ig = ImageGrid(5, 5, 16, 9, 0)
+        ig = ImageGrid(5, 5, 16, 9)
         self.assertEqual(len(ig.cells), 25)
 
     def test_validate_image_size(self):
@@ -151,3 +151,12 @@ class TestImageGrid(TestCase):
             self.landscape, self.panorama, self.panorama, self.portrait,
             self.landscape, self.panorama, self.panorama, self.landscape,
         ])
+        three_by_three = ImageGrid(3, 3, 16, 9)
+        try:
+            three_by_three.fill([
+                self.panorama,
+                self.portrait
+            ])
+            self.fail("Image grid completed a grid that is impossible.")
+        except CouldNotFillGrid:
+            pass

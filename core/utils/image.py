@@ -19,7 +19,7 @@ class CouldNotFillGrid(Exception):
 
 class ImageGrid(object):
 
-    def __init__(self, columns, rows, cell_width, cell_height, scale_margin):
+    def __init__(self, columns, rows, cell_width, cell_height):
         assert cell_width > cell_height, \
             "Image grid expect cells to be landscape oriented"
         self.columns = columns
@@ -36,9 +36,7 @@ class ImageGrid(object):
     def set_stop(self):
         self.stop = self.index - 1
 
-    def next(self):
-        if self.index == self.stop:
-            raise StopIteration()
+    def next_carousel_image(self):
         try:
             image = self.images[self.index]
         except IndexError:
@@ -152,14 +150,13 @@ class ImageGrid(object):
             if cell is not None:
                 continue
 
-            try:
-                while True:
-                    try:
-                        self.cell_image(index, self.next())
-                        break
-                    except IndexError:
-                        pass
-            except StopIteration:
+            for attempt in range(0, len(self.images)):
+                try:
+                    self.cell_image(index, self.next_carousel_image())
+                    break
+                except IndexError:
+                    pass
+            else:
                 raise CouldNotFillGrid("Unable to fill the grid with provided images")
 
     def fill_from_src(self, sources):
