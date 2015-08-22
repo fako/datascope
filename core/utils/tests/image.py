@@ -20,6 +20,8 @@ def monkey_patch_mock_image(image):
 
 class TestImageGrid(TestCase):
 
+    maxDiff = None
+
     def setUp(self):
         self.image_grid = ImageGrid(4, 3, 16, 9, 3)
         self.fit = Mock(Image.Image, size=(16, 9))
@@ -137,3 +139,15 @@ class TestImageGrid(TestCase):
         image.crop.assert_called_once_with((4, 0, 36, 9))
         image = self.image_grid.center_image(self.portrait, 1, 2)
         image.crop.assert_called_once_with((1, 6, 17, 24))
+
+    def test_fill(self):
+        self.image_grid.fill([
+            self.landscape,
+            self.panorama,
+            self.portrait
+        ])
+        self.assertEqual(self.image_grid.cells, [
+            self.landscape, self.panorama, self.panorama, self.portrait,
+            self.landscape, self.panorama, self.panorama, self.portrait,
+            self.landscape, self.panorama, self.panorama, self.landscape,
+        ])

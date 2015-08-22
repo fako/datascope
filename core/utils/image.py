@@ -28,10 +28,24 @@ class ImageGrid(object):
         self.cell_height = cell_height
         self.images = []
         self.cells = list(
-            [None for cell in xrange(0, rows) for row in xrange(0, columns)]
+            [None for cell in range(0, rows) for row in range(0, columns)]
         )
         self.index = 0
-        self.scale_margin = scale_margin
+        self.stop = len(self.cells) - 1
+
+    def set_stop(self):
+        self.stop = self.index - 1
+
+    def next(self):
+        if self.index == self.stop:
+            raise StopIteration()
+        try:
+            image = self.images[self.index]
+        except IndexError:
+            self.index = 0
+            image = self.images[self.index]
+        self.index += 1
+        return image
 
     def get_image_info(self, image):
         image_width, image_height = image.size
@@ -111,37 +125,42 @@ class ImageGrid(object):
 
         return image, horizontal, vertical
 
-    def cell_image(self, image):
-        free_cell_index = next([index for index, cell in enumerate(self.cells) if cell])
-
-        image, horizontal, vertical = self.size_image(image)  # could raise ImageRejected
-        # if horizontal > self.columns:
-        #     raise NoCellAvailable("Image spans more columns than available")
-        # if vertical > self.rows:
-        #     raise NoCellAvailable("Image spans more rows than available")
+    def cell_image(self, cell_index, image_info):
+        image, horizontal, vertical = image_info
+        self.cells[cell_index] = image
 
         # Reserve cells for landscape and panorama
-        for cell_index_modifier in range(0, horizontal):
-            cell_index = free_cell_index + cell_index_modifier
-            self.cells[cell_index] = image
+        if horizontal > 1:
+            for cell_index_modifier in range(0, horizontal):
+                index = cell_index + cell_index_modifier
+                self.cells[index] = image
 
         # Reserve cells for portrait
-        for cell_index_modifier in range(0, vertical*self.columns, self.columns):
-            cell_index = free_cell_index + cell_index_modifier
-            self.cells[cell_index] = image
+        if vertical > 1:
+            for cell_index_modifier in range(0, vertical*self.columns, self.columns):
+                index = cell_index + cell_index_modifier
+                self.cells[index] = image
 
-    def fill(self, images):  # TODO: add logging
+    def fill(self, images):
         for image in images:
             try:
-                self.images.append(self.cell_image(image))
+                self.images.append(self.size_image(image))
             except ImageRejected:
                 pass
-            except ImageDoesNotFit:
-                pass  # TODO: make sure we get images that do fit
-            except StopIteration:  # raised by next() in cell_image
-                break
-        else:
-            raise CouldNotFillGrid("Unable to fill the grid with provided images")
+
+        for index, cell in enumerate(self.cells):
+            if cell is not None:
+                continue
+
+            try:
+                while True:
+                    try:
+                        self.cell_image(index, self.next())
+                        break
+                    except IndexError:
+                        pass
+            except StopIteration:
+                raise CouldNotFillGrid("Unable to fill the grid with provided images")
 
     def fill_from_src(self, sources):
         pass
