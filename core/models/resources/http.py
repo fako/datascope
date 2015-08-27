@@ -330,7 +330,19 @@ class HttpResource(models.Model):
         )
         preq = request.prepare()
 
-        response = self.session.send(preq, proxies=settings.REQUESTS_PROXIES, verify=settings.REQUESTS_VERIFY)
+        try:
+            response = self.session.send(
+                preq,
+                proxies=settings.REQUESTS_PROXIES,
+                verify=settings.REQUESTS_VERIFY,
+                timeout=self.timeout
+            )
+        except (requests.ConnectionError, IOError):
+            self.set_error(502)
+            return
+        except requests.Timeout:
+            self.set_error(504)
+            return
         self._update_from_response(response)
 
     def _update_from_response(self, response):
@@ -339,7 +351,6 @@ class HttpResource(models.Model):
         self.body = unicode(
             response.content, 'utf-8', errors='replace'  # HTML can have some weird bytes, so replace errors!
         )
-
 
     def _handle_errors(self):
         """
@@ -391,11 +402,16 @@ class HttpResource(models.Model):
         hsh.update(json.dumps(data))
         return hsh.hexdigest()
 
+    def set_error(self, status):  # TODO: test
+        self.head = {}
+        self.body = ""
+        self.status = status
+
     class Meta:
         abstract = True
 
 
-class BrowserResource(HttpResource):
+class BrowserResource(HttpResource):  # TODO: write tests
 
     def _send(self):
         # TODO: handle sessions that are set by the context
@@ -403,8 +419,6 @@ class BrowserResource(HttpResource):
         # TODO: handle set headers
         assert self.request and isinstance(self.request, dict), \
             "Trying to make request before having a valid request dictionary."
-
-
 
         dcap = dict(DesiredCapabilities.PHANTOMJS)
         dcap["phantomjs.page.settings.userAgent"] = (
@@ -464,6 +478,3 @@ class BrowserResource(HttpResource):
 
     class Meta:
         abstract = True
-
-
-
