@@ -53,15 +53,15 @@ class Growth(models.Model, ProcessorMixin):
     )
 
     process = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST)
-    contribute = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST)
-    contribute_type = models.CharField(max_length=255, choices=CONTRIBUTE_TYPE_CHOICES)
+    contribute = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST, null=True, blank=True)
+    contribute_type = models.CharField(max_length=255, choices=CONTRIBUTE_TYPE_CHOICES, null=True, blank=True)
 
     input = GenericForeignKey(ct_field="input_type", fk_field="input_id")
-    input_type = models.ForeignKey(ContentType, related_name="+", null=True)
-    input_id = models.PositiveIntegerField(null=True)
+    input_type = models.ForeignKey(ContentType, related_name="+", null=True, blank=True)
+    input_id = models.PositiveIntegerField(null=True, blank=True)
     output = GenericForeignKey(ct_field="output_type", fk_field="output_id")
-    output_type = models.ForeignKey(ContentType, related_name="+")
-    output_id = models.PositiveIntegerField()
+    output_type = models.ForeignKey(ContentType, related_name="+", null=True, blank=True)
+    output_id = models.PositiveIntegerField(null=True, blank=True)
 
     result_id = models.CharField(max_length=255, null=True, blank=True)
     state = models.CharField(max_length=255, choices=GROWTH_STATE_CHOICES, default=GrowthState.NEW, db_index=True)
@@ -121,6 +121,8 @@ class Growth(models.Model, ProcessorMixin):
             scc, err = processor.results(result)
             if self.contribute_type == ContributeType.APPEND:
                 self.append_to_output(scc)
+            elif self.contribute is None:  # TODO: test
+                pass
             else:
                 raise AssertionError("Growth.finish did not act on contribute_type {}".format(self.contribute_type))
             for res in err:
