@@ -435,16 +435,13 @@ class BrowserResource(HttpResource):  # TODO: write tests
 
         url = self.request.get("url")
         browser.get(url)
-        #browser.get("https://translate.google.nl/#auto/en/vrijheid")
 
+        self._update_from_response(browser)
+
+    def _update_from_response(self, response):
         self.head = dict()
         self.status = 1
-
-        self.body = browser.page_source
-
-        # unicode(
-        #     browser.page_source, 'utf-8', errors='replace'  # HTML can have some weird bytes, so replace errors!
-        # )
+        self.body = response.page_source
         self.soup = BeautifulSoup(self.body)
 
     @property
