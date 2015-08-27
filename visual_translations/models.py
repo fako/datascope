@@ -52,6 +52,19 @@ class VisualTranslationsCommunity(Community):
             },
             "schema": {},
             "errors": {},
+        }),
+        ("download", {
+            "process": "HttpResourceProcessor.fetch_mass",
+            "input": "@images",
+            "contribute": None,
+            "output": None,
+            "config": {
+                "_args": ["$.url"],
+                "_kwargs": {},
+                "_resource": "ImageDownload"
+            },
+            "schema": {},
+            "errors": {},
         })
     ])
 
