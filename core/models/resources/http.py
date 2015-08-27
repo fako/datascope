@@ -363,6 +363,7 @@ class HttpResource(models.Model):
     def __init__(self, *args, **kwargs):
         super(HttpResource, self).__init__(*args, **kwargs)
         self.session = kwargs.get("session")
+        self.timeout = kwargs.get("timeout", 30)  # TODO: test this
 
     def clean(self):
         if self.request and not self.uri:
