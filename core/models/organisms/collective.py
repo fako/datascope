@@ -1,12 +1,18 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
+from django.db import models
 from django.conf import settings
 from django.core.urlresolvers import reverse
+
+import json_field
 
 from core.models.organisms import Organism, Individual
 
 
 class Collective(Organism):
+
+    groups = json_field.JSONField(null=True, blank=True, default={})
+    identifier = models.CharField(max_length=255, null=True, blank=True)
 
     @property
     def url(self):
@@ -43,34 +49,40 @@ class Collective(Organism):
 
         def prepare_updates(data):
 
-            bulk = []
-            save = []
+            updates = []
             if isinstance(data, dict):
-                pk = data.pop("ds_id", None)
-                if pk is None:
-                    individual = Individual(
-                        community=self.community,
-                        collective=self,
-                        schema=self.schema,
-                        properties=data
-                    )
-                    bulk.append(individual)
-                else:
-                    individual = Individual.objects.get(pk=pk)
-                    individual.update(data)
-                    individual.collective = self
-                    save.append(individual)
+                individual = Individual(
+                    community=self.community,
+                    collective=self,
+                    schema=self.schema,
+                    properties=data
+                )
+                individual.clean()
+                updates.append(individual)
             else:  # type is list
                 for instance in data:
-                    extra_bulk, extra_save = prepare_updates(instance)
-                    bulk += extra_bulk
-                    save += extra_save
-            return bulk, save
+                    updates += prepare_updates(instance)
+            return updates
 
-        bulks, saves = prepare_updates(data)
-        Individual.objects.bulk_create(bulks, batch_size=settings.MAX_BATCH_SIZE)
-        for organism in saves:
-            organism.save()
+        updates = prepare_updates(data)
+        self.individual_set.all().delete()
+        Individual.objects.bulk_create(updates, batch_size=settings.MAX_BATCH_SIZE)
+
+    def influence(self, individual):  # TODO: test
+        """
+        This allows the Collective to set some attributes and or properties on the Individual
+
+        :param individual: The individual that should be influenced
+        :return: The influenced individual
+        """
+        if self.identifier:
+            individual.identity = individual[self.identifier]
+        if self.groups:
+            pass
+            #group_keys = self.get_group_keys()
+            #individual = self.set_group_for_individual(individual, group_keys)
+
+        return individual
 
     @property
     def content(self):
@@ -80,6 +92,11 @@ class Collective(Organism):
         :return: a list of properties from Individual members
         """
         return [ind.content for ind in self.individual_set.all()]
+
+    @property
+    def json_content(self):
+        json_content = [ind.json_content for ind in self.individual_set.all()]
+        return "[{}]".format(",".join(json_content))
 
     def output(self, *args):
         if len(args) > 1:
