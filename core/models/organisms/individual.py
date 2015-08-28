@@ -93,6 +93,6 @@ class Individual(Organism):
         else:
             raise AssertionError("Expected a string, list or dict as argument got {} instead".format(type(frm)))
 
-    def clean(self):  # TODO: Test! Also update the test for update
+    def clean(self):
         if self.collective:
             self.collective.influence(self)

@@ -38,3 +38,9 @@ class TestIndividual(TestCase):
 
     def test_validate(self):
         self.skipTest("not tested")
+
+    def test_clean(self):
+        self.skipTest("not tested")
+
+    def test_json_content(self):
+        self.skipTest("not tested")
