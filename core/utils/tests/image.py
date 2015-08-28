@@ -5,16 +5,19 @@ import types
 from PIL import Image
 
 from unittest import TestCase
-from mock import Mock
+from mock import Mock, MagicMock
 
 from core.utils.image import ImageGrid, ImageRejected, CouldNotFillGrid
 
 
 def monkey_patch_mock_image(image):
-    def resize(self, size):
+
+    def resize(self, size, anti_alias):
         self.size = size
-    image.resize = types.MethodType(resize, image)
-    image.resize = Mock(side_effect=types.MethodType(resize, image))
+        return image
+
+    image.resize = Mock(side_effect=types.MethodType(resize, image), return_value=image)
+    image.crop = Mock(return_value=image)
     return image
 
 
@@ -24,10 +27,10 @@ class TestImageGrid(TestCase):
 
     def setUp(self):
         self.image_grid = ImageGrid(4, 3, 16, 9)
-        self.fit = Mock(Image.Image, size=(16, 9))
-        self.landscape = Mock(Image.Image, size=(20, 10))
-        self.panorama = Mock(Image.Image, size=(40, 10))
-        self.portrait = Mock(Image.Image, size=(18, 30))
+        self.fit = monkey_patch_mock_image(MagicMock(Image.Image, size=(16, 9)))
+        self.landscape = monkey_patch_mock_image(MagicMock(Image.Image, size=(20, 12)))
+        self.panorama = monkey_patch_mock_image(MagicMock(Image.Image, size=(36, 10)))
+        self.portrait = monkey_patch_mock_image(MagicMock(Image.Image, size=(18, 30)))
 
     def test_init(self):
         ig = ImageGrid(4, 3, 16, 9)
@@ -90,8 +93,8 @@ class TestImageGrid(TestCase):
 
         # Landscape size
         image, horizontal, vertical = self.image_grid.size_image(self.landscape)
-        image.resize.assert_called_once_with((18, 9))
-        image.crop.called_once_with((1, 0, 17, 9))
+        image.resize.assert_called_once_with((16, 10), 1)
+        image.crop.called_once_with((0, 0, 16, 9))
         self.assertEqual(horizontal, 1)
         self.assertEqual(vertical, 1)
         # Landscape size where resize shouldn't happen
@@ -104,7 +107,7 @@ class TestImageGrid(TestCase):
 
         # Panorama size
         image, horizontal, vertical = self.image_grid.size_image(self.panorama)
-        image.resize.assert_called_once_with((36, 9))
+        image.resize.assert_called_once_with((32, 9), 1)
         image.crop.called_once_with((0, 0, 0, 0))
         self.assertEqual(horizontal, 2)
         self.assertEqual(vertical, 1)
@@ -112,18 +115,18 @@ class TestImageGrid(TestCase):
         small_panorama = Mock(Image.Image, size=(40, 9))
         image, horizontal, vertical = self.image_grid.size_image(small_panorama)
         image.resize.assert_not_called()
-        image.crop.called_once_with((4, 0, 36, 9))
+        image.crop.called_once_with((2, 0, 34, 9))
         self.assertEqual(horizontal, 2)
         self.assertEqual(vertical, 1)
 
         # Portrait size
         image, horizontal, vertical = self.image_grid.size_image(self.portrait)
-        image.resize.assert_called_once_with((16, 27))
+        image.resize.assert_called_once_with((16, 27), 1)
         image.crop.called_once_with((0, 4, 16, 22))
         self.assertEqual(horizontal, 1)
         self.assertEqual(vertical, 2)
         # Landscape size where resize shouldn't happen
-        small_portrait = Mock(Image.Image, size=(19, 26))
+        small_portrait = monkey_patch_mock_image(Mock(Image.Image, size=(19, 26)))
         image, horizontal, vertical = self.image_grid.size_image(small_portrait)
         image.resize.assert_not_called()
         image.crop.called_once_with((1, 4, 17, 22))
@@ -134,9 +137,9 @@ class TestImageGrid(TestCase):
         image = self.image_grid.center_image(self.fit, 1, 1)
         image.crop.assert_called_once_with((0, 0, 16, 9))
         image = self.image_grid.center_image(self.landscape, 1, 1)
-        image.crop.assert_called_once_with((2, 0, 18, 9))
+        image.crop.assert_called_once_with((2, 1, 18, 10))
         image = self.image_grid.center_image(self.panorama, 2, 1)
-        image.crop.assert_called_once_with((4, 0, 36, 9))
+        image.crop.assert_called_once_with((2, 0, 34, 9))
         image = self.image_grid.center_image(self.portrait, 1, 2)
         image.crop.assert_called_once_with((1, 6, 17, 24))
 
@@ -147,9 +150,9 @@ class TestImageGrid(TestCase):
             self.portrait
         ])
         self.assertEqual(self.image_grid.cells, [
-            self.landscape, self.panorama, self.panorama, self.portrait,
-            self.landscape, self.panorama, self.panorama, self.portrait,
-            self.landscape, self.panorama, self.panorama, self.landscape,
+            self.landscape, self.panorama, True, self.portrait,
+            self.landscape, self.panorama, True, True,
+            self.landscape, self.panorama, True, self.landscape,
         ])
         three_by_three = ImageGrid(3, 3, 16, 9)
         try:

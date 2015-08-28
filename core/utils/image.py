@@ -71,8 +71,8 @@ class ImageGrid(object):
             delta_width -= 1
         if delta_height % 2:
             delta_height -= 1
-        offset_width = int(delta_width / 2)
-        offset_height = int(delta_height / 2)
+        offset_width = int(round(delta_width / 2))
+        offset_height = int(round(delta_height / 2))
 
         box = (
             offset_width,
@@ -107,9 +107,9 @@ class ImageGrid(object):
             raise AssertionError("Image wasn't labeled as any category")
 
         if self.cell_width >= self.cell_height:
-            new_width, new_height = self.get_new_size(image_width, image_height, self.cell_width)
+            new_width, new_height = self.get_new_size(image_width, image_height, self.cell_width*horizontal)
         else:
-            new_height, new_width = self.get_new_size(image_height, image_width, self.cell_height)
+            new_height, new_width = self.get_new_size(image_height, image_width, self.cell_height*vertical)
 
         if new_width >= self.cell_width and new_height >= self.cell_height:
             image = image.resize((new_width, new_height,), Image.ANTIALIAS)
@@ -131,7 +131,7 @@ class ImageGrid(object):
         if vertical > 1:
             for cell_index_modifier in range(0, vertical*self.columns, self.columns):
                 index = cell_index + cell_index_modifier
-                self.cells[index] = image if not cell_index_modifier else False
+                self.cells[index] = image if not cell_index_modifier else True
 
     def fill(self, images):
         for image in images:

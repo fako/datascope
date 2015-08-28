@@ -34,7 +34,7 @@ error_response.content = json.dumps({"error": "internal error"})
 error_response.status_code = 500
 
 
-def return_response(prepared_request, proxies, verify):
+def return_response(prepared_request, proxies, verify, timeout):
     if "404" in prepared_request.url:
         return not_found_response
     elif "500" in prepared_request.url:
