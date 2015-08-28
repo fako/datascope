@@ -7,7 +7,7 @@ from jsonschema.exceptions import ValidationError as SchemaValidationError
 from django.db import models
 from django.core.exceptions import ValidationError
 
-import jsonfield
+import json_field
 
 from core.models.organisms import Organism
 from core.utils.data import reach
@@ -16,7 +16,7 @@ from core.utils.data import reach
 class Individual(Organism):
 
     collective = models.ForeignKey('Collective', null=True)
-    properties = jsonfield.JSONField(default={})
+    properties = json_field.JSONField(default={})
 
     def __getitem__(self, item):
         return self.properties[item]

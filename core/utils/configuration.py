@@ -12,7 +12,7 @@ from django.forms import fields as form_fields
 from django.utils import six
 from django.core.exceptions import ValidationError
 
-from jsonfield.fields import JSONFormField
+from json_field.fields import JSONFormField
 
 
 log = logging.getLogger("datascope")

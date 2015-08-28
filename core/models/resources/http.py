@@ -18,7 +18,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
-import jsonfield
+import json_field
 
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.utils import configuration
@@ -46,10 +46,10 @@ class HttpResource(models.Model):
     )
 
     # Getting data
-    request = jsonfield.JSONField(default=None)
+    request = json_field.JSONField(default=None)
 
     # Storing data
-    head = jsonfield.JSONField(default=None)
+    head = json_field.JSONField(default=None)
     body = models.TextField(default=None)
     status = models.PositiveIntegerField(default=None)
 
