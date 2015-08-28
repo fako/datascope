@@ -64,5 +64,92 @@
     },
     "model": "core.individual",
     "pk": 3
+},
+    {
+    "fields": {
+        "kernel_type": null,
+        "views": 1,
+        "kernel_id": null,
+        "created_at": "2015-06-05T16:17:54.436",
+        "modified_at": "2015-06-05T16:17:54.436",
+        "completed_at": null,
+        "state": "New",
+        "current_growth": null,
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
+        "purge_at": null
+    },
+    "model": "core.CommunityMock",
+    "pk": 2
+},
+{
+    "fields": {
+        "created_at": "2015-06-04T11:31:27.940",
+        "modified_at": "2015-06-04T11:34:06.960",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"word\",\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"value\":{\"country\":\"string\"}}}",
+        "community_type": 21,
+        "community_id": 2
+    },
+    "model": "core.collective",
+    "pk": 2
+},{
+    "fields": {
+        "properties": "{\"word\":\"pensioen\",\"country\":\"NL\", \"language\":\"nl\", \"value\":\"1\"}",
+        "collective": 2,
+        "modified_at": "2015-06-02T10:01:47.572",
+        "created_at": "2015-06-02T10:00:20.247",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"word\",\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"value\":{\"country\":\"string\"}}}",
+        "community_type": 21,
+        "community_id": 2
+    },
+    "model": "core.individual",
+    "pk": 4
+},{
+    "fields": {
+        "properties": "{\"word\":\"ouderdom\",\"country\":\"NL\", \"language\":\"nl\", \"value\":\"2\"}",
+        "collective": 2,
+        "modified_at": "2015-06-02T10:01:47.572",
+        "created_at": "2015-06-02T10:00:20.247",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"word\",\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"value\":{\"country\":\"string\"}}}",
+        "community_type": 21,
+        "community_id": 2
+    },
+    "model": "core.individual",
+    "pk": 5
+},{
+    "fields": {
+        "properties": "{\"word\":\"pensioen\",\"country\":\"BE\", \"language\":\"nl\", \"value\":\"1\"}",
+        "collective": 2,
+        "modified_at": "2015-06-02T10:01:47.572",
+        "created_at": "2015-06-02T10:00:20.247",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"word\",\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"value\":{\"country\":\"string\"}}}",
+        "community_type": 21,
+        "community_id": 2
+    },
+    "model": "core.individual",
+    "pk": 6
+},{
+    "fields": {
+        "properties": "{\"word\":\"pension\",\"country\":\"GB\", \"language\":\"en\", \"value\":\"1\"}",
+        "collective": 2,
+        "modified_at": "2015-06-02T10:01:47.572",
+        "created_at": "2015-06-02T10:00:20.247",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"word\",\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"value\":{\"country\":\"string\"}}}",
+        "community_type": 21,
+        "community_id": 2
+    },
+    "model": "core.individual",
+    "pk": 7
+},{
+    "fields": {
+        "properties": "{\"word\":\"age\",\"country\":\"GB\", \"language\":\"en\", \"value\":\"2\"}",
+        "collective": 2,
+        "modified_at": "2015-06-02T10:01:47.572",
+        "created_at": "2015-06-02T10:00:20.247",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"word\",\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"value\":{\"country\":\"string\"}}}",
+        "community_type": 21,
+        "community_id": 2
+    },
+    "model": "core.individual",
+    "pk": 8
 }
 ]
