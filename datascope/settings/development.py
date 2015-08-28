@@ -21,7 +21,7 @@ MIDDLEWARE_CLASSES += (
 
 MAX_BATCH_SIZE = None  # better for sqlite to let Django determine batch size
 
-DATABASES["default"]["ENGINE"] = 'django.db.backends.mysql'
-DATABASES["default"]["NAME"] = 'datascope'
-DATABASES["default"]["USER"] = 'root'
-DATABASES["default"]["PASSWORD"] = ''
+# DATABASES["default"]["ENGINE"] = 'django.db.backends.mysql'
+# DATABASES["default"]["NAME"] = 'datascope'
+# DATABASES["default"]["USER"] = 'root'
+# DATABASES["default"]["PASSWORD"] = ''
