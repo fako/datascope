@@ -185,6 +185,22 @@ class VisualTranslationsCommunity(Community):
             ind.properties["images"] = col.url
             ind.save()
 
+    # def finish_download(self, out, err):
+    #     translations = self.growth_set.filter(type="translations").last()
+    #     for ind in translations.output.individual_set.all():
+    #         pass
+    #     from core.utils.image import ImageGrid
+    #     from PIL import Image
+    #     t1=Image.open("test1.jpg")
+    #     t2=Image.open("test2.jpg")
+    #     t3=Image.open("test3.jpg")
+    #     t4=Image.open("test4.jpg")
+    #     t5=Image.open("test5.jpg")
+    #     imgs = [t1,t2,t3,t4,t5]
+    #     ig = ImageGrid(4,3,160,90)
+    #     ig.fill(imgs)
+    #     ig.export("mozaik.jpg")
+
     def set_kernel(self):
         self.kernel = self.growth_set.filter(type="translations").last().output
 
