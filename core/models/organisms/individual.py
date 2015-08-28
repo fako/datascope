@@ -19,7 +19,7 @@ class Individual(Organism):
     properties = json_field.JSONField(default={})
 
     identity = models.CharField(max_length=255, blank=True, null=True, db_index=True)
-    group_code = models.SmallIntegerField(blank=True, null=True)
+    index = models.SmallIntegerField(blank=True, null=True)
 
     def __getitem__(self, item):
         return self.properties[item]

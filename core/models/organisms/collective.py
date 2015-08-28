@@ -11,7 +11,7 @@ from core.models.organisms import Organism, Individual
 
 class Collective(Organism):
 
-    groups = json_field.JSONField(null=True, blank=True, default={})
+    indexes = json_field.JSONField(null=True, blank=True, default={})
     identifier = models.CharField(max_length=255, null=True, blank=True)
 
     @property
@@ -68,22 +68,6 @@ class Collective(Organism):
         self.individual_set.all().delete()
         Individual.objects.bulk_create(updates, batch_size=settings.MAX_BATCH_SIZE)
 
-    def influence(self, individual):  # TODO: test
-        """
-        This allows the Collective to set some attributes and or properties on the Individual
-
-        :param individual: The individual that should be influenced
-        :return: The influenced individual
-        """
-        if self.identifier:
-            individual.identity = individual[self.identifier]
-        if self.groups:
-            pass
-            #group_keys = self.get_group_keys()
-            #individual = self.set_group_for_individual(individual, group_keys)
-
-        return individual
-
     @property
     def content(self):
         """
@@ -131,3 +115,49 @@ class Collective(Organism):
             else:
                 grouped[value].append(ind)
         return grouped
+
+    def _get_index_keys(self):
+        return [item[0] for item in self.indexes.keys()[0]]
+
+    def build_index(self, keys):
+        """
+
+        :param keys:
+        :return:
+        """
+        assert isinstance(keys, list) and len(keys), \
+            "Expected a list with at least one element for argument keys."
+
+        for ind in self.individual_set.all():
+            self.set_index_for_individual(ind, keys)
+
+    def set_index_for_individual(self, individual, index_keys):
+        index = tuple([(key, individual[key]) for key in index_keys])
+        if index not in self.indexes:
+            index_code = len(self.indexes)
+            self.indexes[index] = index_code
+        individual.index = self.indexes[index]
+        return individual
+
+    def influence(self, individual):
+        """
+        This allows the Collective to set some attributes and or properties on the Individual
+
+        :param individual: The individual that should be influenced
+        :return: The influenced individual
+        """
+        if self.identifier:
+            individual.identity = individual[self.identifier]
+        if self.indexes:
+            index_keys = self._get_index_keys()
+            individual = self.set_index_for_individual(individual, index_keys)
+
+        return individual
+
+    def select(self, **kwargs):
+        select = set()
+        for item in kwargs.iteritems():
+            for index in self.indexes.keys():
+                if item in index:
+                    select.add(self.indexes[index])
+        return self.individual_set.filter(index__in=select)

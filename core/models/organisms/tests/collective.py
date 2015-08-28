@@ -17,6 +17,15 @@ class TestCollective(TestCase):
         self.double_list_outcome = [["nested value 0", "nested value 0"], ["nested value 1", "nested value 1"], ["nested value 2", "nested value 2"]]
         self.dict_outcome = [{"value": "nested value 0"}, {"value": "nested value 1"}, {"value": "nested value 2"}]
 
+    def test_url(self):
+        self.skipTest("not tested")
+
+    def test_validate(self):
+        self.skipTest("not tested")
+
+    def test_update(self):
+        self.skipTest("not tested")
+
     def test_output(self):
         results = self.instance.output("$.value")
         self.assertEqual(results, self.value_outcome)
@@ -33,14 +42,23 @@ class TestCollective(TestCase):
         results = self.instance.output({})
         self.assertEqual(results, [{}, {}, {}])
 
-    def test_update(self):
-        self.skipTest("not tested")
-
-    def test_validate(self):
+    def test_json_content(self):
         self.skipTest("not tested")
 
     def test_group_by(self):
         self.skipTest("not tested")
 
-    def test_url(self):
+    def test_get_index_keys(self):
+        self.skipTest("not tested")
+
+    def test_set_index_for_individual(self):
+        self.skipTest("not tested")
+
+    def test_influence(self):
+        self.skipTest("not tested")
+
+    def test_select(self):
+        self.skipTest("not tested")
+
+    def test_build_index(self):
         self.skipTest("not tested")
