@@ -5,13 +5,32 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 
 import json_field
+from json_field.fields import JSONEncoder, JSONDecoder
 
 from core.models.organisms import Organism, Individual
 
 
+class IndexEncoder(JSONEncoder):
+    def encode(self, obj):
+        obj = super(IndexEncoder, self).encode({str(value): key for key, value in obj.iteritems()})
+        return obj
+
+
+class IndexDecoder(JSONDecoder):
+    def decode(self, obj, *args, **kwargs):
+        obj = super(IndexDecoder, self).decode(obj, *args, **kwargs)
+        return {key: int(value) for value, key in obj.iteritems()}
+
+
 class Collective(Organism):
 
-    indexes = json_field.JSONField(null=True, blank=True, default={})
+    indexes = json_field.JSONField(
+        null=True,
+        blank=True,
+        default={},
+        encoder=IndexEncoder,
+        decoder=IndexDecoder
+    )
     identifier = models.CharField(max_length=255, null=True, blank=True)
 
     @property
@@ -31,7 +50,12 @@ class Collective(Organism):
         """
         if not isinstance(data, list):
             data = [data]
-        return [Individual.validate(instance, schema) for instance in data]
+        return [
+            Individual.validate(instance, schema)
+            if isinstance(instance, dict)
+            else Individual.validate(instance.properties, schema)
+            for instance in data
+        ]
 
     def update(self, data, validate=True):
         """
@@ -59,6 +83,9 @@ class Collective(Organism):
                 )
                 individual.clean()
                 updates.append(individual)
+            elif isinstance(data, Individual):
+                data.clean()
+                updates.append(data)
             else:  # type is list
                 for instance in data:
                     updates += prepare_updates(instance)
@@ -128,8 +155,12 @@ class Collective(Organism):
         assert isinstance(keys, list) and len(keys), \
             "Expected a list with at least one element for argument keys."
 
+        individuals = []
         for ind in self.individual_set.all():
             self.set_index_for_individual(ind, keys)
+            individuals.append(ind)
+        self.update(individuals)
+        self.save()
 
     def set_index_for_individual(self, individual, index_keys):
         index = tuple([(key, individual[key]) for key in index_keys])

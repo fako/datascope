@@ -1,8 +1,9 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
 from django.test import TestCase
+from django.db.models.query import QuerySet
 
-from core.models.organisms import Collective
+from core.models.organisms import Collective, Individual
 
 
 class TestCollective(TestCase):
@@ -12,6 +13,8 @@ class TestCollective(TestCase):
     def setUp(self):
         super(TestCollective, self).setUp()
         self.instance = Collective.objects.get(id=1)
+        self.instance2 = Collective.objects.get(id=2)
+        self.individual = Individual.objects.get(id=4)
         self.value_outcome = ["nested value 0", "nested value 1", "nested value 2"]
         self.list_outcome = [["nested value 0"], ["nested value 1"], ["nested value 2"]]
         self.double_list_outcome = [["nested value 0", "nested value 0"], ["nested value 1", "nested value 1"], ["nested value 2", "nested value 2"]]
@@ -48,17 +51,39 @@ class TestCollective(TestCase):
     def test_group_by(self):
         self.skipTest("not tested")
 
-    def test_get_index_keys(self):
-        self.skipTest("not tested")
-
     def test_set_index_for_individual(self):
-        self.skipTest("not tested")
+        individual = self.instance2.set_index_for_individual(self.individual, ["language"])
+        self.assertEqual(
+            self.instance2.indexes,
+            {
+                (("language", "nl",),): 0,
+            }
+        )
+        self.assertEqual(individual.index, 0)
 
     def test_influence(self):
         self.skipTest("not tested")
 
     def test_select(self):
-        self.skipTest("not tested")
+        self.instance2.build_index(["language", "country"])
+        qs = self.instance2.select(country="NL")
+        self.assertIsInstance(qs, QuerySet)
+        words = [ind["word"] for ind in qs.all()]
+        self.assertEqual(words, ["pensioen", "ouderdom"])
+        qs = self.instance2.select(language="nl")
+        self.assertIsInstance(qs, QuerySet)
+        words = [ind["word"] for ind in qs.all()]
+        self.assertEqual(words, ["pensioen", "ouderdom", "pensioen"])
 
     def test_build_index(self):
-        self.skipTest("not tested")
+        self.instance2.build_index(["language", "country"])
+        self.assertEqual(
+            self.instance2.indexes,
+            {
+                (("language", "nl",), ("country", "NL",),): 0,
+                (("language", "nl",), ("country", "BE",),): 1,
+                (("language", "en",), ("country", "GB",),): 2,
+            }
+        )
+        individual = Individual.objects.last()
+        self.assertEqual(individual.index, 2)
