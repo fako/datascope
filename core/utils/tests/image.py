@@ -150,9 +150,9 @@ class TestImageGrid(TestCase):
             self.portrait
         ])
         self.assertEqual(self.image_grid.cells, [
-            self.landscape, self.panorama, True, self.portrait,
-            self.landscape, self.panorama, True, True,
-            self.landscape, self.panorama, True, self.landscape,
+            self.landscape, self.panorama, False, self.portrait,
+            self.landscape, self.panorama, False, False,
+            self.landscape, self.panorama, False, self.landscape,
         ])
         three_by_three = ImageGrid(3, 3, 16, 9)
         try:

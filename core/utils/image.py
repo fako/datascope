@@ -125,13 +125,13 @@ class ImageGrid(object):
         if horizontal > 1:
             for cell_index_modifier in range(0, horizontal):
                 index = cell_index + cell_index_modifier
-                self.cells[index] = image if not cell_index_modifier else True
+                self.cells[index] = image if not cell_index_modifier else False
 
         # Reserve cells for portrait
         if vertical > 1:
             for cell_index_modifier in range(0, vertical*self.columns, self.columns):
                 index = cell_index + cell_index_modifier
-                self.cells[index] = image if not cell_index_modifier else True
+                self.cells[index] = image if not cell_index_modifier else False
 
     def fill(self, images):
         for image in images:
@@ -161,7 +161,7 @@ class ImageGrid(object):
 
         output = Image.new(
             "RGB",
-            (self.cell_width * self.columns, self.cell_height * self.rows)
+            (self.cell_width*self.columns, self.cell_height*self.rows)
         )
         for index, image in enumerate(self.cells):
             if not image:
