@@ -73,7 +73,7 @@ class Collective(Organism):
 
         def prepare_updates(data):
 
-            updates = []
+            prepared = []
             if isinstance(data, dict):
                 individual = Individual(
                     community=self.community,
@@ -82,14 +82,14 @@ class Collective(Organism):
                     properties=data
                 )
                 individual.clean()
-                updates.append(individual)
+                prepared.append(individual)
             elif isinstance(data, Individual):
                 data.clean()
-                updates.append(data)
+                prepared.append(data)
             else:  # type is list
                 for instance in data:
-                    updates += prepare_updates(instance)
-            return updates
+                    prepared += prepare_updates(instance)
+            return prepared
 
         updates = prepare_updates(data)
         self.individual_set.all().delete()

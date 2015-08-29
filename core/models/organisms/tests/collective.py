@@ -1,12 +1,12 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
-from django.test import TestCase
+from django.test import TransactionTestCase, TestCase
 from django.db.models.query import QuerySet
 
 from core.models.organisms import Collective, Individual
 
 
-class TestCollective(TestCase):
+class TestCollective(TransactionTestCase):
 
     fixtures = ["test-organisms"]
 
@@ -26,8 +26,21 @@ class TestCollective(TestCase):
     def test_validate(self):
         self.skipTest("not tested")
 
+    # TODO: patch validate and assert it being used or not
+    # TODO: patch influence and assert it is being used
     def test_update(self):
-        self.skipTest("not tested")
+        updates = []
+        for index, individual in enumerate(self.instance2.individual_set.all()):
+            individual.properties["value"] = 3
+            updates.append(individual) if index % 2 else updates.append(individual.properties)
+        with self.assertNumQueries(6):
+            self.instance2.update(updates, validate=False)
+        values = [
+            ind.properties["value"] for ind in
+            self.instance2.individual_set.all()
+        ]
+        self.assertEqual(len(values), 5)
+        map(lambda v: self.assertEqual(v, 3), values)
 
     def test_output(self):
         results = self.instance.output("$.value")
@@ -74,6 +87,10 @@ class TestCollective(TestCase):
         self.assertIsInstance(qs, QuerySet)
         words = [ind["word"] for ind in qs.all()]
         self.assertEqual(words, ["pensioen", "ouderdom", "pensioen"])
+        self.skipTest(
+            "Make sure that QuerySet gets re-used through: "
+            "https://docs.djangoproject.com/en/dev/topics/testing/tools/#django.test.TransactionTestCase.assertNumQueries"
+        )
 
     def test_build_index(self):
         self.instance2.build_index(["language", "country"])
