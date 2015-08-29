@@ -76,7 +76,10 @@ class ImageDownload(HttpResource):  # TODO: write tests
         if self.success:
             content_type = self.head["content-type"].split(';')[0]
             image_file = default_storage.open(self.body)
-            return content_type, Image.open(image_file)
+            try:
+                return content_type, Image.open(image_file)
+            except IOError:
+                return None, None
         return None, None
 
     def post(self, *args, **kwargs):
