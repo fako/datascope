@@ -107,7 +107,10 @@ class Community(models.Model, ProcessorMixin):
             sch = growth_config["schema"]
             cnf = growth_config["config"]
             prc = growth_config["process"]
-            cont, con = growth_config["contribute"].split(":")
+            if growth_config["contribute"]:
+                cont, con = growth_config["contribute"].split(":")
+            else:
+                cont, con = None, None
             inp = growth_config["input"]
             out = growth_config["output"]
             if inp is not None and inp.startswith("@"):
@@ -119,7 +122,7 @@ class Community(models.Model, ProcessorMixin):
                 inp = grw.output
             elif inp is None:
                 inp = self.initial_input(*args)
-            if out.startswith("@"):
+            if out is not None and out.startswith("@"):
                 grw = self.growth_set.filter(type=out[1:]).last()
                 if grw is None:
                     raise AssertionError(
