@@ -129,7 +129,7 @@ class VisualTranslationsCommunity(Community):
             )
         return collective
 
-    def finish_translations(self, out, err):  # TODO: optimize using "meta" properties
+    def finish_translations(self, out, err):
         new = []
         group_lambda = lambda el: el[0]
         for group, values in groupby(sorted(self.LOCALES, key=group_lambda), group_lambda):
@@ -141,26 +141,29 @@ class VisualTranslationsCommunity(Community):
 
                 if language == "en":  # creating individuals for untranslated words
                     translations = self.growth_set.filter(type="translations").last()
-                    inp = translations.input.individual_set.first()  # TODO: optimize
+                    inp = translations.input.individual_set.first()
                     new.append({
                         "country": "country" + country,
                         "language": "en",
                         "word": inp.properties["query"],
                         "confidence": None,
                         "meanings": None,
+                        "locale": value
                     })
                 elif index == 0:  # only an update needed
-                    for ind in individuals:
+                    for ind in individuals:  # TODO: simplify by using Collective.select (re-use querysets!)
                         if ind.properties["language"] != language:
                             continue
                         ind.properties["country"] = "country" + country
-                        ind.save()
+                        ind.properties["locale"] = value
+                        new.append(ind)
                 else:  # new individuals need to be created
-                    for ind in individuals:
+                    for ind in individuals:  # TODO: simplify by using Collective.select (re-use querysets!)
                         if ind.properties["language"] != language:
                             continue
                         properties = copy(ind.properties)
                         properties["country"] = "country" + country
+                        properties["locale"] = value
                         new.append(properties)
         if new:
             out.update(new)
@@ -170,7 +173,7 @@ class VisualTranslationsCommunity(Community):
         grouped_images = out.group_by("word")
         for ind in translations.output.individual_set.all():
             images = [
-                image.properties for image in grouped_images.get(ind.properties["word"], [])
+                image for image in grouped_images.get(ind.properties["word"], [])
                 if image.properties["country"] == ind.properties["country"]
             ]
             if not images:
