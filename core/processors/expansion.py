@@ -5,6 +5,7 @@ import re
 
 from core.models.organisms import Collective
 
+
 class ExpansionProcessor(object):
 
     def __init__(self, *args, **kwargs):

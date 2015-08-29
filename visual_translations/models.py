@@ -1,10 +1,15 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
+import six
 
 from collections import OrderedDict
 from itertools import groupby
 from copy import copy
 
 from core.models.organisms import Community, Collective, Individual
+from core.utils.image import ImageGrid
+from core.processors.expansion import ExpansionProcessor
+
+from sources.models.downloads import ImageDownload
 
 
 class VisualTranslationsCommunity(Community):
@@ -76,34 +81,35 @@ class VisualTranslationsCommunity(Community):
     ]
 
     LOCALES = [
-        ("de", "AT",),
-        ("nl", "BE",), ("fr", "BE",),
-        ("bg", "BG",),
-        ("hr", "HR",),
-        ("el", "CY",),
-        ("cs", "CZ",),
-        ("da", "DK",),
-        ("et", "EE",),
-        ("fi", "FI",),
-        ("fr", "FR",),
-        ("de", "DE",),
-        ("el", "GR",),
-        ("hu", "HU",),
-        ("it", "IT",),
-        ("lt", "LT",),
-        ("lv", "LV",),
-        ("fr", "LU",),
-        ("mt", "MT",),
-        ("nl", "NL",),
-        ("pl", "PL",),
-        ("pt", "PT",),
-        ("ro", "RO",),
-        ("sk", "SK",),
-        ("sl", "SI",),
-        ("es", "ES",),
-        ("sv", "SE",),
-        ("en", "GB",),
-        ("en", "IR",),
+        ("de", "AT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("nl", "BE", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("fr", "BE", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("bg", "BG", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("hr", "HR", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("el", "CY", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("cs", "CZ", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("da", "DK", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("et", "EE", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("fi", "FI", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("fr", "FR", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("de", "DE", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("el", "GR", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("hu", "HU", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("it", "IT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("lt", "LT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("lv", "LV", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("fr", "LU", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("mt", "MT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("nl", "NL", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("pl", "PL", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("pt", "PT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("ro", "RO", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("sk", "SK", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("sl", "SI", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("es", "ES", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("sv", "SE", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("en", "GB", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("en", "IR", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
     ]
 
     # TODO: don't hard code the source language
@@ -113,7 +119,7 @@ class VisualTranslationsCommunity(Community):
             community=self,
             schema={}
         )
-        for language, country in self.LOCALES:
+        for language, country, grid in self.LOCALES:
             if language == "en":
                 continue
             Individual.objects.create(
@@ -137,7 +143,7 @@ class VisualTranslationsCommunity(Community):
 
             individuals = out.individual_set.all()
             for index, value in enumerate(locales):
-                language, country = value
+                language, country, grid = value
 
                 if language == "en":  # creating individuals for untranslated words
                     translations = self.growth_set.filter(type="translations").last()
@@ -148,14 +154,14 @@ class VisualTranslationsCommunity(Community):
                         "word": inp.properties["query"],
                         "confidence": None,
                         "meanings": None,
-                        "locale": value
+                        "locale": "{}_{}".format(language, country)
                     })
                 elif index == 0:  # only an update needed
                     for ind in individuals:  # TODO: simplify by using Collective.select (re-use querysets!)
                         if ind.properties["language"] != language:
                             continue
                         ind.properties["country"] = "country" + country
-                        ind.properties["locale"] = value
+                        ind.properties["locale"] = "{}_{}".format(language, country)
                         new.append(ind)
                 else:  # new individuals need to be created
                     for ind in individuals:  # TODO: simplify by using Collective.select (re-use querysets!)
@@ -163,7 +169,7 @@ class VisualTranslationsCommunity(Community):
                             continue
                         properties = copy(ind.properties)
                         properties["country"] = "country" + country
-                        properties["locale"] = value
+                        properties["locale"] = "{}_{}".format(language, country)
                         new.append(properties)
         if new:
             out.update(new)
@@ -188,21 +194,30 @@ class VisualTranslationsCommunity(Community):
             ind.properties["images"] = col.url
             ind.save()
 
-    # def finish_download(self, out, err):
-    #     translations = self.growth_set.filter(type="translations").last()
-    #     for ind in translations.output.individual_set.all():
-    #         pass
-    #     from core.utils.image import ImageGrid
-    #     from PIL import Image
-    #     t1=Image.open("test1.jpg")
-    #     t2=Image.open("test2.jpg")
-    #     t3=Image.open("test3.jpg")
-    #     t4=Image.open("test4.jpg")
-    #     t5=Image.open("test5.jpg")
-    #     imgs = [t1,t2,t3,t4,t5]
-    #     ig = ImageGrid(4,3,160,90)
-    #     ig.fill(imgs)
-    #     ig.export("mozaik.jpg")
+    def finish_download(self, out, err):
+        translation_growth = self.growth_set.filter(type="translations").last()
+        grids = {"{}_{}".format(language, country): grid for language, country, grid in self.LOCALES}
+        grouped_translations = translation_growth.output.group_by("locale")
+        for locale, translations in six.iteritems(grouped_translations):
+            expansion_processor = ExpansionProcessor()
+            translations = expansion_processor.collective_content(
+                [translation.properties for translation in translations]
+            )
+            images = []
+            for translation in translations:
+                for image in translation["images"]:
+                    images.append(image)
+            downloads_queryset = ImageDownload.objects.filter(
+                uri__in=[ImageDownload.uri_from_url(image["url"]) for image in images]
+            )
+            downloads = []
+            for download in downloads_queryset:
+                content_type, image = download.content
+                if image is not None:
+                    downloads.append(image)
+            image_grid = ImageGrid(**grids[locale])
+            image_grid.fill(downloads)
+            image_grid.export(locale + ".jpg")
 
     def set_kernel(self):
         self.kernel = self.growth_set.filter(type="translations").last().output
