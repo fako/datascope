@@ -9,6 +9,7 @@ system/coverage/
 system/profile/
 system/files/media/downloads/
 system/files/media/uploads/
+system/files/media/image-translations/
 system/files/static/
 
 */settings/secrets.py

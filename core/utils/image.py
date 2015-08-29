@@ -4,6 +4,8 @@ from six.moves import range
 
 from PIL import Image
 
+from django.core.files.storage import default_storage
+
 
 class ImageRejected(Exception):
     pass
@@ -172,5 +174,5 @@ class ImageGrid(object):
                 image,
                 (column*self.cell_width, row*self.cell_height)
             )
-        output.save(file_name, quality=90)
+        output.save("{}/{}".format(default_storage.location, file_name), quality=90)  # make Django create the dir
         return output

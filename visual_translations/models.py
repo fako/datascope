@@ -194,7 +194,7 @@ class VisualTranslationsCommunity(Community):
             ind.properties["images"] = col.url
             ind.save()
 
-    def finish_download(self, out, err):
+    def finish_download(self, out, err):  # TODO: move images in downloads folder? another way?
         translation_growth = self.growth_set.filter(type="translations").last()
         grids = {"{}_{}".format(language, country): grid for language, country, grid in self.LOCALES}
         grouped_translations = translation_growth.output.group_by("locale")
@@ -204,6 +204,7 @@ class VisualTranslationsCommunity(Community):
                 [translation.properties for translation in translations]
             )
             images = []
+            query = translation_growth.input.individual_set.last().properties["query"]
             for translation in translations:
                 for image in translation["images"]:
                     images.append(image)
@@ -217,7 +218,7 @@ class VisualTranslationsCommunity(Community):
                     downloads.append(image)
             image_grid = ImageGrid(**grids[locale])
             image_grid.fill(downloads)
-            image_grid.export(locale + ".jpg")
+            image_grid.export("image-translations/{}/{}.jpg".format(query, locale))
 
     def set_kernel(self):
         self.kernel = self.growth_set.filter(type="translations").last().output
