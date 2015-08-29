@@ -74,7 +74,7 @@ class ImageDownload(HttpResource):  # TODO: write tests
     @property
     def content(self):
         if self.success:
-            content_type = self.head["content-type"].split(';')[0]
+            content_type = self.head.get("content-type", "unknown/unknown").split(';')[0]
             image_file = default_storage.open(self.body)
             try:
                 return content_type, Image.open(image_file)
