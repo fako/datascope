@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from core.views.community import HtmlCommunityView
+from visual_translations.models import VisualTranslationsCommunity
 
 
 class VisualTranslationsHtmlView(HtmlCommunityView):
@@ -26,4 +27,24 @@ def info(request):
     """
     Gives information about the available terms and the sizes of the country grids
     """
-    return Response({"test": "test"}, status=status.HTTP_200_OK)
+    locales_info = [
+        {
+            "locale": "{}_{}".format(language, country),
+            "grid": {
+                "width": grid["cell_width"] * grid["columns"],
+                "height": grid["cell_height"] * grid["rows"]
+            }
+        }
+        for language, country, grid in VisualTranslationsCommunity.LOCALES
+    ]
+    terms_info = [
+        community.growth_set.filter(type="translations").last().input.individual_set.first()["query"]
+        for community in VisualTranslationsCommunity.objects.all()
+    ]
+    return Response(
+        {
+            "locales": locales_info,
+            "words": terms_info
+        },
+        status=status.HTTP_200_OK
+    )
