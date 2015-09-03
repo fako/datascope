@@ -1,5 +1,9 @@
 from itertools import groupby
 
+from rest_framework import status
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
 from core.views.community import HtmlCommunityView
 
 
@@ -15,3 +19,11 @@ class VisualTranslationsHtmlView(HtmlCommunityView):
             return response.data
         else:
             return response.data
+
+
+@api_view()
+def info(request):
+    """
+    Gives information about the available terms and the sizes of the country grids
+    """
+    return Response({"test": "test"}, status=status.HTTP_200_OK)

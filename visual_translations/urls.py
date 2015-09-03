@@ -4,7 +4,7 @@ from django.conf.urls import url
 
 from core.views.community import CommunityView
 from visual_translations.models import VisualTranslationsCommunity
-from visual_translations.views import VisualTranslationsHtmlView
+from visual_translations.views import VisualTranslationsHtmlView, info
 
 
 urlpatterns = [
@@ -12,4 +12,5 @@ urlpatterns = [
         {"community_class": VisualTranslationsCommunity}),
     url(r'^visual-translations/html/(?P<path>.+)?/?$', VisualTranslationsHtmlView.as_view(),
         {"community_class": VisualTranslationsCommunity}),
+    url(r'^visual-translations/info/?$', info),
 ]
