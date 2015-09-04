@@ -59,8 +59,11 @@ class ImageDownload(HttpResource):  # TODO: write tests
     def _save_image(self, url, content):
         path = str(URLObject(url).path)
         file_name_position = path.rfind('/') + 1
+        extension_position = path.rfind('.') + 1
         assert file_name_position >= 1, "Can't determine file name for {}".format(url)
         file_name = path[file_name_position:]
+        if len(file_name) > 150:
+            file_name = file_name[:150] + '.' + path[extension_position:]
         image = ImageFile(StringIO(content))
         image_name = default_storage.save('downloads/' + file_name, image)
         return image_name
