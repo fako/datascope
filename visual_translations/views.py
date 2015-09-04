@@ -29,9 +29,24 @@ def info(request):
     """
     Gives information about the available terms and the sizes of the country grids
     """
+
+    terms_info = [
+        community.growth_set.filter(type="translations").last().input.individual_set.first()["query"]
+        for community in VisualTranslationsCommunity.objects.all()
+    ]
+    return Response(
+        {
+            "words": terms_info
+        },
+        status=status.HTTP_200_OK
+    )
+
+
+def visual_translation_map(request, region, term):
     locales_info = [
         {
             "locale": "{}_{}".format(language, country),
+            "image_file": "image-translations/{}/{}_{}.jpg".format(term, language, country),  # TODO: migrate data to visual_translations
             "grid": {
                 "width": grid["cell_width"] * grid["columns"],
                 "height": grid["cell_height"] * grid["rows"]
@@ -39,18 +54,8 @@ def info(request):
         }
         for language, country, grid in VisualTranslationsCommunity.LOCALES
     ]
-    terms_info = [
-        community.growth_set.filter(type="translations").last().input.individual_set.first()["query"]
-        for community in VisualTranslationsCommunity.objects.all()
-    ]
-    return Response(
-        {
-            "locales": locales_info,
-            "words": terms_info
-        },
-        status=status.HTTP_200_OK
-    )
-
-
-def visual_translation_map(request, region):
-    return render_to_response("visual_translations/map.html", {}, RequestContext(request))
+    context = {
+        "region_topo_json": "visual_translations/geo/{}.topo.json".format(region),
+        "locales": locales_info,
+    }
+    return render_to_response("visual_translations/map.html", context, RequestContext(request))

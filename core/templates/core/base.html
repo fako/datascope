@@ -3,9 +3,13 @@
 <html>
 <head>
     <title>{% block title %}Data Scope{% endblock %}</title>
+    <meta charset="utf-8">
 
-    {% block css %}
+    {% block core-css %}
         <link href="{% static "core/css/bootstrap.min.css" %}" rel="stylesheet" />
+    {% endblock %}
+
+    {% block theme-css %}
         <link href="{% static "core/css/style.css" %}" rel="stylesheet" />
     {% endblock %}
 

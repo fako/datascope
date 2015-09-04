@@ -13,5 +13,5 @@ urlpatterns = [
     url(r'^visual-translations/html/(?P<path>.+)?/?$', VisualTranslationsHtmlView.as_view(),
         {"community_class": VisualTranslationsCommunity}),
     url(r'^visual-translations/info/?$', info),
-    url(r'^visual-translations/map/(?P<region>.+)/?$', visual_translation_map),
+    url(r'^visual-translations/map/(?P<region>[a-z]+)/(?P<term>[a-z+]+)/?$', visual_translation_map),
 ]
