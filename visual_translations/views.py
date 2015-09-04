@@ -63,3 +63,7 @@ def visual_translation_map(request, region, term):
         "locales": locales_info,
     }
     return render_to_response("visual_translations/map.html", context, RequestContext(request))
+
+
+def visual_translations_controller(request):
+    return render_to_response("visual_translations/controller.html", {}, RequestContext(request))
