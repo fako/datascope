@@ -16,34 +16,34 @@
             overflow: scroll;
         }
 
-        .large .subunit.NLX { fill: url("#L-nl_NL"); }
-        .large .subunit.DEU { fill: url("#L-de_DE"); }
-        .large .subunit.ITX, .large .subunit.ITY, .large .subunit.ITD  { fill: url("#L-it_IT"); }
-        .large .subunit.ESX, .large .subunit.ESI  { fill: url("#L-es_ES"); }
-        .large .subunit.PRX { fill: url("#L-pt_PT"); }
-        .large .subunit.HRV { fill: url("#L-hr_HR"); }
-        .large .subunit.SVN { fill: url("#L-sl_SI"); }
-        .large .subunit.CZE { fill: url("#L-cs_CZ"); }
-        .large .subunit.POL { fill: url("#L-pl_PL"); }
-        .large .subunit.HUN { fill: url("#L-hu_HU"); }
-        .large .subunit.ROU { fill: url("#L-ro_RO"); }
-        .large .subunit.BGR { fill: url("#L-bg_BG"); }
-        .large .subunit.GRC { fill: url("#L-el_GR"); }
-        .large .subunit.DNK { fill: url("#L-da_DK"); }
-        .large .subunit.FIN { fill: url("#L-fi_FI"); }
-        .large .subunit.EST { fill: url("#L-et_EE"); }
-        .large .subunit.LVA { fill: url("#L-lv_LV"); }
-        .large .subunit.LTU { fill: url("#L-lt_LT"); }
-        .large .subunit.LUX { fill: url("#L-fr_LU"); }
-        .large .subunit.FXX, .large .subunit.FXC { fill: url("#L-fr_FR"); }
-        .large .subunit.AUT { fill: url("#L-de_AT"); }
-        .large .subunit.CYP { fill: url("#L-el_CY"); }
-        .large .subunit.BWR { fill: url("#L-fr_BE"); }  /* Wallonie */
-        .large .subunit.BFR, .large .subunit.BCR { fill: url("#L-nl_BE"); } /* Vlaanderen + Brussel */
-        .large .subunit.SWE { fill: url("#L-sv_SE"); }
-        .large .subunit.ENG, .large .subunit.SCT, .large .subunit.WLS, .large .subunit.NIR { fill: url("#L-en_GB"); }
-        .large .subunit.IRL { fill: url("#L-en_IR"); }
-        .large .subunit.SVK { fill: url("#L-sk_SK"); }
+        .large .subunit.NLX { fill: url("#L_nl_NL"); }
+        .large .subunit.DEU { fill: url("#L_de_DE"); }
+        .large .subunit.ITX, .large .subunit.ITY, .large .subunit.ITD  { fill: url("#L_it_IT"); }
+        .large .subunit.ESX, .large .subunit.ESI  { fill: url("#L_es_ES"); }
+        .large .subunit.PRX { fill: url("#L_pt_PT"); }
+        .large .subunit.HRV { fill: url("#L_hr_HR"); }
+        .large .subunit.SVN { fill: url("#L_sl_SI"); }
+        .large .subunit.CZE { fill: url("#L_cs_CZ"); }
+        .large .subunit.POL { fill: url("#L_pl_PL"); }
+        .large .subunit.HUN { fill: url("#L_hu_HU"); }
+        .large .subunit.ROU { fill: url("#L_ro_RO"); }
+        .large .subunit.BGR { fill: url("#L_bg_BG"); }
+        .large .subunit.GRC { fill: url("#L_el_GR"); }
+        .large .subunit.DNK { fill: url("#L_da_DK"); }
+        .large .subunit.FIN { fill: url("#L_fi_FI"); }
+        .large .subunit.EST { fill: url("#L_et_EE"); }
+        .large .subunit.LVA { fill: url("#L_lv_LV"); }
+        .large .subunit.LTU { fill: url("#L_lt_LT"); }
+        .large .subunit.LUX { fill: url("#L_fr_LU"); }
+        .large .subunit.FXX, .large .subunit.FXC { fill: url("#L_fr_FR"); }
+        .large .subunit.AUT { fill: url("#L_de_AT"); }
+        .large .subunit.CYP { fill: url("#L_el_CY"); }
+        .large .subunit.BWR { fill: url("#L_fr_BE"); }  /* Wallonie */
+        .large .subunit.BFR, .large .subunit.BCR { fill: url("#L_nl_BE"); } /* Vlaanderen + Brussel */
+        .large .subunit.SWE { fill: url("#L_sv_SE"); }
+        .large .subunit.ENG, .large .subunit.SCT, .large .subunit.WLS, .large .subunit.NIR { fill: url("#L_en_GB"); }
+        .large .subunit.IRL { fill: url("#L_en_IR"); }
+        .large .subunit.SVK { fill: url("#L_sk_SK"); }
 
         .subunit.NLX { fill: url("#S_nl_NL"); }
         .subunit.DEU { fill: url("#S_de_DE"); }
@@ -200,8 +200,8 @@
     <svg id="patterns" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">
         <defs>
             {% for locale in locales %}
-                <pattern id="{{ locale.locale }}" patternUnits="userSpaceOnUse" width="{{ locale.grid.width }}" height="{{ locale.grid.height }}">
-                    <image xlink:href="{{ MEDIA_URL }}{{ locale.image_file }}" x="0" y="0" width="{{ locale.grid.width }}" height="{{ locale.grid.height }}"/>
+                <pattern id="L_{{ locale.locale }}" patternUnits="userSpaceOnUse" width="{{ locale.grid.width_2 }}" height="{{ locale.grid.height_2 }}">
+                    <image xlink:href="{{ MEDIA_URL }}{{ locale.image_file }}" x="0" y="0" width="{{ locale.grid.width_2 }}" height="{{ locale.grid.height_2 }}"/>
                 </pattern>
                 <pattern id="S_{{ locale.locale }}" patternUnits="userSpaceOnUse" width="{{ locale.grid.width_20 }}" height="{{ locale.grid.height_20 }}">
                     <image xlink:href="{{ MEDIA_URL }}{{ locale.image_file }}" x="0" y="0" width="{{ locale.grid.width_20 }}" height="{{ locale.grid.height_20 }}"/>
@@ -209,6 +209,4 @@
             {% endfor %}
         </defs>
     </svg>
-
-
 {% endblock %}

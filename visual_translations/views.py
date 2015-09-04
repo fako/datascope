@@ -50,6 +50,8 @@ def visual_translation_map(request, region, term):
             "grid": {
                 "width": grid["cell_width"] * grid["columns"],
                 "height": grid["cell_height"] * grid["rows"],
+                "width_2": int(grid["cell_width"] * grid["columns"] / 2),
+                "height_2": int(grid["cell_height"] * grid["rows"] / 2),
                 "width_20": int(grid["cell_width"] * grid["columns"] / 20),
                 "height_20": int(grid["cell_height"] * grid["rows"] / 20)
             }
