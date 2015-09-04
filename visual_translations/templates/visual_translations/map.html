@@ -45,34 +45,34 @@
         .large .subunit.IRL { fill: url("#L-en_IR"); }
         .large .subunit.SVK { fill: url("#L-sk_SK"); }
 
-        .subunit.NLX { fill: url("#nl_NL"); }
-        .subunit.DEU { fill: url("#de_DE"); }
-        .subunit.ITX, .subunit.ITY, .subunit.ITD  { fill: url("#it_IT"); }
-        .subunit.ESX, .subunit.ESI  { fill: url("#es_ES"); }
-        .subunit.PRX { fill: url("#pt_PT"); }
-        .subunit.HRV { fill: url("#hr_HR"); }
-        .subunit.SVN { fill: url("#sl_SI"); }
-        .subunit.CZE { fill: url("#cs_CZ"); }
-        .subunit.POL { fill: url("#pl_PL"); }
-        .subunit.HUN { fill: url("#hu_HU"); }
-        .subunit.ROU { fill: url("#ro_RO"); }
-        .subunit.BGR { fill: url("#bg_BG"); }
-        .subunit.GRC { fill: url("#el_GR"); }
-        .subunit.DNK { fill: url("#da_DK"); }
-        .subunit.FIN { fill: url("#fi_FI"); }
-        .subunit.EST { fill: url("#et_EE"); }
-        .subunit.LVA { fill: url("#lv_LV"); }
-        .subunit.LTU { fill: url("#lt_LT"); }
-        .subunit.LUX { fill: url("#fr_LU"); }
-        .subunit.FXX, .subunit.FXC { fill: url("#fr_FR"); }
-        .subunit.AUT { fill: url("#de_AT"); }
-        .subunit.CYP { fill: url("#el_CY"); }
-        .subunit.BWR { fill: url("#fr_BE"); }  /* Wallonie */
-        .subunit.BFR, .subunit.BCR { fill: url("#nl_BE"); } /* Vlaanderen + Brussel */
-        .subunit.SWE { fill: url("#sv_SE"); }
-        .subunit.ENG, .subunit.SCT, .subunit.WLS, .subunit.NIR { fill: url("#en_GB"); }
-        .subunit.IRL { fill: url("#en_IR"); }
-        .subunit.SVK { fill: url("#sk_SK"); }
+        .subunit.NLX { fill: url("#S_nl_NL"); }
+        .subunit.DEU { fill: url("#S_de_DE"); }
+        .subunit.ITX, .subunit.ITY, .subunit.ITD  { fill: url("#S_it_IT"); }
+        .subunit.ESX, .subunit.ESI  { fill: url("#S_es_ES"); }
+        .subunit.PRX { fill: url("#S_pt_PT"); }
+        .subunit.HRV { fill: url("#S_hr_HR"); }
+        .subunit.SVN { fill: url("#S_sl_SI"); }
+        .subunit.CZE { fill: url("#S_cs_CZ"); }
+        .subunit.POL { fill: url("#S_pl_PL"); }
+        .subunit.HUN { fill: url("#S_hu_HU"); }
+        .subunit.ROU { fill: url("#S_ro_RO"); }
+        .subunit.BGR { fill: url("#S_bg_BG"); }
+        .subunit.GRC { fill: url("#S_el_GR"); }
+        .subunit.DNK { fill: url("#S_da_DK"); }
+        .subunit.FIN { fill: url("#S_fi_FI"); }
+        .subunit.EST { fill: url("#S_et_EE"); }
+        .subunit.LVA { fill: url("#S_lv_LV"); }
+        .subunit.LTU { fill: url("#S_lt_LT"); }
+        .subunit.LUX { fill: url("#S_fr_LU"); }
+        .subunit.FXX, .subunit.FXC { fill: url("#S_fr_FR"); }
+        .subunit.AUT { fill: url("#S_de_AT"); }
+        .subunit.CYP { fill: url("#S_el_CY"); }
+        .subunit.BWR { fill: url("#S_fr_BE"); }  /* Wallonie */
+        .subunit.BFR, .subunit.BCR { fill: url("#S_nl_BE"); } /* Vlaanderen + Brussel */
+        .subunit.SWE { fill: url("#S_sv_SE"); }
+        .subunit.ENG, .subunit.SCT, .subunit.WLS, .subunit.NIR { fill: url("#S_en_GB"); }
+        .subunit.IRL { fill: url("#S_en_IR"); }
+        .subunit.SVK { fill: url("#S_sk_SK"); }
 
         .subunit-boundary {
             fill: none;
@@ -202,6 +202,9 @@
             {% for locale in locales %}
                 <pattern id="{{ locale.locale }}" patternUnits="userSpaceOnUse" width="{{ locale.grid.width }}" height="{{ locale.grid.height }}">
                     <image xlink:href="{{ MEDIA_URL }}{{ locale.image_file }}" x="0" y="0" width="{{ locale.grid.width }}" height="{{ locale.grid.height }}"/>
+                </pattern>
+                <pattern id="S_{{ locale.locale }}" patternUnits="userSpaceOnUse" width="{{ locale.grid.width_20 }}" height="{{ locale.grid.height_20 }}">
+                    <image xlink:href="{{ MEDIA_URL }}{{ locale.image_file }}" x="0" y="0" width="{{ locale.grid.width_20 }}" height="{{ locale.grid.height_20 }}"/>
                 </pattern>
             {% endfor %}
         </defs>

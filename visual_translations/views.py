@@ -49,7 +49,9 @@ def visual_translation_map(request, region, term):
             "image_file": "image-translations/{}/{}_{}.jpg".format(term, language, country),  # TODO: migrate data to visual_translations
             "grid": {
                 "width": grid["cell_width"] * grid["columns"],
-                "height": grid["cell_height"] * grid["rows"]
+                "height": grid["cell_height"] * grid["rows"],
+                "width_20": int(grid["cell_width"] * grid["columns"] / 20),
+                "height_20": int(grid["cell_height"] * grid["rows"] / 20)
             }
         }
         for language, country, grid in VisualTranslationsCommunity.LOCALES
