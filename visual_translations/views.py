@@ -1,5 +1,7 @@
 from itertools import groupby
 
+from django.shortcuts import render_to_response, RequestContext
+
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -48,3 +50,7 @@ def info(request):
         },
         status=status.HTTP_200_OK
     )
+
+
+def visual_translation_map(request, region):
+    return render_to_response("visual_translations/map.html", {}, RequestContext(request))

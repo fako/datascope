@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+
+        body {
+            /*position: fixed;*/
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            margin: 0;
+            overflow: scroll;
+        }
+
+        .large .subunit.NLX { fill: url("#L-nl_NL"); }
+        .large .subunit.DEU { fill: url("#L-de_DE"); }
+        .large .subunit.ITX, .large .subunit.ITY, .large .subunit.ITD  { fill: url("#L-it_IT"); }
+        .large .subunit.ESX, .large .subunit.ESI  { fill: url("#L-es_ES"); }
+        .large .subunit.PRX { fill: url("#L-pt_PT"); }
+        .large .subunit.HRV { fill: url("#L-hr_HR"); }
+        .large .subunit.SVN { fill: url("#L-sl_SI"); }
+        .large .subunit.CZE { fill: url("#L-cs_CZ"); }
+        .large .subunit.POL { fill: url("#L-pl_PL"); }
+        .large .subunit.HUN { fill: url("#L-hu_HU"); }
+        .large .subunit.ROU { fill: url("#L-ro_RO"); }
+        .large .subunit.BGR { fill: url("#L-bg_BG"); }
+        .large .subunit.GRC { fill: url("#L-el_GR"); }
+        .large .subunit.DNK { fill: url("#L-da_DK"); }
+        .large .subunit.FIN { fill: url("#L-fi_FI"); }
+        .large .subunit.EST { fill: url("#L-et_EE"); }
+        .large .subunit.LVA { fill: url("#L-lv_LV"); }
+        .large .subunit.LTU { fill: url("#L-lt_LT"); }
+        .large .subunit.LUX { fill: url("#L-fr_LU"); }
+        .large .subunit.FXX, .large .subunit.FXC { fill: url("#L-fr_FR"); }
+        .large .subunit.AUT { fill: url("#L-de_AT"); }
+        .large .subunit.CYP { fill: url("#L-el_CY"); }
+        .large .subunit.BWR { fill: url("#L-fr_BE"); }  /* Wallonie */
+        .large .subunit.BFR, .large .subunit.BCR { fill: url("#L-nl_BE"); } /* Vlaanderen + Brussel */
+        .large .subunit.SWE { fill: url("#L-sv_SE"); }
+        .large .subunit.ENG, .large .subunit.SCT, .large .subunit.WLS, .large .subunit.NIR { fill: url("#L-en_GB"); }
+        .large .subunit.IRL { fill: url("#L-en_IR"); }
+        .large .subunit.SVK { fill: url("#L-sk_SK"); }
+
+        .subunit.NLX { fill: url("#nl_NL"); }
+        .subunit.DEU { fill: url("#de_DE"); }
+        .subunit.ITX, .subunit.ITY, .subunit.ITD  { fill: url("#it_IT"); }
+        .subunit.ESX, .subunit.ESI  { fill: url("#es_ES"); }
+        .subunit.PRX { fill: url("#pt_PT"); }
+        .subunit.HRV { fill: url("#hr_HR"); }
+        .subunit.SVN { fill: url("#sl_SI"); }
+        .subunit.CZE { fill: url("#cs_CZ"); }
+        .subunit.POL { fill: url("#pl_PL"); }
+        .subunit.HUN { fill: url("#hu_HU"); }
+        .subunit.ROU { fill: url("#ro_RO"); }
+        .subunit.BGR { fill: url("#bg_BG"); }
+        .subunit.GRC { fill: url("#el_GR"); }
+        .subunit.DNK { fill: url("#da_DK"); }
+        .subunit.FIN { fill: url("#fi_FI"); }
+        .subunit.EST { fill: url("#et_EE"); }
+        .subunit.LVA { fill: url("#lv_LV"); }
+        .subunit.LTU { fill: url("#lt_LT"); }
+        .subunit.LUX { fill: url("#fr_LU"); }
+        .subunit.FXX, .subunit.FXC { fill: url("#fr_FR"); }
+        .subunit.AUT { fill: url("#de_AT"); }
+        .subunit.CYP { fill: url("#el_CY"); }
+        .subunit.BWR { fill: url("#fr_BE"); }  /* Wallonie */
+        .subunit.BFR, .subunit.BCR { fill: url("#nl_BE"); } /* Vlaanderen + Brussel */
+        .subunit.SWE { fill: url("#sv_SE"); }
+        .subunit.ENG, .subunit.SCT, .subunit.WLS, .subunit.NIR { fill: url("#en_GB"); }
+        .subunit.IRL { fill: url("#en_IR"); }
+        .subunit.SVK { fill: url("#sk_SK"); }
+
+        .subunit-boundary {
+            fill: none;
+            stroke: #000;
+            stroke-width: 2px;
+            stroke-linejoin: round;
+        }
+        .outer-boundary {
+            fill: none;
+            stroke: #000;
+            stroke-width: 2px;
+            stroke-linejoin: round;
+        }
+        .large .subunit-boundary, .large .outer-boundary {
+            stroke-width: 5px;
+        }
+
+        .subunit-boundary.ENG {
+            stroke: none;
+            fill: none;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: scroll !important;
+        }
+
+    </style>
+</head>
+
+<body>
+    <script>
+        function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+    </script>
+
+    <script src="d3.v3.min.js"></script>
+    <script src="topojson.min.js"></script>
+    <script>
+        var originalWidth = 1000, originalHeight = 750,
+            horizontalOffset, verticalOffset;
+
+        var zoom, offset,
+            zoomLevel = getParameterByName("zoom");
+        if(zoomLevel === "large") {
+            zoom = 5;
+            offset = 2;
+            horizontalOffset = originalWidth * offset;
+            verticalOffset = originalHeight * offset;
+        } else {
+            zoom = 1;
+            offset = 0;
+            horizontalOffset = (window.innerWidth - originalWidth) / 2;
+            verticalOffset = (window.innerHeight - originalHeight) / 2;
+        }
+        d3.select("body").attr("class", zoomLevel);
+
+        var width = originalWidth * zoom,
+            height = originalHeight * zoom;
+
+        var svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .attr("id", "map");
+
+        if(zoomLevel !== "large") {
+            svg.style("left", horizontalOffset+"px");
+            svg.style("top", verticalOffset+"px");
+        }
+
+        d3.json("europe.topo.json", function(error, eu) {
+            if (error) return console.error(error);
+
+            var subunits = topojson.feature(eu, eu.objects.subunits);
+
+            // Create a unit projection.
+            var projection = d3.geo.mercator()
+                .scale(1)
+                .translate([0, 0]);
+
+            var path = d3.geo.path()
+                .projection(projection);
+
+            // Compute the bounds of a feature of interest, then derive scale & translate.
+            var b = path.bounds(subunits),
+                s = .95 / Math.max((b[1][0] - b[0][0]) / width, (b[1][1] - b[0][1]) / height),
+                t = [(width - s * (b[1][0] + b[0][0])) / 2, (height - s * (b[1][1] + b[0][1])) / 2];
+
+            // Update the projection to use computed scale & translate.
+            projection
+                .scale(s)
+                .translate(t);
+
+            svg.selectAll(".subunit")
+                .data(subunits.features)
+                .enter()
+                .append("path")
+                .attr("class", function(d) { return "subunit " + d.id; })
+
+                .attr("d", path);
+
+            svg.append("path")
+                .datum(topojson.mesh(eu, eu.objects.subunits, function(a, b) { return a !== b && a.id !== "ENG" && a.id !== "BCR"; }))
+                .attr("d", path)
+                .attr("class", "subunit-boundary");
+
+            svg.append("path")
+                .datum(topojson.mesh(eu, eu.objects.subunits, function(a, b) { return a === b; }))
+                .attr("d", path)
+                .attr("class", "outer-boundary");
+        });
+
+        window.scrollTo(horizontalOffset, verticalOffset);
+
+    </script>
+
+    <svg id="patterns" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <defs>
+            <pattern id="L-nl_NL" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="nl_NL.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-de_DE" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="de_DE.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-cs_CZ" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="cs_CZ.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-da_DK" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="da_DK.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-es_ES" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="es_ES.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-et_EE" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="et_EE.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-el_GR" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="el_GR.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-fi_FI" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="fi_FI.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-hr_HR" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="hr_HR.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-hu_HU" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="hu_HU.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-it_IT" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="it_IT.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-lt_LT" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="lt_LT.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-lv_LV" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="lv_LV.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-pl_PL" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="pl_PL.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-pt_PT" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="pt_PT.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-ro_RO" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="ro_RO.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-bg_BG" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="bg_BG.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-fr_LU" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="fr_LU.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-sl_SI" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="sl_SI.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-de_AT" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="de_AT.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-sv_SE" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="sv_SE.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-nl_BE" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="nl_BE.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-fr_BE" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="fr_BE.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-fr_FR" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="fr_FR.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-el_CY" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="el_CY.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-en_GB" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="en_GB.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-en_IR" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="en_IR.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="L-sk_SK" patternUnits="userSpaceOnUse" width="354" height="201">
+                <image xlink:href="sk_SK.png" x="0" y="0" width="354" height="201" />
+            </pattern>
+            <pattern id="nl_NL" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="nl_NL.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="de_DE" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="de_DE.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="cs_CZ" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="cs_CZ.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="da_DK" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="da_DK.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="es_ES" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="es_ES.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="et_EE" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="et_EE.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="el_GR" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="el_GR.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="fi_FI" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="fi_FI.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="hr_HR" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="hr_HR.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="hu_HU" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="hu_HU.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="it_IT" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="it_IT.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="lt_LT" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="lt_LT.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="lv_LV" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="lv_LV.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="pl_PL" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="pl_PL.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="pt_PT" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="pt_PT.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="ro_RO" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="ro_RO.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="bg_BG" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="bg_BG.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="fr_LU" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="fr_LU.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="sl_SI" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="sl_SI.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="de_AT" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="de_AT.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="sv_SE" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="sv_SE.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="nl_BE" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="nl_BE.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="fr_BE" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="fr_BE.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="fr_FR" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="fr_FR.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="el_CY" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="el_CY.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="en_GB" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="en_GB.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="en_IR" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="en_IR.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+            <pattern id="sk_SK" patternUnits="userSpaceOnUse" width="118" height="67">
+                <image xlink:href="sk_SK.png" x="0" y="0" width="118" height="67" />
+            </pattern>
+        </defs>
+    </svg>
+
+</body>
+</html>
