@@ -30,13 +30,9 @@ def info(request):
     Gives information about the available terms and the sizes of the country grids
     """
 
-    terms_info = [
-        community.growth_set.filter(type="translations").last().input.individual_set.first()["query"]
-        for community in VisualTranslationsCommunity.objects.all()
-    ]
+
     return Response(
         {
-            "words": terms_info
         },
         status=status.HTTP_200_OK
     )
@@ -66,4 +62,11 @@ def visual_translation_map(request, region, term):
 
 
 def visual_translations_controller(request):
-    return render_to_response("visual_translations/controller.html", {}, RequestContext(request))
+    terms_info = [
+        community.growth_set.filter(type="translations").last().input.individual_set.first()["query"]
+        for community in VisualTranslationsCommunity.objects.all()[:6]
+    ]
+    context = {
+        "words": terms_info
+    }
+    return render_to_response("visual_translations/controller.html", context, RequestContext(request))
