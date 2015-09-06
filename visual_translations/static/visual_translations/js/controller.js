@@ -17,7 +17,7 @@ $(function(){
 	var colorBars = bars.find('.colorBar');
 	var numBars = 0, lastNum = -1;
 
-	$('#control').knobKnob({
+	$('#control').knob({
 		value: 154,
 		turn : function(ratio) {
 

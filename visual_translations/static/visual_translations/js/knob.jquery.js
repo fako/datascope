@@ -6,9 +6,11 @@
  * @license		MIT License
  */
 
-(function($){
+(function($) {
 
-	$.fn.knobKnob = function(props){
+    self = this;
+
+    function init(props){
 
 		var options = $.extend({
 			value: 0,
@@ -26,16 +28,17 @@
 			el.append(tpl);
 
 			var knob = $('.knob',el),
-				knobTop = knob.find('.top'),
-				startDeg = -1,
+                startDeg = -1,
 				currentDeg = 0,
 				rotation = 0,
 				lastDeg = 0,
 				doc = $(document);
 
+            self.knobTop = knob.find('.top');
+
 			if(options.value > 0 && options.value <= 359){
 				rotation = currentDeg = options.value;
-				knobTop.css('transform','rotate('+(currentDeg)+'deg)');
+				self.knobTop.css('transform','rotate('+(currentDeg)+'deg)');
 				options.turn(currentDeg/359);
 			}
 
@@ -84,7 +87,7 @@
 					currentDeg = tmp;
 					lastDeg = tmp;
 
-					knobTop.css('transform','rotate('+(currentDeg)+'deg)');
+					self.knobTop.css('transform','rotate('+(currentDeg)+'deg)');
 					options.turn(currentDeg/359);
 				});
 
@@ -101,6 +104,26 @@
 
 			});
 		});
-	};
+	}
+
+    function snapTo(degrees) {
+        self.knobTop.css('transform','rotate('+(degrees)+'deg)');
+    }
+
+    var methods = {
+        init : init,
+        snapTo : snapTo
+    };
+
+    $.fn.knob = function(methodOrOptions) {
+        if ( methods[methodOrOptions] ) {
+            return methods[ methodOrOptions ].apply( this, Array.prototype.slice.call( arguments, 1 ));
+        } else if ( typeof methodOrOptions === 'object' || ! methodOrOptions ) {
+            // Default to "init"
+            return methods.init.apply( this, arguments );
+        } else {
+            $.error( 'Method ' +  methodOrOptions + ' does not exist on jQuery.knob' );
+        }
+    };
 
 })(jQuery);
