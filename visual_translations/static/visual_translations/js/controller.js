@@ -3,9 +3,10 @@ $(function(){
 	var rad2deg = 180/Math.PI;
 	var deg = 0;
 	var bars = $('#bars');
+    var knobLabels = bars.find('.knobLabel');
 
 	// Place the colorbars
-    $('.knobLabel').each(function(i, el) {
+    knobLabels.each(function(i, el) {
         deg = i*60;
         $(el).css({
             transform: 'rotate(' + (deg - 90) + 'deg)',
@@ -14,7 +15,7 @@ $(function(){
         });
     });
 
-	var colorBars = bars.find('.knobLabel');
+
 	var numBars = 0, lastNum = -1;
 
 	$('#control').knob({
@@ -30,7 +31,7 @@ $(function(){
 			}
 			lastNum = numBars;
 
-            $('.knobLabel').each(function (i, el) {
+            knobLabels.each(function (i, el) {
                 var $el = $(el);
                 if(i === numBars || (numBars === 6 && i === 0)) {
                     $el.addClass('active');
