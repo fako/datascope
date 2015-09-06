@@ -12,10 +12,12 @@
 
     function init(props){
 
-		var options = $.extend({
+		self.options = $.extend({
 			value: 0,
 			turn: function(){}
 		}, props || {});
+        self.startDeg = -1;
+        self.rotation = 0;
 
 		var tpl = '<div class="knob">\
 				<div class="top"></div>\
@@ -28,18 +30,16 @@
 			el.append(tpl);
 
 			var knob = $('.knob',el),
-                startDeg = -1,
-				currentDeg = 0,
-				rotation = 0,
+                currentDeg = 0,
 				lastDeg = 0,
 				doc = $(document);
 
             self.knobTop = knob.find('.top');
 
-			if(options.value > 0 && options.value <= 359){
-				rotation = currentDeg = options.value;
+			if(self.options.value > 0 && self.options.value <= 359){
+				self.rotation = currentDeg = self.options.value;
 				self.knobTop.css('transform','rotate('+(currentDeg)+'deg)');
-				options.turn(currentDeg/359);
+				self.options.turn(currentDeg/359);
 			}
 
 			knob.on('mousedown', function(e){
@@ -68,12 +68,12 @@
 					}
 
 					// Save the starting position of the drag
-					if(startDeg == -1){
-						startDeg = deg;
+					if(self.startDeg == -1){
+						self.startDeg = deg;
 					}
 
 					// Calculating the current rotation
-					tmp = Math.floor((deg-startDeg) + rotation);
+					tmp = Math.floor((deg-self.startDeg) + self.rotation);
 
 					// Making sure the current rotation
 					// stays between 0 and 359
@@ -88,7 +88,7 @@
 					lastDeg = tmp;
 
 					self.knobTop.css('transform','rotate('+(currentDeg)+'deg)');
-					options.turn(currentDeg/359);
+					self.options.turn(currentDeg/359);
 				});
 
 				doc.on('mouseup.rem',function(){
@@ -96,10 +96,10 @@
 					doc.off('.rem');
 
 					// Saving the current rotation
-					rotation = currentDeg;
+					self.rotation = currentDeg;
 
 					// Marking the starting degree as invalid
-					startDeg = -1;
+					self.startDeg = -1;
 				});
 
 			});
@@ -107,7 +107,11 @@
 	}
 
     function snapTo(degrees) {
-        self.knobTop.css('transform','rotate('+(degrees)+'deg)');
+        self.knobTop.css('transform','rotate('+degrees+'deg)');
+        options.turn(degrees/359);
+        self.rotation = degrees;
+        self.startDeg = -1;
+
     }
 
     var methods = {
