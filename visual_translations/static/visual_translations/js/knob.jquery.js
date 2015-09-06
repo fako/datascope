@@ -11,7 +11,6 @@
 	$.fn.knobKnob = function(props){
 
 		var options = $.extend({
-			snap: 0,
 			value: 0,
 			turn: function(){}
 		}, props || {});
@@ -82,10 +81,6 @@
 						tmp = tmp % 360;
 					}
 
-					// Snapping in the off position:
-					if(options.snap && tmp < options.snap){
-						tmp = 0;
-					}
 					currentDeg = tmp;
 					lastDeg = tmp;
 

@@ -18,7 +18,6 @@ $(function(){
 	var numBars = 0, lastNum = -1;
 
 	$('#control').knobKnob({
-		snap : 10,
 		value: 154,
 		turn : function(ratio) {
 
