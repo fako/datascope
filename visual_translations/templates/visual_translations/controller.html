@@ -151,8 +151,9 @@ $(function(){
 	$('#control').knobKnob({
 		snap : 10,
 		value: 154,
-		turn : function(ratio){
-			numBars = Math.round(6*ratio);
+		turn : function(ratio) {
+
+			numBars = Math.round(ratio/(1/6));
 
 			// Update the dom only when the number of active bars
 			// changes, instead of on every move
@@ -161,7 +162,16 @@ $(function(){
 			}
 			lastNum = numBars;
 
-			colorBars.removeClass('active').slice(0, numBars).addClass('active');
+            $('.colorBar').each(function (i, el) {
+                var $el = $(el);
+                if(i === numBars || (numBars === 6 && i === 0)) {
+                    $el.addClass('active');
+                } else {
+                    $el.removeClass('active');
+                }
+            });
+
+			//colorBars.removeClass('active').slice(numBars, numBars+1).addClass('active');
 		}
 	});
 
