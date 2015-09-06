@@ -5,7 +5,7 @@ $(function(){
 	var bars = $('#bars');
 
 	// Place the colorbars
-    $('.colorBar').each(function(i, el) {
+    $('.knobLabel').each(function(i, el) {
         deg = i*60;
         $(el).css({
             transform: 'rotate(' + (deg - 90) + 'deg)',
@@ -14,7 +14,7 @@ $(function(){
         });
     });
 
-	var colorBars = bars.find('.colorBar');
+	var colorBars = bars.find('.knobLabel');
 	var numBars = 0, lastNum = -1;
 
 	$('#control').knob({
@@ -30,7 +30,7 @@ $(function(){
 			}
 			lastNum = numBars;
 
-            $('.colorBar').each(function (i, el) {
+            $('.knobLabel').each(function (i, el) {
                 var $el = $(el);
                 if(i === numBars || (numBars === 6 && i === 0)) {
                     $el.addClass('active');
