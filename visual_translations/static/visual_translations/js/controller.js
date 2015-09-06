@@ -17,7 +17,6 @@ $(function(){
             left: Math.cos((180 - deg) / rad2deg) * 80 + 75
         });
         $el.click(function(e) {
-            console.log("click");
             $control.knob('snapTo', $knobLabels.index($(this)) * 60);
         })
     });
