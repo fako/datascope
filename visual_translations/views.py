@@ -5,6 +5,8 @@ from django.shortcuts import render_to_response, RequestContext
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from ws4redis.publisher import RedisPublisher
+from ws4redis.redis_store import RedisMessage
 
 from core.views.community import HtmlCommunityView
 from visual_translations.models import VisualTranslationsCommunity
@@ -70,3 +72,15 @@ def visual_translations_controller(request):
         "words": terms_info
     }
     return render_to_response("visual_translations/controller.html", context, RequestContext(request))
+
+
+def web_sockets_broadcaster(request):
+    redis_publisher = RedisPublisher(facility='foobar', broadcast=True)
+    message = RedisMessage('Hello World 2')
+    # and somewhere else
+    redis_publisher.publish_message(message)
+    return render_to_response("visual_translations/broadcaster.html", {}, RequestContext(request))
+
+
+def web_sockets_receiver(request):
+    return render_to_response("visual_translations/receiver.html", {}, RequestContext(request))

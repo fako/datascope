@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     # 3rd party
     'djcelery',
     'rest_framework',
+    'ws4redis',
     # Main app
     'datascope',
     # Framework apps
@@ -149,6 +150,12 @@ TEMPLATE_LOADERS = (
     'django.template.loaders.app_directories.Loader',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
+    'django.core.context_processors.static',
+    'ws4redis.context_processors.default',
+)
+
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -227,6 +234,14 @@ CELERY_RESULT_BACKEND = "djcelery.backends.database.DatabaseBackend"
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['application/json']
+
+# Websockets
+WEBSOCKET_URL = '/ws/'
+WS4REDIS_PREFIX = 'ws'
+WSGI_APPLICATION = 'ws4redis.django_runserver.application'
+WS4REDIS_CONNECTION = {
+    'port': 6379,
+}
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.fakoberkers.nl"

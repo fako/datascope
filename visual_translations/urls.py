@@ -5,7 +5,7 @@ from django.conf.urls import url
 from core.views.community import CommunityView
 from visual_translations.models import VisualTranslationsCommunity
 from visual_translations.views import (VisualTranslationsHtmlView, info, visual_translation_map,
-                                       visual_translations_controller)
+                                       visual_translations_controller, web_sockets_broadcaster, web_sockets_receiver)
 
 
 urlpatterns = [
@@ -16,4 +16,6 @@ urlpatterns = [
     url(r'^visual-translations/info/?$', info),
     url(r'^visual-translations/map/(?P<region>[a-z]+)/(?P<term>[a-z+]+)/?$', visual_translation_map),
     url(r'^visual-translations/controller/$', visual_translations_controller),
+    url(r'^visual-translations/ws-b/$', web_sockets_broadcaster),
+    url(r'^visual-translations/ws-r/$', web_sockets_receiver),
 ]
