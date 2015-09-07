@@ -26,48 +26,41 @@
             {% endfor %}
         </div>
         <div>
-            <button onclick="$.get('http://192.168.255.16:8000/data/v1/visual-translations/broadcast/top-left')">broadcast scroll</button>
+            <button id="broadcast">broadcast scroll</button>
         </div>
     </section>
 
-    <script>
+<script>
 
-    var ws = new WebSocket("{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast&publish-broadcast&echo");
-interval = null;
+    var ws = new WebSocket("{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast&publish-broadcast");
+    ws.onopen = function() {
+        console.log("websocket connected");
+    };
+    ws.onmessage = function(e) {
+        console.log("Received: " + e.data);
+    };
+    ws.onerror = function(e) {
+        console.error(e);
+    };
+    ws.onclose = function(e) {
+        console.log("connection closed");
+    };
+    function send_message(msg) {
+        ws.send(msg);
+    }
 
-ws.onopen = function() {
-    console.log("websocket connected");
-    initial = true;
-};
-ws.onmessage = function(e) {
-    if(initial) {
-        initial = false;
-        return;
-    }
-    if(interval === null) {
-        interval = setInterval(function() { VT.functions.scrollDocument("top-left") }, 100)
-    } else {
-        clearInterval(interval);
-        interval = null;
-    }
-    console.log("Received: " + e.data);
-};
-ws.onerror = function(e) {
-    console.error(e);
-    clearInterval(interval);
-    interval = null;
-};
-ws.onclose = function(e) {
-    console.log("connection closed");
-    clearInterval(interval);
-    interval = null;
-};
-function send_message(msg) {
-    ws.send(msg);
-}
-{#    $(function(){#}
-{#        setTimeout(function(){send_message("hallo?")}, 1000);#}
-{#    })#}
-    </script>
+    $(function(){
+        $broadcast = $('#broadcast');
+        $broadcast.on('mousedown', function(event){
+            console.log("mouse down");
+            send_message("top-left");
+        });
+        $broadcast.on('mouseup', function(event){
+            console.log("mouse up");
+            send_message("top-left");
+        });
+    })
+
+</script>
 
 {% endblock %}
