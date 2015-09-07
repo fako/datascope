@@ -25,8 +25,8 @@
                 <div class="knobLabel">{{ word }}</div>
             {% endfor %}
         </div>
-        <div id="broadcast">
-            <p>broadcast scroll</p>
+        <div>
+            <button id="broadcast">broadcast scroll</button>
         </div>
     </section>
 
@@ -50,8 +50,7 @@
     }
 
     $(function(){
-        $broadcast = $('body');
-        $broadcast.append("hello?");
+        $broadcast = $('#broadcast');
         $broadcast.on({'mousedown touchstart': function(event){
             console.log("mouse down");
             send_message("top-left");
