@@ -2,9 +2,6 @@ from itertools import groupby
 
 from django.shortcuts import render_to_response, RequestContext, HttpResponse
 
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from ws4redis.publisher import RedisPublisher
 from ws4redis.redis_store import RedisMessage
 
@@ -24,20 +21,6 @@ class VisualTranslationsHtmlView(HtmlCommunityView):
             return response.data
         else:
             return response.data
-
-
-@api_view()
-def info(request):
-    """
-    Gives information about the available terms and the sizes of the country grids
-    """
-
-
-    return Response(
-        {
-        },
-        status=status.HTTP_200_OK
-    )
 
 
 def visual_translation_map(request, region, term):

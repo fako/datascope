@@ -164,14 +164,15 @@
             }
         };
         VT.zoomLevel = VT.functions.getParameterByName("zoom");
-        VT.webSocketEndpoint = "{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast";
+        VT.webSocketEndpoint = "{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast&publish-broadcast&echo";
         VT.topoJSONFile = "{% static region_topo_json %}";
 
         // TEST CODE
         $(document).on('keydown', function(event){
             switch(event.which) {
                 case 49:  // key: 1
-                    VT.functions.scrollDocument("top-left");
+                    //VT.functions.scrollDocument("top-left");
+                    console.log(new Date().getTime());
                     break;
             }
         });

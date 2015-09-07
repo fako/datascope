@@ -30,4 +30,44 @@
         </div>
     </section>
 
+    <script>
+
+    var ws = new WebSocket("{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast&publish-broadcast&echo");
+interval = null;
+
+ws.onopen = function() {
+    console.log("websocket connected");
+    initial = true;
+};
+ws.onmessage = function(e) {
+    if(initial) {
+        initial = false;
+        return;
+    }
+    if(interval === null) {
+        interval = setInterval(function() { VT.functions.scrollDocument("top-left") }, 100)
+    } else {
+        clearInterval(interval);
+        interval = null;
+    }
+    console.log("Received: " + e.data);
+};
+ws.onerror = function(e) {
+    console.error(e);
+    clearInterval(interval);
+    interval = null;
+};
+ws.onclose = function(e) {
+    console.log("connection closed");
+    clearInterval(interval);
+    interval = null;
+};
+function send_message(msg) {
+    ws.send(msg);
+}
+{#    $(function(){#}
+{#        setTimeout(function(){send_message("hallo?")}, 1000);#}
+{#    })#}
+    </script>
+
 {% endblock %}
