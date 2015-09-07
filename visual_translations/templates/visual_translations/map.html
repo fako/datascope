@@ -108,22 +108,78 @@
         // GLOBAL INIT FOR VISUAL TRANSLATION RELATED JS
         window.VT = {};
         VT.functions = {
-            getParameterByName: function getParameterByName(name) {
+            getParameterByName: function (name) {
                 name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
                 var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
                     results = regex.exec(location.search);
                 return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+            },
+            scrollDocument: function (command) {
+                var $document = $(document);
+                var scrollDelta = 20, top, left;
+                switch(command) {
+                    case "top-left":
+                        top = $document.scrollTop();
+                        left = $document.scrollLeft();
+                        $document.scrollTop(top - scrollDelta);
+                        $document.scrollLeft(left - scrollDelta);
+                        break;
+                    case "top":
+                        top = $document.scrollTop();
+                        $document.scrollTop(top - scrollDelta);
+                        break;
+                    case "top-right":
+                        top = $document.scrollTop();
+                        left = $document.scrollLeft();
+                        $document.scrollTop(top - scrollDelta);
+                        $document.scrollLeft(left + scrollDelta);
+                        break;
+                    case "left":
+                        left = $document.scrollLeft();
+                        $document.scrollLeft(left - scrollDelta);
+                        break;
+                    case "right":
+                        left = $document.scrollLeft();
+                        $document.scrollLeft(left + scrollDelta);
+                        break;
+                    case "bottom-left":
+                        top = $document.scrollTop();
+                        left = $document.scrollLeft();
+                        $document.scrollTop(top + scrollDelta);
+                        $document.scrollLeft(left - scrollDelta);
+                        break;
+                    case "bottom":
+                        top = $document.scrollTop();
+                        $document.scrollTop(top + scrollDelta);
+                        break;
+                    case "bottom-right":
+                        top = $document.scrollTop();
+                        left = $document.scrollLeft();
+                        $document.scrollTop(top + scrollDelta);
+                        $document.scrollLeft(left + scrollDelta);
+                        break;
+                    default:
+                        throw "Invalid command to scroll document: " + command;
+                }
             }
         };
         VT.zoomLevel = VT.functions.getParameterByName("zoom");
         VT.webSocketEndpoint = "{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast";
         VT.topoJSONFile = "{% static region_topo_json %}";
+
+        // TEST CODE
+        $(document).on('keydown', function(event){
+            switch(event.which) {
+                case 49:  // key: 1
+                    VT.functions.scrollDocument("top-left");
+                    break;
+            }
+        });
     </script>
     <script src="{% static "visual_translations/js/d3.v3.min.js" %}"></script>
     <script src="{% static "visual_translations/js/topojson.min.js" %}"></script>
     <script src="{% static "visual_translations/js/map.js" %}"></script>
     <script src="{% static "visual_translations/js/socket.js" %}"></script>
-    <script src="{% static "visual_translations/js/scroll.js" %}"></script>
 {% endblock %}
 
 {% block body %}

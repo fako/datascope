@@ -4,6 +4,7 @@ ws.onopen = function() {
 };
 ws.onmessage = function(e) {
     console.log("Received: " + e.data);
+    VT.functions.scrollDocument(e.data);
 };
 ws.onerror = function(e) {
     console.error(e);
