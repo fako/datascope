@@ -25,6 +25,9 @@
                 <div class="knobLabel">{{ word }}</div>
             {% endfor %}
         </div>
+        <div>
+            <button onclick="$.get('http://192.168.255.16:8000/data/v1/visual-translations/broadcast/top-left')">broadcast scroll</button>
+        </div>
     </section>
 
 {% endblock %}
