@@ -38,10 +38,16 @@ body {
 
 #zoom {
     background-color: #ffff00;
+    min-height: 500px;
 }
 #zoom-component {
+    position: relative;
+    top: 80px;
     margin: 0 auto;
-    min-height: 212px;
+    height: 340px;
 }
-
+.ui-slider .ui-slider-handle {
+    width: 72px;
+    left: -2em;
+}
 
