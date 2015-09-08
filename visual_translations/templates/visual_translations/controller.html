@@ -2,6 +2,8 @@
 {% load i18n static %}
 
 {% block theme-css %}
+    <link href="{% static "visual_translations/css/jquery-ui.min.css" %}" rel="stylesheet"/>
+    <link href="{% static "visual_translations/css/jquery-ui.theme.min.css" %}" rel="stylesheet"/>
     <link href="{% static "visual_translations/css/knob.css" %}" rel="stylesheet"/>
     <link href="{% static "visual_translations/css/controller.css" %}" rel="stylesheet"/>
     <style>
@@ -14,11 +16,22 @@
 
 {% block head-js %}
     {{ block.super }}
+    <script src="{% static "visual_translations/js/jquery-ui.min.js" %}"></script>
+    <script src="{% static "visual_translations/js/jquery-ui-touch-punch.min.js" %}"></script>
     <script src="{% static "visual_translations/js/knob.jquery.js" %}"></script>
 {% endblock %}
 
 {% block body-js %}
     <script src="{% static "visual_translations/js/controller.js" %}"></script>
+    <script>
+        $( "#zoom-component" ).slider({
+            orientation: "vertical",
+            change: function(event, ui) {
+                console.log(ui.value);
+            },
+            max: 2  // counts from 0
+        });
+    </script>
 {% endblock %}
 
 
@@ -26,13 +39,13 @@
 
     <section id="main" class="container-fluid">
         <div class="row">
-            <div id="arrows" class="col-sm-5">
+            <div id="arrows" class="col-xs-5">
                 <button id="broadcast">broadcast scroll</button>
             </div>
-            <div id="zoom" class="col-sm-2">
-                <p>zoom</p>
+            <div id="zoom" class="col-xs-2">
+                <div id="zoom-component"></div>
             </div>
-            <div id="words" class="col-sm-5">
+            <div id="words" class="col-xs-5">
                 <div id="knob-component">
                     <div id="control"></div>
                     {% for word in words %}
