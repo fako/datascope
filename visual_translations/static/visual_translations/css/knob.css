@@ -1,8 +1,8 @@
 #knob-component, #arrows-component {
-	height: 212px;
+    position: relative;
+    width: 500px;
+	height: 500px;
 	margin: 0 auto;
-	position: relative;
-	width: 228px;
 }
 
 #control {
@@ -15,9 +15,10 @@
 }
 
 .knobLabel, .arrow{
-	width:70px;
+	width:200px;
     text-align: center;
-	height:8px;
+	height: 36px;
+    font-size: 36px;
 	position:absolute;
     color: lightgray;
 	/*opacity:1;*/

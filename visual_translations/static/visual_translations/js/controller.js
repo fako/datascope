@@ -6,6 +6,8 @@ $(function(){
 	var $knobComponent = $('#knob-component');
     var $knobLabels = $knobComponent.find('.knobLabel');
     var $control = $('#control');
+    var componentRadius = 200, topOffset = 220, leftOffset = 150;
+
 
 	// Place the knob labels
     $knobLabels.each(function(i, el) {
@@ -14,8 +16,8 @@ $(function(){
         var orientationDeg = (deg > 180) ? deg + 90: deg - 90;
         $el.css({
             transform: 'rotate(' + orientationDeg + 'deg)',
-            top: -Math.sin(deg / rad2deg) * 80 + 100,
-            left: Math.cos((180 - deg) / rad2deg) * 80 + 75
+            top: -Math.sin(deg / rad2deg) * componentRadius + topOffset,
+            left: Math.cos((180 - deg) / rad2deg) * componentRadius + leftOffset
         });
         $el.click(function(e) {
             $control.knob('snapTo', $knobLabels.index($(this)) * 60);
@@ -30,8 +32,8 @@ $(function(){
         $el = $(el);
         $el.css({
             transform: 'rotate(' + (deg - 90) + 'deg)',
-            top: -Math.sin(deg / rad2deg) * 80 + 100,
-            left: Math.cos((180 - deg) / rad2deg) * 80 + 75
+            top: -Math.sin(deg / rad2deg) * componentRadius + topOffset,
+            left: Math.cos((180 - deg) / rad2deg) * componentRadius + leftOffset
         });
         $el.click(function(e) {
             console.log("clicked: ", $arrows.index($(this)));
