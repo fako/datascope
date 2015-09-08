@@ -11,8 +11,9 @@ $(function(){
     $knobLabels.each(function(i, el) {
         deg = i*60;
         $el = $(el);
+        var orientationDeg = (deg > 180) ? deg + 90: deg - 90;
         $el.css({
-            transform: 'rotate(' + (deg - 90) + 'deg)',
+            transform: 'rotate(' + orientationDeg + 'deg)',
             top: -Math.sin(deg / rad2deg) * 80 + 100,
             left: Math.cos((180 - deg) / rad2deg) * 80 + 75
         });
