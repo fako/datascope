@@ -40,7 +40,12 @@
     <section id="main" class="container-fluid">
         <div class="row">
             <div id="arrows" class="col-xs-5">
-                <button id="broadcast">broadcast scroll</button>
+                <div id="arrows-component">
+                    {% for index in "xxxxxxxx" %}
+                        <div class="arrow">arrow</div>
+                    {% endfor %}
+                </div>
+
             </div>
             <div id="zoom" class="col-xs-2">
                 <div id="zoom-component"></div>

@@ -15,6 +15,7 @@
 }
 #zoom-component {
     margin: 0 auto;
+    min-height: 212px;
 }
 
 
