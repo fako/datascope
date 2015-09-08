@@ -5,6 +5,8 @@ from collections import OrderedDict
 from itertools import groupby
 from copy import copy
 
+from django.core.files.storage import default_storage
+
 from core.models.organisms import Community, Collective, Individual
 from core.utils.image import ImageGrid
 from core.processors.expansion import ExpansionProcessor
@@ -119,6 +121,8 @@ class VisualTranslationsCommunity(Community):
             community=self,
             schema={}
         )
+        query = args[0]
+        # TODO: create dir here
         for language, country, grid in self.LOCALES:
             if language == "en":
                 continue
@@ -126,7 +130,7 @@ class VisualTranslationsCommunity(Community):
                 community=self,
                 collective=collective,
                 properties={
-                    "query": args[0],
+                    "query": query,
                     "translate_from": "en",
                     "translate_to": language,
                     "country": "country" + country
