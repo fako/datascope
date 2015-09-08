@@ -3,7 +3,13 @@
 
 {% block theme-css %}
     <link href="{% static "visual_translations/css/knob.css" %}" rel="stylesheet"/>
-    <link href="{% static "visual_translations/css/knob-extra.css" %}" rel="stylesheet"/>
+    <link href="{% static "visual_translations/css/controller.css" %}" rel="stylesheet"/>
+    <style>
+    /* Styling fed by Django */
+    .knob .top {
+        background: url('{% static "visual_translations/img/knob.png" %}') no-repeat;
+    }
+    </style>
 {% endblock %}
 
 {% block head-js %}
@@ -18,15 +24,22 @@
 
 {% block body %}
 
-    <section id="main">
-        <div id="bars">
-            <div id="control"></div>
-            {% for word in words %}
-                <div class="knobLabel">{{ word }}</div>
-            {% endfor %}
-        </div>
-        <div>
-            <button id="broadcast">broadcast scroll</button>
+    <section id="main" class="container-fluid">
+        <div class="row">
+            <div id="arrows" class="col-sm-5">
+                <button id="broadcast">broadcast scroll</button>
+            </div>
+            <div id="zoom" class="col-sm-2">
+                <p>zoom</p>
+            </div>
+            <div id="words" class="col-sm-5">
+                <div id="knob-component">
+                    <div id="control"></div>
+                    {% for word in words %}
+                        <div class="knobLabel">{{ word }}</div>
+                    {% endfor %}
+                </div>
+            </div>
         </div>
     </section>
 

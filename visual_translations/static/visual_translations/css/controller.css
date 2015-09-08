@@ -1,0 +1,17 @@
+#words {
+    background-color: red;
+}
+
+#arrows {
+    background-color: purple;
+}
+#arrows button {
+    display: block;
+    margin: 0 auto;
+}
+
+#zoom {
+    background-color: #ffff00;
+}
+
+

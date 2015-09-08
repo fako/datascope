@@ -3,8 +3,8 @@ $(function(){
 	var rad2deg = 180/Math.PI;
 	var deg = 0;
 
-	var $bars = $('#bars');
-    var $knobLabels = $bars.find('.knobLabel');
+	var $knobComponent = $('#knob-component');
+    var $knobLabels = $knobComponent.find('.knobLabel');
     var $control = $('#control');
 
 	// Place the colorbars
