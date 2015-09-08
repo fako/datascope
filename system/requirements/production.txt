@@ -14,6 +14,8 @@ jsonschema==2.4.0
 beautifulsoup4==4.3.2
 pandas==0.16.1
 django-websocket-redis==0.4.4
+selenium==2.47.1
+pillow==2.9.0
 
 pyOpenSSL==0.15.1
 ndg-httpsclient==0.4.0
