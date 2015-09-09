@@ -48,6 +48,7 @@ body {
 }
 .ui-slider .ui-slider-handle {
     width: 72px;
+    height: 2em;
     left: -2em;
 }
 
