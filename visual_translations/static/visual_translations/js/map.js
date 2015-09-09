@@ -10,7 +10,7 @@ var originalWidth = 1000, originalHeight = 750,
             verticalOffset = originalHeight * offset;
         } else if(zoomLevel === "xlarge") {
             zoom = 20;
-            offset = 2;
+            offset = 10;
             horizontalOffset = originalWidth * offset;
             verticalOffset = originalHeight * offset;
         }
@@ -31,7 +31,7 @@ var originalWidth = 1000, originalHeight = 750,
             .attr("height", height)
             .attr("id", "map");
 
-        if(zoomLevel !== "large") {
+        if(!zoomLevel) {
             svg.style("left", horizontalOffset+"px");
             svg.style("top", verticalOffset+"px");
         }
