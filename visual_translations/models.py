@@ -83,35 +83,35 @@ class VisualTranslationsCommunity(Community):
     ]
 
     LOCALES = [
-        ("de", "AT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("nl", "BE", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("fr", "BE", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("bg", "BG", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("hr", "HR", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("el", "CY", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("cs", "CZ", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("da", "DK", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("et", "EE", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("fi", "FI", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("fr", "FR", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("de", "DE", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("el", "GR", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("hu", "HU", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("it", "IT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("lt", "LT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("lv", "LV", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("fr", "LU", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("mt", "MT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("nl", "NL", {"columns": 4, "rows": 8, "cell_width": 80, "cell_height": 45},),
-        ("pl", "PL", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("pt", "PT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("ro", "RO", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("sk", "SK", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("sl", "SI", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("es", "ES", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("sv", "SE", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("en", "GB", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("en", "IR", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("de", "AT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("nl", "BE", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("fr", "BE", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("bg", "BG", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("hr", "HR", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("el", "CY", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("cs", "CZ", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("da", "DK", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("et", "EE", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("fi", "FI", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("fr", "FR", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("de", "DE", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("el", "GR", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("hu", "HU", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("it", "IT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("lt", "LT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("lv", "LV", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("fr", "LU", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("mt", "MT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("nl", "NL", {"columns": 4, "rows": 8, "cell_width": 80, "cell_height": 45}, 3),
+        ("pl", "PL", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("pt", "PT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("ro", "RO", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("sk", "SK", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("sl", "SI", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("es", "ES", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("sv", "SE", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("en", "GB", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
+        ("en", "IR", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180}, 1,),
     ]
 
     # TODO: don't hard code the source language
@@ -123,7 +123,7 @@ class VisualTranslationsCommunity(Community):
         )
         query = args[0]
         # TODO: create dir here
-        for language, country, grid in self.LOCALES:
+        for language, country, grid, factor in self.LOCALES:
             if language == "en":
                 continue
             Individual.objects.create(
@@ -147,7 +147,7 @@ class VisualTranslationsCommunity(Community):
 
             individuals = out.individual_set.all()
             for index, value in enumerate(locales):
-                language, country, grid = value
+                language, country, grid, factor = value
 
                 if language == "en":  # creating individuals for untranslated words
                     translations = self.growth_set.filter(type="translations").last()
@@ -198,11 +198,11 @@ class VisualTranslationsCommunity(Community):
             ind.properties["images"] = col.url
             ind.save()
 
-    zoom_levels = {"S": 0.2, "L": 1}
+    zoom_levels = {"S": 0.2, "L": 1, "XL": 1}
 
     def finish_download(self, out, err):  # TODO: move images in downloads folder? another way?
         translation_growth = self.growth_set.filter(type="translations").last()
-        grids = {"{}_{}".format(language, country): grid for language, country, grid in self.LOCALES}
+        grids = {"{}_{}".format(language, country): (grid, factor) for language, country, grid, factor in self.LOCALES}
         grouped_translations = translation_growth.output.group_by("locale")
         for locale, translations in six.iteritems(grouped_translations):
             expansion_processor = ExpansionProcessor()
@@ -223,7 +223,9 @@ class VisualTranslationsCommunity(Community):
                 if image is not None:
                     downloads.append(image)
             for size, factor in self.zoom_levels.iteritems():
-                grid_specs = copy(grids[locale])
+                grid, xlarge_factor = grids[locale]
+                factor = factor if size != "XL" else xlarge_factor
+                grid_specs = copy(grid)
                 grid_specs["cell_width"] = int(grid_specs["cell_width"] * factor)
                 grid_specs["cell_height"] = int(grid_specs["cell_height"] * factor)
                 image_grid = ImageGrid(**grid_specs)

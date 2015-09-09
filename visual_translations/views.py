@@ -29,16 +29,19 @@ def visual_translation_map(request, region, term):
             "locale": "{}_{}".format(language, country),
             "small_image_file": "visual_translations/{}/S_{}_{}.jpg".format(term, language, country),
             "large_image_file": "visual_translations/{}/L_{}_{}.jpg".format(term, language, country),
+            "xlarge_image_file": "visual_translations/{}/XL_{}_{}.jpg".format(term, language, country),
             "grid": {
                 "width": grid["cell_width"] * grid["columns"],
                 "height": grid["cell_height"] * grid["rows"],
+                "width_xl": grid["cell_width"] * grid["columns"] * factor,
+                "height_xl": grid["cell_height"] * grid["rows"] * factor,
                 "width_2": int(grid["cell_width"] * grid["columns"] / 2),
                 "height_2": int(grid["cell_height"] * grid["rows"] / 2),
                 "width_20": int(grid["cell_width"] * grid["columns"] / 20),
                 "height_20": int(grid["cell_height"] * grid["rows"] / 20)
             }
         }
-        for language, country, grid in VisualTranslationsCommunity.LOCALES
+        for language, country, grid, factor in VisualTranslationsCommunity.LOCALES
     ]
     context = {
         "region_topo_json": "visual_translations/geo/{}.topo.json".format(region),

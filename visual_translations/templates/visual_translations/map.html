@@ -48,6 +48,35 @@
         .large .subunit.IRL { fill: url("#L_en_IR"); }
         .large .subunit.SVK { fill: url("#L_sk_SK"); }
 
+        .xlarge .subunit.NLX { fill: url("#XL_nl_NL"); }
+        .xlarge .subunit.DEU { fill: url("#XL_de_DE"); }
+        .xlarge .subunit.ITX, .xlarge .subunit.ITY, .xlarge .subunit.ITD  { fill: url("#XL_it_IT"); }
+        .xlarge .subunit.ESX, .xlarge .subunit.ESI  { fill: url("#XL_es_ES"); }
+        .xlarge .subunit.PRX { fill: url("#XL_pt_PT"); }
+        .xlarge .subunit.HRV { fill: url("#XL_hr_HR"); }
+        .xlarge .subunit.SVN { fill: url("#XL_sl_SI"); }
+        .xlarge .subunit.CZE { fill: url("#XL_cs_CZ"); }
+        .xlarge .subunit.POL { fill: url("#XL_pl_PL"); }
+        .xlarge .subunit.HUN { fill: url("#XL_hu_HU"); }
+        .xlarge .subunit.ROU { fill: url("#XL_ro_RO"); }
+        .xlarge .subunit.BGR { fill: url("#XL_bg_BG"); }
+        .xlarge .subunit.GRC { fill: url("#XL_el_GR"); }
+        .xlarge .subunit.DNK { fill: url("#XL_da_DK"); }
+        .xlarge .subunit.FIN { fill: url("#XL_fi_FI"); }
+        .xlarge .subunit.EST { fill: url("#XL_et_EE"); }
+        .xlarge .subunit.LVA { fill: url("#XL_lv_LV"); }
+        .xlarge .subunit.LTU { fill: url("#XL_lt_LT"); }
+        .xlarge .subunit.LUX { fill: url("#XL_fr_LU"); }
+        .xlarge .subunit.FXX, .xlarge .subunit.FXC { fill: url("#XL_fr_FR"); }
+        .xlarge .subunit.AUT { fill: url("#XL_de_AT"); }
+        .xlarge .subunit.CYP { fill: url("#XL_el_CY"); }
+        .xlarge .subunit.BWR { fill: url("#XL_fr_BE"); }  /* Wallonie */
+        .xlarge .subunit.BFR, .xlarge .subunit.BCR { fill: url("#XL_nl_BE"); } /* Vlaanderen + Brussel */
+        .xlarge .subunit.SWE { fill: url("#XL_sv_SE"); }
+        .xlarge .subunit.ENG, .xlarge .subunit.SCT, .xlarge .subunit.WLS, .xlarge .subunit.NIR { fill: url("#XL_en_GB"); }
+        .xlarge .subunit.IRL { fill: url("#XL_en_IR"); }
+        .xlarge .subunit.SVK { fill: url("#XL_sk_SK"); }
+
         .subunit.NLX { fill: url("#S_nl_NL"); }
         .subunit.DEU { fill: url("#S_de_DE"); }
         .subunit.ITX, .subunit.ITY, .subunit.ITD  { fill: url("#S_it_IT"); }
@@ -90,6 +119,9 @@
             stroke-linejoin: round;
         }
         .large .subunit-boundary, .large .outer-boundary {
+            stroke-width: 5px;
+        }
+        .xlarge .subunit-boundary, .xlarge .outer-boundary {
             stroke-width: 5px;
         }
 
@@ -186,6 +218,9 @@
     <svg id="patterns" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">
         <defs>
             {% for locale in locales %}
+                <pattern id="XL_{{ locale.locale }}" patternUnits="userSpaceOnUse" width="{{ locale.grid.width_xl }}" height="{{ locale.grid.height_xl }}">
+                    <image xlink:href="{{ MEDIA_URL }}{{ locale.xlarge_image_file }}" x="0" y="0" width="{{ locale.grid.width_xl }}" height="{{ locale.grid.height_xl }}"/>
+                </pattern>
                 <pattern id="L_{{ locale.locale }}" patternUnits="userSpaceOnUse" width="{{ locale.grid.width_2 }}" height="{{ locale.grid.height_2 }}">
                     <image xlink:href="{{ MEDIA_URL }}{{ locale.large_image_file }}" x="0" y="0" width="{{ locale.grid.width_2 }}" height="{{ locale.grid.height_2 }}"/>
                 </pattern>

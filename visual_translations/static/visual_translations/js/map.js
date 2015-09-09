@@ -8,7 +8,14 @@ var originalWidth = 1000, originalHeight = 750,
             offset = 2;
             horizontalOffset = originalWidth * offset;
             verticalOffset = originalHeight * offset;
-        } else {
+        } else if(zoomLevel === "xlarge") {
+            zoom = 20;
+            offset = 2;
+            horizontalOffset = originalWidth * offset;
+            verticalOffset = originalHeight * offset;
+        }
+
+        else {
             zoom = 1;
             offset = 0;
             horizontalOffset = (window.innerWidth - originalWidth) / 2;
