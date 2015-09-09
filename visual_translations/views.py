@@ -27,8 +27,8 @@ def visual_translation_map(request, region, term):
     locales_info = [
         {
             "locale": "{}_{}".format(language, country),
-            "small_image_file": "image-translations/{}/S_{}_{}.jpg".format(term, language, country),  # TODO: migrate data to visual_translations
-            "large_image_file": "image-translations/{}/L_{}_{}.jpg".format(term, language, country),  # TODO: migrate data to visual_translations
+            "small_image_file": "visual_translations/{}/S_{}_{}.jpg".format(term, language, country),
+            "large_image_file": "visual_translations/{}/L_{}_{}.jpg".format(term, language, country),
             "grid": {
                 "width": grid["cell_width"] * grid["columns"],
                 "height": grid["cell_height"] * grid["rows"],

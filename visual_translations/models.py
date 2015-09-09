@@ -228,7 +228,7 @@ class VisualTranslationsCommunity(Community):
                 grid_specs["cell_height"] = int(grid_specs["cell_height"] * factor)
                 image_grid = ImageGrid(**grid_specs)
                 image_grid.fill(downloads)
-                image_grid.export("image-translations/{}/{}_{}.jpg".format(query, size, locale))
+                image_grid.export("visual_translations/{}/{}_{}.jpg".format(query, size, locale))
 
     def set_kernel(self):
         self.kernel = self.growth_set.filter(type="translations").last().output

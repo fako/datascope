@@ -9,7 +9,8 @@ system/coverage/
 system/profile/
 system/files/media/downloads/
 system/files/media/uploads/
-system/files/media/image-translations/
+
+system/files/media/visual_translations/
 system/files/static/
 
 */settings/secrets.py
@@ -23,3 +24,6 @@ nl-hyves*.html
 
 # Wikipedia labs specific file
 app.py
+
+# Legacy
+system/files/media/image-translations/
