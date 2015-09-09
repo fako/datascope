@@ -102,7 +102,7 @@ class VisualTranslationsCommunity(Community):
         ("lv", "LV", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
         ("fr", "LU", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
         ("mt", "MT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
-        ("nl", "NL", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
+        ("nl", "NL", {"columns": 2, "rows": 4, "cell_width": 320, "cell_height": 180},),
         ("pl", "PL", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
         ("pt", "PT", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
         ("ro", "RO", {"columns": 4, "rows": 3, "cell_width": 320, "cell_height": 180},),
