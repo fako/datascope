@@ -21,7 +21,6 @@
 
 		var tpl = '<div class="knob">\
 				<div class="top"></div>\
-				<div class="base"></div>\
 			</div>';
 
 		return this.each(function(){

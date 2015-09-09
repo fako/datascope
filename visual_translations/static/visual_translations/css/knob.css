@@ -6,26 +6,22 @@
 }
 
 #control {
-	width:90px;
-	height:90px;
+	width:320px;
+	height:320px;
 	position:absolute;
 	top:50%;
 	left:50%;
-	margin:-45px 0 0 -45px;
+	margin:-160px 0 0 -160px;
 }
 
 .knobLabel, .arrow{
-	width:200px;
+	width: 200px;
     text-align: center;
 	height: 46px;
     font-size: 36px;
-	position:absolute;
+	position: absolute;
     color: lightgray;
-	/*opacity:1;*/
-	/*-moz-transition:0.3s;*/
-	/*-webkit-transition:0.3s;*/
-	/*-o-transition:0.3s;*/
-	/*transition:0.3s;*/
+    z-index: 15;
 }
 
 .knobLabel.active {
@@ -33,40 +29,28 @@
 }
 
 .knob{
-	width:83px;
-	height:83px;
-	position:relative;
+	width: 320px;
+	height: 320px;
+	position: relative;
 }
 
 .knob .top{
 	position: absolute;
 	top: 0;
 	left: 0;
-	width: 83px;
-	height: 83px;
+	width: 320px;
+	height: 320px;
 	z-index: 10;
 	cursor: default !important;
-}
-
-.knob .base{
-	width:83px;
-	height:83px;
-	border-radius:50%;
-	box-shadow:0 5px 0 #4a5056,5px 5px 5px #000;
-	position:absolute;
-	top:0;
-	left:0;
-	z-index:1;
 }
 
 .knob .top:after{
 	content: '';
     position: absolute;
 	width: 72px;
-	height: 200px;
-	top: -70%;
-	left: -55px;
-	margin-top: -7px;
+	height: 150px;
+	top: 25%;
+	left: 50px;
     transform: rotate(-90deg);
 }
 
