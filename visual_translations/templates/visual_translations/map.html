@@ -169,7 +169,7 @@
             }
         };
         var wsEndpointURI = new URI("{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast&publish-broadcast");
-        wsEndpointURI.hostname("192.168.255.16");
+        wsEndpointURI.hostname("{{ STATIC_IP }}");
 
         VT.zoomLevel = VT.functions.getParameterByName("zoom");
         VT.webSocketEndpoint = wsEndpointURI.toString();

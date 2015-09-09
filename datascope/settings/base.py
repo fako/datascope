@@ -159,6 +159,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.template.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
     'ws4redis.context_processors.default',
+    'core.templatetags.template_context.core_context',
 )
 
 MIDDLEWARE_CLASSES = (
