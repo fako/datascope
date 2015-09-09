@@ -19,16 +19,17 @@
 
 {% block head-js %}
     {{ block.super }}
+    <script type="text/javascript" src="{% static "js/ws4redis.js" %}"></script>
     <script type="text/javascript" src="{% static "visual_translations/js/jquery-ui.min.js" %}"></script>
     <script type="text/javascript" src="{% static "visual_translations/js/jquery-ui-touch-punch.min.js" %}"></script>
     <script type="text/javascript" src="{% static "visual_translations/js/knob.jquery.js" %}"></script>
-    <script type="text/javascript" src="{% static "js/ws4redis.js" %}"></script>
+    <script type="text/javascript" src="{% static "visual_translations/js/socket.js" %}"></script>
 {% endblock %}
 
 {% block body-js %}
     <script src="{% static "visual_translations/js/controller.js" %}"></script>
     <script>
-        $( "#zoom-component" ).slider({
+        $("#zoom-component" ).slider({
             orientation: "vertical",
             change: function(event, ui) {
                 console.log(ui.value);
@@ -36,6 +37,26 @@
             max: 100
         });
     </script>
+    <script>
+
+
+        window.VT = {};
+        var wsEndpointURI = new URI("{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast&publish-broadcast");
+        wsEndpointURI.hostname("192.168.255.16");
+        VT.webSocketEndpoint = wsEndpointURI.toString();
+        VT.webSocketHeartbeat = {{ WS4REDIS_HEARTBEAT }};
+
+        $(function() {
+            $broadcast = $('.arrow');
+            $broadcast.on({'mousedown touchstart': function(event){
+                wsConnection.send("top-left bingo!");
+            }});
+            $broadcast.on({'mouseup touchend': function(event){  // naive, put this on document!
+                wsConnection.send("top-left bingo 2!");
+            }});
+        })
+
+</script>
 {% endblock %}
 
 
@@ -64,42 +85,5 @@
             </div>
         </div>
     </section>
-
-<script>
-
-    $(function($) {
-        window.ws4redis = WS4Redis({
-            uri: '{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast&publish-broadcast',
-            receive_message: receiveMessage,
-            heartbeat_msg: {{ WS4REDIS_HEARTBEAT }},
-            on_open: function() {
-                console.log("websocket connected");
-            },
-            on_error: function(e) {
-                console.error(e);
-            },
-            on_close: function(e) {
-                console.log("connection closed");
-            }
-        });
-
-        function receiveMessage(msg) {
-            console.log('message from websocket: ' + msg);
-        }
-    });
-
-    $(function(){
-        $broadcast = $('.arrow');
-        $broadcast.on({'mousedown touchstart': function(event){
-            console.log("mouse down");
-            ws4redis.send_message("top-left");
-        }});
-        $broadcast.on({'mouseup touchend': function(event){  // naive, put this on document!
-            console.log("mouse up");
-            ws4redis.send_message("top-left");
-        }});
-    })
-
-</script>
 
 {% endblock %}

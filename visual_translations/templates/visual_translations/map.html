@@ -1,6 +1,11 @@
 {% extends "core/base.html" %}
 {% load bootstrap_tags i18n static %}
 
+{% block head-js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static "js/ws4redis.js" %}"></script>
+{% endblock %}
+
 {% block theme-css %}
     <style>
 
@@ -163,8 +168,12 @@
                 }
             }
         };
+        var wsEndpointURI = new URI("{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast&publish-broadcast");
+        wsEndpointURI.hostname("192.168.255.16");
+
         VT.zoomLevel = VT.functions.getParameterByName("zoom");
-        VT.webSocketEndpoint = "{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast";
+        VT.webSocketEndpoint = wsEndpointURI.toString();
+        VT.webSocketHeartbeat = {{ WS4REDIS_HEARTBEAT }};
         VT.topoJSONFile = "{% static region_topo_json %}";
     </script>
     <script src="{% static "visual_translations/js/d3.v3.min.js" %}"></script>

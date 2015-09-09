@@ -244,9 +244,6 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 WEBSOCKET_URL = '/ws/'
 WS4REDIS_PREFIX = 'ws'
 WSGI_APPLICATION = 'ws4redis.django_runserver.application'
-WS4REDIS_CONNECTION = {
-    'port': 6379,
-}
 WS4REDIS_EXPIRE = 0
 WS4REDIS_HEARTBEAT = '--heartbeat--'
 
