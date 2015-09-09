@@ -187,10 +187,10 @@
         <defs>
             {% for locale in locales %}
                 <pattern id="L_{{ locale.locale }}" patternUnits="userSpaceOnUse" width="{{ locale.grid.width_2 }}" height="{{ locale.grid.height_2 }}">
-                    <image xlink:href="{{ MEDIA_URL }}{{ locale.image_file }}" x="0" y="0" width="{{ locale.grid.width_2 }}" height="{{ locale.grid.height_2 }}"/>
+                    <image xlink:href="{{ MEDIA_URL }}{{ locale.large_image_file }}" x="0" y="0" width="{{ locale.grid.width_2 }}" height="{{ locale.grid.height_2 }}"/>
                 </pattern>
                 <pattern id="S_{{ locale.locale }}" patternUnits="userSpaceOnUse" width="{{ locale.grid.width_20 }}" height="{{ locale.grid.height_20 }}">
-                    <image xlink:href="{{ MEDIA_URL }}{{ locale.image_file }}" x="0" y="0" width="{{ locale.grid.width_20 }}" height="{{ locale.grid.height_20 }}"/>
+                    <image xlink:href="{{ MEDIA_URL }}{{ locale.small_image_file }}" x="0" y="0" width="{{ locale.grid.width_20 }}" height="{{ locale.grid.height_20 }}"/>
                 </pattern>
             {% endfor %}
         </defs>

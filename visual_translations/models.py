@@ -198,6 +198,8 @@ class VisualTranslationsCommunity(Community):
             ind.properties["images"] = col.url
             ind.save()
 
+    zoom_levels = {"S": 0.2, "L": 1}
+
     def finish_download(self, out, err):  # TODO: move images in downloads folder? another way?
         translation_growth = self.growth_set.filter(type="translations").last()
         grids = {"{}_{}".format(language, country): grid for language, country, grid in self.LOCALES}
@@ -220,9 +222,13 @@ class VisualTranslationsCommunity(Community):
                 content_type, image = download.content
                 if image is not None:
                     downloads.append(image)
-            image_grid = ImageGrid(**grids[locale])
-            image_grid.fill(downloads)
-            image_grid.export("image-translations/{}/{}.jpg".format(query, locale))
+            for size, factor in self.zoom_levels.iteritems():
+                grid_specs = copy(grids[locale])
+                grid_specs["cell_width"] = int(grid_specs["cell_width"] * factor)
+                grid_specs["cell_height"] = int(grid_specs["cell_height"] * factor)
+                image_grid = ImageGrid(**grid_specs)
+                image_grid.fill(downloads)
+                image_grid.export("image-translations/{}/{}_{}.jpg".format(query, size, locale))
 
     def set_kernel(self):
         self.kernel = self.growth_set.filter(type="translations").last().output
