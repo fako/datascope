@@ -39,13 +39,13 @@
 }
 
 .knob .top{
-	position:absolute;
-	top:0;
-	left:0;
-	width:83px;
-	height:83px;
-	z-index:10;
-	cursor:default !important;
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 83px;
+	height: 83px;
+	z-index: 10;
+	cursor: default !important;
 }
 
 .knob .base{
@@ -60,17 +60,14 @@
 }
 
 .knob .top:after{
-	content:'';
-	width:10px;
-	height:10px;
-	background-color:#666;
-	position:absolute;
-	top:50%;
-	left:10px;
-	margin-top:-5px;
-	border-radius: 50%;
-	cursor:default !important;
-	box-shadow: 0 0 1px #5a5a5a inset;
+	content: '';
+    position: absolute;
+	width: 72px;
+	height: 200px;
+	top: -70%;
+	left: -55px;
+	margin-top: -7px;
+    transform: rotate(-90deg);
 }
 
 .knob [draggable] {
