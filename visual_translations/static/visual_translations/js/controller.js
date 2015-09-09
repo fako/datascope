@@ -59,9 +59,12 @@ $(function(){
 // THE ARROWS
 $(function() {
 
+    var arrowValues = ["left", "top-left", "top", "top-right", "right", "bottom-right", "bottom", "bottom-left"];
+
     // Place the arrows
     var $arrowsComponent = $('#arrows-component');
     var $arrows = $arrowsComponent.find('.arrow');
+    var interval = false;
     $arrows.each(function(i, el) {
         deg = i*45;
         $el = $(el);
@@ -70,18 +73,25 @@ $(function() {
             top: -Math.sin(deg / rad2deg) * (componentRadius - 48) + topOffset,
             left: Math.cos((180 - deg) / rad2deg) * (componentRadius - 48) + leftOffset
         });
-        $el.click(function(e) {
-            console.log("clicked: ", $arrows.index($(this)));
-        })
+        $el.on({'mousedown touchstart': function(event) {
+            if(interval) {
+                return;
+            }
+            $this = $(this);
+            // TODO: switch background color here
+            var $self = $this;
+            interval = setInterval(function() {
+                wsConnection.send("scrollDocument:" + arrowValues[$arrows.index($self)]);
+            }, 100);
+        }});
+        $el.on({'mouseup touchend touchcancel': function(event){
+            if(!interval) {
+                return;
+            }
+            clearInterval(interval);
+            interval = false;
+        }});
     });
-
-    $broadcast = $('.arrow');
-    $broadcast.on({'mousedown touchstart': function(event){
-        wsConnection.send("top-left bingo!");
-    }});
-    $broadcast.on({'mouseup touchend': function(event){  // naive, put this on document!
-        wsConnection.send("top-left bingo 2!");
-    }});
 
 });
 
