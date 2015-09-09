@@ -9,6 +9,10 @@
         <link href="{% static "core/css/bootstrap.min.css" %}" rel="stylesheet" />
     {% endblock %}
 
+    {% block viewport %}
+        <meta name="viewport" content="height=device-height, width=device-width, user-scalable=no"/>
+    {% endblock %}
+
     {% block theme-css %}
         <link href="{% static "core/css/style.css" %}" rel="stylesheet" />
     {% endblock %}
