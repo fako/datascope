@@ -52,6 +52,7 @@
 	top: 25%;
 	left: 50px;
     transform: rotate(-90deg);
+    -webkit-transform: rotate(-90deg);
 }
 
 .knob [draggable] {

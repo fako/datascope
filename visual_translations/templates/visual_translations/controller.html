@@ -7,16 +7,13 @@
     <link href="{% static "visual_translations/css/knob.css" %}" rel="stylesheet"/>
     <link href="{% static "visual_translations/css/controller.css" %}" rel="stylesheet"/>
     <style>
-    /* Styling fed by Django */
-    .knob .top {
-        background: url('{% static "visual_translations/img/knob.png" %}') no-repeat center;
-    }
-    .knob .top:after {
-        background: url('{% static "visual_translations/img/pointer.png" %}') no-repeat;
-    }
-    .arrow {
-        background: url('{% static "visual_translations/img/triangle.png" %}') no-repeat center center;
-    }
+        /* Styling fed by Django */
+        .knob .top:after {
+            background: url('{% static "visual_translations/img/pointer.png" %}') no-repeat;
+        }
+        .arrow {
+            background: url('{% static "visual_translations/img/triangle.png" %}') no-repeat center center;
+        }
     </style>
 {% endblock %}
 
