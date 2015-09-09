@@ -32,8 +32,8 @@ $(function(){
         $el = $(el);
         $el.css({
             transform: 'rotate(' + (deg - 90) + 'deg)',
-            top: -Math.sin(deg / rad2deg) * componentRadius + topOffset,
-            left: Math.cos((180 - deg) / rad2deg) * componentRadius + leftOffset
+            top: -Math.sin(deg / rad2deg) * (componentRadius - 48) + topOffset,
+            left: Math.cos((180 - deg) / rad2deg) * (componentRadius - 48) + leftOffset
         });
         $el.click(function(e) {
             console.log("clicked: ", $arrows.index($(this)));

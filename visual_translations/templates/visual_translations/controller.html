@@ -11,6 +11,9 @@
     .knob .top {
         background: url('{% static "visual_translations/img/knob.png" %}') no-repeat;
     }
+    .arrow {
+        background: url('{% static "visual_translations/img/triangle.png" %}') no-repeat center center;
+    }
     </style>
 {% endblock %}
 
@@ -42,7 +45,7 @@
             <div id="arrows" class="col-xs-5">
                 <div id="arrows-component">
                     {% for index in "xxxxxxxx" %}
-                        <div class="arrow">arrow</div>
+                        <div class="arrow"></div>
                     {% endfor %}
                 </div>
 
