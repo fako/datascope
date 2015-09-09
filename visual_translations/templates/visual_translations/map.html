@@ -166,15 +166,6 @@
         VT.zoomLevel = VT.functions.getParameterByName("zoom");
         VT.webSocketEndpoint = "{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast";
         VT.topoJSONFile = "{% static region_topo_json %}";
-
-        // TEST CODE
-        $(document).on('keydown', function(event){
-            switch(event.which) {
-                case 49:  // key: 1
-                    VT.functions.scrollDocument("top-left");
-                    break;
-            }
-        });
     </script>
     <script src="{% static "visual_translations/js/d3.v3.min.js" %}"></script>
     <script src="{% static "visual_translations/js/topojson.min.js" %}"></script>

@@ -19,9 +19,10 @@
 
 {% block head-js %}
     {{ block.super }}
-    <script src="{% static "visual_translations/js/jquery-ui.min.js" %}"></script>
-    <script src="{% static "visual_translations/js/jquery-ui-touch-punch.min.js" %}"></script>
-    <script src="{% static "visual_translations/js/knob.jquery.js" %}"></script>
+    <script type="text/javascript" src="{% static "visual_translations/js/jquery-ui.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "visual_translations/js/jquery-ui-touch-punch.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "visual_translations/js/knob.jquery.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/ws4redis.js" %}"></script>
 {% endblock %}
 
 {% block body-js %}
@@ -66,32 +67,36 @@
 
 <script>
 
-    var ws = new WebSocket("{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast&publish-broadcast");
-    ws.onopen = function() {
-        console.log("websocket connected");
-    };
-    ws.onmessage = function(e) {
-        console.log("Received: " + e.data);
-    };
-    ws.onerror = function(e) {
-        console.error(e);
-    };
-    ws.onclose = function(e) {
-        console.log("connection closed");
-    };
-    function send_message(msg) {
-        ws.send(msg);
-    }
+    $(function($) {
+        window.ws4redis = WS4Redis({
+            uri: '{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast&publish-broadcast',
+            receive_message: receiveMessage,
+            heartbeat_msg: {{ WS4REDIS_HEARTBEAT }},
+            on_open: function() {
+                console.log("websocket connected");
+            },
+            on_error: function(e) {
+                console.error(e);
+            },
+            on_close: function(e) {
+                console.log("connection closed");
+            }
+        });
+
+        function receiveMessage(msg) {
+            console.log('message from websocket: ' + msg);
+        }
+    });
 
     $(function(){
         $broadcast = $('.arrow');
         $broadcast.on({'mousedown touchstart': function(event){
             console.log("mouse down");
-            send_message("top-left");
+            ws4redis.send_message("top-left");
         }});
         $broadcast.on({'mouseup touchend': function(event){  // naive, put this on document!
             console.log("mouse up");
-            send_message("top-left");
+            ws4redis.send_message("top-left");
         }});
     })
 

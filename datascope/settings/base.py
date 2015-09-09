@@ -247,6 +247,8 @@ WSGI_APPLICATION = 'ws4redis.django_runserver.application'
 WS4REDIS_CONNECTION = {
     'port': 6379,
 }
+WS4REDIS_EXPIRE = 0
+WS4REDIS_HEARTBEAT = '--heartbeat--'
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.fakoberkers.nl"

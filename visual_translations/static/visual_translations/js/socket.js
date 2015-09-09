@@ -7,6 +7,9 @@ ws.onopen = function() {
 };
 ws.onmessage = function(e) {
     console.log("Received: " + e.data);
+    if(e.data == '--heartbeat--') {
+        return;
+    }
     if(initial) {
         initial = false;
         return;
