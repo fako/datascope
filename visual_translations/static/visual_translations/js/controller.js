@@ -1,15 +1,16 @@
+// SHARED VARIABLES
+var rad2deg = 180/Math.PI;
+var deg = 0;
+var componentRadius = 200, topOffset = 220, leftOffset = 150;
+
+
+// THE WORDS POINTER
 $(function(){
 
-	var rad2deg = 180/Math.PI;
-	var deg = 0;
-
-	var $knobComponent = $('#knob-component');
+	// Place the knob labels
+    var $knobComponent = $('#knob-component');
     var $knobLabels = $knobComponent.find('.knobLabel');
     var $control = $('#control');
-    var componentRadius = 200, topOffset = 220, leftOffset = 150;
-
-
-	// Place the knob labels
     $knobLabels.each(function(i, el) {
         deg = i*60;
         $el = $(el);
@@ -21,22 +22,6 @@ $(function(){
         });
         $el.click(function(e) {
             $control.knob('snapTo', $knobLabels.index($(this)) * 60);
-        })
-    });
-
-    // Place the arrows
-    var $arrowsComponent = $('#arrows-component');
-    var $arrows = $arrowsComponent.find('.arrow');
-    $arrows.each(function(i, el) {
-        deg = i*45;
-        $el = $(el);
-        $el.css({
-            transform: 'rotate(' + (deg - 90) + 'deg)',
-            top: -Math.sin(deg / rad2deg) * (componentRadius - 48) + topOffset,
-            left: Math.cos((180 - deg) / rad2deg) * (componentRadius - 48) + leftOffset
-        });
-        $el.click(function(e) {
-            console.log("clicked: ", $arrows.index($(this)));
         })
     });
 
@@ -67,5 +52,50 @@ $(function(){
 	});
 
     $control.knob('snapTo', 0);
+
+});
+
+
+// THE ARROWS
+$(function() {
+
+    // Place the arrows
+    var $arrowsComponent = $('#arrows-component');
+    var $arrows = $arrowsComponent.find('.arrow');
+    $arrows.each(function(i, el) {
+        deg = i*45;
+        $el = $(el);
+        $el.css({
+            transform: 'rotate(' + (deg - 90) + 'deg)',
+            top: -Math.sin(deg / rad2deg) * (componentRadius - 48) + topOffset,
+            left: Math.cos((180 - deg) / rad2deg) * (componentRadius - 48) + leftOffset
+        });
+        $el.click(function(e) {
+            console.log("clicked: ", $arrows.index($(this)));
+        })
+    });
+
+    $broadcast = $('.arrow');
+    $broadcast.on({'mousedown touchstart': function(event){
+        wsConnection.send("top-left bingo!");
+    }});
+    $broadcast.on({'mouseup touchend': function(event){  // naive, put this on document!
+        wsConnection.send("top-left bingo 2!");
+    }});
+
+});
+
+
+// ZOOM SLIDER
+$(function(){
+
+    // Init the slider
+    $("#zoom-component" ).slider({
+        orientation: "vertical",
+        change: function(event, ui) {
+            console.log(ui.value);
+        },
+        max: 100
+    });
 
 });
