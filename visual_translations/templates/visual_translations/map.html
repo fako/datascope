@@ -170,14 +170,10 @@
                 var new_url = current_url.clone().pathname(path.join("/")).setQuery(params);
                 if(!current_url.equals(new_url)) {
                     $win = $(window);
-{#                    params["x-offset"] = $win.scrollLeft() / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];#}
-{#                    params["y-offset"] = $win.scrollTop() / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];#}
                     var xCenter = ($win.scrollLeft() + ($win.width() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
                     var yCenter = ($win.scrollTop() + ($win.height() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
                     params["x-offset"] = xCenter - $win.width() / 2;
                     params["y-offset"] = yCenter - $win.height() / 2;
-{#                    params["x-offset"] = ($win.scrollLeft() / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom]) + ($win.width() / 2 * VT.zoomFactors[zoom]);#}
-{#                    params["y-offset"] = ($win.scrollTop() / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom]) + ($win.height() / 2 * VT.zoomFactors[zoom]);#}
                     window.location = new_url.setQuery(params).toString();
                 }
                 return;
