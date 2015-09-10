@@ -44,6 +44,9 @@ $(function(){
                 var $el = $(el);
                 if(i === numBars || (numBars === 6 && i === 0)) {
                     $el.addClass('active');
+                    if(wsConnection.ws4redis.getState() == 1) { // OPEN TODO: commit this in the package
+                        wsConnection.send("setDocument:" + $el.text() + ',' + zoomLevel);
+                    }
                 } else {
                     $el.removeClass('active');
                 }
@@ -79,7 +82,6 @@ $(function() {
             }
             $this = $(this);
             $this.addClass('active');
-            // TODO: switch background color here
             var $self = $this;
             interval = setInterval(function() {
                 wsConnection.send("scrollDocument:" + arrowValues[$arrows.index($self)]);
@@ -101,11 +103,14 @@ $(function() {
 // ZOOM SLIDER
 $(function(){
 
+    var zoomLevels = ["standard", "large", "xlarge"];
+
     // Init the slider
     $("#zoom-component" ).slider({
         orientation: "vertical",
         change: function(event, ui) {
-            console.log(ui.value);
+            window.zoomLevel = zoomLevels[Math.floor(ui.value / 33)];
+            wsConnection.send("setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel);
         },
         max: 100
     });

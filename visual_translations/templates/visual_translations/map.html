@@ -157,26 +157,41 @@
                     results = regex.exec(location.search);
                 return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
             },
+            getActiveWord: function() {
+                var current_url = new URI(window.location);
+                var path = current_url.pathname().split('/');
+                return path[path.length-2];
+            },
+            getActiveZoom: function() {
+                return this.getParameterByName("zoom");
+            },
             setDocument: function(word, zoom) {
 
                 // Get the vars
                 var current_url = new URI(window.location).removeSearch("x-offset", "y-offset");
                 var params = URI.parseQuery(current_url.query());
                 var current_zoom = params["zoom"];
-                params["zoom"] = zoom;
+                if(zoom !== "standard") {
+                    params["zoom"] = zoom;
+                } else {
+                    zoom = "";
+                }
                 var path = current_url.pathname().split('/');
                 path[path.length-2] = word;
 
                 var new_url = current_url.clone().pathname(path.join("/")).setQuery(params);
                 if(!current_url.equals(new_url)) {
                     $win = $(window);
-                    var xCenter = ($win.scrollLeft() + ($win.width() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
-                    var yCenter = ($win.scrollTop() + ($win.height() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
-                    params["x-offset"] = xCenter - $win.width() / 2;
-                    params["y-offset"] = yCenter - $win.height() / 2;
+                    if(zoom === VT.functions.getActiveZoom()) {
+                        var xCenter = ($win.scrollLeft() + ($win.width() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
+                        var yCenter = ($win.scrollTop() + ($win.height() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
+                        params["x-offset"] = xCenter - $win.width() / 2;
+                        params["y-offset"] = yCenter - $win.height() / 2;
+                    }
                     window.location = new_url.setQuery(params).toString();
                 }
                 return;
+
             },
             scrollDocument: function (command) {
                 var $document = $(document);
