@@ -3,24 +3,19 @@ var originalWidth = 1000, originalHeight = 750,
 
         var zoom, offset,
             zoomLevel = VT.zoomLevel;
-        if(zoomLevel === "large") {
-            zoom = 5;
-            offset = 2;
-            horizontalOffset = originalWidth * offset;
-            verticalOffset = originalHeight * offset;
-        } else if(zoomLevel === "xlarge") {
-            zoom = 20;
-            offset = 10;
-            horizontalOffset = originalWidth * offset;
-            verticalOffset = originalHeight * offset;
-        }
 
-        else {
+        if(!zoomLevel) {
             zoom = 1;
             offset = 0;
             horizontalOffset = (window.innerWidth - originalWidth) / 2;
             verticalOffset = (window.innerHeight - originalHeight) / 2;
+        } else {
+            zoom = VT.zoomFactors[zoomLevel];
+            offset = (zoomLevel === "large") ? 2 : 10;
+            horizontalOffset = (VT.xOffset) ? VT.xOffset : originalWidth * offset;
+            verticalOffset = (VT.yOffset) ? VT.yOffset : originalHeight * offset;
         }
+
         d3.select("body").attr("class", zoomLevel);
 
         var width = originalWidth * zoom,

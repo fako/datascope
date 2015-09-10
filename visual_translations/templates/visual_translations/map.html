@@ -144,12 +144,40 @@
     <script>
         // GLOBAL INIT FOR VISUAL TRANSLATION RELATED JS
         window.VT = {};
+        VT.zoomFactors = {
+            "normal": 1,
+            "large": 5,
+            "xlarge": 20
+        };
         VT.functions = {
             getParameterByName: function (name) {
                 name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
                 var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
                     results = regex.exec(location.search);
                 return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+            },
+            setDocument: function(word, zoom) {
+
+                // Get the vars
+                var current_url = new URI(window.location).removeSearch("x-offset", "y-offset");
+                var params = URI.parseQuery(current_url.query());
+                var current_zoom = params["zoom"];
+                params["zoom"] = zoom;
+                var path = current_url.pathname().split('/');
+                path[path.length-2] = word;
+
+                var new_url = current_url.clone().pathname(path.join("/")).setQuery(params);
+                if(!current_url.equals(new_url)) {
+                    $win = $(window);
+{#                    params["x-offset"] = $win.scrollLeft() / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];#}
+{#                    params["y-offset"] = $win.scrollTop() / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];#}
+                    params["x-offset"] = ($win.scrollLeft() + ($win.width() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
+                    params["y-offset"] = ($win.scrollTop() + ($win.height() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
+{#                    params["x-offset"] = ($win.scrollLeft() / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom]) + ($win.width() / 2 * VT.zoomFactors[zoom]);#}
+{#                    params["y-offset"] = ($win.scrollTop() / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom]) + ($win.height() / 2 * VT.zoomFactors[zoom]);#}
+                    window.location = new_url.setQuery(params).toString();
+                }
+                return;
             },
             scrollDocument: function (command) {
                 var $document = $(document);
@@ -204,6 +232,8 @@
         wsEndpointURI.hostname("{{ STATIC_IP }}");
 
         VT.zoomLevel = VT.functions.getParameterByName("zoom");
+        VT.xOffset = VT.functions.getParameterByName("x-offset");
+        VT.yOffset = VT.functions.getParameterByName("y-offset");
         VT.webSocketEndpoint = wsEndpointURI.toString();
         VT.webSocketHeartbeat = {{ WS4REDIS_HEARTBEAT }};
         VT.topoJSONFile = "{% static region_topo_json %}";
