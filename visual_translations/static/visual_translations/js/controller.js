@@ -103,13 +103,14 @@ $(function() {
 // ZOOM SLIDER
 $(function(){
 
-    var zoomLevels = ["standard", "large", "xlarge"];
 
     // Init the slider
     $("#zoom-component" ).slider({
         orientation: "vertical",
         change: function(event, ui) {
-            window.zoomLevel = zoomLevels[Math.floor(ui.value / 33)];
+            var zoomLevels = ["small", "large", "xlarge"];
+            window.zoomLevel = zoomLevels[Math.floor(ui.value / 34)];
+            console.log("sending: " + "setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel);
             wsConnection.send("setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel);
         },
         max: 100

@@ -4,7 +4,7 @@ var originalWidth = 1000, originalHeight = 750,
         var zoom, offset,
             zoomLevel = VT.zoomLevel;
 
-        if(!zoomLevel) {
+        if(zoomLevel == "small") {
             zoom = 1;
             offset = 0;
             horizontalOffset = (window.innerWidth - originalWidth) / 2;
@@ -26,7 +26,7 @@ var originalWidth = 1000, originalHeight = 750,
             .attr("height", height)
             .attr("id", "map");
 
-        if(!zoomLevel) {
+        if(zoomLevel == "small") {
             svg.style("left", horizontalOffset+"px");
             svg.style("top", verticalOffset+"px");
         }

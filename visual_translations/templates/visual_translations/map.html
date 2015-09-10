@@ -146,7 +146,7 @@
         // GLOBAL INIT FOR VISUAL TRANSLATION RELATED JS
         window.VT = {};
         VT.zoomFactors = {
-            "normal": 1,
+            "small": 1,
             "large": 5,
             "xlarge": 20
         };
@@ -163,7 +163,7 @@
                 return path[path.length-2];
             },
             getActiveZoom: function() {
-                return this.getParameterByName("zoom");
+                return this.getParameterByName("zoom") || "small";
             },
             setDocument: function(word, zoom) {
 
@@ -171,23 +171,20 @@
                 var current_url = new URI(window.location).removeSearch("x-offset", "y-offset");
                 var params = URI.parseQuery(current_url.query());
                 var current_zoom = params["zoom"];
-                if(zoom !== "standard") {
-                    params["zoom"] = zoom;
-                } else {
-                    zoom = "";
-                }
+                params["zoom"] = zoom;
                 var path = current_url.pathname().split('/');
                 path[path.length-2] = word;
 
                 var new_url = current_url.clone().pathname(path.join("/")).setQuery(params);
                 if(!current_url.equals(new_url)) {
                     $win = $(window);
-                    if(zoom === VT.functions.getActiveZoom()) {
+{#                        console.log(current_zoom);#}
+{#                        console.log(VT.zoomFactors);#}
+{#                        console.log(zoom);#}
                         var xCenter = ($win.scrollLeft() + ($win.width() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
                         var yCenter = ($win.scrollTop() + ($win.height() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
                         params["x-offset"] = xCenter - $win.width() / 2;
                         params["y-offset"] = yCenter - $win.height() / 2;
-                    }
                     window.location = new_url.setQuery(params).toString();
                 }
                 return;
@@ -245,7 +242,7 @@
         var wsEndpointURI = new URI("{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast&publish-broadcast");
         wsEndpointURI.hostname("{{ STATIC_IP }}");
 
-        VT.zoomLevel = VT.functions.getParameterByName("zoom");
+        VT.zoomLevel = VT.functions.getParameterByName("zoom") || "small";
         VT.xOffset = VT.functions.getParameterByName("x-offset");
         VT.yOffset = VT.functions.getParameterByName("y-offset");
         VT.webSocketEndpoint = wsEndpointURI.toString();
