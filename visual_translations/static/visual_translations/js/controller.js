@@ -78,6 +78,7 @@ $(function() {
                 return;
             }
             $this = $(this);
+            $this.addClass('active');
             // TODO: switch background color here
             var $self = $this;
             interval = setInterval(function() {
@@ -88,6 +89,7 @@ $(function() {
             if(!interval) {
                 return;
             }
+            $(this).removeClass('active');
             clearInterval(interval);
             interval = false;
         }});

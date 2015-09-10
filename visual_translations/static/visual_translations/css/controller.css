@@ -68,6 +68,9 @@ body {
     border: none;
     outline: none;
 }
+.ui-slider .ui-slider-handle.ui-state-active {
+    background: lightgray;
+}
 .ui-widget-content {
     background: #000;
     border: none;
