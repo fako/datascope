@@ -57,7 +57,7 @@ def visual_translations_controller(request):
         for community in VisualTranslationsCommunity.objects.all()[:6]
     ]
     context = {
-        "words": terms_info
+        "words": ["pension", "peace", "women", "immigrants", "cowshed", "privatization"]
     }
     return render_to_response("visual_translations/controller.html", context, RequestContext(request))
 
