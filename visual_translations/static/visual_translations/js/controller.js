@@ -2,6 +2,7 @@
 var rad2deg = 180/Math.PI;
 var deg = 0;
 var componentRadius = 200, topOffset = 220, leftOffset = 150;
+var zoomLevel = "small";
 
 
 // THE WORDS POINTER
@@ -44,9 +45,6 @@ $(function(){
                 var $el = $(el);
                 if(i === numBars || (numBars === 6 && i === 0)) {
                     $el.addClass('active');
-                    if(wsConnection.ws4redis.getState() == 1) { // OPEN TODO: commit this in the package
-                        wsConnection.send("setDocument:" + $el.text() + ',' + zoomLevel);
-                    }
                 } else {
                     $el.removeClass('active');
                 }

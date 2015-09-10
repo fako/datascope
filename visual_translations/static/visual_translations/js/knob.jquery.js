@@ -102,6 +102,10 @@
 
 					// Marking the starting degree as invalid
 					self.startDeg = -1;
+
+                    if(wsConnection.ws4redis.getState() == 1) { // OPEN TODO: commit this in the package
+                        wsConnection.send("setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel);
+                    }
 				});
 
 			});
