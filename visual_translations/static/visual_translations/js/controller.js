@@ -117,3 +117,10 @@ $(function(){
     });
 
 });
+
+
+// Reset projection when reloading
+$(window).unload(function() {
+    wsConnection.send("setDocument:pension,small");
+
+});
