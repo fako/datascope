@@ -34,6 +34,10 @@
 
 window.WSExecute = function(socket, heartbeat, functions) {
 
+//    this.getState = function() {
+//        return ws.readyState
+//    };
+
     this.ws4redis = WS4Redis({
         uri: socket,
         receive_message: this.execute,

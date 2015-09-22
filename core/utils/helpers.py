@@ -19,6 +19,7 @@ def override_dict(parent, child):
     assert isinstance(child, dict), "The child is not a dictionary"
     return dict(parent.copy(), **child)
 
+
 # def get_json(model_instance):
 #     if self.lazy:
 #         state = getattr(model_instance, Creator._state_key, None)
