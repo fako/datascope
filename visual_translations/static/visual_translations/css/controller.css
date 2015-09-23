@@ -25,11 +25,11 @@ body {
 }
 
 #words {
-    /*background-color: red;*/
+    background-color: red;
 }
 
 #arrows {
-    /*background-color: purple;*/
+    background-color: purple;
 }
 #arrows button {
     display: block;
@@ -37,7 +37,7 @@ body {
 }
 
 #zoom {
-    /*background-color: #ffff00;*/
+    background-color: #ffff00;
     min-height: 500px;
 }
 #zoom-component {
