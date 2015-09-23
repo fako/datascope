@@ -15,13 +15,20 @@
 }
 
 .knobLabel, .arrow{
-	width: 200px;
     text-align: center;
-	height: 46px;
     font-size: 36px;
 	position: absolute;
     color: lightgray;
     z-index: 15;
+}
+.knobLabel {
+    width: 200px;
+    height: 48px;
+
+}
+.arrow {
+    width: 100px;
+    height: 100px;
 }
 
 .knobLabel.active {

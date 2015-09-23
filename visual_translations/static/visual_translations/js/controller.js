@@ -70,8 +70,8 @@ $(function() {
         $el = $(el);
         $el.css({
             transform: 'rotate(' + (deg - 90) + 'deg)',
-            top: -Math.sin(deg / rad2deg) * (componentRadius - 48) + topOffset,
-            left: Math.cos((180 - deg) / rad2deg) * (componentRadius - 48) + leftOffset
+            top: -Math.sin(deg / rad2deg) * (componentRadius - 8) + topOffset - 20,
+            left: Math.cos((180 - deg) / rad2deg) * (componentRadius - 8) + leftOffset + 40
         });
         $el.on({'mousedown touchstart': function(event) {
             if(interval) {
