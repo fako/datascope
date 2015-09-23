@@ -1,4 +1,4 @@
-var originalWidth = 1000, originalHeight = 750,
+var originalWidth = 1400, originalHeight = 1000,
             horizontalOffset, verticalOffset;
 
         var zoom, offset,
