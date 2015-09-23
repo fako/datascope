@@ -61,7 +61,6 @@ $(function(){
 $(function() {
 
     var arrowValues = ["left", "top-left", "top", "top-right", "right", "bottom-right", "bottom", "bottom-left"];
-
     // Place the arrows
     var $arrowsComponent = $('#arrows-component');
     var $arrows = $arrowsComponent.find('.arrow');
@@ -107,11 +106,11 @@ $(function(){
         orientation: "vertical",
         change: function(event, ui) {
             var zoomLevels = ["small", "large", "xlarge"];
-            window.zoomLevel = zoomLevels[Math.floor(ui.value / 34)];
+            window.zoomLevel = zoomLevels[ui.value];
             console.log("sending: " + "setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel);
             wsConnection.send("setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel);
         },
-        max: 100
+        max: 2
     });
 
 });
