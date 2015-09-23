@@ -73,25 +73,30 @@ $(function() {
             top: -Math.sin(deg / rad2deg) * (componentRadius - 8) + topOffset - 20,
             left: Math.cos((180 - deg) / rad2deg) * (componentRadius - 8) + leftOffset + 40
         });
-        $el.on({'mousedown touchstart': function(event) {
-            if(interval) {
-                return;
-            }
-            $this = $(this);
-            $this.addClass('active');
-            var $self = $this;
-            interval = setInterval(function() {
+        $el.on({
+            'mousedown touchstart': function(event) {
+                if(interval) {
+                    return;
+                }
+                $this = $(this);
+                $this.addClass('active');
+                var $self = $this;
+                interval = setInterval(function() {
+                    wsConnection.send("scrollDocument:" + arrowValues[$arrows.index($self)]);
+                }, 100);
+            },
+            'mouseup touchend touchcancel': function(event){
+                if(!interval) {
+                    return;
+                }
+                $(this).removeClass('active');
+                clearInterval(interval);
+                interval = false;
+            },
+            'click': function(event){
                 wsConnection.send("scrollDocument:" + arrowValues[$arrows.index($self)]);
-            }, 100);
-        }});
-        $el.on({'mouseup touchend touchcancel': function(event){
-            if(!interval) {
-                return;
             }
-            $(this).removeClass('active');
-            clearInterval(interval);
-            interval = false;
-        }});
+        });
     });
 
 });
