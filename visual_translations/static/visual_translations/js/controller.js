@@ -94,7 +94,7 @@ $(function() {
                 interval = false;
             },
             'click': function(event){
-                wsConnection.send("scrollDocument:" + arrowValues[$arrows.index($self)]);
+                wsConnection.send("scrollDocument:" + arrowValues[$arrows.index($(this))]);
             }
         });
     });
