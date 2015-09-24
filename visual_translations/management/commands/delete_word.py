@@ -17,7 +17,6 @@ class Command(CommunityCommand):
 
     def handle_community(self, community, **options):
         qs = community.individual_set.filter(properties__contains=options["locale"]).filter(properties__contains="word\": \"{}\"".format(options["word"]))
-        import ipdb; ipdb.set_trace()
         print("Deleting {} individuals".format(qs.count()))
         for ind in qs:
             print(ind.properties)
