@@ -38,7 +38,16 @@ class TestCommunityMock(CommunityTestMixin):
         self.instance.call_finish_callback = Mock()
 
     def test_get_or_create_by_input(self):
-        self.skipTest("not tested")
+        community, created = CommunityMock.get_or_create_by_input("test", setting1="const", illegal="please")
+        self.assertIsNotNone(community)
+        self.assertIsNotNone(community.id)
+        self.assertFalse(created)
+        self.assertEqual(community.config.setting1, "const")
+        self.assertFalse(hasattr(community.config, "illegal"))
+        community, created = CommunityMock.get_or_create_by_input("test", **{"$setting2": "variable"})
+        self.assertIsNotNone(community)
+        self.assertTrue(created)
+        self.assertTrue(hasattr(community.config, "$setting2"))
 
     def test_callbacks(self):
         self.instance.begin_phase1 = Mock()
