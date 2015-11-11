@@ -42,7 +42,9 @@ MOCK_CONFIGURATION = {
     "http_resource_continuation_limit": 1,
     "http_resource_interval_duration": 0,  # NB: milliseconds!
     "http_resource_concat_args_size": 0,
-    "http_resource_concat_args_symbol": "|"
+    "http_resource_concat_args_symbol": "|",
+    "mock_processor_filter_odd": False,
+    "mock_processor_filter_even": False,
 }
 
 

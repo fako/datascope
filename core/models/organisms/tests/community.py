@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 from django.test import TestCase
 
 from mock import Mock, patch
@@ -8,17 +10,14 @@ from core.tests.mocks.community import CommunityMock
 from core.exceptions import DSProcessUnfinished
 
 
-
-class CommunityTestMixin(TestProcessorMixin):
+class CommunityTestMixin(TestCase):
 
     def test_set_kernel(self):
-        # Test that return type is an organism
-        # No save!
-        pass
+        self.skipTest("Test that return type is an organism")
+        self.skipTest("No save!")
 
     def test_initial_input(self):
-        # Test that return type is an organism
-        pass
+        self.skipTest("Test that return type is an organism")
 
 
 class TestCommunityMock(CommunityTestMixin):
@@ -29,6 +28,7 @@ class TestCommunityMock(CommunityTestMixin):
         super(TestCommunityMock, self).setUp()
         self.instance = CommunityMock.objects.get(id=1)
         self.incomplete = CommunityMock.objects.get(id=2)
+        self.complete = CommunityMock.objects.get(id=3)
 
     def raise_unfinished(self, result):
         raise DSProcessUnfinished("Raised for test")
@@ -177,13 +177,5 @@ class TestCommunityMock(CommunityTestMixin):
         self.skipTest("test with states")
 
     def test_manifestation(self):
-        self.skipTest("not tested")
-
-
-class CommunityTestMixin(TestCase):
-
-    def test_set_kernel(self):
-        self.skipTest("not tested")
-
-    def test_initial_input(self):
+        print(self.complete.manifestation)
         self.skipTest("not tested")
