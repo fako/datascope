@@ -29,10 +29,10 @@ class MockFilterProcessor(MockProcessor):
     def filter_individuals(self, individuals):
         results = []
         for individual in individuals:
-            if self.config.filter_odd and individual.get("number") % 2:
+            if self.config.include_odd and individual.get("number") % 2:
                 results.append(individual)
-            elif self.config.filter_even and not individual.get("number") % 2:
+            elif self.config.include_even and not individual.get("number") % 2:
                 results.append(individual)
-            elif not self.config.filter_odd and not self.config.filter_even:
+            elif self.config.include_odd and self.config.include_even:
                 results.append(individual)
         return results

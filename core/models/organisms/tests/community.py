@@ -177,5 +177,15 @@ class TestCommunityMock(CommunityTestMixin):
         self.skipTest("test with states")
 
     def test_manifestation(self):
-        print(self.complete.manifestation)
-        self.skipTest("not tested")
+        self.complete.config.include_odd = True
+        manifestation = self.complete.manifestation
+        self.assertEqual(len(manifestation), 2)
+        self.complete.config.include_even = True
+        manifestation = self.complete.manifestation
+        self.assertEqual(len(manifestation), 3)
+        self.complete.config.include_odd = False
+        manifestation = self.complete.manifestation
+        self.assertEqual(len(manifestation), 1)
+        self.complete.config.include_even = False
+        manifestation = self.complete.manifestation
+        self.assertEqual(len(manifestation), 0)
