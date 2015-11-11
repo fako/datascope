@@ -10,7 +10,9 @@ class Command(CommunityCommand):
 
     def handle_community(self, community, **options):
         community.config = {"async": False}
+        print("before save")
         community.save()
+        print("before grow")
         community.grow()
         print("Result:", community.kernel)
         print("Growth:", [growth.id for growth in community.growth_set.all()])
