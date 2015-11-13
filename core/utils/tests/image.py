@@ -163,3 +163,5 @@ class TestImageGrid(TestCase):
             self.fail("Image grid completed a grid that is impossible.")
         except CouldNotFillGrid:
             pass
+
+        self.skipTest("Test with panorama images at the border")

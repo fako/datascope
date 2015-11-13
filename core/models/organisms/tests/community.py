@@ -182,6 +182,8 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertEqual(self.instance.state, CommunityState.READY)
 
     def test_grow_sync(self):
+        self.instance.config.async = False
+        # self.instance.grow()
         self.skipTest("update test for sync flow")
 
     def test_manifestation(self):
