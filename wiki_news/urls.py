@@ -7,6 +7,6 @@ from wiki_news.models import WikiNewsCommunity
 
 
 urlpatterns = [
-    url(r'^wiki-algo-news/$', CommunityView.as_view(), {"community_class": WikiNewsCommunity}),
-    url(r'^wiki-algo-news/html/$', HtmlCommunityView.as_view(), {"community_class": WikiNewsCommunity})
+    url(r'^wiki-algo-news/service/(?P<path>.+)/$', CommunityView.as_view(), {"community_class": WikiNewsCommunity}),
+    url(r'^wiki-algo-news/html/(?P<path>.+)/$', HtmlCommunityView.as_view(), {"community_class": WikiNewsCommunity})
 ]
