@@ -1,5 +1,6 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 import six
+from django.utils.encoding import python_2_unicode_compatible
 
 import logging
 
@@ -39,6 +40,7 @@ CONTRIBUTE_TYPE_CHOICES = [
 ]
 
 
+@python_2_unicode_compatible
 class Growth(models.Model, ProcessorMixin):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
@@ -156,3 +158,9 @@ class Growth(models.Model, ProcessorMixin):
         Resource = get_any_model(self.config.resource)
         Type = ContentType.objects.get_for_model(self)
         return Resource.objects.filter(retainer_type__pk=Type.id, retainer_id=self.id)
+
+    def __str__(self):
+        return "{} growth for {}".format(
+            self.type,
+            self.community
+        )

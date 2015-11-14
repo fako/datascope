@@ -1,10 +1,14 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 import six
+from django.utils.encoding import python_2_unicode_compatible
 
 from collections import OrderedDict
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, ContentType
+
+from celery.result import AsyncResult
+from json_field import JSONField
 
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.models.organisms import Growth, Collective, Individual
@@ -12,6 +16,7 @@ from core.models.organisms.mixins import ProcessorMixin
 from core.models.user import DataScopeUser
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
+from core.tasks import manifest_community
 from core.exceptions import DSProcessUnfinished
 
 
@@ -26,6 +31,42 @@ COMMUNITY_STATE_CHOICES = [
 ]
 
 
+@python_2_unicode_compatible
+class Manifestation(models.Model):
+
+    community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
+    community_type = models.ForeignKey(ContentType, related_name="+")
+    community_id = models.PositiveIntegerField()
+    uri = models.CharField(max_length=255, db_index=True, default=None)
+    data = JSONField(null=True)
+    task = models.CharField(max_length=255, null=True)
+
+    def get_data(self):
+        if self.data:
+            return self.data
+        if self.task:
+            result = AsyncResult(self.task)
+            if not result.ready():
+                raise DSProcessUnfinished("Manifest processing is not done")
+            self.data = result.result
+            self.save()
+            return result.result
+        community_type = ContentType.objects.get_for_model(self.community)
+        if self.community.ASYNC_MANIFEST:
+            self.task = manifest_community.delay(community_type.id, self.community.id)
+            self.save()
+            raise DSProcessUnfinished("Manifest started processing")
+        else:
+            return manifest_community(community_type.id, self.community.id)
+
+    def __str__(self):
+        return "Manifestation {} for {}".format(
+            self.id,
+            self.community
+        )
+
+
+@python_2_unicode_compatible
 class Community(models.Model, ProcessorMixin):
     """
 
@@ -57,6 +98,7 @@ class Community(models.Model, ProcessorMixin):
 
     COMMUNITY_SPIRIT = OrderedDict()
     COMMUNITY_BODY = []
+    ASYNC_MANIFEST = False
     PUBLIC_CONFIG = {}
 
     @classmethod
@@ -233,6 +275,13 @@ class Community(models.Model, ProcessorMixin):
             else:
                 name += char
         return name
+
+    def __str__(self):
+        return "{} ({}, {})".format(
+            self.signature,
+            self.id,
+            self.state
+        )
 
     class Meta:
         abstract = True
