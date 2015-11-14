@@ -5,7 +5,7 @@ import json
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
 
-from core.models.organisms import Individual, Growth
+from core.models import Individual, Growth, Manifestation
 
 
 class IndividualInline(admin.StackedInline):
@@ -42,6 +42,17 @@ class GrowthAdmin(admin.ModelAdmin):
     list_display = ["type", "state", "config"]
 
 
+class ManifestationInline(GenericStackedInline):
+    model = Manifestation
+    fields = ("uri", "task", "data")
+    extra = 0
+    ct_field = "community_type"
+    ct_fk_field = "community_id"
+
+
 class CommunityAdmin(admin.ModelAdmin):
     list_display = ["__str__", "signature", "state", "views", "config"]
-    inlines = [GrowthInline]
+    inlines = (
+        GrowthInline,
+        ManifestationInline
+    )
