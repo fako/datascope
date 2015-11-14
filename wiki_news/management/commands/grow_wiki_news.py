@@ -16,11 +16,8 @@ class Command(GrowCommand):
     @staticmethod
     def clear_database():
         WikiNewsCommunity.objects.all().delete()
-        print("delete community")
         WikipediaRecentChanges.objects.all().delete()
-        print("delete recent changes")
         WikipediaListPages.objects.all().delete()
-        print("delete list pages")
 
     def handle_community(self, community, **options):
         today_at_midnight = (date.today() - date(1970, 1, 1)).total_seconds()
@@ -29,11 +26,8 @@ class Command(GrowCommand):
             "start_time": yesterday_at_midnight,
             "end_time": today_at_midnight
         }
-        print("starting command")
         super(Command, self).handle_community(community, **options)
 
     def handle(self, *args, **options):
-        print("before clear")
         self.clear_database()
-        print("after clear")
         super(Command, self).handle(*args, **options)

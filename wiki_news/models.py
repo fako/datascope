@@ -111,6 +111,10 @@ class WikiNewsCommunity(Community):
     def set_kernel(self):
         self.kernel = self.current_growth.output
 
+    def clean(self):
+        if not self.signature:
+            self.signature = "from:{}-till:{}".format(self.config.start_time, self.config.end_time)
+
     @property
     def manifestation(self):
         return super(WikiNewsCommunity, self).manifestation[:20]
