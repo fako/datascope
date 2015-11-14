@@ -52,9 +52,9 @@ class Manifestation(models.Model):
             if not result.ready():
                 raise DSProcessUnfinished("Manifest processing is not done")
             self.data = result.result
-            self.completed_at = datetime.utcnow()
+            self.completed_at = datetime.now()
             self.save()
-            return result.result
+            return self.data
         community_type = ContentType.objects.get_for_model(self.community)
         if self.community.ASYNC_MANIFEST:
             self.task = manifest_community.delay(community_type.id, self.community.id)
@@ -119,6 +119,7 @@ class Community(models.Model, ProcessorMixin):
         try:
             community = cls.objects.get(signature="&".join(signature))
             community.config = {key: value for key, value in six.iteritems(kwargs) if key in cls.PUBLIC_CONFIG}
+            community.save()
         except cls.DoesNotExist:
             community = cls(
                 signature="&".join(signature),
