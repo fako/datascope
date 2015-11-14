@@ -4,7 +4,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 
-from jsonfield import JSONField
+import json_field
 
 
 class OrganismIterator(object):
@@ -43,7 +43,7 @@ class Organism(models.Model):
     community_type = models.ForeignKey(ContentType, related_name="+")
     community_id = models.PositiveIntegerField()
 
-    schema = JSONField(default=None, null=False, blank=False)  # BUG: schema does not throw IntegrityError on None
+    schema = json_field.JSONField(default=None, null=False, blank=False)  # BUG: schema does not throw IntegrityError on None
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)

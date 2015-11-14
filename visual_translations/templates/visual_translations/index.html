@@ -1,0 +1,7 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block header %}
+    <p>{% trans "Search for a single word and see the canonical visuals for that word in different languages." %}</p>
+    {% include "core/components/search.html" %}
+{% endblock %}

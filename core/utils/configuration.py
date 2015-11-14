@@ -1,6 +1,7 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 # noinspection PyUnresolvedReferences
 from six.moves.urllib.parse import parse_qsl
+from django.utils.encoding import python_2_unicode_compatible
 
 import json
 import logging
@@ -8,7 +9,9 @@ import argparse
 from copy import copy
 
 from django.db.models import fields
+from django.forms import fields as form_fields
 from django.utils import six
+from django.core.exceptions import ValidationError
 
 
 log = logging.getLogger("datascope")
@@ -18,10 +21,13 @@ class ConfigurationNotFoundError(Exception):
     pass
 
 
+@python_2_unicode_compatible
 class ConfigurationType(object):
     """
-    This is the type for a ConfigurationProperty.
-
+    Instances of this type are configurations that can be serialized to JSON dicts for storage and transfer.
+    They can also pass on their configuration to other instances in a parent/child like relationship.
+    Upon initialization (which typically happens when application loads) defaults can be specified,
+    which then may get overridden at runtime (typically during requests).
     """
 
     _private_defaults = ["_private", "_defaults", "_namespace"]
@@ -29,7 +35,7 @@ class ConfigurationType(object):
 
     def __init__(self, defaults, namespace="", private=tuple()):
         """
-        Initiates the ConfigurationType by checking arguments and setting privates
+        Initiates the ConfigurationType by checking arguments and setting logically private attributes
 
         :param defaults: (dict) that should hold default configurations as items
         :param namespace: (string) prefix to search default configurations with
@@ -57,7 +63,7 @@ class ConfigurationType(object):
 
     def set_configuration(self, new):
         """
-        Will update any keys in new with corresponding attributes on self.
+        Will update any keys given through new with corresponding attributes on self.
 
         NB: Be careful with using _private, _namespace, _defaults and _global_prefix as configurations.
             They will override attributes that the ConfigurationType needs internally.
@@ -79,8 +85,10 @@ class ConfigurationType(object):
         This function tries to find configurations on self other than configurations set as direct attributes.
 
         It will first try to append a _ to the configuration to see if the configuration is protected/private.
-        Then it will prefix the configuration with self._namespace and see if it exists on the defaults object as an attribute.
-        If the configuration still isn't found it will prefix with self._global_prefix and look again for that as an attribute on defaults object.
+        Then it will prefix the configuration with self._namespace
+        and see if it exists on the defaults object as an attribute.
+        If the configuration still isn't found it will prefix with self._global_prefix
+        and look again for that as an attribute on defaults object.
         Finally it will raise a ConfigurationNotFoundError if the configuration is not there.
 
         NB: if you haven't set self._namespace it will default to self._global_prefix
@@ -110,7 +118,7 @@ class ConfigurationType(object):
         By default it will return all attributes except those that start with an underscore.
         You can include protected and private configurations through arguments
 
-        NB: It never returns domain attribute, because that attribute is the same for all config instances.
+        NB: It never returns the defaults attribute, because that attribute is the same for all instances.
 
         :param protected: (boolean) flag to include protected configurations
         :param private: (boolean) flag to include private configurations
@@ -152,9 +160,6 @@ class ConfigurationType(object):
 
     def __str__(self):
         return str(self.to_dict(protected=True))
-
-    def __unicode__(self):
-        return  unicode(self.to_dict(protected=True))
 
 
 class ConfigurationProperty(object):
@@ -205,12 +210,26 @@ class ConfigurationProperty(object):
             obj.__dict__[self._storage_attribute].set_configuration(new)
 
 
+class ConfigurationFormField(form_fields.CharField):
+    """
+    This form field correctly serializes the configuration when saving an (admin) form.
+    """
+    def to_python(self, value):
+        if isinstance(value, six.string_types):
+            try:
+                return json.loads(value)
+            except ValueError:
+                raise ValidationError("Enter valid JSON")
+        return super(ConfigurationFormField, self).to_python(value)
+
+
 class ConfigurationField(fields.TextField):
     """
-    This field creates a property of ConfigurationType on the model.
+    This field creates a property of ConfigurationType on models.
 
     NB: default that gets stored in the database is always an empty dictionary.
     """
+    form_class = ConfigurationFormField
 
     def __init__(self, config_defaults=None, namespace="", private=tuple(), default=None, *args, **kwargs):
         """
@@ -243,16 +262,41 @@ class ConfigurationField(fields.TextField):
         return json.loads(value)
 
     def to_python(self, value):
-        dictionary = json.loads(value)
-        return super(ConfigurationField, self).to_python(dictionary)
+        if isinstance(value, six.string_types):
+            try:
+                return json.loads(value)
+            except ValueError:
+                raise ValidationError("Enter valid JSON")
+        return super(ConfigurationField, self).to_python(value)
 
     def get_prep_value(self, value):
         if not isinstance(value, dict):
-            value = json.dumps(value.to_dict(protected=True, private=True))
+            value = json.dumps(value.to_dict(private=True, protected=True))
         return super(ConfigurationField, self).get_prep_value(value)
+
+    def value_from_object(self, obj):
+        value = super(ConfigurationField, self).value_from_object(obj)
+        if self.null and value is None:
+            return None
+        return json.dumps(value.to_dict(private=True, protected=True))
+
+    def formfield(self, **kwargs):
+        if "form_class" not in kwargs:
+            kwargs["form_class"] = self.form_class
+        field = super(ConfigurationField, self).formfield(**kwargs)
+        if not field.help_text:
+            field.help_text = "Enter valid JSON"
+        return field
 
 
 def load_config(defaults):
+    """
+    This decorator will turn the value of any keyword arguments named "config" into a ConfigurationType.
+    The decorated function will get the configuration as its first argument.
+
+    :param defaults: (dict) which should be used as default for inserted configuration.
+    :return:
+    """
 
     def wrap(func):
         def config_func(*args, **kwargs):
@@ -269,6 +313,11 @@ def load_config(defaults):
 
 
 class DecodeConfigAction(argparse.Action):
+    """
+    This class can be used as action for any argsparse command line option (like Django management command options).
+    It will parse a URL like parameter string into a dictionary. This dictionary can then be used to initialize
+    a configuration.
+    """
 
     def __call__(self, parser, namespace, values, option_string=None):
         values = dict(parse_qsl(values))

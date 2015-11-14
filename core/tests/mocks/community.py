@@ -65,6 +65,17 @@ class CommunityMock(Community):
         })
     ])
 
+    COMMUNITY_BODY = [
+        {
+            "process": "MockNumberProcessor.number_individuals",
+            "config": {}
+        },
+        {
+            "process": "MockFilterProcessor.filter_individuals",
+            "config": {}
+        },
+    ]
+
     def initial_input(self):
         return Individual.objects.create(
             properties={"test": "test"},

@@ -42,11 +42,14 @@ MOCK_CONFIGURATION = {
     "http_resource_continuation_limit": 1,
     "http_resource_interval_duration": 0,  # NB: milliseconds!
     "http_resource_concat_args_size": 0,
-    "http_resource_concat_args_symbol": "|"
+    "http_resource_concat_args_symbol": "|",
+    "mock_processor_include_odd": False,
+    "mock_processor_include_even": False,
 }
 
 
 PROCESS_CHOICE_LIST = [
     ("HttpResourceProcessor.fetch", "Fetch content from HTTP resource"),
     ("HttpResourceProcessor.fetch_mass", "Fetch content from multiple HTTP resources"),
+    ("ExtractProcessor.extract_from_resource", "Extract content from one or more resources"),
 ]

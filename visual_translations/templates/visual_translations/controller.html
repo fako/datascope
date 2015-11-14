@@ -1,0 +1,71 @@
+{% extends "core/base.html" %}
+{% load i18n static %}
+
+{% block theme-css %}
+    <link href="{% static "visual_translations/css/jquery-ui.min.css" %}" rel="stylesheet"/>
+    <link href="{% static "visual_translations/css/jquery-ui.theme.min.css" %}" rel="stylesheet"/>
+    <link href="{% static "visual_translations/css/knob.css" %}" rel="stylesheet"/>
+    <link href="{% static "visual_translations/css/controller.css" %}" rel="stylesheet"/>
+    <style>
+        /* Styling fed by Django */
+        .knob .top:after {
+            background: url('{% static "visual_translations/img/pointer.png" %}') no-repeat;
+        }
+        .arrow {
+            background: url('{% static "visual_translations/img/triangle.png" %}') no-repeat center center;
+        }
+        .arrow.active {
+            background: url('{% static "visual_translations/img/triangle-grey.png" %}') no-repeat center center;
+
+        }
+    </style>
+{% endblock %}
+
+{% block head-js %}
+    {{ block.super }}
+    <script>
+        window.VT = {};
+        var wsEndpointURI = new URI("{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast&publish-broadcast");
+        wsEndpointURI.hostname("{{ STATIC_IP }}");
+        VT.webSocketEndpoint = wsEndpointURI.toString();
+        VT.webSocketHeartbeat = {{ WS4REDIS_HEARTBEAT }};
+    </script>
+    <script type="text/javascript" src="{% static "js/ws4redis.js" %}"></script>
+    <script type="text/javascript" src="{% static "visual_translations/js/jquery-ui.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "visual_translations/js/jquery-ui-touch-punch.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "visual_translations/js/knob.jquery.js" %}"></script>
+    <script type="text/javascript" src="{% static "visual_translations/js/socket.js" %}"></script>
+{% endblock %}
+
+{% block body-js %}
+    <script src="{% static "visual_translations/js/controller.js" %}"></script>
+{% endblock %}
+
+
+{% block body %}
+
+    <section id="main" class="container-fluid">
+        <div class="row">
+            <div id="arrows" class="col-xs-5">
+                <div id="arrows-component">
+                    {% for index in "xxxxxxxx" %}
+                        <div class="arrow"></div>
+                    {% endfor %}
+                </div>
+
+            </div>
+            <div id="zoom" class="col-xs-2">
+                <div id="zoom-component"></div>
+            </div>
+            <div id="words" class="col-xs-5">
+                <div id="knob-component">
+                    <div id="control"></div>
+                    {% for word in words %}
+                        <div class="knobLabel">{{ word }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </section>
+
+{% endblock %}

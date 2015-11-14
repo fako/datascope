@@ -12,9 +12,10 @@ class CommunityCommand(BaseCommand):
     """
     Base command for Community centered commands
     """
+    community_model = ""
 
     def add_arguments(self, parser):
-        parser.add_argument('community', type=unicode)
+        parser.add_argument('community', type=unicode, nargs="?", default=self.community_model)
         parser.add_argument('-a', '--args', type=unicode, nargs="*", default="")
         parser.add_argument('-c', '--config', type=unicode, action=DecodeConfigAction, nargs="?", default={})
 

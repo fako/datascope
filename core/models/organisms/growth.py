@@ -1,15 +1,20 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 import six
 
+import logging
+
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 
 from datascope.configuration import PROCESS_CHOICE_LIST, DEFAULT_CONFIGURATION
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
-from core.exceptions import DSProcessError
+from core.exceptions import DSProcessError, DSNoContent
 from core.models.organisms import Individual, Collective
 from core.models.organisms.mixins import ProcessorMixin
+
+
+log = logging.getLogger("datascope")
 
 
 class GrowthState(object):
@@ -22,7 +27,7 @@ class GrowthState(object):
     RETRY = "Retry"
 
 GROWTH_STATE_CHOICES = [
-    (attr, value) for attr, value in six.iteritems(GrowthState.__dict__) if not attr.startswith("_")
+    (value, value) for attr, value in six.iteritems(GrowthState.__dict__) if not attr.startswith("_")
 ]
 
 
@@ -30,7 +35,7 @@ class ContributeType(object):
     APPEND = "Append"
 
 CONTRIBUTE_TYPE_CHOICES = [
-    (attr, value) for attr, value in six.iteritems(ContributeType.__dict__) if not attr.startswith("_")
+    (value, value) for attr, value in six.iteritems(ContributeType.__dict__) if not attr.startswith("_")
 ]
 
 
@@ -48,15 +53,15 @@ class Growth(models.Model, ProcessorMixin):
     )
 
     process = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST)
-    contribute = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST)
-    contribute_type = models.CharField(max_length=255, choices=CONTRIBUTE_TYPE_CHOICES)
+    contribute = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST, null=True, blank=True)
+    contribute_type = models.CharField(max_length=255, choices=CONTRIBUTE_TYPE_CHOICES, null=True, blank=True)
 
     input = GenericForeignKey(ct_field="input_type", fk_field="input_id")
-    input_type = models.ForeignKey(ContentType, related_name="+", null=True)
-    input_id = models.PositiveIntegerField(null=True)
+    input_type = models.ForeignKey(ContentType, related_name="+", null=True, blank=True)
+    input_id = models.PositiveIntegerField(null=True, blank=True)
     output = GenericForeignKey(ct_field="output_type", fk_field="output_id")
-    output_type = models.ForeignKey(ContentType, related_name="+")
-    output_id = models.PositiveIntegerField()
+    output_type = models.ForeignKey(ContentType, related_name="+", null=True, blank=True)
+    output_id = models.PositiveIntegerField(null=True, blank=True)
 
     result_id = models.CharField(max_length=255, null=True, blank=True)
     state = models.CharField(max_length=255, choices=GROWTH_STATE_CHOICES, default=GrowthState.NEW, db_index=True)
@@ -116,6 +121,8 @@ class Growth(models.Model, ProcessorMixin):
             scc, err = processor.results(result)
             if self.contribute_type == ContributeType.APPEND:
                 self.append_to_output(scc)
+            elif self.contribute is None:  # TODO: test
+                pass
             else:
                 raise AssertionError("Growth.finish did not act on contribute_type {}".format(self.contribute_type))
             for res in err:
@@ -129,7 +136,15 @@ class Growth(models.Model, ProcessorMixin):
         contribute_processor, callback = self.prepare_process(self.contribute)
         results = []
         for contribution in contributions:
-            results += callback(contribution)
+            try:
+                results += callback(contribution)
+            except DSNoContent as exc:
+                log.debug("No content for {} with id {}: {}".format(
+                    contribution.__class__.__name__,
+                    contribution.id,
+                    exc
+                ))
+                contribution.retain(self)
         self.output.update(results)
 
     def save(self, *args, **kwargs):

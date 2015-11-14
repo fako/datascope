@@ -7,7 +7,7 @@ from jsonschema.exceptions import ValidationError as SchemaValidationError
 from django.db import models
 from django.core.exceptions import ValidationError
 
-import jsonfield
+import json_field
 
 from core.models.organisms import Organism
 from core.utils.data import reach
@@ -16,7 +16,10 @@ from core.utils.data import reach
 class Individual(Organism):
 
     collective = models.ForeignKey('Collective', null=True)
-    properties = jsonfield.JSONField(default={})
+    properties = json_field.JSONField(default={})
+
+    identity = models.CharField(max_length=255, blank=True, null=True, db_index=True)
+    index = models.SmallIntegerField(blank=True, null=True)
 
     def __getitem__(self, item):
         return self.properties[item]
@@ -34,17 +37,11 @@ class Individual(Organism):
             raise ValidationError(
                 "An Individual can only work with a dict as data and got {} instead".format(type(data))
             )
-        pk = data.pop("ds_id", None)
 
         try:
             jsonschema.validate(data, schema)
         except SchemaValidationError as exc:
             raise ValidationError(exc)
-
-        if pk and not isinstance(pk, six.integer_types):
-            raise ValidationError("The id of an individual needs to be an integer not {}.".format(type(spirit)))
-        elif pk:
-            data["ds_id"] = pk
 
         return data
 
@@ -73,13 +70,13 @@ class Individual(Organism):
 
         :return: Dictionary filled with properties.
         """
-        meta = {
-            "ds_id": self.id,
-        }
         return dict(
             {key: value for key, value in six.iteritems(self.properties) if not key.startswith('_')},
-            **meta
         )
+
+    @property
+    def json_content(self):
+        return self.get_properties_json()
 
     def output(self, *args):
         if len(args) > 1:
@@ -95,3 +92,7 @@ class Individual(Organism):
             return {key: self.output(value) for key, value in six.iteritems(frm)}
         else:
             raise AssertionError("Expected a string, list or dict as argument got {} instead".format(type(frm)))
+
+    def clean(self):
+        if self.collective:
+            self.collective.influence(self)

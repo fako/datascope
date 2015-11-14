@@ -1,0 +1,78 @@
+body {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: table;
+    width: 100%;
+    height: 100%;
+}
+#main {
+    display: table-cell;
+    vertical-align: middle;
+}
+.no-gutter.row,
+.no-gutter.container,
+.no-gutter.container-fluid{
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.no-gutter>[class^="col-"]{
+  padding-left: 0;
+  padding-right: 0;
+}
+
+#words {
+    /*background-color: red;*/
+}
+
+#arrows {
+    /*background-color: purple;*/
+}
+#arrows button {
+    display: block;
+    margin: 0 auto;
+}
+
+#zoom {
+    /*background-color: #ffff00;*/
+    min-height: 500px;
+}
+#zoom-component {
+    position: relative;
+    top: 80px;
+    margin: 0 auto;
+    height: 340px;
+}
+#zoom-component:before {
+    font-size: 72px;
+    content: '+';
+    position: relative;
+    top: -100px;
+    left: -14px;
+}
+#zoom-component:after {
+    font-size: 72px;
+    content: '\2212';
+    position: relative;
+    bottom: -220px;
+    left: -14px;
+}
+.ui-slider .ui-slider-handle {
+    width: 72px;
+    height: 2em;
+    left: -2em;
+    background: #000;
+    border: none;
+    outline: none;
+}
+.ui-slider .ui-slider-handle.ui-state-active {
+    background: lightgray;
+}
+.ui-widget-content {
+    background: #000;
+    border: none;
+}
+

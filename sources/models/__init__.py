@@ -8,3 +8,6 @@ from .wikipedia.pages import WikipediaListPages
 from .wikipedia.translations import WikipediaTranslate
 
 from .google.images import GoogleImage
+from .google.translations import GoogleTranslate
+
+from .downloads import ImageDownload

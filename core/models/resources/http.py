@@ -5,10 +5,13 @@ import json
 from copy import copy, deepcopy
 
 import requests
+from OpenSSL.SSL import SysCallError
 import jsonschema
 from jsonschema.exceptions import ValidationError as SchemaValidationError
 from urlobject import URLObject
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -16,7 +19,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
-import jsonfield
+import json_field
 
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.utils import configuration
@@ -44,10 +47,10 @@ class HttpResource(models.Model):
     )
 
     # Getting data
-    request = jsonfield.JSONField(default=None)
+    request = json_field.JSONField(default=None)
 
     # Storing data
-    head = jsonfield.JSONField(default=None)
+    head = json_field.JSONField(default=None)
     body = models.TextField(default=None)
     status = models.PositiveIntegerField(default=None)
 
@@ -147,7 +150,7 @@ class HttpResource(models.Model):
         :return: content_type, data
         """
         if self.success:
-            content_type = self.head["content-type"].split(';')[0]
+            content_type = self.head.get("content-type", "unknown/unknown").split(';')[0]
             if content_type == "application/json":
                 return content_type, json.loads(self.body)
             elif content_type == "text/html":
@@ -292,7 +295,7 @@ class HttpResource(models.Model):
         return {}
 
     def create_next_request(self):
-        if not self.next_parameters():
+        if not self.success or not self.next_parameters():
             return None
         url = URLObject(self.request.get("url"))
         params = url.query.dict
@@ -327,8 +330,23 @@ class HttpResource(models.Model):
             data=data
         )
         preq = request.prepare()
-        response = self.session.send(preq, proxies=settings.REQUESTS_PROXIES, verify=settings.REQUESTS_VERIFY)
 
+        try:
+            response = self.session.send(
+                preq,
+                proxies=settings.REQUESTS_PROXIES,
+                verify=settings.REQUESTS_VERIFY,
+                timeout=self.timeout
+            )
+        except (requests.ConnectionError, IOError, SysCallError):
+            self.set_error(502)
+            return
+        except requests.Timeout:
+            self.set_error(504)
+            return
+        self._update_from_response(response)
+
+    def _update_from_response(self, response):
         self.head = dict(response.headers)
         self.status = response.status_code
         self.body = unicode(
@@ -357,6 +375,7 @@ class HttpResource(models.Model):
     def __init__(self, *args, **kwargs):
         super(HttpResource, self).__init__(*args, **kwargs)
         self.session = kwargs.get("session")
+        self.timeout = kwargs.get("timeout", 30)  # TODO: test this
 
     def clean(self):
         if self.request and not self.uri:
@@ -365,6 +384,8 @@ class HttpResource(models.Model):
         if self.request and not self.data_hash:
             uri_request = self.request_without_auth()
             self.data_hash = HttpResource.hash_from_data(uri_request.get("data"))
+        if self.uri > 255:  # TODO: test this
+            self.uri = self.uri[:255]
 
     #######################################################
     # CONVENIENCE
@@ -383,6 +404,77 @@ class HttpResource(models.Model):
         hsh = hashlib.sha1()
         hsh.update(json.dumps(data))
         return hsh.hexdigest()
+
+    def set_error(self, status):  # TODO: test
+        self.head = {}
+        self.body = ""
+        self.status = status
+
+    class Meta:
+        abstract = True
+
+
+class BrowserResource(HttpResource):  # TODO: write tests
+
+    def _send(self):
+        # TODO: handle sessions that are set by the context
+        # TODO: handle POST
+        # TODO: handle set headers
+        assert self.request and isinstance(self.request, dict), \
+            "Trying to make request before having a valid request dictionary."
+
+        dcap = dict(DesiredCapabilities.PHANTOMJS)
+        dcap["phantomjs.page.settings.userAgent"] = (
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/53 "
+            "(KHTML, like Gecko) Chrome/15.0.87"
+        )
+        browser = webdriver.PhantomJS(
+            desired_capabilities=dcap,
+            service_args=['--ignore-ssl-errors=true'],
+            service_log_path=settings.PATH_TO_LOGS + "ghostdriver.log"
+        )
+
+        url = self.request.get("url")
+        browser.get(url)
+
+        self._update_from_response(browser)
+
+    def _update_from_response(self, response):
+        self.head = dict()
+        self.status = 1
+        self.body = response.page_source
+        self.soup = BeautifulSoup(self.body)
+
+    @property
+    def success(self):
+        """
+        This needs to be checked per resource based on the returned HTML. Status codes are not available:
+        https://code.google.com/p/selenium/issues/detail?id=141
+
+        :return: Boolean indicating success
+        """
+        return self.status == 1
+
+    def transform(self, soup):
+        """
+
+        :return:
+        """
+        raise NotImplementedError()
+
+    @property
+    def content(self):
+        """
+
+        :return: content_type, data
+        """
+        if self.success:
+            return "application/json", self.transform(self.soup)
+        return None, None
+
+    def __init__(self, *args, **kwargs):
+        super(HttpResource, self).__init__(*args, **kwargs)
+        self.soup = BeautifulSoup(self.body if self.body else "")
 
     class Meta:
         abstract = True

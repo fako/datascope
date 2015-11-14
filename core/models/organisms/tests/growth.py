@@ -21,7 +21,6 @@ class TestGrowth(TestProcessorMixin):
         super(TestGrowth, cls).setUpClass()
         cls.expected_append_output = [
             {
-                "ds_id": index + 6,
                 "context": "nested value",
                 "value": "nested value {}".format(index % 3)
             }
@@ -29,7 +28,6 @@ class TestGrowth(TestProcessorMixin):
         ]
         cls.expected_finished_output = [
             {
-                "ds_id": 2,
                 "context": "nested value",
                 "value": "nested value 0"
             }

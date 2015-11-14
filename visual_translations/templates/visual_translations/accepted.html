@@ -1,0 +1,39 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block body-js %}
+    <script type="text/javascript">
+        $(function pollService() {
+
+            var uri = new URI(location);
+            var segments = uri.segment(); segments.pop();  // removes empty string due to trailing slash
+            var search = segments.pop();
+            var service = URI.expand(uri.pathname() + "../../service/{search}/", {"search": search}).normalizePathname();
+
+            $.getJSON(service, uri.search(true), function (data, textStatus, jqXHR) {
+
+                if (jqXHR.status === 202) {
+                    $('#wait-text').append('.');
+                    setTimeout(pollService, 800);
+                } else {
+                    window.location = window.location;
+                }
+            });
+
+        });
+
+        $(function handleAjaxErrors() {
+
+            $(document).ajaxError(function( event, jqxhr, settings, thrownError ) {
+                console.error("AJAX error");
+                location = location;
+            });
+
+        })
+    </script>
+{% endblock %}
+
+{% block body %}
+    <p>{% trans "Your query is being processed. Please wait." %}</p>
+    <p id="wait-text">...</p>
+{% endblock %}

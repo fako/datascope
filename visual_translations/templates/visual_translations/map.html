@@ -1,0 +1,274 @@
+{% extends "core/base.html" %}
+{% load bootstrap_tags i18n static %}
+
+{% block head-js %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static "js/ws4redis.js" %}"></script>
+{% endblock %}
+
+{% block theme-css %}
+    <style>
+
+        body {
+            /*position: fixed;*/
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            margin: 0;
+            overflow: scroll;
+        }
+
+        .large .subunit.NLX { fill: url("#L_nl_NL"); }
+        .large .subunit.DEU { fill: url("#L_de_DE"); }
+        .large .subunit.ITX, .large .subunit.ITY, .large .subunit.ITD  { fill: url("#L_it_IT"); }
+        .large .subunit.ESX, .large .subunit.ESI  { fill: url("#L_es_ES"); }
+        .large .subunit.PRX { fill: url("#L_pt_PT"); }
+        .large .subunit.HRV { fill: url("#L_hr_HR"); }
+        .large .subunit.SVN { fill: url("#L_sl_SI"); }
+        .large .subunit.CZE { fill: url("#L_cs_CZ"); }
+        .large .subunit.POL { fill: url("#L_pl_PL"); }
+        .large .subunit.HUN { fill: url("#L_hu_HU"); }
+        .large .subunit.ROU { fill: url("#L_ro_RO"); }
+        .large .subunit.BGR { fill: url("#L_bg_BG"); }
+        .large .subunit.GRC { fill: url("#L_el_GR"); }
+        .large .subunit.DNK { fill: url("#L_da_DK"); }
+        .large .subunit.FIN { fill: url("#L_fi_FI"); }
+        .large .subunit.EST { fill: url("#L_et_EE"); }
+        .large .subunit.LVA { fill: url("#L_lv_LV"); }
+        .large .subunit.LTU { fill: url("#L_lt_LT"); }
+        .large .subunit.LUX { fill: url("#L_fr_LU"); }
+        .large .subunit.FXX, .large .subunit.FXC { fill: url("#L_fr_FR"); }
+        .large .subunit.AUT { fill: url("#L_de_AT"); }
+        .large .subunit.CYP { fill: url("#L_el_CY"); }
+        .large .subunit.BWR { fill: url("#L_fr_BE"); }  /* Wallonie */
+        .large .subunit.BFR, .large .subunit.BCR { fill: url("#L_nl_BE"); } /* Vlaanderen + Brussel */
+        .large .subunit.SWE { fill: url("#L_sv_SE"); }
+        .large .subunit.ENG, .large .subunit.SCT, .large .subunit.WLS, .large .subunit.NIR { fill: url("#L_en_GB"); }
+        .large .subunit.IRL { fill: url("#L_en_IR"); }
+        .large .subunit.SVK { fill: url("#L_sk_SK"); }
+
+        .xlarge .subunit.NLX { fill: url("#XL_nl_NL"); }
+        .xlarge .subunit.DEU { fill: url("#XL_de_DE"); }
+        .xlarge .subunit.ITX, .xlarge .subunit.ITY, .xlarge .subunit.ITD  { fill: url("#XL_it_IT"); }
+        .xlarge .subunit.ESX, .xlarge .subunit.ESI  { fill: url("#XL_es_ES"); }
+        .xlarge .subunit.PRX { fill: url("#XL_pt_PT"); }
+        .xlarge .subunit.HRV { fill: url("#XL_hr_HR"); }
+        .xlarge .subunit.SVN { fill: url("#XL_sl_SI"); }
+        .xlarge .subunit.CZE { fill: url("#XL_cs_CZ"); }
+        .xlarge .subunit.POL { fill: url("#XL_pl_PL"); }
+        .xlarge .subunit.HUN { fill: url("#XL_hu_HU"); }
+        .xlarge .subunit.ROU { fill: url("#XL_ro_RO"); }
+        .xlarge .subunit.BGR { fill: url("#XL_bg_BG"); }
+        .xlarge .subunit.GRC { fill: url("#XL_el_GR"); }
+        .xlarge .subunit.DNK { fill: url("#XL_da_DK"); }
+        .xlarge .subunit.FIN { fill: url("#XL_fi_FI"); }
+        .xlarge .subunit.EST { fill: url("#XL_et_EE"); }
+        .xlarge .subunit.LVA { fill: url("#XL_lv_LV"); }
+        .xlarge .subunit.LTU { fill: url("#XL_lt_LT"); }
+        .xlarge .subunit.LUX { fill: url("#XL_fr_LU"); }
+        .xlarge .subunit.FXX, .xlarge .subunit.FXC { fill: url("#XL_fr_FR"); }
+        .xlarge .subunit.AUT { fill: url("#XL_de_AT"); }
+        .xlarge .subunit.CYP { fill: url("#XL_el_CY"); }
+        .xlarge .subunit.BWR { fill: url("#XL_fr_BE"); }  /* Wallonie */
+        .xlarge .subunit.BFR, .xlarge .subunit.BCR { fill: url("#XL_nl_BE"); } /* Vlaanderen + Brussel */
+        .xlarge .subunit.SWE { fill: url("#XL_sv_SE"); }
+        .xlarge .subunit.ENG, .xlarge .subunit.SCT, .xlarge .subunit.WLS, .xlarge .subunit.NIR { fill: url("#XL_en_GB"); }
+        .xlarge .subunit.IRL { fill: url("#XL_en_IR"); }
+        .xlarge .subunit.SVK { fill: url("#XL_sk_SK"); }
+
+        .subunit.NLX { fill: url("#S_nl_NL"); }
+        .subunit.DEU { fill: url("#S_de_DE"); }
+        .subunit.ITX, .subunit.ITY, .subunit.ITD  { fill: url("#S_it_IT"); }
+        .subunit.ESX, .subunit.ESI  { fill: url("#S_es_ES"); }
+        .subunit.PRX { fill: url("#S_pt_PT"); }
+        .subunit.HRV { fill: url("#S_hr_HR"); }
+        .subunit.SVN { fill: url("#S_sl_SI"); }
+        .subunit.CZE { fill: url("#S_cs_CZ"); }
+        .subunit.POL { fill: url("#S_pl_PL"); }
+        .subunit.HUN { fill: url("#S_hu_HU"); }
+        .subunit.ROU { fill: url("#S_ro_RO"); }
+        .subunit.BGR { fill: url("#S_bg_BG"); }
+        .subunit.GRC { fill: url("#S_el_GR"); }
+        .subunit.DNK { fill: url("#S_da_DK"); }
+        .subunit.FIN { fill: url("#S_fi_FI"); }
+        .subunit.EST { fill: url("#S_et_EE"); }
+        .subunit.LVA { fill: url("#S_lv_LV"); }
+        .subunit.LTU { fill: url("#S_lt_LT"); }
+        .subunit.LUX { fill: url("#S_fr_LU"); }
+        .subunit.FXX, .subunit.FXC { fill: url("#S_fr_FR"); }
+        .subunit.AUT { fill: url("#S_de_AT"); }
+        .subunit.CYP { fill: url("#S_el_CY"); }
+        .subunit.BWR { fill: url("#S_fr_BE"); }  /* Wallonie */
+        .subunit.BFR, .subunit.BCR { fill: url("#S_nl_BE"); } /* Vlaanderen + Brussel */
+        .subunit.SWE { fill: url("#S_sv_SE"); }
+        .subunit.ENG, .subunit.SCT, .subunit.WLS, .subunit.NIR { fill: url("#S_en_GB"); }
+        .subunit.IRL { fill: url("#S_en_IR"); }
+        .subunit.SVK { fill: url("#S_sk_SK"); }
+
+        .subunit-boundary {
+            fill: none;
+            stroke: #000;
+            stroke-width: 2px;
+            stroke-linejoin: round;
+        }
+        .outer-boundary {
+            fill: none;
+            stroke: #000;
+            stroke-width: 2px;
+            stroke-linejoin: round;
+        }
+        .large .subunit-boundary, .large .outer-boundary {
+            stroke-width: 5px;
+        }
+        .xlarge .subunit-boundary, .xlarge .outer-boundary {
+            stroke-width: 5px;
+        }
+
+        .subunit-boundary.ENG {
+            stroke: none;
+            fill: none;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: scroll !important;
+        }
+        body::-webkit-scrollbar { width: 0 !important }
+
+    </style>
+{% endblock %}
+
+{% block body-js %}
+    <script>
+        // GLOBAL INIT FOR VISUAL TRANSLATION RELATED JS
+        window.VT = {};
+        VT.zoomFactors = {
+            "small": 1,
+            "large": 5,
+            "xlarge": 20
+        };
+        VT.functions = {
+            getParameterByName: function (name) {
+                name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+                var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                    results = regex.exec(location.search);
+                return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+            },
+            getActiveWord: function() {
+                var current_url = new URI(window.location);
+                var path = current_url.pathname().split('/');
+                return path[path.length-2];
+            },
+            getActiveZoom: function() {
+                return this.getParameterByName("zoom") || "small";
+            },
+            setDocument: function(word, zoom) {
+
+                // Get the vars
+                var current_url = new URI(window.location).removeSearch("x-offset", "y-offset");
+                var params = URI.parseQuery(current_url.query());
+                var current_zoom = params["zoom"];
+                params["zoom"] = zoom;
+                var path = current_url.pathname().split('/');
+                path[path.length-2] = word;
+
+                var new_url = current_url.clone().pathname(path.join("/")).setQuery(params);
+                if(!current_url.equals(new_url)) {
+                    $win = $(window);
+{#                        console.log(current_zoom);#}
+{#                        console.log(VT.zoomFactors);#}
+{#                        console.log(zoom);#}
+                        var xCenter = ($win.scrollLeft() + ($win.width() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
+                        var yCenter = ($win.scrollTop() + ($win.height() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
+                        params["x-offset"] = xCenter - $win.width() / 2;
+                        params["y-offset"] = yCenter - $win.height() / 2;
+                    window.location = new_url.setQuery(params).toString();
+                }
+                return;
+
+            },
+            scrollDocument: function (command) {
+                var $document = $(document);
+                var scrollDelta = 20, top, left;
+                switch(command) {
+                    case "top-left":
+                        top = $document.scrollTop();
+                        left = $document.scrollLeft();
+                        $document.scrollTop(top - scrollDelta);
+                        $document.scrollLeft(left - scrollDelta);
+                        break;
+                    case "top":
+                        top = $document.scrollTop();
+                        $document.scrollTop(top - scrollDelta);
+                        break;
+                    case "top-right":
+                        top = $document.scrollTop();
+                        left = $document.scrollLeft();
+                        $document.scrollTop(top - scrollDelta);
+                        $document.scrollLeft(left + scrollDelta);
+                        break;
+                    case "left":
+                        left = $document.scrollLeft();
+                        $document.scrollLeft(left - scrollDelta);
+                        break;
+                    case "right":
+                        left = $document.scrollLeft();
+                        $document.scrollLeft(left + scrollDelta);
+                        break;
+                    case "bottom-left":
+                        top = $document.scrollTop();
+                        left = $document.scrollLeft();
+                        $document.scrollTop(top + scrollDelta);
+                        $document.scrollLeft(left - scrollDelta);
+                        break;
+                    case "bottom":
+                        top = $document.scrollTop();
+                        $document.scrollTop(top + scrollDelta);
+                        break;
+                    case "bottom-right":
+                        top = $document.scrollTop();
+                        left = $document.scrollLeft();
+                        $document.scrollTop(top + scrollDelta);
+                        $document.scrollLeft(left + scrollDelta);
+                        break;
+                    default:
+                        throw "Invalid command to scroll document: " + command;
+                }
+            }
+        };
+        var wsEndpointURI = new URI("{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast&publish-broadcast");
+        wsEndpointURI.hostname("{{ STATIC_IP }}");
+
+        VT.zoomLevel = VT.functions.getParameterByName("zoom") || "small";
+        VT.xOffset = VT.functions.getParameterByName("x-offset");
+        VT.yOffset = VT.functions.getParameterByName("y-offset");
+        VT.webSocketEndpoint = wsEndpointURI.toString();
+        VT.webSocketHeartbeat = {{ WS4REDIS_HEARTBEAT }};
+        VT.topoJSONFile = "{% static region_topo_json %}";
+    </script>
+    <script src="{% static "visual_translations/js/d3.v3.min.js" %}"></script>
+    <script src="{% static "visual_translations/js/topojson.min.js" %}"></script>
+    <script src="{% static "visual_translations/js/map.js" %}"></script>
+    <script src="{% static "visual_translations/js/socket.js" %}"></script>
+{% endblock %}
+
+{% block body %}
+    <svg id="patterns" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink">
+        <defs>
+            {% for locale in locales %}
+                <pattern id="XL_{{ locale.locale }}" patternUnits="userSpaceOnUse" width="{{ locale.grid.width_xl }}" height="{{ locale.grid.height_xl }}">
+                    <image xlink:href="{{ MEDIA_URL }}{{ locale.xlarge_image_file }}" x="0" y="0" width="{{ locale.grid.width_xl }}" height="{{ locale.grid.height_xl }}"/>
+                </pattern>
+                <pattern id="L_{{ locale.locale }}" patternUnits="userSpaceOnUse" width="{{ locale.grid.width_2 }}" height="{{ locale.grid.height_2 }}">
+                    <image xlink:href="{{ MEDIA_URL }}{{ locale.large_image_file }}" x="0" y="0" width="{{ locale.grid.width_2 }}" height="{{ locale.grid.height_2 }}"/>
+                </pattern>
+                <pattern id="S_{{ locale.locale }}" patternUnits="userSpaceOnUse" width="{{ locale.grid.width_20 }}" height="{{ locale.grid.height_20 }}">
+                    <image xlink:href="{{ MEDIA_URL }}{{ locale.small_image_file }}" x="0" y="0" width="{{ locale.grid.width_20 }}" height="{{ locale.grid.height_20 }}"/>
+                </pattern>
+            {% endfor %}
+        </defs>
+    </svg>
+{% endblock %}

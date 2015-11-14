@@ -16,3 +16,6 @@ form {
 .people-suggestions-result {
     margin-bottom: 15px;
 }
+.col-md-1 {
+    overflow: hidden;
+}

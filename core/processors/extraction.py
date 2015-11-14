@@ -1,11 +1,16 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 import six
 
+import logging
 from copy import copy
 
 from datascope.configuration import DEFAULT_CONFIGURATION
+from core.exceptions import DSNoContent
 from core.utils.configuration import ConfigurationProperty
 from core.utils.data import reach
+
+
+log = logging.getLogger("datascope")
 
 
 class ExtractProcessor(object):
@@ -60,6 +65,9 @@ class ExtractProcessor(object):
         nodes = reach(self._at, data)
         if isinstance(nodes, dict):
             nodes = six.itervalues(nodes)
+
+        if nodes is None:
+            raise DSNoContent("Found no nodes at {}".format(self._at))
 
         results = []
         for node in nodes:

@@ -22,6 +22,10 @@ class OrganismAdmin(admin.ModelAdmin):
     pretty_content.short_description = "Content"
 
 
+class IndividualAdmin(OrganismAdmin):
+    search_fields = ["properties"]
+
+
 class CollectiveAdmin(OrganismAdmin):
     inlines = [IndividualInline]
 

@@ -12,6 +12,7 @@ from core.models.organisms.mixins import ProcessorMixin
 from core.models.user import DataScopeUser
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
+from core.exceptions import DSProcessUnfinished
 
 
 class CommunityState(object):
@@ -19,10 +20,9 @@ class CommunityState(object):
     ASYNC = "Asynchronous"
     SYNC = "Synchronous"
     READY = "Ready"
-    EXPAND = "Expand"
 
 COMMUNITY_STATE_CHOICES = [
-    (attr, value) for attr, value in six.iteritems(CommunityState.__dict__) if not attr.startswith("_")
+    (value, value) for attr, value in six.iteritems(CommunityState.__dict__) if not attr.startswith("_")
 ]
 
 
@@ -44,8 +44,8 @@ class Community(models.Model, ProcessorMixin):
 
     current_growth = models.ForeignKey('Growth', null=True)
     kernel = GenericForeignKey(ct_field="kernel_type", fk_field="kernel_id")
-    kernel_type = models.ForeignKey(ContentType, null=True)
-    kernel_id = models.PositiveIntegerField(null=True)
+    kernel_type = models.ForeignKey(ContentType, null=True, blank=True)
+    kernel_id = models.PositiveIntegerField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
@@ -66,6 +66,7 @@ class Community(models.Model, ProcessorMixin):
             for key, value in six.iteritems(kwargs)
             if key in cls.PUBLIC_CONFIG and not key.startswith("$")
         ]
+        signature = filter(bool, signature)
         signature.sort()
         created = False
         try:
@@ -106,7 +107,10 @@ class Community(models.Model, ProcessorMixin):
             sch = growth_config["schema"]
             cnf = growth_config["config"]
             prc = growth_config["process"]
-            cont, con = growth_config["contribute"].split(":")
+            if growth_config["contribute"]:
+                cont, con = growth_config["contribute"].split(":")
+            else:
+                cont, con = None, None
             inp = growth_config["input"]
             out = growth_config["output"]
             if inp is not None and inp.startswith("@"):
@@ -118,7 +122,7 @@ class Community(models.Model, ProcessorMixin):
                 inp = grw.output
             elif inp is None:
                 inp = self.initial_input(*args)
-            if out.startswith("@"):
+            if out is not None and out.startswith("@"):
                 grw = self.growth_set.filter(type=out[1:]).last()
                 if grw is None:
                     raise AssertionError(
@@ -177,7 +181,7 @@ class Community(models.Model, ProcessorMixin):
             return False
 
         result = None
-        if self.state in [CommunityState.NEW, CommunityState.EXPAND]:
+        if self.state in [CommunityState.NEW]:
             self.state = CommunityState.ASYNC if self.config.async else CommunityState.SYNC
             self.setup_growth(*args)
             self.current_growth = self.next_growth()
@@ -202,7 +206,7 @@ class Community(models.Model, ProcessorMixin):
             self.save()
 
             if self.state == CommunityState.ASYNC:
-                return False
+                raise DSProcessUnfinished("Community starts another Growth.")
 
     @property
     def manifestation(self):
@@ -219,7 +223,7 @@ class Community(models.Model, ProcessorMixin):
 
     @classmethod
     def get_name(cls):
-        word_separator = '-'
+        word_separator = '_'
         class_name = cls.__name__
         class_name = class_name.replace('Community', '')
         name = ''

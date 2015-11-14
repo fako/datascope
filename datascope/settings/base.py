@@ -16,7 +16,9 @@ REQUESTS_VERIFY = True
 REQUESTS_PROXIES_ENABLED = {
     "http": "localhost:8888"
 }
-MAX_BATCH_SIZE = 999
+
+MAX_BATCH_SIZE = 1000
+PATH_TO_LOGS = PATH_TO_PROJECT + "system/logs/"
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -32,6 +34,7 @@ INSTALLED_APPS = (
     # 3rd party
     'djcelery',
     'rest_framework',
+    'ws4redis',
     # Main app
     'datascope',
     # Framework apps
@@ -109,22 +112,22 @@ LOCALE_PATHS = (
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = SERVER_ROOT + 'media/' + PROJECT_NAME + '/'
+MEDIA_ROOT = PATH_TO_PROJECT + 'system/files/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = '/media/' + PROJECT_NAME + '/'
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = SERVER_ROOT + 'static/' + PROJECT_NAME + '/'
+STATIC_ROOT = PATH_TO_PROJECT + 'system/files/static/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/' + PROJECT_NAME + '/'
+STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
@@ -145,6 +148,18 @@ STATICFILES_FINDERS = (
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.contrib.auth.context_processors.auth",
+    "django.template.context_processors.debug",
+    "django.template.context_processors.i18n",
+    "django.template.context_processors.media",
+    "django.template.context_processors.static",
+    "django.template.context_processors.tz",
+    "django.contrib.messages.context_processors.messages",
+    'ws4redis.context_processors.default',
+    'core.templatetags.template_context.core_context',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -209,6 +224,8 @@ LOGGING = {
     }
 }
 
+TEST_RUNNER = "core.tests.runner.DataScopeDiscoverRunner"
+
 REST_FRAMEWORK = {
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
     #'DEFAULT_PAGINATION_CLASS': 'core.views.content.ContentPagination',
@@ -223,6 +240,13 @@ CELERY_RESULT_BACKEND = "djcelery.backends.database.DatabaseBackend"
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['application/json']
+
+# Websockets
+WEBSOCKET_URL = '/ws/'
+WS4REDIS_PREFIX = 'ws'
+WSGI_APPLICATION = 'ws4redis.django_runserver.application'
+WS4REDIS_EXPIRE = 0
+WS4REDIS_HEARTBEAT = '--heartbeat--'
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.fakoberkers.nl"

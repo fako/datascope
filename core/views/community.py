@@ -92,7 +92,15 @@ class HtmlCommunityView(View):
             return response.data
         return None
 
-    def get(self, request, community_class, path="", *args, **kwargs):
+    def get(self, request, community_class, path=None, *args, **kwargs):
+        # Index request
+        if path is None:
+            return render_to_response(
+                "{}/{}".format(community_class.get_name(), HtmlCommunityView.INDEX),
+                {},
+                RequestContext(request)
+            )
+        # Search request
         api_response = CommunityView().get(request, community_class, path, *args, **kwargs)
         template_context = {
             'self_reverse': community_class.get_name() + '-plain',
