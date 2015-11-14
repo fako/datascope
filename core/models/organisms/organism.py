@@ -64,7 +64,7 @@ class Organism(models.Model):
 
     @property
     def url(self):
-        raise NotImplementedError
+        raise NotImplementedError()
 
     def __str__(self):
         return "{} {}".format(self.__class__.__name__, self.id)
