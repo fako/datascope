@@ -103,6 +103,7 @@ class Community(models.Model, ProcessorMixin):
     COMMUNITY_SPIRIT = OrderedDict()
     COMMUNITY_BODY = []
     ASYNC_MANIFEST = False
+    INPUT_THROUGH_PATH = True
     PUBLIC_CONFIG = {}
 
     @classmethod

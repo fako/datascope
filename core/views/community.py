@@ -113,7 +113,7 @@ class HtmlCommunityView(View):
 
     def get(self, request, community_class, path=None, *args, **kwargs):
         # Index request
-        if path is None:
+        if path is None and community_class.INPUT_THROUGH_PATH:
             return render_to_response(
                 "{}/{}".format(community_class.get_name(), HtmlCommunityView.INDEX),
                 {},

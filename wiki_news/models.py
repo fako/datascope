@@ -64,6 +64,7 @@ class WikiNewsCommunity(Community):
         }
     ]
     ASYNC_MANIFEST = True
+    INPUT_THROUGH_PATH = False
 
     PUBLIC_CONFIG = {
         "$revision_count": 1,
