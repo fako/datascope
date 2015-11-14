@@ -63,6 +63,7 @@ class WikiNewsCommunity(Community):
             "config": {}
         }
     ]
+    ASYNC_MANIFEST = True
 
     PUBLIC_CONFIG = {
         "$revision_count": 1,
