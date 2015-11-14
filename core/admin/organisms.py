@@ -44,7 +44,8 @@ class GrowthAdmin(admin.ModelAdmin):
 
 class ManifestationInline(GenericStackedInline):
     model = Manifestation
-    fields = ("uri", "task", "data")
+    readonly_fields = ("created_at", "completed_at")
+    fields = ("uri", "created_at", "completed_at", "task", "data")
     extra = 0
     ct_field = "community_type"
     ct_fk_field = "community_id"

@@ -3,6 +3,7 @@ import six
 from django.utils.encoding import python_2_unicode_compatible
 
 from collections import OrderedDict
+from datetime import datetime
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, ContentType
@@ -40,6 +41,8 @@ class Manifestation(models.Model):
     uri = models.CharField(max_length=255, db_index=True, default=None)
     data = JSONField(null=True)
     task = models.CharField(max_length=255, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
 
     def get_data(self):
         if self.data:
@@ -49,6 +52,7 @@ class Manifestation(models.Model):
             if not result.ready():
                 raise DSProcessUnfinished("Manifest processing is not done")
             self.data = result.result
+            self.completed_at = datetime.utcnow()
             self.save()
             return result.result
         community_type = ContentType.objects.get_for_model(self.community)

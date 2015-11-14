@@ -21,6 +21,8 @@ class Migration(migrations.Migration):
                 ('uri', models.CharField(default=None, max_length=255, db_index=True)),
                 ('data', json_field.fields.JSONField(default='null', help_text='Enter a valid JSON object', null=True)),
                 ('task', models.CharField(max_length=255, null=True)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('completed_at', models.DateTimeField(null=True, blank=True)),
                 ('community_type', models.ForeignKey(related_name='+', to='contenttypes.ContentType')),
             ],
         ),
