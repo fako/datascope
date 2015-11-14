@@ -10,7 +10,6 @@ class Command(CommunityCommand):
 
     def handle_community(self, community, **options):
         community.config = {"async": False}
-        community.clean()
         community.save()
         community.grow()
         print("Result:", community.kernel)

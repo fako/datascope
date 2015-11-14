@@ -12,12 +12,22 @@ class Command(GrowCommand):
     def add_arguments(self, parser):
         parser.add_argument('community', type=unicode, nargs="?", default="WikiNewsCommunity")
         parser.add_argument('-c', '--config', type=unicode, action=DecodeConfigAction, nargs="?", default={})
+        parser.add_argument('-d', '--delete', action="store_true")
 
     @staticmethod
     def clear_database():
         WikiNewsCommunity.objects.all().delete()
         WikipediaRecentChanges.objects.all().delete()
         WikipediaListPages.objects.all().delete()
+
+    @staticmethod
+    def archive_growth():
+        for community in WikiNewsCommunity.objects.filter(signature="latest-news"):
+            community.signature = "from:{}-till:{}".format(
+                community.config.start_time,
+                community.config.end_time
+            )
+            community.save()
 
     def handle_community(self, community, **options):
         today_at_midnight = (date.today() - date(1970, 1, 1)).total_seconds()
@@ -26,8 +36,9 @@ class Command(GrowCommand):
             "start_time": yesterday_at_midnight,
             "end_time": today_at_midnight
         }
+        community.signature = "latest-news"
         super(Command, self).handle_community(community, **options)
 
     def handle(self, *args, **options):
-        self.clear_database()
+        self.clear_database() if options["delete"] else self.archive_growth()
         super(Command, self).handle(*args, **options)
