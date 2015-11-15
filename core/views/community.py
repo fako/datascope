@@ -39,7 +39,9 @@ class CommunityView(APIView):
     def get(self, request, community_class, path="", *args, **kwargs):
 
         response_data = copy(self.RESPONSE_DATA)
-        full_path = request.get_full_path()
+        full_path = request.get_full_path().replace("/html/", "/service/", 1)  # TODO: find good solution
+        get_parameters = request.GET.dict()
+
         try:
             manifestation = Manifestation.objects.get(uri=full_path)
             community = manifestation.community
@@ -47,7 +49,7 @@ class CommunityView(APIView):
             manifestation = None
             community, created = community_class.get_or_create_by_input(
                 *path.split('/'),
-                **request.GET.dict()
+                **get_parameters
             )
 
         try:
@@ -58,7 +60,8 @@ class CommunityView(APIView):
                 raise DSProcessUnfinished()
 
             community.grow(*path.split('/'))
-            manifestation = Manifestation.objects.create(uri=full_path, community=community)
+            config = Manifestation.generate_config(community.PUBLIC_CONFIG, **get_parameters)
+            manifestation = Manifestation.objects.create(uri=full_path, community=community, config=config)
             return self.get_response_from_manifestation(manifestation, response_data)
 
         except ValidationError as exc:

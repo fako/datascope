@@ -35,14 +35,24 @@ COMMUNITY_STATE_CHOICES = [
 @python_2_unicode_compatible
 class Manifestation(models.Model):
 
+    uri = models.CharField(max_length=255, db_index=True, default=None)
+    data = JSONField(null=True)
+    config = ConfigurationField(
+        config_defaults=DEFAULT_CONFIGURATION
+    )
+
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+")
     community_id = models.PositiveIntegerField()
-    uri = models.CharField(max_length=255, db_index=True, default=None)
-    data = JSONField(null=True)
+
     task = models.CharField(max_length=255, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
+
+    @staticmethod
+    def generate_config(allowed_config, **kwargs):
+        config = {key: value for key, value in six.iteritems(kwargs) if key in allowed_config}
+        return config
 
     def get_data(self):
         if self.data:
@@ -55,13 +65,12 @@ class Manifestation(models.Model):
             self.completed_at = datetime.now()
             self.save()
             return self.data
-        community_type = ContentType.objects.get_for_model(self.community)
         if self.community.ASYNC_MANIFEST:
-            self.task = manifest_community.delay(community_type.id, self.community.id)
+            self.task = manifest_community.delay(self.id)
             self.save()
             raise DSProcessUnfinished("Manifest started processing")
         else:
-            return manifest_community(community_type.id, self.community.id)
+            return manifest_community(self.id)
 
     def __str__(self):
         return "Manifestation {} for {}".format(
@@ -118,8 +127,6 @@ class Community(models.Model, ProcessorMixin):
         created = False
         try:
             community = cls.objects.get(signature="&".join(signature))
-            community.config = {key: value for key, value in six.iteritems(kwargs) if key in cls.PUBLIC_CONFIG}
-            community.save()
         except cls.DoesNotExist:
             community = cls(
                 signature="&".join(signature),
