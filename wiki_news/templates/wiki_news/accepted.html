@@ -10,7 +10,7 @@
             var search = segments.pop();
             var service = URI.expand(uri.pathname() + "../../service/{search}/", {"search": search}).normalizePathname();
 
-            $.getJSON(service, uri.search(true), function (data, textStatus, jqXHR) {
+            $.getJSON(service, uri.search().substr(1), function (data, textStatus, jqXHR) {
 
                 if (jqXHR.status === 202) {
                     $('#wait-text').append('.');
