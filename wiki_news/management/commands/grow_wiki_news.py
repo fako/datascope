@@ -1,6 +1,6 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
-from datetime import date
+from datetime import date, datetime
 
 from core.management.commands.grow_community import Command as GrowCommand
 from core.utils.configuration import DecodeConfigAction
@@ -23,11 +23,14 @@ class Command(GrowCommand):
     @staticmethod
     def archive_growth():
         for community in WikiNewsCommunity.objects.filter(signature="latest-news"):
+            start = datetime.fromtimestamp(community.config.start_time)
+            end = datetime.fromtimestamp(community.config.end_time)
             community.signature = "from:{}-till:{}".format(
-                community.config.start_time,
-                community.config.end_time
+                start.strftime("%Y-%m-%d"),
+                end.strftime("%Y-%m-%d")
             )
             community.save()
+            community.manifestation_set.all().delete()
 
     def handle_community(self, community, **options):
         today_at_midnight = (date.today() - date(1970, 1, 1)).total_seconds()

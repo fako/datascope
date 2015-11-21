@@ -95,6 +95,7 @@ class Community(models.Model, ProcessorMixin):
     growth_set = GenericRelation(Growth, content_type_field="community_type", object_id_field="community_id")
     collective_set = GenericRelation(Collective, content_type_field="community_type", object_id_field="community_id")
     individual_set = GenericRelation(Individual, content_type_field="community_type", object_id_field="community_id")
+    manifestation_set = GenericRelation(Manifestation, content_type_field="community_type", object_id_field="community_id")
 
     current_growth = models.ForeignKey('Growth', null=True)
     kernel = GenericForeignKey(ct_field="kernel_type", fk_field="kernel_id")
