@@ -13,7 +13,7 @@ jsonfield==1.0.3  # deprecated
 jsonschema==2.4.0
 beautifulsoup4==4.3.2
 pandas==0.16.1
-django-websocket-redis==0.4.4
+#django-websocket-redis==0.4.4
 selenium==2.47.1
 pillow==2.9.0
 

@@ -2,8 +2,8 @@ from itertools import groupby
 
 from django.shortcuts import render_to_response, RequestContext, HttpResponse
 
-from ws4redis.publisher import RedisPublisher
-from ws4redis.redis_store import RedisMessage
+# from ws4redis.publisher import RedisPublisher
+# from ws4redis.redis_store import RedisMessage
 
 from core.views.community import HtmlCommunityView
 

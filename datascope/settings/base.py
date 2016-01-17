@@ -34,7 +34,7 @@ INSTALLED_APPS = (
     # 3rd party
     'djcelery',
     'rest_framework',
-    'ws4redis',
+    #'ws4redis',
     # Main app
     'datascope',
     # Framework apps
@@ -158,7 +158,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.template.context_processors.static",
     "django.template.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    'ws4redis.context_processors.default',
+    #'ws4redis.context_processors.default',
     'core.templatetags.template_context.core_context',
 )
 
@@ -244,7 +244,7 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 # Websockets
 WEBSOCKET_URL = '/ws/'
 WS4REDIS_PREFIX = 'ws'
-WSGI_APPLICATION = 'ws4redis.django_runserver.application'
+#WSGI_APPLICATION = 'ws4redis.django_runserver.application'
 WS4REDIS_EXPIRE = 0
 WS4REDIS_HEARTBEAT = '--heartbeat--'
 
