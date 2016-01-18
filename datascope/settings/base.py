@@ -67,6 +67,7 @@ ALLOWED_HOSTS = [
     '.globe-scope.org',
     '.data-scope.com',
     '.data-scope.org',
+    'tools.wmflabs.org',
 ]
 
 APPEND_SLASH = False

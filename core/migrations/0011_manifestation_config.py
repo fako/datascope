@@ -15,6 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='manifestation',
             name='config',
-            field=core.utils.configuration.ConfigurationField(default={}),
+            field=core.utils.configuration.ConfigurationField(default=None),
         ),
     ]
