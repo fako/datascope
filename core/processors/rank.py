@@ -2,10 +2,11 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 import six
 
 from datascope.configuration import DEFAULT_CONFIGURATION
+from core.processors.base import Processor
 from core.utils.configuration import ConfigurationProperty
 
 
-class RankProcessor(object):
+class RankProcessor(Processor):
 
     config = ConfigurationProperty(
         storage_attribute="_config",
@@ -13,11 +14,6 @@ class RankProcessor(object):
         private=[],
         namespace="rank_processor"
     )
-
-    def __init__(self, config):
-        super(RankProcessor, self).__init__()
-        assert isinstance(config, dict), "ExtractProcessor expects an objective to extract in the configuration."
-        self.config = config
 
     def hooks(self, individuals):
         config_dict = self.config.to_dict()
