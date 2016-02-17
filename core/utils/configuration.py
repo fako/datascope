@@ -307,7 +307,6 @@ def load_config(defaults):
                 return func(config, *args, **kwargs)
             config_instance = ConfigurationType.from_dict(config, defaults)
             return func(config_instance, *args, **kwargs)
-
         return config_func
     return wrap
 

@@ -75,7 +75,7 @@ class TestCommunityMock(CommunityTestMixin):
         growth1 = self.instance.growth_set.first()
         growth2 = self.instance.growth_set.last()
         self.assertEqual(growth1.output.id, growth2.input.id)
-        self.assertEqual(growth1.contribute, "ExtractProcessor.extract_resource")
+        self.assertEqual(growth1.contribute, "ExtractProcessor.extract_from_resource")
         self.assertEqual(growth1.contribute_type, "Append")
         self.assertIsInstance(growth1.input, Individual)
         self.assertIsInstance(growth1.output, Collective)
@@ -181,10 +181,17 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertFalse(finish_growth.called)
         self.assertEqual(self.instance.state, CommunityState.READY)
 
-    def test_grow_sync(self):
+    @patch('core.processors.resources.HttpResourceProcessor.get_link', return_value=HttpResourceMock())
+    def test_grow_sync(self, get_link):
         self.instance.config.async = False
-        # self.instance.grow()
-        self.skipTest("update test for sync flow")
+        self.set_callback_mocks()
+        self.assertEqual(self.instance.state, CommunityState.NEW)
+        done = self.instance.grow()
+        self.assertTrue(done)
+        self.assertEqual(self.instance.growth_set.filter(state=GrowthState.COMPLETE).count(), 2)
+        self.assertIsInstance(self.instance.current_growth, Growth)
+        self.assertEqual(self.instance.current_growth.id, self.instance.growth_set.last().id)
+        self.assertEqual(self.instance.state, CommunityState.READY)
 
     def test_manifestation(self):
         self.complete.config.include_odd = True

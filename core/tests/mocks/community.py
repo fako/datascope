@@ -12,9 +12,9 @@ class CommunityMock(Community):
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("phase1", {
-            "process": "HttpResourceProcessor.fetch_mass",
+            "process": "HttpResourceProcessor.fetch",
             "config": {
-                "_args": ["$.start"],
+                "_args": ["$.test"],
                 "_kwargs": {},
                 "_resource": "HttpResourceMock",
                 "_objective": {
@@ -24,7 +24,7 @@ class CommunityMock(Community):
                 },
             },
             "input": None,
-            "contribute": "Append:ExtractProcessor.extract_resource",
+            "contribute": "Append:ExtractProcessor.extract_from_resource",
             "errors": {},
             "schema": {
                 "additionalProperties": False,
@@ -40,7 +40,7 @@ class CommunityMock(Community):
         ("phase2", {
             "process": "HttpResourceProcessor.fetch_mass",
             "config": {
-                "_args": ["$.start"],
+                "_args": ["$.value"],
                 "_kwargs": {},
                 "_resource": "HttpResourceMock",
                 "_objective": {
@@ -50,7 +50,7 @@ class CommunityMock(Community):
                 },
             },
             "input": "@phase1",
-            "contribute": "Append:ExtractProcessor.extract_resource",
+            "contribute": "Append:ExtractProcessor.extract_from_resource",
             "errors": {},
             "schema": {
                 "additionalProperties": False,
