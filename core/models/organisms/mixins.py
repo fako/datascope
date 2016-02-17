@@ -22,9 +22,9 @@ class ProcessorMixin(object):
                 "from core.processors or sources.processors.".format(processor_name)
             )
         processor = processor_class(config=self.config.to_dict(protected=True))
-        method = getattr(processor, method_name)
+        method, args_type = processor.get_processor_method(method_name)
         if async:
             method = getattr(method, "delay")
         if not callable(method):
             raise AssertionError("{} is not a callable property on {}.".format(method_name, processor))
-        return processor, method
+        return processor, method, args_type

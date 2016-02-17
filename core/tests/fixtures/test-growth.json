@@ -21,7 +21,7 @@
         "result_id": null,
         "contribute": "ExtractProcessor.extract_from_resource",
         "contribute_type": "Append",
-        "process": "HttpResourceProcessor.fetch_mass",
+        "process": "HttpResourceProcessor.fetch",
         "type": "test_new",
         "state": "New",
         "input_id": 1,

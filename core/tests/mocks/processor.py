@@ -1,8 +1,9 @@
 from core.utils.configuration import ConfigurationProperty
 from datascope.configuration import MOCK_CONFIGURATION
+from core.processors.base import Processor
 
 
-class MockProcessor(object):
+class MockProcessor(Processor):
 
     config = ConfigurationProperty(
         storage_attribute="_config",
@@ -10,10 +11,6 @@ class MockProcessor(object):
         namespace="mock_processor",
         private=[]
     )
-
-    def __init__(self, config):
-        super(MockProcessor, self).__init__()
-        self.config = config
 
 
 class MockNumberProcessor(MockProcessor):

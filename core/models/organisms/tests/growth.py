@@ -43,9 +43,10 @@ class TestGrowth(TestProcessorMixin):
         MockAsyncResultError.reset_mock()
         MockAsyncResultPartial.reset_mock()
 
-    @patch('core.processors.HttpResourceProcessor._send_mass.s', return_value=MockTask)
-    def test_begin(self, send_mass_s):
-        self.new.begin()
+
+    def test_begin(self):
+        with patch('core.processors.HttpResourceProcessor._send.s', return_value=MockTask) as send_s:
+            self.new.begin()
         MockTask.delay.assert_called_once_with(1024, 768, name="modest")
         self.assertEqual(self.new.result_id, "result-id")
         self.assertEqual(self.new.state, GrowthState.PROCESSING)
@@ -57,7 +58,8 @@ class TestGrowth(TestProcessorMixin):
         except AssertionError:
             pass
         MockTask.reset_mock()
-        self.collective_input.begin()
+        with patch('core.processors.HttpResourceProcessor._send_mass.s', return_value=MockTask) as send_mass_s:
+            self.collective_input.begin()
         MockTask.delay.assert_called_once_with(
             [["nested value 0"], ["nested value 1"], ["nested value 2"]],
             [{"context": "nested value"}, {"context": "nested value"}, {"context": "nested value"}]

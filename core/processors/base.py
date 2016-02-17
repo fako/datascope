@@ -4,11 +4,16 @@ from core.utils.configuration import ConfigurationProperty
 from datascope.configuration import DEFAULT_CONFIGURATION
 
 
+class ArgumentsTypes:
+    NORMAL = 'normal'
+    BATCH = 'batch'
+
+
 class Processor(object):
 
-    DEFAULT_RETURN_TYPE = list
-    RETURN_LIST_METHODS = []
-    RETURN_DICT_METHODS = []
+    DEFAULT_ARGS_TYPE = ArgumentsTypes.NORMAL
+    ARGS_NORMAL_METHODS = []
+    ARGS_BATCH_METHODS = []
 
     config = ConfigurationProperty(
             storage_attribute="_config",
@@ -22,4 +27,10 @@ class Processor(object):
         self.config = config
 
     def get_processor_method(self, method_name):
-        pass
+        if method_name in self.ARGS_NORMAL_METHODS:
+            args_type = ArgumentsTypes.NORMAL
+        elif method_name in self.ARGS_BATCH_METHODS:
+            args_type = ArgumentsTypes.BATCH
+        else:
+            args_type = self.DEFAULT_ARGS_TYPE
+        return getattr(self, method_name), args_type

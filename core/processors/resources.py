@@ -30,6 +30,8 @@ class HttpResourceProcessor(Processor):
     - a guideline to how deep a single resource should collect data
     """
 
+    ARGS_BATCH_METHODS = ['fetch_mass', 'send_mass']
+
     config = ConfigurationProperty(
         storage_attribute="_config",
         defaults=DEFAULT_CONFIGURATION,

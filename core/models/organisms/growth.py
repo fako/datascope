@@ -8,6 +8,7 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 
 from datascope.configuration import PROCESS_CHOICE_LIST, DEFAULT_CONFIGURATION
+from core.processors.base import ArgumentsTypes
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
 from core.exceptions import DSProcessError, DSNoContent
@@ -82,7 +83,10 @@ class Growth(models.Model, ProcessorMixin):
 
         self.config = self.community.config.to_dict(protected=True)  # TODO: make this += operation instead
 
-        processor, method = self.prepare_process(self.process, async=self.config.async)  # TODO: unit test async
+        processor, method, args_type = self.prepare_process(self.process, async=self.config.async)  # TODO: unit test async
+        assert args_type == ArgumentsTypes.NORMAL and isinstance(self.input, Individual) or \
+            args_type == ArgumentsTypes.BATCH and isinstance(self.input, Collective), \
+            "Unexpected arguments type '{}' for input of class {}".format(args_type, self.input.__class__.__name__)
         args, kwargs = self.input.output(self.config.args, self.config.kwargs)
         if isinstance(self.input, Individual):
             result = method(*args, **kwargs)
@@ -108,7 +112,7 @@ class Growth(models.Model, ProcessorMixin):
             GrowthState.PROCESSING, GrowthState.COMPLETE, GrowthState.PARTIAL, GrowthState.CONTRIBUTE
         ], "Can't finish a growth that is in state {}".format(self.state)
 
-        processor, method = self.prepare_process(self.process, async=self.config.async)
+        processor, method, args_type = self.prepare_process(self.process, async=self.config.async)
 
         if self.state == GrowthState.PROCESSING:
             try:
@@ -135,7 +139,7 @@ class Growth(models.Model, ProcessorMixin):
         return self.output, self.resources
 
     def append_to_output(self, contributions):
-        contribute_processor, callback = self.prepare_process(self.contribute)
+        contribute_processor, callback, args_type = self.prepare_process(self.contribute)
         results = []
         for contribution in contributions:
             try:
