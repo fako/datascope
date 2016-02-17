@@ -12,7 +12,7 @@ from celery.result import AsyncResult
 from json_field import JSONField
 
 from datascope.configuration import DEFAULT_CONFIGURATION
-from core.models.organisms import Growth, Collective, Individual
+from core.models.organisms import Growth, Collective, Individual, Organism
 from core.models.organisms.mixins import ProcessorMixin
 from core.models.user import DataScopeUser
 from core.utils.configuration import ConfigurationField
@@ -212,7 +212,11 @@ class Community(models.Model, ProcessorMixin):
 
         :return:
         """
-        raise NotImplementedError()
+        assert self.kernel is not None, \
+            "Community.set_kernel expected the kernel to be set. " \
+            "The overriding method is failing, is not implemented or is calling its parent before the kernel is set."
+        assert issubclass(self.kernel.__class__, Organism), \
+            "The kernel should be an Organism."
 
     def initial_input(self, *args):
         """

@@ -4,21 +4,21 @@ from django.test import TestCase
 
 from mock import Mock, patch
 
-from core.models.organisms import Individual, Collective, Growth
+from core.models.organisms import Individual, Collective, Growth, Community, Organism
 from core.models.organisms.community import CommunityState
-from core.models.organisms.tests.mixins import TestProcessorMixin
+from core.models.organisms.growth import GrowthState
 from core.tests.mocks.community import CommunityMock
+from core.tests.mocks.http import HttpResourceMock
 from core.exceptions import DSProcessUnfinished
 
 
 class CommunityTestMixin(TestCase):
 
-    def test_set_kernel(self):
-        self.skipTest("Test that return type is an organism")
-        self.skipTest("No save!")
-
     def test_initial_input(self):
-        self.skipTest("Test that return type is an organism")
+        if not issubclass(self.instance.__class__, Community):
+            self.skipTest('CommunityTestMixin expected an self.instance that is a Community subclass')
+        initial_input = self.instance.initial_input()
+        self.assertIsInstance(initial_input, Organism)
 
 
 class TestCommunityMock(CommunityTestMixin):

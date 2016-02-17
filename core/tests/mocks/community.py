@@ -91,3 +91,4 @@ class CommunityMock(Community):
 
     def set_kernel(self):
         self.kernel = self.growth_set.filter(type="phase2").last().output
+        super(CommunityMock, self).set_kernel()
