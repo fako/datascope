@@ -30,6 +30,7 @@ class TestCommunityMock(CommunityTestMixin):
         self.instance = CommunityMock.objects.get(id=1)
         self.incomplete = CommunityMock.objects.get(id=2)
         self.complete = CommunityMock.objects.get(id=3)
+        self.error = CommunityMock.objects.get(id=4)
 
     def raise_unfinished(self, result):
         raise DSProcessUnfinished("Raised for test")
@@ -91,8 +92,9 @@ class TestCommunityMock(CommunityTestMixin):
         except Growth.DoesNotExist:
             pass
 
-    def test_error_callback(self):
-        self.skipTest("not tested")
+    @patch("core.models.organisms.community.Growth.begin")
+    def test_error_callback(self, begin_growth):
+        self.error.grow()
 
     @patch("core.models.organisms.community.Growth.begin")
     def test_grow_async(self, begin_growth):

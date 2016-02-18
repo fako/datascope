@@ -43,7 +43,6 @@ class TestGrowth(TestProcessorMixin):
         MockAsyncResultError.reset_mock()
         MockAsyncResultPartial.reset_mock()
 
-
     def test_begin(self):
         with patch('core.processors.HttpResourceProcessor._send.s', return_value=MockTask) as send_s:
             self.new.begin()

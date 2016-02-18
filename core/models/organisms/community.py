@@ -2,6 +2,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 import six
 from django.utils.encoding import python_2_unicode_compatible
 
+from itertools import groupby
 from collections import OrderedDict
 from datetime import datetime
 
@@ -18,7 +19,7 @@ from core.models.user import DataScopeUser
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
 from core.tasks import manifest_community
-from core.exceptions import DSProcessUnfinished
+from core.exceptions import DSProcessUnfinished, DSProcessError
 
 
 class CommunityState(object):
@@ -149,6 +150,19 @@ class Community(models.Model, ProcessorMixin):
         if callback is not None and callable(callback):
             callback(inp)
 
+    def call_error_callback(self, phase, errors, out):
+        errors.order_by('-status')
+        phase_config = self.COMMUNITY_SPIRIT[phase]
+        error_config = phase_config["errors"]
+        fatal_error = not bool(out)
+        for status, error_group in groupby(errors, lambda err: err.status):
+            if status in error_config:
+                callback_name = "error_{}_{}".format(phase, error_config[status])
+                callback = getattr(self, callback_name, None)
+                if callback is not None and callable(callback):
+                    fatal_error = fatal_error or not callback(list(error_group), out)
+        return fatal_error
+
     def create_organism(self, organism_type, schema):
         model = get_any_model(organism_type)
         org = model(community=self, schema=schema)
@@ -253,6 +267,9 @@ class Community(models.Model, ProcessorMixin):
         while self.kernel is None:
 
             output, errors = self.current_growth.finish(result)  # will raise when Growth is not finished
+            should_finish = self.call_error_callback(self.current_growth.type, errors, output) if errors else True
+            if not should_finish:
+                raise DSProcessError("Could not finish growth according to error callbacks.")
             self.call_finish_callback(self.current_growth.type, output, errors)
             try:
                 self.current_growth = self.next_growth()
