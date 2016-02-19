@@ -9,7 +9,7 @@ from core.models.organisms.community import CommunityState
 from core.models.organisms.growth import GrowthState
 from core.tests.mocks.community import CommunityMock
 from core.tests.mocks.http import HttpResourceMock
-from core.exceptions import DSProcessUnfinished
+from core.exceptions import DSProcessUnfinished, DSProcessError
 
 
 class CommunityTestMixin(TestCase):
@@ -38,6 +38,8 @@ class TestCommunityMock(CommunityTestMixin):
     def set_callback_mocks(self):
         self.instance.call_begin_callback = Mock()
         self.instance.call_finish_callback = Mock()
+        self.error.error_phase1_unreachable = Mock(return_value=True)
+        self.error.error_phase1_not_found = Mock(return_value=False)
 
     def test_get_or_create_by_input(self):
         community, created = CommunityMock.get_or_create_by_input("test", setting1="const", illegal="please")
@@ -92,9 +94,70 @@ class TestCommunityMock(CommunityTestMixin):
         except Growth.DoesNotExist:
             pass
 
-    @patch("core.models.organisms.community.Growth.begin")
-    def test_error_callback(self, begin_growth):
-        self.error.grow()
+    @patch("core.models.CommunityMock.set_kernel")
+    def test_erroneous_community(self, set_kernel):
+        empty_output = Collective.objects.get(id=2)
+        full_output = Collective.objects.get(id=3)
+        self.set_callback_mocks()
+        try:
+            self.error.grow()
+            self.fail("Community did not raise error when dealing with errors and empty results.")
+        except DSProcessError:
+            pass
+        self.assertEqual(self.error.state, CommunityState.ABORTED)
+        self.error.error_phase1_unreachable.assert_called_once_with(
+            list(self.error.current_growth.resources.filter(status=502)),
+            empty_output
+        )
+        self.error.error_phase1_not_found.assert_called_once_with(
+            list(self.error.current_growth.resources.filter(status=404)),
+            empty_output
+        )
+        set_kernel.assert_not_called()
+
+        self.set_callback_mocks()
+        self.error.state = CommunityState.ASYNC
+        self.error.save()
+        self.error.current_growth.state = GrowthState.COMPLETE  # bypass growth logic
+        self.error.current_growth.output = full_output
+        self.error.current_growth.save()
+
+        try:
+            self.error.grow()
+            self.fail("Community did not raise error when dealing with fatal errors in results.")
+        except DSProcessError:
+            pass
+        self.assertEqual(self.error.state, CommunityState.ABORTED)
+        self.error.error_phase1_unreachable.assert_called_once_with(
+            list(self.error.current_growth.resources.filter(status=502)),
+            full_output
+        )
+        self.error.error_phase1_not_found.assert_called_once_with(
+            list(self.error.current_growth.resources.filter(status=404)),
+            full_output
+        )
+        set_kernel.assert_not_called()
+
+        self.set_callback_mocks()
+        self.error.state = CommunityState.ASYNC
+        self.error.save()
+        self.error.current_growth.state = GrowthState.COMPLETE  # bypass growth logic
+        self.error.current_growth.save()
+        error_resource = HttpResourceMock.objects.get(status=404)
+        error_resource.retainer = None
+        error_resource.save()
+
+        try:
+            self.error.grow()
+        except DSProcessError:
+            self.fail("Community raised an error when dealing with non-fatal errors in results")
+        self.assertEqual(self.error.state, CommunityState.READY)
+        self.error.error_phase1_unreachable.assert_called_once_with(
+            list(self.error.current_growth.resources.filter(status=502)),
+            full_output
+        )
+        self.error.error_phase1_not_found.assert_not_called()
+        set_kernel.assert_called_once()
 
     @patch("core.models.organisms.community.Growth.begin")
     def test_grow_async(self, begin_growth):

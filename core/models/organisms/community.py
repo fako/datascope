@@ -27,6 +27,7 @@ class CommunityState(object):
     ASYNC = "Asynchronous"
     SYNC = "Synchronous"
     READY = "Ready"
+    ABORTED = "Aborted"
 
 COMMUNITY_STATE_CHOICES = [
     (value, value) for attr, value in six.iteritems(CommunityState.__dict__) if not attr.startswith("_")
@@ -150,18 +151,19 @@ class Community(models.Model, ProcessorMixin):
         if callback is not None and callable(callback):
             callback(inp)
 
-    def call_error_callback(self, phase, errors, out):
+    def call_error_callbacks(self, phase, errors, out):
         errors.order_by('-status')
         phase_config = self.COMMUNITY_SPIRIT[phase]
         error_config = phase_config["errors"]
-        fatal_error = not bool(out)
+        fatal_error = not bool(len(out.content))
         for status, error_group in groupby(errors, lambda err: err.status):
             if status in error_config:
                 callback_name = "error_{}_{}".format(phase, error_config[status])
                 callback = getattr(self, callback_name, None)
                 if callback is not None and callable(callback):
-                    fatal_error = fatal_error or not callback(list(error_group), out)
-        return fatal_error
+                    should_continue = callback(list(error_group), out)
+                    fatal_error = fatal_error or not should_continue
+        return not fatal_error
 
     def create_organism(self, organism_type, schema):
         model = get_any_model(organism_type)
@@ -267,8 +269,10 @@ class Community(models.Model, ProcessorMixin):
         while self.kernel is None:
 
             output, errors = self.current_growth.finish(result)  # will raise when Growth is not finished
-            should_finish = self.call_error_callback(self.current_growth.type, errors, output) if errors else True
+            should_finish = self.call_error_callbacks(self.current_growth.type, errors, output) if errors else True
             if not should_finish:
+                self.state = CommunityState.ABORTED
+                self.save()
                 raise DSProcessError("Could not finish growth according to error callbacks.")
             self.call_finish_callback(self.current_growth.type, output, errors)
             try:
