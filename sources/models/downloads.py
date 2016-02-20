@@ -1,6 +1,5 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
-
-from StringIO import StringIO
+from six import StringIO
 
 from PIL import Image
 from urlobject import URLObject
