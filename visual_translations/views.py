@@ -1,9 +1,7 @@
 from itertools import groupby
 
+from django.conf import settings
 from django.shortcuts import render_to_response, RequestContext, HttpResponse
-
-#from ws4redis.publisher import RedisPublisher
-#from ws4redis.redis_store import RedisMessage
 
 from core.views.community import HtmlCommunityView
 
@@ -63,6 +61,13 @@ def visual_translations_controller(request):
 
 
 def web_sockets_broadcast(request, message):
+    if not settings.USE_WEBSOCKETS:
+        return HttpResponse('Websockets not enabled in bootstrap.py')
+    try:
+        from ws4redis.publisher import RedisPublisher
+        from ws4redis.redis_store import RedisMessage
+    except ImportError:
+        return HttpResponse('Websockets package ws4redis not installed')
     redis_publisher = RedisPublisher(facility='visual-translations-map', broadcast=True)
     message = RedisMessage(message)
     redis_publisher.publish_message(message)

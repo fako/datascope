@@ -1,0 +1,3 @@
+-r development.txt
+
+django-websocket-redis==0.4.4
