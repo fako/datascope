@@ -1,4 +1,5 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
+import six
 # noinspection PyUnresolvedReferences
 from six.moves.urllib.parse import parse_qsl
 from django.utils.encoding import python_2_unicode_compatible
@@ -72,7 +73,7 @@ class ConfigurationType(object):
         :return: None
         """
         assert isinstance(new, dict), "Configurations can only be set with a dictionary not a {}".format(type(new))
-        for key, value in new.iteritems():
+        for key, value in six.iteritems(new):
             # FEATURE: guard here against improper override of internal attributes
             shielded_key = key if key.startswith('_') else '_' + key
             if shielded_key in self._private:
