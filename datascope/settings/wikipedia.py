@@ -5,3 +5,5 @@ DATABASES["default"]["NAME"] = 's52573__datascope'
 DATABASES["default"]["USER"] = 's52573'
 DATABASES["default"]["PASSWORD"] = MYSQL_PASSWORD
 DATABASES["default"]["HOST"] = 'tools-db'
+
+# TODO: add STATIC_IP

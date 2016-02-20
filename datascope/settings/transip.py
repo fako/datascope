@@ -5,3 +5,4 @@ DATABASES["default"]["NAME"] = 'datascope'
 DATABASES["default"]["USER"] = 'django'
 DATABASES["default"]["PASSWORD"] = MYSQL_PASSWORD
 
+STATIC_IP = '149.210.128.125'
