@@ -129,7 +129,7 @@ class HttpResourceTestMixin(TestCase):
             except DSHttpError50X as exc:
                 self.assertIsInstance(exc.resource, HttpResource)
                 self.assertEqual(exc.resource.status, status)
-            except Exception, exception:
+            except Exception as exception:
                 self.fail("Handle error throws wrong exception '{}' expecting 50X".format(exception))
         for status in statuses_40x:
             self.instance.status = status
@@ -139,7 +139,7 @@ class HttpResourceTestMixin(TestCase):
             except DSHttpError40X as exc:
                 self.assertIsInstance(exc.resource, HttpResource)
                 self.assertEqual(exc.resource.status, status)
-            except Exception, exception:
+            except Exception as exception:
                 self.fail("Handle error throws wrong exception '{}' expecting 40X".format(exception))
 
     def test_uri_from_url(self):
