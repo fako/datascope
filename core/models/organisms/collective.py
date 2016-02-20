@@ -1,4 +1,5 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
+import six
 
 from django.db import models
 from django.conf import settings
@@ -12,14 +13,14 @@ from core.models.organisms import Organism, Individual
 
 class IndexEncoder(JSONEncoder):
     def encode(self, obj):
-        obj = super(IndexEncoder, self).encode({str(value): key for key, value in obj.iteritems()})
+        obj = super(IndexEncoder, self).encode({str(value): key for key, value in six.iteritems(obj)})
         return obj
 
 
 class IndexDecoder(JSONDecoder):
     def decode(self, obj, *args, **kwargs):
         obj = super(IndexDecoder, self).decode(obj, *args, **kwargs)
-        return {key: int(value) for value, key in obj.iteritems()}
+        return {key: int(value) for value, key in six.iteritems(obj)}
 
 
 class Collective(Organism):
@@ -187,7 +188,7 @@ class Collective(Organism):
 
     def select(self, **kwargs):
         select = set()
-        for item in kwargs.iteritems():
+        for item in six.iteritems(kwargs):
             for index in self.indexes.keys():
                 if item in index:
                     select.add(self.indexes[index])

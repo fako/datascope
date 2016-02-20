@@ -222,7 +222,7 @@ class VisualTranslationsCommunity(Community):
                 content_type, image = download.content
                 if image is not None:
                     downloads.append(image)
-            for size, factor in self.zoom_levels.iteritems():
+            for size, factor in six.iteritems(self.zoom_levels):
                 grid, xlarge_factor = grids[locale]
                 factor = factor if size != "XL" else xlarge_factor
                 grid_specs = copy(grid)
