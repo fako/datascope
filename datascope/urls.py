@@ -9,7 +9,6 @@ admin.autodiscover()
 from . import views
 
 urlpatterns = [
-    url(r'', include('legacy.urls')),
     url(r'^data/v1/', include('core.urls', namespace="v1")),
     url(r'^admin/', include(admin.site.urls)),
 

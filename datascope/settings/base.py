@@ -40,7 +40,6 @@ INSTALLED_APPS = (
     # Framework apps
     'core',
     'sources',
-    'legacy',
     # Algorithms
     'wiki_news',
     'visual_translations',
@@ -132,7 +131,6 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    PATH_TO_PROJECT + 'legacy/output/http/static',
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -264,16 +262,3 @@ if USE_WEBSOCKETS:
     WSGI_APPLICATION = 'ws4redis.django_runserver.application'
     WS4REDIS_EXPIRE = 0
     WS4REDIS_HEARTBEAT = '--heartbeat--'
-
-#######################################################
-# LEGACY SETTINGS
-#######################################################
-
-TEMPLATE_DIRS = (
-    PATH_TO_PROJECT + "legacy/output/http/html",
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
-
-HIF_SKIP_EXTERNAL_RESOURCE_INTEGRATION_TESTS = True
