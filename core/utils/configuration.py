@@ -126,7 +126,7 @@ class ConfigurationType(object):
         :return: (dict) current configuration other than default
         """
         dictionary = dict()
-        for key, value in self.__dict__.iteritems():
+        for key, value in six.iteritems(self.__dict__):
             if isinstance(value, str):
                 value = unicode(value)
             if key == '_defaults':
