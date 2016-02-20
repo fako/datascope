@@ -140,7 +140,7 @@ class HttpResource(models.Model):
         """
         Returns True if status is within HTTP success range
         """
-        return 200 <= self.status < 209
+        return self.status is not None and 200 <= self.status < 209
 
     @property
     def content(self):
@@ -190,7 +190,7 @@ class HttpResource(models.Model):
         }, validate_input=False)
 
     def _create_url(self, *args):
-        url_template = copy(str(self.URI_TEMPLATE))
+        url_template = copy(self.URI_TEMPLATE)
         url = URLObject(url_template.format(*args))
         params = url.query.dict
         params.update(self.parameters())
@@ -348,9 +348,7 @@ class HttpResource(models.Model):
     def _update_from_response(self, response):
         self.head = dict(response.headers)
         self.status = response.status_code
-        self.body = str(
-            response.content, 'utf-8', errors='replace'  # HTML can have some weird bytes, so replace errors!
-        )
+        self.body = response.content  # TODO: check what to do with responses that contain invalid character bytes
 
     def _handle_errors(self):
         """
@@ -401,7 +399,8 @@ class HttpResource(models.Model):
         if not data:
             return ""
         hsh = hashlib.sha1()
-        hsh.update(json.dumps(data))
+        hash_data = json.dumps(data).encode("utf-8")
+        hsh.update(hash_data)
         return hsh.hexdigest()
 
     def set_error(self, status):  # TODO: test
