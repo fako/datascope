@@ -35,7 +35,7 @@ class Migration(migrations.Migration):
                 ('schema', jsonfield.fields.JSONField(default=None)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('modified_at', models.DateTimeField(auto_now=True)),
-                ('properties', jsonfield.fields.JSONField(default={})),
+                ('properties', jsonfield.fields.JSONField(default=None)),
                 ('collective', models.ForeignKey(to='core.Collective', null=True)),
             ],
             options={

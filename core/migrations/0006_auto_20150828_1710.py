@@ -15,7 +15,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='collective',
             name='groups',
-            field=jsonfield.fields.JSONField(default="{}", null=True, blank=True),
+            field=jsonfield.fields.JSONField(default=None, null=True, blank=True),
         ),
         migrations.AddField(
             model_name='collective',
