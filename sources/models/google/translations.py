@@ -30,7 +30,7 @@ class GoogleTranslate(BrowserResource):
                 word = word.text
                 meaning = meaning.text
             else:
-                word = unicode(fallback)  # TODO: make Python3 variant
+                word = str(fallback)
                 meaning = ""
             if confidence is not None:
                 confidence = int(confidence["style"].split(" ")[1][:-3])  # confidence expressed like: "width: 24px;"

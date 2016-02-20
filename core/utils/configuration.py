@@ -127,8 +127,6 @@ class ConfigurationType(object):
         """
         dictionary = dict()
         for key, value in six.iteritems(self.__dict__):
-            if isinstance(value, str):
-                value = unicode(value)
             if key == '_defaults':
                 continue
             if key.startswith('_'):

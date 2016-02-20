@@ -190,12 +190,12 @@ class HttpResource(models.Model):
         }, validate_input=False)
 
     def _create_url(self, *args):
-        url_template = copy(unicode(self.URI_TEMPLATE))
+        url_template = copy(str(self.URI_TEMPLATE))
         url = URLObject(url_template.format(*args))
         params = url.query.dict
         params.update(self.parameters())
         url = url.set_query_params(params)
-        return unicode(url)
+        return str(url)
 
     def headers(self):
         """
@@ -274,14 +274,14 @@ class HttpResource(models.Model):
         params.update(self.auth_parameters())
         url = url.set_query_params(params)
         request = deepcopy(self.request)
-        request["url"] = unicode(url)
+        request["url"] = str(url)
         return request
 
     def request_without_auth(self):
         url = URLObject(self.request.get("url"))
         url = url.del_query_params(self.auth_parameters())
         request = deepcopy(self.request)
-        request["url"] = unicode(url)
+        request["url"] = str(url)
         return request
 
     #######################################################
@@ -301,7 +301,7 @@ class HttpResource(models.Model):
         params.update(self.next_parameters())
         url = url.set_query_params(params)
         request = deepcopy(self.request)
-        request["url"] = unicode(url)
+        request["url"] = str(url)
         return request
 
     #######################################################
@@ -348,7 +348,7 @@ class HttpResource(models.Model):
     def _update_from_response(self, response):
         self.head = dict(response.headers)
         self.status = response.status_code
-        self.body = unicode(
+        self.body = str(
             response.content, 'utf-8', errors='replace'  # HTML can have some weird bytes, so replace errors!
         )
 
@@ -394,7 +394,7 @@ class HttpResource(models.Model):
     @staticmethod
     def uri_from_url(url):
         url = URLObject(url)
-        return unicode(url).replace(url.scheme + u"://", u"")
+        return str(url).replace(url.scheme + u"://", u"")
 
     @staticmethod
     def hash_from_data(data):

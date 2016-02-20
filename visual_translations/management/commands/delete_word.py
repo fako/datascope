@@ -15,7 +15,7 @@ class Command(CommunityCommand):
         parser.add_argument('-a', '--args', type=unicode, nargs="*", default="")
         parser.add_argument('-c', '--config', type=unicode, action=DecodeConfigAction, nargs="?", default={})
         parser.add_argument('-l', '--locale', type=unicode, nargs="?", default="")
-        parser.add_argument('-w', '--word', type=lambda s: unicode(s, 'utf-8'), nargs="?", default="")
+        parser.add_argument('-w', '--word', type=lambda s: str(s, encoding='utf-8'), nargs="?", default="")
 
     def handle_community(self, community, **options):
         word_encoded = json.dumps(options["word"])
