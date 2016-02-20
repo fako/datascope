@@ -3,11 +3,11 @@ log = logging.getLogger(__name__)
 
 try:
     # We load variables that control how settings should be loaded
-    from bootstrap import *
+    from .bootstrap import *
 except ImportError:
     log.warning("Could not import setup settings. Are they created?")
 try:
-    from secrets import *
+    from .secrets import *
 except ImportError:
     log.warning("Could not import secret settings. Are they created?")
 
