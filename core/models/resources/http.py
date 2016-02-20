@@ -5,7 +5,6 @@ import json
 from copy import copy, deepcopy
 
 import requests
-from OpenSSL.SSL import SysCallError
 import jsonschema
 from jsonschema.exceptions import ValidationError as SchemaValidationError
 from urlobject import URLObject
@@ -338,7 +337,7 @@ class HttpResource(models.Model):
                 verify=settings.REQUESTS_VERIFY,
                 timeout=self.timeout
             )
-        except (requests.ConnectionError, IOError, SysCallError):
+        except (requests.ConnectionError, IOError):
             self.set_error(502)
             return
         except requests.Timeout:
