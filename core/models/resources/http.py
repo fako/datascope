@@ -383,7 +383,7 @@ class HttpResource(models.Model):
         if self.request and not self.data_hash:
             uri_request = self.request_without_auth()
             self.data_hash = HttpResource.hash_from_data(uri_request.get("data"))
-        if self.uri > 255:  # TODO: test this
+        if len(self.uri) > 255:  # TODO: test this
             self.uri = self.uri[:255]
 
     #######################################################
