@@ -145,7 +145,7 @@ class Collective(Organism):
         return grouped
 
     def _get_index_keys(self):
-        return [item[0] for item in self.indexes.keys()[0]]
+        return [item[0] for item in next(six.iterkeys(self.indexes))]
 
     def build_index(self, keys):
         """
