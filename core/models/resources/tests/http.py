@@ -1,7 +1,8 @@
 import six
+# noinspection PyUnresolvedReferences
+from six.moves.urllib.parse import urlencode
 
 import json
-import urllib
 from copy import deepcopy
 
 from django.test import TestCase
@@ -95,7 +96,7 @@ class HttpResourceTestMixin(TestCase):
         preq = args[0]
         self.assertEqual(preq.url, test_url)
         self.assertEqual(preq.headers, content_header)
-        self.assertEqual(preq.body, urllib.urlencode(test_data))
+        self.assertEqual(preq.body, urlencode(test_data))
         # Make sure that response fields are set to something and do not remain None
         self.assertIsNotNone(self.instance.head)
         self.assertIsNotNone(self.instance.body)
