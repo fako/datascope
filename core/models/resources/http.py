@@ -153,7 +153,7 @@ class HttpResource(models.Model):
             if content_type == "application/json":
                 return content_type, json.loads(self.body)
             elif content_type == "text/html":
-                return content_type, BeautifulSoup(self.body)
+                return content_type, BeautifulSoup(self.body, "html.parser")
             else:
                 return content_type, None
         return None, None
@@ -441,7 +441,7 @@ class BrowserResource(HttpResource):  # TODO: write tests
         self.head = dict()
         self.status = 1
         self.body = response.page_source
-        self.soup = BeautifulSoup(self.body)
+        self.soup = BeautifulSoup(self.body, "html.parser")
 
     @property
     def success(self):
@@ -472,7 +472,7 @@ class BrowserResource(HttpResource):  # TODO: write tests
 
     def __init__(self, *args, **kwargs):
         super(HttpResource, self).__init__(*args, **kwargs)
-        self.soup = BeautifulSoup(self.body if self.body else "")
+        self.soup = BeautifulSoup(self.body if self.body else "", "html.parser")
 
     class Meta:
         abstract = True
