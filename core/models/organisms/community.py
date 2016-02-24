@@ -125,7 +125,7 @@ class Community(models.Model, ProcessorMixin):
             for key, value in six.iteritems(kwargs)
             if key in cls.PUBLIC_CONFIG and not key.startswith("$")
         ]
-        signature = filter(bool, signature)
+        signature = list(filter(bool, signature))
         signature.sort()
         created = False
         try:
