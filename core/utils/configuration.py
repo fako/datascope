@@ -18,7 +18,7 @@ from django.core.exceptions import ValidationError
 log = logging.getLogger("datascope")
 
 
-class ConfigurationNotFoundError(Exception):
+class ConfigurationNotFoundError(AttributeError):
     pass
 
 
