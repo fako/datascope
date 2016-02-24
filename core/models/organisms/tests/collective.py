@@ -46,7 +46,7 @@ class TestCollective(TransactionTestCase):
         results = self.instance.output("$.value")
         self.assertEqual(results, self.value_outcome)
         results = self.instance.output("$.value", "$.value")
-        self.assertEqual(results, [self.value_outcome, self.value_outcome])
+        self.assertEqual(list(results), [self.value_outcome, self.value_outcome])
         results = self.instance.output(["$.value"])
         self.assertEqual(results, self.list_outcome)
         results = self.instance.output(["$.value", "$.value"])
