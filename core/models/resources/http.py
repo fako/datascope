@@ -352,7 +352,7 @@ class HttpResource(models.Model):
         self.head = dict(response.headers)
         self.status = response.status_code
         # TODO: check what to do with responses that contain invalid character bytes
-        # TODO: check why sometimes we get strings and sometimes bytes in self.body
+        # TODO: check why sometimes we get strings and sometimes bytes in response.body
         self.body = response.content if isinstance(response.content, six.string_types) else response.content.decode("utf-8")
 
     def _handle_errors(self):
