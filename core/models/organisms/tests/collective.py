@@ -28,6 +28,7 @@ class TestCollective(TransactionTestCase):
 
     # TODO: patch validate and assert it being used or not
     # TODO: patch influence and assert it is being used
+    # TODO: queries vary per database, make development and production use the same database
     def test_update(self):
         updates = []
         for index, individual in enumerate(self.instance2.individual_set.all()):
