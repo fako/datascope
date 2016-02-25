@@ -1,4 +1,5 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
+import six
 # noinspection PyUnresolvedReferences
 from six.moves.urllib.parse import urlencode
 
@@ -350,7 +351,9 @@ class HttpResource(models.Model):
     def _update_from_response(self, response):
         self.head = dict(response.headers)
         self.status = response.status_code
-        self.body = response.content  # TODO: check what to do with responses that contain invalid character bytes
+        # TODO: check what to do with responses that contain invalid character bytes
+        # TODO: check why sometimes we get strings and sometimes bytes in self.body
+        self.body = response.content if isinstance(self.body, six.string_types) else response.content.decode("utf-8")
 
     def _handle_errors(self):
         """
