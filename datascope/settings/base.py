@@ -56,8 +56,6 @@ DATABASES = {
     },
 }
 
-TEMPLATE_DEBUG = DEBUG
-
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.4/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = [
@@ -150,6 +148,7 @@ TEMPLATES = [
         'DIRS': [
             # insert your TEMPLATE_DIRS here
         ],
+        'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
