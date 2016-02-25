@@ -16,6 +16,16 @@ class WikiDataClaims(HttpResource):
         "kwargs": None
     }
 
+    @property
+    def content(self):
+        content_type, data = super(WikiDataClaims, self).content
+        data = data["entities"][self.meta]
+        return content_type, data
+
+    @property
+    def meta(self):
+        return self.request['args'][0]
+
     HIF_objective = {
         "property": "",
         "datavalue.value.numeric-id": 0
