@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^collective/(?P<pk>\d+)/$', views.CollectiveView.as_view(), name="collective"),
     url(r'^individual/(?P<pk>\d+)/content/$', views.IndividualContentView.as_view(), name="individual"),
     url(r'^individual/(?P<pk>\d+)/$', views.IndividualView.as_view(), name="individual-content"),
+    url(r'^$', views.index, name="datascope-index")
 ]
 
 urlpatterns += wiki_news_patterns
