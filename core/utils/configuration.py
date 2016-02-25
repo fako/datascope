@@ -271,6 +271,8 @@ class ConfigurationField(fields.TextField):
         return super(ConfigurationField, self).to_python(value)
 
     def get_prep_value(self, value):
+        if value is None:
+            return super(ConfigurationField, self).get_prep_value({})
         if not isinstance(value, dict):
             value = json.dumps(value.to_dict(private=True, protected=True))
         return super(ConfigurationField, self).get_prep_value(value)
