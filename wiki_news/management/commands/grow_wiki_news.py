@@ -10,8 +10,8 @@ from wiki_news.models import WikiNewsCommunity
 class Command(GrowCommand):
 
     def add_arguments(self, parser):
-        parser.add_argument('community', type=unicode, nargs="?", default="WikiNewsCommunity")
-        parser.add_argument('-c', '--config', type=unicode, action=DecodeConfigAction, nargs="?", default={})
+        parser.add_argument('community', type=str, nargs="?", default="WikiNewsCommunity")
+        parser.add_argument('-c', '--config', type=str, action=DecodeConfigAction, nargs="?", default={})
         parser.add_argument('-d', '--delete', action="store_true")
 
     @staticmethod
