@@ -1,4 +1,6 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
+# noinspection PyUnresolvedReferences
+from six.moves.urllib.parse import urlencode
 
 import hashlib
 import json
@@ -392,6 +394,8 @@ class HttpResource(models.Model):
     @staticmethod
     def uri_from_url(url):
         url = URLObject(url)
+        params = sorted(url.query.dict.items(), key=lambda item: item[0])
+        url = url.with_query(urlencode(params))
         return str(url).replace(url.scheme + u"://", u"")
 
     @staticmethod

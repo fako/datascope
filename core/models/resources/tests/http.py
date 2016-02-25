@@ -144,10 +144,10 @@ class HttpResourceTestMixin(TestCase):
                 self.fail("Handle error throws wrong exception '{}' expecting 40X".format(exception))
 
     def test_uri_from_url(self):
-        uri = HttpResource.uri_from_url("http://localhost:8000/")
-        self.assertEqual(uri, "localhost:8000/")
-        uri = HttpResource.uri_from_url("https://localhost:8000/")
-        self.assertEqual(uri, "localhost:8000/")
+        uri = HttpResource.uri_from_url("http://localhost:8000/?z=z&a=a")
+        self.assertEqual(uri, "localhost:8000/?a=a&z=z")
+        uri = HttpResource.uri_from_url("https://localhost:8000/?a=a&z=z")
+        self.assertEqual(uri, "localhost:8000/?a=a&z=z")
 
     def test_hash_from_data(self):
         # Give no data
