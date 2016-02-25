@@ -72,6 +72,8 @@ class ConfigurationType(object):
         :param new: (dictionary) to update attributes on self with
         :return: None
         """
+        if not new:
+            return
         assert isinstance(new, dict), "Configurations can only be set with a dictionary not a {}".format(type(new))
         for key, value in six.iteritems(new):
             # FEATURE: guard here against improper override of internal attributes
