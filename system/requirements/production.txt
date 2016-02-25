@@ -15,6 +15,7 @@ pandas==0.16.1
 # Celery plugins
 amqp==1.4.9
 anyjson==0.3.3
+redis==2.10.5
 
 # Advanced features
 selenium==2.47.1
