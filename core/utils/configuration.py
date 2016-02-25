@@ -230,7 +230,7 @@ class ConfigurationField(fields.TextField):
     """
     form_class = ConfigurationFormField
 
-    def __init__(self, config_defaults=None, namespace="", private=tuple(), default=None, *args, **kwargs):
+    def __init__(self, config_defaults=None, namespace="", private=tuple(), *args, **kwargs):
         """
         Stores its arguments for later use by contribute_to_class.
         Assertions are done by the ConfigurationType class, upon contribute_to_class.
@@ -242,8 +242,8 @@ class ConfigurationField(fields.TextField):
         :param kwargs: additional field keyword arguments
         :return:
         """
-        super(ConfigurationField, self).__init__(default={}, *args, **kwargs)
-        self._defaults = config_defaults if config_defaults else {}
+        super(ConfigurationField, self).__init__(*args, **kwargs)
+        self._defaults = config_defaults
         self._namespace = namespace
         self._private = private
 
