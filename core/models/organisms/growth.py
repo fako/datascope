@@ -29,7 +29,7 @@ class GrowthState(object):
     RETRY = "Retry"
 
 GROWTH_STATE_CHOICES = [
-    (value, value) for attr, value in six.iteritems(GrowthState.__dict__) if not attr.startswith("_")
+    (value, value) for attr, value in sorted(GrowthState.__dict__.items()) if not attr.startswith("_")
 ]
 
 
@@ -37,7 +37,7 @@ class ContributeType(object):
     APPEND = "Append"
 
 CONTRIBUTE_TYPE_CHOICES = [
-    (value, value) for attr, value in six.iteritems(ContributeType.__dict__) if not attr.startswith("_")
+    (value, value) for attr, value in sorted(ContributeType.__dict__.items()) if not attr.startswith("_")
 ]
 
 

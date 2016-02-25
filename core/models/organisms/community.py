@@ -30,7 +30,7 @@ class CommunityState(object):
     ABORTED = "Aborted"
 
 COMMUNITY_STATE_CHOICES = [
-    (value, value) for attr, value in six.iteritems(CommunityState.__dict__) if not attr.startswith("_")
+    (value, value) for attr, value in sorted(CommunityState.__dict__.items()) if not attr.startswith("_")
 ]
 
 
