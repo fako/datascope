@@ -10,7 +10,8 @@
         "state": "New",
         "current_growth": null,
         "config": "{\"test_flag\": true}",
-        "purge_at": null
+        "purge_at": null,
+        "signature": "setting1=const&test"
     },
     "model": "core.CommunityMock",
     "pk": 1

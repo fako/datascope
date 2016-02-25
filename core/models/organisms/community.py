@@ -130,6 +130,7 @@ class Community(models.Model, ProcessorMixin):
         created = False
         try:
             community = cls.objects.get(signature="&".join(signature))
+            community.config = {key: value for key, value in six.iteritems(kwargs) if key in cls.PUBLIC_CONFIG}
         except cls.DoesNotExist:
             community = cls(
                 signature="&".join(signature),
@@ -177,7 +178,8 @@ class Community(models.Model, ProcessorMixin):
         """
         for growth_type, growth_config in six.iteritems(self.COMMUNITY_SPIRIT):
             sch = growth_config["schema"]
-            cnf = growth_config["config"]
+            cnf = self.config.to_dict(protected=True)
+            cnf.update(growth_config["config"])
             prc = growth_config["process"]
             if growth_config["contribute"]:
                 cont, con = growth_config["contribute"].split(":")

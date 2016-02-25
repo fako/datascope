@@ -77,6 +77,8 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertEqual(self.instance.growth_set.count(), 2)
         growth1 = self.instance.growth_set.first()
         growth2 = self.instance.growth_set.last()
+        self.assertTrue(growth1.config.test_flag)
+        self.assertTrue(growth2.config.test_flag)
         self.assertEqual(growth1.output.id, growth2.input.id)
         self.assertEqual(growth1.contribute, "ExtractProcessor.extract_from_resource")
         self.assertEqual(growth1.contribute_type, "Append")
