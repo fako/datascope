@@ -2,8 +2,6 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 
 from mock import patch
 
-from django.test import TestCase
-
 from core.models.organisms.growth import Growth, GrowthState
 from core.tests.mocks.celery import (MockTask, MockAsyncResultSuccess, MockAsyncResultPartial,
                                     MockAsyncResultError, MockAsyncResultWaiting)
@@ -25,6 +23,16 @@ class TestGrowth(TestProcessorMixin):
                 "value": "nested value {}".format(index % 3)
             }
             for index in range(0, 9)
+        ]
+        cls.expected_inline_output = [
+            {
+                "context": "nested value",
+                "value": {
+                    "value": "nested value {}".format(index % 3),
+                    "extra": "test {}".format(index % 3)
+                }
+            }
+            for index in range(0, 3)
         ]
         cls.expected_finished_output = [
             {
@@ -141,6 +149,11 @@ class TestGrowth(TestProcessorMixin):
         qs = HttpResourceMock.objects.filter(id=1)
         self.new.append_to_output(qs)
         self.assertEqual(self.new.output.content, self.expected_append_output[:3])
+
+    def test_inline_in_output(self):
+        qs = HttpResourceMock.objects.filter(id__in=[6, 7, 8])
+        self.collective_input.inline_in_output(qs, "value")
+        self.assertEqual(self.collective_input.output.content, self.expected_inline_output)
 
     def test_is_finished(self):
         self.new.state = GrowthState.COMPLETE

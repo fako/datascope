@@ -293,5 +293,53 @@
     },
     "model": "core.httpresourcemock",
     "pk": 5
-}
+},
+{
+    "fields": {
+        "body": "{\"value\": \"nested value 0\", \"extra\": \"test 0\"}",
+        "status": 200,
+        "head": "{\"content-type\":\"application/json\"}",
+        "modified_at": "2015-05-12T18:45:22.105",
+        "created_at": "2015-05-12T18:45:22.105",
+        "request": "{\"url\":\"http://localhost:8000/en/?param=1&q=extra0\",\"args\":[\"en\",\"extra0\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{},\"data\":{},\"method\":\"get\"}",
+        "uri": "localhost:8000/en/?param=1&q=extra0",
+        "data_hash": "",
+        "config": "{}",
+        "purge_at": null
+    },
+    "model": "core.httpresourcemock",
+    "pk": 6
+},
+    {
+        "fields": {
+            "body": "{\"value\": \"nested value 1\", \"extra\": \"test 1\"}",
+            "status": 200,
+            "head": "{\"content-type\":\"application/json\"}",
+            "modified_at": "2015-05-12T18:45:22.105",
+            "created_at": "2015-05-12T18:45:22.105",
+            "request": "{\"url\":\"http://localhost:8000/en/?param=1&q=extra1\",\"args\":[\"en\",\"extra1\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{},\"data\":{},\"method\":\"get\"}",
+            "uri": "localhost:8000/en/?param=1&q=extra1",
+            "data_hash": "",
+            "config": "{}",
+            "purge_at": null
+        },
+        "model": "core.httpresourcemock",
+        "pk": 7
+    },
+    {
+        "fields": {
+            "body": "{\"value\": \"nested value 2\", \"extra\": \"test 2\"}",
+            "status": 200,
+            "head": "{\"content-type\":\"application/json\"}",
+            "modified_at": "2015-05-12T18:45:22.105",
+            "created_at": "2015-05-12T18:45:22.105",
+            "request": "{\"url\":\"http://localhost:8000/en/?param=1&q=extra2\",\"args\":[\"en\",\"extra2\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{},\"data\":{},\"method\":\"get\"}",
+            "uri": "localhost:8000/en/?param=1&q=extra2",
+            "data_hash": "",
+            "config": "{}",
+            "purge_at": null
+        },
+        "model": "core.httpresourcemock",
+        "pk": 8
+    }
 ]

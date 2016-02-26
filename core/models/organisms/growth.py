@@ -160,7 +160,7 @@ class Growth(models.Model, ProcessorMixin):
         self.output.update(results)
 
     def inline_in_output(self, contributions, inline_key):
-        pass
+        print(self.input.content)
 
     def save(self, *args, **kwargs):
         self.is_finished = self.state in [GrowthState.COMPLETE, GrowthState.PARTIAL]
