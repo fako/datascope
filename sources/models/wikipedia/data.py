@@ -3,7 +3,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 from core.models.resources.http import HttpResource
 
 
-class WikiDataClaims(HttpResource):
+class WikiDataItem(HttpResource):
 
     URI_TEMPLATE = "https://www.wikidata.org/wiki/Special:EntityData/{}.json"  # updated at runtime
     CONFIG_NAMESPACE = 'wikipedia'
@@ -43,7 +43,7 @@ class WikiDataClaims(HttpResource):
 
     @property
     def content(self):
-        content_type, data = super(WikiDataClaims, self).content
+        content_type, data = super(WikiDataItem, self).content
         item = data["entities"][self.meta]
         raw_claims = []
         for raw_claims_list in item["claims"].values():
