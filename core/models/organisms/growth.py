@@ -132,7 +132,7 @@ class Growth(models.Model, ProcessorMixin):
                 assert self.config.inline_key, \
                     "No inline_key specified in configuration for Growth with inline contribution"
                 # TODO: assert that contributions and output fully match?
-                self.inline_in_output(scc, self.config.inline_key)
+                self.inline_by_key(scc, self.config.inline_key)
             elif self.contribute is None:  # TODO: test
                 pass
             else:
@@ -159,8 +159,15 @@ class Growth(models.Model, ProcessorMixin):
                 contribution.retain(self)
         self.output.update(results)
 
-    def inline_in_output(self, contributions, inline_key):
-        print(self.input.content)
+    def inline_by_key(self, contributions, inline_key):
+        groups = self.input.group_by(inline_key)
+        for contribution in contributions:
+            content_type, data = contribution.content
+            for individual in groups[data[inline_key]]:
+                individual.properties[inline_key] = data
+                individual.save()
+        self.output = self.input
+        self.save()
 
     def save(self, *args, **kwargs):
         self.is_finished = self.state in [GrowthState.COMPLETE, GrowthState.PARTIAL]

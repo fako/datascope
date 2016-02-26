@@ -150,9 +150,9 @@ class TestGrowth(TestProcessorMixin):
         self.new.append_to_output(qs)
         self.assertEqual(self.new.output.content, self.expected_append_output[:3])
 
-    def test_inline_in_output(self):
+    def test_inline_by_key(self):
         qs = HttpResourceMock.objects.filter(id__in=[6, 7, 8])
-        self.collective_input.inline_in_output(qs, "value")
+        self.collective_input.inline_by_key(qs, "value")
         self.assertEqual(self.collective_input.output.content, self.expected_inline_output)
 
     def test_is_finished(self):
