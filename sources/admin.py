@@ -3,10 +3,14 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 from django.contrib import admin
 
 from core.admin.resources import ResourceAdmin
-from sources.models import GoogleImage, WikipediaTranslate, GoogleTranslate, ImageDownload
+from sources.models import (GoogleImage, WikipediaTranslate, GoogleTranslate, ImageDownload, WikipediaRecentChanges,
+                            WikipediaListPages, WikiDataItem)
 
 
 admin.site.register(WikipediaTranslate, ResourceAdmin)
 admin.site.register(GoogleImage, ResourceAdmin)
 admin.site.register(GoogleTranslate, ResourceAdmin)
 admin.site.register(ImageDownload, ResourceAdmin)
+admin.site.register(WikipediaRecentChanges, ResourceAdmin)
+admin.site.register(WikipediaListPages, ResourceAdmin)
+admin.site.register(WikiDataItem, ResourceAdmin)
