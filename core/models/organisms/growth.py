@@ -35,6 +35,7 @@ GROWTH_STATE_CHOICES = [
 
 class ContributeType(object):
     APPEND = "Append"
+    INLINE = "Inline"
 
 CONTRIBUTE_TYPE_CHOICES = [
     (value, value) for attr, value in sorted(ContributeType.__dict__.items()) if not attr.startswith("_")
@@ -127,6 +128,11 @@ class Growth(models.Model, ProcessorMixin):
             scc, err = processor.results(result)
             if self.contribute_type == ContributeType.APPEND:
                 self.append_to_output(scc)
+            elif self.contribute_type == ContributeType.INLINE:
+                assert self.config.inline_key, \
+                    "No inline_key specified in configuration for Growth with inline contribution"
+                # TODO: assert that contributions and output fully match?
+                self.inline_in_output(scc, self.config.inline_key)
             elif self.contribute is None:  # TODO: test
                 pass
             else:
@@ -152,6 +158,9 @@ class Growth(models.Model, ProcessorMixin):
                 ))
                 contribution.retain(self)
         self.output.update(results)
+
+    def inline_in_output(self, contributions, inline_key):
+        pass
 
     def save(self, *args, **kwargs):
         self.is_finished = self.state in [GrowthState.COMPLETE, GrowthState.PARTIAL]
