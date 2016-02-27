@@ -19,8 +19,8 @@ class RankProcessor(Processor):
         config_dict = self.config.to_dict()
         hooks = [
             getattr(self, hook[1:])
-            for hook in six.iterkeys(config_dict)  # config gets whitelisted by Community
-            if isinstance(hook, str) and hook.startswith("$") and callable(getattr(self, hook[1:], None))
+            for hook, weight in six.iteritems(config_dict)  # config gets whitelisted by Community
+            if isinstance(hook, str) and hook.startswith("$") and callable(getattr(self, hook[1:], None)) and weight
         ]
         # TODO: There are problems with the memory consumption of this piece of code.
         # 1)   Give the kernel to "body" processor methods instead of the content. Make a default content reader processor
@@ -32,15 +32,17 @@ class RankProcessor(Processor):
         # 7)   Return an iterator over all combined files using heapq.merge
         # 8)   Make manifestations always work with iterators and use itertools.islice for wiki_news
         for hook in hooks:
-            total = 0
             for individual in individuals:
-                total += hook(individual)
-            if not total:
-                return individuals
-            for individual in individuals:
-                weight = hook(individual) / total * float(config_dict["$"+hook.__name__])
+                module_value = hook(individual)
+                module_weight = float(config_dict["$"+hook.__name__])
+                if not module_value:
+                    continue
+                if isinstance(module_value, bool):
+                    module_value = int(module_value)
+                if not isinstance(module_value, six.integer_types):
+                    continue
                 if "ds_rank" not in individual:
-                    individual["ds_rank"] = weight
+                    individual["ds_rank"] = module_value * module_weight
                 else:
-                    individual["ds_rank"] *= weight
+                    individual["ds_rank"] *= module_value * module_weight
         return sorted(individuals, key=lambda el: el.get("ds_rank", 0), reverse=True)
