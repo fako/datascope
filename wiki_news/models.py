@@ -25,7 +25,8 @@ class WikiNewsCommunity(Community):
                     "pageid": "$.pageid",
                     "title": "$.title",
                     "timestamp": "$.timestamp",
-                    "comment": "$.comment"
+                    "comment": "$.comment",
+                    "userid": "$.userid"
                 },
                 "_continuation_limit": 1000,
             },
@@ -77,14 +78,20 @@ class WikiNewsCommunity(Community):
     def finish_revisions(self, out, err):
         pages = {}
         for ind in out.individual_set.all():
+            revision = ind.content
             if ind.properties["pageid"] not in pages:
                 pages[ind.properties["pageid"]] = ind
                 ind.properties = {
                     "pageid": ind.properties["pageid"],
-                    "revisions": [ind.content]
+                    "revisions": [revision],
+                    "users": {revision["userid"]} if revision["userid"] else set()
                 }
             else:
                 pages[ind.properties["pageid"]]["revisions"].append(ind.content)
+                if revision["userid"]:
+                    pages[ind.properties["pageid"]]["users"].add(revision["userid"])
+        for page in six.itervalues(pages):
+            page.properties["users"] = list(page["users"])
         out.individual_set.all().delete()
         out.individual_set.bulk_create(six.itervalues(pages), batch_size=settings.MAX_BATCH_SIZE)
 
