@@ -92,6 +92,8 @@ class WikiNewsCommunity(Community):
     PUBLIC_CONFIG = {
         "$revision_count": 1,
         "$category_count": 1,
+        "$number_of_deaths": 1,
+        "$women": 1
     }
 
     def initial_input(self, *args, **kwargs):
