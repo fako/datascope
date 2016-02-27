@@ -25,6 +25,10 @@ class WikiDataItems(HttpResource):
         "kwargs": None
     }
 
+    class Meta:
+        verbose_name = "Wikidata Items"
+        verbose_name_plural = "Wikidata Items"
+
     def get_entity(self, snak):
         """
         Turns Wikidata into a more readable entity data structure
