@@ -55,6 +55,28 @@ class WikiNewsCommunity(Community):
             },
             "schema": {},
             "errors": {},
+        }),
+        ("wikidata", {
+            "process": "HttpResourceProcessor.fetch_mass",
+            "input": "Collective",  # gets a filter applied
+            "contribute": "Inline:ExtractProcessor.extract_from_resource",
+            "output": "@pages",
+            "config": {
+                "_args": ["$.wikidata"],
+                "_kwargs": {},
+                "_resource": "WikiDataItems",
+                "_objective": {
+                    "@": "$",
+                    "wikidata": "$.id",
+                    "claims": "$.claims",
+                    "references": "$.references"
+                },
+                "_inline_key": "wikidata",
+                "_concat_args_size": 50,
+                "_continuation_limit": 1000,
+            },
+            "schema": {},
+            "errors": {},
         })
     ])
 
@@ -115,6 +137,14 @@ class WikiNewsCommunity(Community):
 
         out.individual_set.all().delete()
         out.individual_set.bulk_create(six.itervalues(pages), batch_size=settings.MAX_BATCH_SIZE)
+
+    def begin_wikidata(self, inp):
+        wikidata_individuals = []
+        pages = self.growth_set.filter(type="pages").last().output
+        for individual in pages.individual_set.all():
+            if individual.properties.get("wikidata"):
+                wikidata_individuals.append(individual.content)
+        inp.update(wikidata_individuals)
 
     def set_kernel(self):
         self.kernel = self.current_growth.output
