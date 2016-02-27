@@ -145,6 +145,9 @@ class TestGrowth(TestProcessorMixin):
     def test_finish_synchronous(self):
         self.skipTest("not tested")
 
+    def test_prepare_contributions(self):
+        self.skipTest("not tested")
+
     def test_append_to_output(self):
         qs = HttpResourceMock.objects.filter(id=1)
         self.new.append_to_output(qs)

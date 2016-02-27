@@ -126,13 +126,14 @@ class Growth(models.Model, ProcessorMixin):
 
         if self.state == GrowthState.CONTRIBUTE:
             scc, err = processor.results(result)
+            contributions = self.prepare_contributions(scc)
             if self.contribute_type == ContributeType.APPEND:
-                self.append_to_output(scc)
+                self.append_to_output(contributions)
             elif self.contribute_type == ContributeType.INLINE:
                 assert self.config.inline_key, \
                     "No inline_key specified in configuration for Growth with inline contribution"
                 # TODO: assert that contributions and output fully match?
-                self.inline_by_key(scc, self.config.inline_key)
+                self.inline_by_key(contributions, self.config.inline_key)
             elif self.contribute is None:  # TODO: test
                 pass
             else:
@@ -144,30 +145,32 @@ class Growth(models.Model, ProcessorMixin):
 
         return self.output, self.resources
 
-    def append_to_output(self, contributions):
+    def prepare_contributions(self, success_resources):
+        if not success_resources:
+            return []
         contribute_processor, callback, args_type = self.prepare_process(self.contribute)
-        results = []
-        for contribution in contributions:
+        contributions = []
+        for success_resource in success_resources:
             try:
-                results += callback(contribution)
+                contributions += callback(success_resource)
             except DSNoContent as exc:
                 log.debug("No content for {} with id {}: {}".format(
-                    contribution.__class__.__name__,
-                    contribution.id,
+                    success_resource.__class__.__name__,
+                    success_resource.id,
                     exc
                 ))
-                contribution.retain(self)
-        self.output.update(results)
+                success_resource.retain(self)
+        return contributions
+
+    def append_to_output(self, contributions):
+        self.output.update(contributions)
 
     def inline_by_key(self, contributions, inline_key):
-        groups = self.input.group_by(inline_key)
+        groups = self.output.group_by(inline_key)
         for contribution in contributions:
-            content_type, data = contribution.content
-            for individual in groups[data[inline_key]]:
-                individual.properties[inline_key] = data
+            for individual in groups[contribution[inline_key]]:
+                individual.properties[inline_key] = contribution
                 individual.save()
-        self.output = self.input
-        self.save()
 
     def save(self, *args, **kwargs):
         self.is_finished = self.state in [GrowthState.COMPLETE, GrowthState.PARTIAL]
