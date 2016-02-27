@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import json_field.fields
 import core.utils.configuration
+import json_field.fields
 
 
 class Migration(migrations.Migration):
@@ -15,14 +15,14 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='WikiDataItem',
+            name='WikiDataItems',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('uri', models.CharField(default=None, db_index=True, max_length=255)),
-                ('data_hash', models.CharField(default='', db_index=True, max_length=255)),
+                ('id', models.AutoField(primary_key=True, auto_created=True, verbose_name='ID', serialize=False)),
+                ('uri', models.CharField(db_index=True, max_length=255, default=None)),
+                ('data_hash', models.CharField(db_index=True, max_length=255, default='')),
                 ('config', core.utils.configuration.ConfigurationField()),
-                ('request', json_field.fields.JSONField(default=None, help_text='Enter a valid JSON object')),
-                ('head', json_field.fields.JSONField(default=None, help_text='Enter a valid JSON object')),
+                ('request', json_field.fields.JSONField(help_text='Enter a valid JSON object', default=None)),
+                ('head', json_field.fields.JSONField(help_text='Enter a valid JSON object', default=None)),
                 ('body', models.TextField(default=None)),
                 ('status', models.PositiveIntegerField(default=None)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),

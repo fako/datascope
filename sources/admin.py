@@ -4,7 +4,7 @@ from django.contrib import admin
 
 from core.admin.resources import ResourceAdmin
 from sources.models import (GoogleImage, WikipediaTranslate, GoogleTranslate, ImageDownload, WikipediaRecentChanges,
-                            WikipediaListPages, WikiDataItem)
+                            WikipediaListPages, WikiDataItems)
 
 
 admin.site.register(WikipediaTranslate, ResourceAdmin)
@@ -13,4 +13,4 @@ admin.site.register(GoogleTranslate, ResourceAdmin)
 admin.site.register(ImageDownload, ResourceAdmin)
 admin.site.register(WikipediaRecentChanges, ResourceAdmin)
 admin.site.register(WikipediaListPages, ResourceAdmin)
-admin.site.register(WikiDataItem, ResourceAdmin)
+admin.site.register(WikiDataItems, ResourceAdmin)

@@ -1,17 +1,27 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
+import six
 
 from core.models.resources.http import HttpResource
 
 
-class WikiDataItem(HttpResource):
+class WikiDataItems(HttpResource):
 
-    URI_TEMPLATE = "https://www.wikidata.org/wiki/Special:EntityData/{}.json"  # updated at runtime
+    URI_TEMPLATE = "https://www.wikidata.org/w/api.php?ids={}"
     CONFIG_NAMESPACE = 'wikipedia'
+
+    PARAMETERS = {
+        "action": "wbgetentities",
+        "format": "json",
+        "redirects": "yes",
+        "continue": "",
+        "languages": "en",
+        "props": "info|claims"
+    }
 
     GET_SCHEMA = {
         "args": {
             "type": "array",
-            "items": [{"type": "string"}],
+            "items": [{"type": "string"}],  # TODO: use a pattern?
         },
         "kwargs": None
     }
@@ -39,12 +49,9 @@ class WikiDataItem(HttpResource):
                 "type": snak["datatype"]
             }, False
 
-    @property
-    def content(self):
-        content_type, data = super(WikiDataItem, self).content
-        item = data["entities"][self.meta]
+    def get_item(self, raw_item_data):
         raw_claims = []
-        for raw_claims_list in item["claims"].values():
+        for raw_claims_list in six.itervalues(raw_item_data["claims"]):
             raw_claims += raw_claims_list
         claim_entities = []
         references = set()
@@ -63,14 +70,15 @@ class WikiDataItem(HttpResource):
                 claim_entity["references"].append(reference)
                 references.add(reference)
             claim_entities.append(claim_entity)
+        item = raw_item_data
         item["claims"] = claim_entities
         item["references"] = list(references)
-        del item["labels"]
-        del item["descriptions"]
-        del item["aliases"]
-        del item["sitelinks"]
-        return content_type, item
+        return item
 
     @property
-    def meta(self):
-        return self.request['args'][0]
+    def content(self):
+        content_type, data = super(WikiDataItems, self).content
+        items = []
+        for raw_item in six.itervalues(data["entities"]):
+            items.append(self.get_item(raw_item))
+        return content_type, items
