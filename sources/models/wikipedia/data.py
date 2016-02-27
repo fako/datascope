@@ -13,7 +13,6 @@ class WikiDataItems(HttpResource):
         "action": "wbgetentities",
         "format": "json",
         "redirects": "yes",
-        "continue": "",
         "languages": "en",
         "props": "info|claims"
     }
@@ -33,8 +32,14 @@ class WikiDataItems(HttpResource):
         :param (dict) snak: a Wikidata specific data structure: https://www.mediawiki.org/wiki/Wikibase/DataModel#Snaks
         :return: A tuple with the format (entity, is_item).
         """
-        assert "property" in snak and "datavalue" in snak and "datatype" in snak, \
-            "Wikidata snacs should have a property, datavalue and datatype specified"
+        assert "property" in snak and "datatype" in snak and "snaktype" in snak, \
+            "Wikidata snacs should have a property and datatype specified"
+        if snak["snaktype"] == "novalue" or snak["snaktype"] == "somevalue":
+            return {
+                "property": snak["property"],
+                "type": snak["datatype"],
+                "value": None
+            }, snak["datatype"] == "wikibase-item"
         value = snak["datavalue"]["value"]
         if snak["datatype"] == "wikibase-item":
             return {
@@ -65,7 +70,10 @@ class WikiDataItems(HttpResource):
                 for raw_references_list in references_data["snaks"].values():
                     raw_references += raw_references_list
                 raw_reference_entities = map(self.get_entity, raw_references)
-                reference_entity = next(ref for ref, is_item in raw_reference_entities if is_item)
+                try:
+                    reference_entity = next(ref for ref, is_item in raw_reference_entities if is_item)
+                except StopIteration:
+                    continue
                 reference = "{}:{}".format(reference_entity["property"], reference_entity["value"])
                 claim_entity["references"].append(reference)
                 references.add(reference)
