@@ -1,4 +1,4 @@
-from base import *
+from .base import *
 
 DATABASES["default"]["ENGINE"] = 'django.db.backends.mysql'
 DATABASES["default"]["NAME"] = 's52573__datascope'
