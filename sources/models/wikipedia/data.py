@@ -26,8 +26,8 @@ class WikiDataItems(HttpResource):
     }
 
     class Meta:
-        verbose_name = "Wikidata Items"
-        verbose_name_plural = "Wikidata Items"
+        verbose_name = "Wikidata items"
+        verbose_name_plural = "Wikidata items"
 
     def get_entity(self, snak):
         """

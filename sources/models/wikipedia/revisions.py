@@ -36,8 +36,8 @@ class WikipediaRecentChanges(WikipediaQuery):
     WIKI_RESULTS_KEY = "recentchanges"
 
     class Meta:
-        verbose_name = "Wikipedia Recent Changes"
-        verbose_name_plural = "Wikipedia Recent Changes"
+        verbose_name = "Wikipedia recent changes"
+        verbose_name_plural = "Wikipedia recent changes"
 
     def send(self, method, *args, **kwargs):
         args = (self.config.wiki_country, int(self.config.start_time), int(self.config.end_time))
