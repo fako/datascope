@@ -64,7 +64,7 @@ ALLOWED_HOSTS = [
     '.globe-scope.org',
     '.data-scope.com',
     '.data-scope.org',
-    'tools.wmflabs.org',
+    '.tools.wmflabs.org',
     '37.139.10.19',
 ]
 
