@@ -20,5 +20,6 @@ urlpatterns = [
         kwargs={"community_class": WikiNewsCommunity},
         name=WikiNewsCommunity.get_name() + "_html"
     ),
-    url(r'^wiki-algo-news/wiki-update/(?P<page>.+)/$', views.wiki_page_update, name="wiki_page_update")
+    url(r'^wiki-algo-news/wiki-update/(?P<page>.+)/$', views.wiki_page_update, name="wiki_page_update"),
+    url(r'^wiki-algo-news/wiki-wait/(?P<page>.+)/$', views.wiki_page_wait, name="wiki_page_wait"),
 ]

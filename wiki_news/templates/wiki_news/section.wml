@@ -1,0 +1,10 @@
+{% templatetag openvariable %}anchor|{{ page.pageid }}{% templatetag closevariable %} <!-- moving or deleting anchor tags on this page will do damage to it -->
+{% if page.image %}
+    [[File:{{ page.image }}|right|border|100px]]
+{% endif %}
+===[[w:{{ page.title }}|{{ page.title }}]]===
+Paragraph goes here
+
+''Algorithm Rank: {{ page.ds_rank }} ([[/why|Why?]])''
+{% templatetag openvariable %}clear{% templatetag closevariable %}
+----
