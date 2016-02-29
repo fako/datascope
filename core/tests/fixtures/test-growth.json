@@ -98,7 +98,7 @@
 },
 {
     "fields": {
-        "output_id": 1,
+        "output_id": 3,
         "result_id": null,
         "contribute": "ExtractProcessor.extract_from_resource",
         "contribute_type": "Append",
@@ -109,7 +109,7 @@
         "input_type": 18,
         "output_type": 18,
         "is_finished": false,
-        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\", \"args\": [\"$.value\"], \"kwargs\": {\"context\": \"$.context\"}}",
+        "config": "{\"objective\": {\"@\": \"$\", \"value\":\"$.value\", \"extra\":\"$.extra\"}, \"resource\": \"HttpResourceMock\", \"args\": [\"$.value\"], \"kwargs\": {\"context\": \"$.context\"}}",
         "community_type": 21,
         "community_id": 1
     },
@@ -296,7 +296,7 @@
 },
 {
     "fields": {
-        "body": "{\"value\": \"nested value 0\", \"extra\": \"test 0\"}",
+        "body": "[{\"value\": \"nested value 0\", \"extra\": \"test 0\"}]",
         "status": 200,
         "head": "{\"content-type\":\"application/json\"}",
         "modified_at": "2015-05-12T18:45:22.105",
@@ -312,7 +312,7 @@
 },
     {
         "fields": {
-            "body": "{\"value\": \"nested value 1\", \"extra\": \"test 1\"}",
+            "body": "[{\"value\": \"nested value 1\", \"extra\": \"test 1\"}]",
             "status": 200,
             "head": "{\"content-type\":\"application/json\"}",
             "modified_at": "2015-05-12T18:45:22.105",
@@ -328,7 +328,7 @@
     },
     {
         "fields": {
-            "body": "{\"value\": \"nested value 2\", \"extra\": \"test 2\"}",
+            "body": "[{\"value\": \"nested value 2\", \"extra\": \"test 2\"}]",
             "status": 200,
             "head": "{\"content-type\":\"application/json\"}",
             "modified_at": "2015-05-12T18:45:22.105",
