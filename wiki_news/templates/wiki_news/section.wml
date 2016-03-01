@@ -5,6 +5,8 @@
 ===[[w:{{ page.title }}|{{ page.title }}]]===
 Paragraph goes here
 
-''Algorithm Rank: {{ page.ds_rank }} ([[/why|Why?]])''
+{% templatetag openvariable %}collapse top|title=Algorithm Rank: {{ page.ds_rank }}{% templatetag closevariable %}
+Sample contents text
+{% templatetag openvariable %}collapse bottom{% templatetag closevariable %}
 {% templatetag openvariable %}clear{% templatetag closevariable %}
 ----

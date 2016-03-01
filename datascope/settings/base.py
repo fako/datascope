@@ -95,7 +95,7 @@ DATETIME_FORMAT = 'd-m-y H:i:s/u'  # default would get overridden by L18N
 USE_TZ = False
 
 # Available languages for all projects
-ugettext = lambda s: s # a dummy ugettext to prevent circular import
+ugettext = lambda s: s  # a dummy ugettext to prevent circular import
 LANGUAGES = (
     ('en', ugettext('English')),
     ('pt', ugettext('Portuguese')),
