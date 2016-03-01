@@ -73,7 +73,7 @@ def get_existing_sections(page):
         match = anchor_regex.match(line)
         if match:
             current_anchor = match.groups()[0].strip()
-            sections[current_anchor] = []
+            sections[current_anchor] = [line]
         elif match is None and current_anchor:
             sections[current_anchor].append(line)
         else:
