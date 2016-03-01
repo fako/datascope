@@ -1,3 +1,4 @@
+import six
 # noinspection PyUnresolvedReferences
 from six.moves.urllib.parse import urlencode
 
@@ -89,10 +90,15 @@ def wiki_page_update(request, page):
     existing_sections = get_existing_sections(page)
     content = render_to_string("wiki_news/header.wml", {"absolute_uri": request.build_absolute_uri()})
     for page_details in response.data["results"]:
-        if page_details["pageid"] in existing_sections:
-            content += "\n".join(existing_sections[page_details["pageid"]])
+        page_key = str(page_details["pageid"])
+        if page_key in existing_sections:
+            content += "\n".join(existing_sections[page_key])
         else:
-            content += render_to_string("wiki_news/section.wml", {"page": page_details})
+            modules = sorted(six.iteritems(page_details["ds_rank"]), key=lambda item: item[1], reverse=True)[1:]
+            content += render_to_string("wiki_news/section.wml", {
+                "page": page_details,
+                "modules": modules
+            })
     edit_wiki(page, content)
     return redirect("{}wiki/{}".format(TARGET_WIKI, page))
 
