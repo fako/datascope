@@ -65,7 +65,7 @@ ALLOWED_HOSTS = [
     '.data-scope.com',
     '.data-scope.org',
     '.tools.wmflabs.org',
-    '37.139.10.19',
+    '37.139.16.242',
 ]
 
 APPEND_SLASH = False
