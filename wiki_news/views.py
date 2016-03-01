@@ -62,6 +62,7 @@ def edit_wiki(page, content):
 
 def get_existing_sections(page):
     page_url = "{}wiki/{}".format(TARGET_WIKI, page)
+
     page_response = requests.get(page_url, params={"action": "raw"})
     anchor_regex = re.compile("\{\{\s*anchor\s*\|([^}]+)")
     current_anchor = None
@@ -87,8 +88,7 @@ def wiki_page_update(request, page):
         wait_query = request.META.get("QUERY_STRING")
         return redirect("{}?{}".format(wait_url, wait_query))
     existing_sections = get_existing_sections(page)
-    universal_update_url = reverse("v1:wiki_page_update", kwargs={"page": "{{PAGENAMEE}}"})
-    content = render_to_string("wiki_news/header.wml", {"absolute_uri": request.build_absolute_uri(universal_update_url)})
+    content = render_to_string("wiki_news/header.wml", {"absolute_uri": request.build_absolute_uri()})
     for page_details in response.data["results"]:
         page_key = str(page_details["pageid"])
         if page_key in existing_sections:
