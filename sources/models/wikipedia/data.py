@@ -14,7 +14,7 @@ class WikiDataItems(HttpResource):
         "format": "json",
         "redirects": "yes",
         "languages": "en",
-        "props": "info|claims"
+        "props": "info|claims|descriptions"
     }
 
     GET_SCHEMA = {
@@ -83,6 +83,11 @@ class WikiDataItems(HttpResource):
                 references.add(reference)
             claim_entities.append(claim_entity)
         item = raw_item_data
+        try:
+            item["description"] = item["descriptions"]["en"]["value"]
+        except KeyError:
+            item["description"] = "No English description available"
+        del item["descriptions"]
         item["claims"] = claim_entities
         item["references"] = list(references)
         return item

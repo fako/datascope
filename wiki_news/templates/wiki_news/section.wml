@@ -3,7 +3,7 @@
     [[File:{{ page.image }}|right|border|100px]]
 {% endif %}
 ===[[w:{{ page.title }}|{{ page.title }}]]===
-Paragraph goes here
+{{  page.wikidata.description }}
 
 {% templatetag openvariable %}collapse top|title=Algorithm Rank: {{ page.ds_rank }}{% templatetag closevariable %}
 Sample contents text
