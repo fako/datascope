@@ -1,8 +1,13 @@
+# noinspection PyUnresolvedReferences
+from six.moves.urllib.parse import urlencode
+
 import re
 import requests
 
-from django.shortcuts import render_to_response, HttpResponse, redirect
+from django.shortcuts import render_to_response, redirect
 from django.template.loader import render_to_string
+from django.core.urlresolvers import reverse
+from django.conf import settings
 
 from rest_framework import status
 
@@ -71,33 +76,31 @@ def get_existing_sections(page):
         elif match is None and current_anchor:
             sections[current_anchor].append(line)
         else:
-            sections["header"].append(line)
+            continue
     return sections
 
 
 def wiki_page_update(request, page):
     response = CommunityView().get_service_data_response(WikiNewsCommunity, "latest-news", request.GET.dict())
     if response.status_code == status.HTTP_202_ACCEPTED:
-        return redirect("v1:wiki_page_wait", page)
+        wait_url = reverse("v1:wiki_page_wait", kwargs={"page": page})
+        wait_query = request.META.get("QUERY_STRING")
+        return redirect("{}?{}".format(wait_url, wait_query))
     existing_sections = get_existing_sections(page)
-    content = "\n".join(existing_sections["header"])
+    content = render_to_string("wiki_news/header.wml", {"absolute_uri": request.build_absolute_uri()})
     for page_details in response.data["results"]:
         if page_details["pageid"] in existing_sections:
             content += "\n".join(existing_sections[page_details["pageid"]])
         else:
             content += render_to_string("wiki_news/section.wml", {"page": page_details})
-
-    # edit = edit_wiki(page, "NEWEST! E-MAZING!")
-    # out = HttpResponse(edit.json())
-    # out["content-type"] = "application/json"
-    # return out
-    return HttpResponse("testing")
+    edit_wiki(page, content)
+    return redirect("{}wiki/{}".format(TARGET_WIKI, page))
 
 
 def wiki_page_wait(request, page):
-    # Renders a template that redirects to wiki_page_update when results are in
-    return HttpResponse(page)
-
-
-def wiki_page_details(request):
-    pass
+    return render_to_response("wiki_news/wait.html", {
+        "segments_to_service": settings.SEGMENTS_TO_SERVICE,
+        "service_query": "latest-news",
+        "continue_path": reverse("v1:wiki_page_update", args=(page,)),
+        "page_title": page
+    })

@@ -109,6 +109,9 @@ LOCALE_PATHS = (
     PATH_TO_PROJECT + 'src/locale/',
 )
 
+SEGMENTS_BEFORE_PROJECT_ROOT = len([segment for segment in URL_TO_PROJECT.split('/') if segment])
+SEGMENTS_TO_SERVICE = SEGMENTS_BEFORE_PROJECT_ROOT + 3  # /data/v1/<service-name>/
+
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = PATH_TO_PROJECT + 'system/files/media/'
