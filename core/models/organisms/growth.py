@@ -168,6 +168,9 @@ class Growth(models.Model, ProcessorMixin):
     def inline_by_key(self, contributions, inline_key):
         groups = self.output.group_by(inline_key)
         for contribution in contributions:
+            # TODO: figure out why we need to skip here at times
+            if contribution[inline_key] not in groups:
+                continue
             for individual in groups[contribution[inline_key]]:
                 individual.properties[inline_key] = contribution
                 individual.save()
