@@ -35,8 +35,8 @@ def edit_wiki(page, content):
         'action': 'login',
         'format': 'json',
         'utf8': '',
-        'lgname': 'Fako85',
-        'lgpassword': '1Wiki0110&0010',
+        'lgname': settings.WIKI_USER,
+        'lgpassword': settings.WIKI_PASSWORD,
         'lgtoken': login_token
     }
     wiki_session.post(api_endpoint, data=confirm_login_payload)
