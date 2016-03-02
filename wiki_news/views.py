@@ -70,10 +70,13 @@ def get_existing_sections(page):
         "header": []
     }
     for line in page_response.text.splitlines():
-        match = anchor_regex.match(line)
+        match = anchor_regex.search(line)
         if match:
+            pre_anchor = line[:match.start()]
+            if pre_anchor and current_anchor:
+                sections[current_anchor].append(pre_anchor)
             current_anchor = match.groups()[0].strip()
-            sections[current_anchor] = [line]
+            sections[current_anchor] = [line[match.start():]]
         elif match is None and current_anchor:
             sections[current_anchor].append(line)
         else:
