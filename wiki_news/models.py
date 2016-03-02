@@ -69,7 +69,8 @@ class WikiNewsCommunity(Community):
                     "@": "$",
                     "wikidata": "$.id",
                     "claims": "$.claims",
-                    "references": "$.references"
+                    "references": "$.references",
+                    "description": "$.description",
                 },
                 "_inline_key": "wikidata",
                 "_concat_args_size": 50,
