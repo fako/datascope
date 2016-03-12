@@ -17,7 +17,7 @@ class WikipediaRankProcessor(RankProcessor):
     @staticmethod
     def number_of_deaths(page):
         wikidata = page.get("wikidata")
-        if not wikidata or not isinstance(wikidata, six.string_types):
+        if not wikidata or isinstance(wikidata, six.string_types):
             return
         number_of_deaths_property = "P1120"
         for claim in wikidata.get("claims", []):
