@@ -69,7 +69,7 @@ class VisualTranslationsCommunity(Community):
                 "_resource": "ImageDownload"
             },
             "schema": {},
-            "errors": {},
+            "errors": None,
         })
     ])
 

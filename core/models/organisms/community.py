@@ -156,6 +156,8 @@ class Community(models.Model, ProcessorMixin):
         errors.order_by('-status')
         phase_config = self.COMMUNITY_SPIRIT[phase]
         error_config = phase_config["errors"]
+        if error_config is None:
+            return True
         fatal_error = not bool(len(out.content))
         for status, error_group in groupby(errors, lambda err: err.status):
             if status in error_config:

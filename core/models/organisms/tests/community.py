@@ -158,8 +158,26 @@ class TestCommunityMock(CommunityTestMixin):
             list(self.error.current_growth.resources.filter(status=502)),
             full_output
         )
-        self.error.error_phase1_not_found.assert_not_called()
-        set_kernel.assert_called_once()
+        self.assertFalse(self.error.error_phase1_not_found.called)
+        self.assertEqual(set_kernel.call_count, 1)
+
+        self.set_callback_mocks()
+        self.error.state = CommunityState.ASYNC
+        self.error.COMMUNITY_SPIRIT["phase1"]["errors"] = None
+        self.error.save()
+        self.error.current_growth.state = GrowthState.COMPLETE  # bypass growth logic
+        self.error.current_growth.save()
+        set_kernel.reset_mock()
+
+        try:
+            self.error.grow()
+        except DSProcessError:
+            self.fail("Community raised an error with no error configuration present")
+        self.assertEqual(self.error.state, CommunityState.READY)
+        self.assertFalse(self.error.error_phase1_unreachable.called)
+        self.assertFalse(self.error.error_phase1_not_found.called)
+        self.assertEqual(set_kernel.call_count, 1)
+
 
     @patch("core.models.organisms.community.Growth.begin")
     def test_grow_async(self, begin_growth):
