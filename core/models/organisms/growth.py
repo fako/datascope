@@ -146,7 +146,7 @@ class Growth(models.Model, ProcessorMixin):
         return self.output, self.resources
 
     def prepare_contributions(self, success_resources):
-        if not success_resources:
+        if not success_resources or not self.contribute:
             return []
         contribute_processor, callback, args_type = self.prepare_process(self.contribute)
         contributions = []
