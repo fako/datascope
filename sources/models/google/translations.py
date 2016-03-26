@@ -21,7 +21,7 @@ class GoogleTranslate(BrowserResource):
         words = soup.find_all(class_="gt-baf-word-clickable")
         meanings = soup.find_all(class_="gt-baf-translations")
         try:
-            fallback = next(word for word in soup.find_all(class_="hps") if word.parent["id"] == "result_box")
+            fallback = next(word for word in soup.find_all("span") if word.parent.get("id") == "result_box")
         except StopIteration:
             log.error("No fallback for: {}".format(self.uri))
 
