@@ -5,8 +5,6 @@ from collections import OrderedDict
 from itertools import groupby
 from copy import copy
 
-from django.core.files.storage import default_storage
-
 from core.models.organisms import Community, Collective, Individual
 from core.utils.image import ImageGrid
 from core.processors.expansion import ExpansionProcessor
@@ -205,7 +203,7 @@ class VisualTranslationsCommunity(Community):
         grids = {"{}_{}".format(language, country): (grid, factor) for language, country, grid, factor in self.LOCALES}
         grouped_translations = translation_growth.output.group_by("locale")
         for locale, translations in six.iteritems(grouped_translations):
-            expansion_processor = ExpansionProcessor()
+            expansion_processor = ExpansionProcessor(self.config.to_dict())
             translations = expansion_processor.collective_content(
                 [translation.properties for translation in translations]
             )
