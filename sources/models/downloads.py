@@ -1,5 +1,5 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
-from six import StringIO
+from six import BytesIO
 
 from PIL import Image
 from urlobject import URLObject
@@ -63,7 +63,7 @@ class ImageDownload(HttpResource):  # TODO: write tests
         file_name = path[file_name_position:]
         if len(file_name) > 150:
             file_name = file_name[:150] + '.' + path[extension_position:]
-        image = ImageFile(StringIO(content))
+        image = ImageFile(BytesIO(content))
         image_name = default_storage.save('downloads/' + file_name, image)
         return image_name
 
