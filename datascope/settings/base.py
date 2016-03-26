@@ -260,9 +260,7 @@ if USE_WEBSOCKETS:
     INSTALLED_APPS += (
         'ws4redis',
     )
-    TEMPLATE_CONTEXT_PROCESSORS += (
-        'ws4redis.context_processors.default',
-    )
+    TEMPLATES[0]["OPTIONS"]["context_processors"].append('ws4redis.context_processors.default')
     WEBSOCKET_URL = '/ws/'
     WS4REDIS_PREFIX = 'ws'
     WSGI_APPLICATION = 'ws4redis.django_runserver.application'

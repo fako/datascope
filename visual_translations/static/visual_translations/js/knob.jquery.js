@@ -103,7 +103,7 @@
 					// Marking the starting degree as invalid
 					self.startDeg = -1;
 
-                    if(wsConnection.ws4redis.getState() == 1) { // OPEN TODO: commit this in the package
+                    if(wsConnection.ws4redis.get_state() == 1) {
                         wsConnection.send("setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel);
                     }
 				});
@@ -117,10 +117,9 @@
         options.turn(degrees/359);
         self.rotation = degrees;
         self.startDeg = -1;
-                    if(wsConnection.ws4redis.getState() == 1) { // OPEN TODO: commit this in the package
-                        wsConnection.send("setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel);
-                    }
-
+		if(wsConnection.ws4redis.get_state() == 1) {
+			wsConnection.send("setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel);
+		}
     }
 
     var methods = {

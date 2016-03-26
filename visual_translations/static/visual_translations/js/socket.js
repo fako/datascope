@@ -1,42 +1,4 @@
-//var ws = new WebSocket(VT.webSocketEndpoint);
-//interval = null;
-//
-//ws.onopen = function() {
-//    console.log("websocket connected");
-//    initial = true;
-//};
-//ws.onmessage = function(e) {
-//    console.log("Received: " + e.data);
-//    if(e.data == '--heartbeat--') {
-//        return;
-//    }
-//    if(initial) {
-//        initial = false;
-//        return;
-//    }
-//    if(interval === null) {
-//        interval = setInterval(function() { VT.functions.scrollDocument("top-left") }, 100)
-//    } else {
-//        clearInterval(interval);
-//        interval = null;
-//    }
-//};
-//ws.onerror = function(e) {
-//    console.error(e);
-//    clearInterval(interval);
-//    interval = null;
-//};
-//ws.onclose = function(e) {
-//    console.log("connection closed");
-//    clearInterval(interval);
-//    interval = null;
-//};
-
 window.WSExecute = function(socket, heartbeat, functions) {
-
-//    this.getState = function() {
-//        return ws.readyState
-//    };
 
     this.ws4redis = WS4Redis({
         uri: socket,
