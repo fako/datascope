@@ -151,7 +151,7 @@ class HtmlCommunityView(View):
         # Search request
         api_response = CommunityView().get_service_data_response(community_class, path, request.GET.dict())
         template_context = {
-            'self_reverse': community_class.get_name() + '-plain',
+            'self_reverse': community_class.get_name() + '_html',
             'response': self.data_for(community_class, api_response)
         }
         return render_to_response(

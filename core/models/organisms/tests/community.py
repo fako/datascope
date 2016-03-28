@@ -291,3 +291,8 @@ class TestCommunityMock(CommunityTestMixin):
         self.complete.config.include_even = False
         manifestation = self.complete.manifestation
         self.assertEqual(len(manifestation), 0)
+
+    def test_get_name(self):
+        self.assertEqual(self.instance.get_name(), 'mock')
+        self.instance.Meta.community = 'community_real'
+        self.assertEqual(self.instance.get_name(), 'community_real')
