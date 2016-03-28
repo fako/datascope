@@ -294,5 +294,5 @@ class TestCommunityMock(CommunityTestMixin):
 
     def test_get_name(self):
         self.assertEqual(self.instance.get_name(), 'mock')
-        self.instance.Meta.community = 'community_real'
+        self.instance.__class__.COMMUNITY_NAME = 'community_real'
         self.assertEqual(self.instance.get_name(), 'community_real')

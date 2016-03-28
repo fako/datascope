@@ -308,8 +308,8 @@ class Community(models.Model, ProcessorMixin):
 
     @classmethod
     def get_name(cls):
-        if hasattr(cls.Meta, 'community'):
-            return cls.Meta.community
+        if hasattr(cls, 'COMMUNITY_NAME'):
+            return cls.COMMUNITY_NAME
         word_separator = '_'
         class_name = cls.__name__
         class_name = class_name.replace('Community', '')
