@@ -6,7 +6,7 @@ from core.utils.configuration import DecodeConfigAction
 
 class Command(CommunityCommand):
 
-    community_model = "VisualTranslationsCommunity"
+    community_model = "VisualTranslationsEUCommunity"
 
     def add_arguments(self, parser):
         parser.add_argument('community', type=unicode, nargs="?", default=self.community_model)

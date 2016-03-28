@@ -12,7 +12,9 @@ from core.processors.expansion import ExpansionProcessor
 from sources.models.downloads import ImageDownload
 
 
-class VisualTranslationsCommunity(Community):
+class VisualTranslationsEUCommunity(Community):
+
+    COMMUNITY_NAME = "visual_translations_eu"
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("translations", {

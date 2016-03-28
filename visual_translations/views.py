@@ -5,7 +5,7 @@ from django.shortcuts import render_to_response, RequestContext, HttpResponse
 
 from core.views.community import HtmlCommunityView
 
-from visual_translations.models import VisualTranslationsCommunity
+from visual_translations.models import VisualTranslationsEUCommunity
 
 
 class VisualTranslationsHtmlView(HtmlCommunityView):
@@ -40,7 +40,7 @@ def visual_translation_map(request, region, term):
                 "height_20": int(grid["cell_height"] * grid["rows"] / 20)
             }
         }
-        for language, country, grid, factor in VisualTranslationsCommunity.LOCALES
+        for language, country, grid, factor in VisualTranslationsEUCommunity.LOCALES
     ]
     context = {
         "region_topo_json": "visual_translations/geo/{}.topo.json".format(region),
@@ -50,10 +50,6 @@ def visual_translation_map(request, region, term):
 
 
 def visual_translations_controller(request):
-    terms_info = [
-        community.growth_set.filter(type="translations").last().input.individual_set.first()["query"]
-        for community in VisualTranslationsCommunity.objects.all()[:6]
-    ]
     context = {
         "words": ["pension", "peace", "women", "immigrants", "cowshed", "privatization"]
     }
