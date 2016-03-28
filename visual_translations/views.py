@@ -22,7 +22,7 @@ class VisualTranslationsHtmlView(HtmlCommunityView):
             return response.data
 
 
-def visual_translation_map(request, region, term):
+def visual_translation_map(request, term):
     locales_info = [
         {
             "locale": "{}_{}".format(language, country),
@@ -43,7 +43,7 @@ def visual_translation_map(request, region, term):
         for language, country, grid, factor in VisualTranslationsEUCommunity.LOCALES
     ]
     context = {
-        "region_topo_json": "visual_translations/geo/{}.topo.json".format(region),
+        "region_topo_json": "visual_translations/geo/europe.topo.json",
         "locales": locales_info,
     }
     return render_to_response("visual_translations/map.html", context, RequestContext(request))

@@ -13,7 +13,7 @@ urlpatterns = [
         {"community_class": VisualTranslationsEUCommunity}),
     url(r'^visual-translations/html/(?P<path>.+)?/?$', VisualTranslationsHtmlView.as_view(),
         {"community_class": VisualTranslationsEUCommunity}),
-    url(r'^visual-translations-eu/map/(?P<region>[a-z]+)/(?P<term>[a-z+]+)/?$', visual_translation_map),
+    url(r'^visual-translations-eu/map/(?P<term>[a-z+]+)/?$', visual_translation_map),
     url(r'^visual-translations-eu/controller/$', visual_translations_controller),
     url(r'^visual-translations-eu/broadcast/(?P<message>[a-z\-]+)/?$', web_sockets_broadcast),
 ]
