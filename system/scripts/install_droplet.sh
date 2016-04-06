@@ -47,6 +47,7 @@ pip install -r src/system/requirements/production.txt
 mysql -p -e "CREATE DATABASE datascope CHARSET utf8;"
 mysql -p -e "CREATE USER 'django'@'localhost' IDENTIFIED BY 'password';"
 mysql -p -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX ON datascope.* TO 'django'@'localhost'; FLUSH PRIVILEGES;"
+mysql -p -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX ON test_datascope.* TO 'django'@'localhost'; FLUSH PRIVILEGES;"
 
 # SETUP: services
 cd /srv/ds-server/deploy/
