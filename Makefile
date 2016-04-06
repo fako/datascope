@@ -6,7 +6,7 @@ docs:
 
 deploy: clean
 	sudo service uwsgi restart
-	sudo /etc/init.d/celeryd restart
+	sudo service celeryd restart
 
 deploy-wiki-labs: clean
 	webservice2 uwsgi-python restart

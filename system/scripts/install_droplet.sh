@@ -52,11 +52,14 @@ mysql -p -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX ON
 # SETUP: services
 cd /srv/ds-server/deploy/
 # Celery
-adduser celery
+groupadd celery
+useradd -N -M --system -s /bin/bash -G celery celery
 cp celery/celeryd.cnf.sh /etc/default/celeryd
+cp celery/celeryd.cnf.sh /etc/default/S99celeryd
 cp celery/celeryd.sh /etc/init.d/celeryd
 chmod a+x /etc/init.d/celeryd
-/etc/init.d/celeryd start
+sudo service celeryd start
+update-rc.d celeryd defaults 99
 # UWSGI
 cp uwsgi/datascope-3.ini /etc/uwsgi/apps-available/datascope.ini
 ln -s /etc/uwsgi/apps-available/datascope.ini /etc/uwsgi/apps-enabled/datascope.ini
