@@ -7,7 +7,9 @@ from copy import copy
 from core.models.organisms import Community, Collective, Individual
 
 
-class VisualTranslationCommunity(Community):
+class VisualTranslationsBRICCommunity(Community):
+
+    COMMUNITY_NAME = "visual_translations_bric"
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("translations", {
@@ -127,5 +129,5 @@ class VisualTranslationCommunity(Community):
         self.kernel = self.growth_set.filter(type="translations").last().output
 
     class Meta:
-        verbose_name = "Visual translation"
-        verbose_name_plural = "Visual translations"
+        verbose_name = "Visual translation (BRIC)"
+        verbose_name_plural = "Visual translations (BRIC)"

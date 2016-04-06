@@ -236,5 +236,5 @@ class VisualTranslationsEUCommunity(Community):
         self.kernel = self.growth_set.filter(type="translations").last().output
 
     class Meta:
-        verbose_name = "Visual translation"
-        verbose_name_plural = "Visual translations"
+        verbose_name = "Visual translation (EU)"
+        verbose_name_plural = "Visual translations (EU)"

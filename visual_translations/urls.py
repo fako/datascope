@@ -3,12 +3,17 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 from django.conf.urls import url
 
 from core.views.community import CommunityView
-from visual_translations.models import VisualTranslationsEUCommunity
+from visual_translations.models import VisualTranslationsEUCommunity, VisualTranslationsBRICCommunity
 from visual_translations.views.community import VisualTranslationsHtmlView
 from visual_translations.views.eu import visual_translation_map, visual_translations_controller, web_sockets_broadcast
 
 
 urlpatterns = [
+    url(r'^visual-translations-bric/service/(?P<path>.+)/$', CommunityView.as_view(),
+        {"community_class": VisualTranslationsBRICCommunity}),
+    url(r'^visual-translations-bric/html/(?P<path>.+)?/?$', VisualTranslationsHtmlView.as_view(),
+        {"community_class": VisualTranslationsBRICCommunity}),
+
     url(r'^visual-translations-eu/service/(?P<path>.+)/$', CommunityView.as_view(),
         {"community_class": VisualTranslationsEUCommunity}),
     url(r'^visual-translations-eu/html/(?P<path>.+)?/?$', VisualTranslationsHtmlView.as_view(),

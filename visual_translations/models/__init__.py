@@ -1,2 +1,2 @@
 from visual_translations.models.eu import VisualTranslationsEUCommunity
-#from visual_translations.models.bric import VisualTranslationsBRICCommunity
+from visual_translations.models.bric import VisualTranslationsBRICCommunity
