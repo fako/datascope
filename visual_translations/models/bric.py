@@ -61,11 +61,7 @@ class VisualTranslationsBRICCommunity(Community):
             "config": {}
         }
     ]
-    #
-    # PUBLIC_CONFIG = {
-    #     "$revision_count": 1,
-    #     "$category_count": 1,
-    # }
+
     LOCALES = [("pt", "BR",), ("ru", "RU",), ("zh", "CN",), ("zh", "TW",)]
 
     def initial_input(self, *args):
@@ -86,28 +82,32 @@ class VisualTranslationsBRICCommunity(Community):
             )
         return collective
 
-    def finish_translations(self, out, err):  # TODO: optimize using "meta" properties
+    def finish_translations(self, out, err):
+
         new = []
+        grouped_translations = out.group_by("language")
+
         for group, values in groupby(self.LOCALES, lambda el: el[0]):
             locales = list(values)
-            individuals = out.individual_set.all()
             for index, value in enumerate(locales):
                 language, country = value
                 if index == 0:  # only an update needed
-                    for ind in individuals:
-                        if ind.properties["language"] != language:
-                            continue
+                    for ind in grouped_translations[language]:
                         ind.properties["country"] = "country" + country
-                        ind.save()
                 else:  # new individuals need to be created
-                    for ind in individuals:
-                        if ind.properties["language"] != language:
-                            continue
-                        properties = copy(ind.properties)
-                        properties["country"] = "country" + country
-                        new.append(properties)
-            if new:
-                out.update(new)
+                    def copy_to_country(individual, new_country):
+                        new_individual = copy(individual.properties)
+                        new_individual["country"] = "country" + new_country
+                        return new_individual
+                    new += [
+                        copy_to_country(ind, country)
+                        for ind in grouped_translations[language]
+                    ]
+
+        updated = []
+        for individuals in grouped_translations.values():
+            updated += individuals
+        out.update(updated + new)
 
     def finish_images(self, out, err):
         translations = self.growth_set.filter(type="translations").last()
