@@ -6,14 +6,10 @@ from django.conf import settings
 from django.contrib import admin
 admin.autodiscover()
 
-from . import views
 
 urlpatterns = [
     url(r'^data/v1/', include('core.urls', namespace="v1")),
-    url(r'^admin/', include(admin.site.urls)),
-
-    url(r'^intersection/$', views.casting_comparison_by_face),
-    url(r'^$', views.home)
+    url(r'^admin/', include(admin.site.urls))
 ]
 
 if settings.DEBUG:

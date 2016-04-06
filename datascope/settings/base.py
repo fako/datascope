@@ -268,7 +268,7 @@ CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['application/json']
 
 EMAIL_USE_TLS = True
-EMAIL_HOST = "smtp.fakoberkers.nl"
+EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 
 #######################################################
