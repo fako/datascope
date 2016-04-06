@@ -19,7 +19,7 @@ SECRET_KEY = 'default'
 try:
     from .bootstrap import *
 except ImportError:
-    log.warning("Could not import setup settings. Are they created?")
+    log.warning("Could not import bootstrap settings. Are they created?")
 try:
     from .secrets import *
 except ImportError:
