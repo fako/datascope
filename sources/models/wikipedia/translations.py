@@ -26,8 +26,8 @@ class WikipediaTranslate(WikipediaQuery):
         if data is None:
             return content_type, data
         try:
-            page = data["query"]["pages"].values()[0]
-        except (KeyError, IndexError, TypeError):
+            page = next(iter(data["query"]["pages"].values()))
+        except (KeyError, StopIteration, TypeError):
             raise DSInvalidResource(
                 "Translate resource did not contain 'query', 'pages' or a first page",
                 resource=self
