@@ -1,0 +1,14 @@
+{% templatetag openvariable %}anchor|{{ page.pageid }}{% templatetag closevariable %} <!-- moving or deleting anchor tags on this page will do damage to it -->
+{% if page.image %}
+    [[File:{{ page.image }}|right|border|100px]]
+{% endif %}
+===[[w:{{ page.title }}|{{ page.title }}]]===
+{{  page.wikidata.description }}
+
+{% templatetag openvariable %}collapse top|title=Algorithm Rank: {{ page.ds_rank.rank }}{% templatetag closevariable %}
+{% for module, value in modules %}
+{{ module }} = {{ value }}
+{% endfor %}
+{% templatetag openvariable %}collapse bottom{% templatetag closevariable %}
+{% templatetag openvariable %}clear{% templatetag closevariable %}
+----

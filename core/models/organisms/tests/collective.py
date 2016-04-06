@@ -28,6 +28,7 @@ class TestCollective(TransactionTestCase):
 
     # TODO: patch validate and assert it being used or not
     # TODO: patch influence and assert it is being used
+    # TODO: queries vary per database, make development and production use the same database
     def test_update(self):
         updates = []
         for index, individual in enumerate(self.instance2.individual_set.all()):
@@ -46,7 +47,7 @@ class TestCollective(TransactionTestCase):
         results = self.instance.output("$.value")
         self.assertEqual(results, self.value_outcome)
         results = self.instance.output("$.value", "$.value")
-        self.assertEqual(results, [self.value_outcome, self.value_outcome])
+        self.assertEqual(list(results), [self.value_outcome, self.value_outcome])
         results = self.instance.output(["$.value"])
         self.assertEqual(results, self.list_outcome)
         results = self.instance.output(["$.value", "$.value"])

@@ -1,4 +1,5 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
+import six
 # noinspection PyUnresolvedReferences
 from six.moves.urllib.parse import parse_qsl
 from django.utils.encoding import python_2_unicode_compatible
@@ -17,7 +18,7 @@ from django.core.exceptions import ValidationError
 log = logging.getLogger("datascope")
 
 
-class ConfigurationNotFoundError(Exception):
+class ConfigurationNotFoundError(AttributeError):
     pass
 
 
@@ -71,8 +72,10 @@ class ConfigurationType(object):
         :param new: (dictionary) to update attributes on self with
         :return: None
         """
+        if not new:
+            return
         assert isinstance(new, dict), "Configurations can only be set with a dictionary not a {}".format(type(new))
-        for key, value in new.iteritems():
+        for key, value in six.iteritems(new):
             # FEATURE: guard here against improper override of internal attributes
             shielded_key = key if key.startswith('_') else '_' + key
             if shielded_key in self._private:
@@ -125,9 +128,7 @@ class ConfigurationType(object):
         :return: (dict) current configuration other than default
         """
         dictionary = dict()
-        for key, value in self.__dict__.iteritems():
-            if isinstance(value, str):
-                value = unicode(value)
+        for key, value in six.iteritems(self.__dict__):
             if key == '_defaults':
                 continue
             if key.startswith('_'):
@@ -231,7 +232,7 @@ class ConfigurationField(fields.TextField):
     """
     form_class = ConfigurationFormField
 
-    def __init__(self, config_defaults=None, namespace="", private=tuple(), default=None, *args, **kwargs):
+    def __init__(self, config_defaults=None, namespace="", private=tuple(), *args, **kwargs):
         """
         Stores its arguments for later use by contribute_to_class.
         Assertions are done by the ConfigurationType class, upon contribute_to_class.
@@ -243,8 +244,8 @@ class ConfigurationField(fields.TextField):
         :param kwargs: additional field keyword arguments
         :return:
         """
-        super(ConfigurationField, self).__init__(default={}, *args, **kwargs)
-        self._defaults = config_defaults if config_defaults else {}
+        super(ConfigurationField, self).__init__(*args, **kwargs)
+        self._defaults = config_defaults
         self._namespace = namespace
         self._private = private
 
@@ -270,6 +271,8 @@ class ConfigurationField(fields.TextField):
         return super(ConfigurationField, self).to_python(value)
 
     def get_prep_value(self, value):
+        if value is None:
+            return super(ConfigurationField, self).get_prep_value({})
         if not isinstance(value, dict):
             value = json.dumps(value.to_dict(private=True, protected=True))
         return super(ConfigurationField, self).get_prep_value(value)

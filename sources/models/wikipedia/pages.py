@@ -21,3 +21,7 @@ class WikipediaListPages(WikipediaQuery, WikipediaImagesMixin):
         "kwargs": None
     }
     WIKI_QUERY_PARAM = "pageids"
+
+    class Meta:
+        verbose_name = "Wikipedia list pages"
+        verbose_name_plural = "Wikipedia list pages"

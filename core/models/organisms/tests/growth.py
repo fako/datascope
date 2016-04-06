@@ -2,8 +2,6 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 
 from mock import patch
 
-from django.test import TestCase
-
 from core.models.organisms.growth import Growth, GrowthState
 from core.tests.mocks.celery import (MockTask, MockAsyncResultSuccess, MockAsyncResultPartial,
                                     MockAsyncResultError, MockAsyncResultWaiting)
@@ -25,6 +23,16 @@ class TestGrowth(TestProcessorMixin):
                 "value": "nested value {}".format(index % 3)
             }
             for index in range(0, 9)
+        ]
+        cls.expected_inline_output = [
+            {
+                "context": "nested value",
+                "value": {
+                    "value": "nested value {}".format(index % 3),
+                    "extra": "test {}".format(index % 3)
+                }
+            }
+            for index in range(0, 3)
         ]
         cls.expected_finished_output = [
             {
@@ -137,10 +145,20 @@ class TestGrowth(TestProcessorMixin):
     def test_finish_synchronous(self):
         self.skipTest("not tested")
 
+    def test_prepare_contributions(self):
+        self.skipTest("not tested")
+
     def test_append_to_output(self):
         qs = HttpResourceMock.objects.filter(id=1)
-        self.new.append_to_output(qs)
+        contributions = self.new.prepare_contributions(qs)
+        self.new.append_to_output(contributions)
         self.assertEqual(self.new.output.content, self.expected_append_output[:3])
+
+    def test_inline_by_key(self):
+        qs = HttpResourceMock.objects.filter(id__in=[6, 7, 8])
+        contributions = self.collective_input.prepare_contributions(qs)
+        self.collective_input.inline_by_key(contributions, "value")
+        self.assertEqual(self.collective_input.output.content, self.expected_inline_output)
 
     def test_is_finished(self):
         self.new.state = GrowthState.COMPLETE

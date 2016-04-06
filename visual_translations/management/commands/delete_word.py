@@ -8,14 +8,14 @@ from core.utils.configuration import DecodeConfigAction
 
 class Command(CommunityCommand):
 
-    community_model = "VisualTranslationsCommunity"
+    community_model = "VisualTranslationsEUCommunity"
 
     def add_arguments(self, parser):
         parser.add_argument('community', type=unicode, nargs="?", default=self.community_model)
         parser.add_argument('-a', '--args', type=unicode, nargs="*", default="")
         parser.add_argument('-c', '--config', type=unicode, action=DecodeConfigAction, nargs="?", default={})
         parser.add_argument('-l', '--locale', type=unicode, nargs="?", default="")
-        parser.add_argument('-w', '--word', type=lambda s: unicode(s, 'utf-8'), nargs="?", default="")
+        parser.add_argument('-w', '--word', type=lambda s: str(s, encoding='utf-8'), nargs="?", default="")
 
     def handle_community(self, community, **options):
         word_encoded = json.dumps(options["word"])

@@ -14,7 +14,7 @@ class TestWikiNewsCommunity(TestCase):
 
     def test_setup_growth(self):
         self.instance.setup_growth()
-        self.assertEqual(self.instance.growth_set.count(), 2)
+        self.assertEqual(self.instance.growth_set.count(), 3)
 
     def test_next_growth(self):
         self.instance.setup_growth()

@@ -19,7 +19,7 @@ class WikipediaRecentChanges(WikipediaQuery):
         "rcnamespace": 0,
         "rcshow": "!bot|!minor|!redirect",
         "rclimit": 500,
-        "rcprop": "ids|title|comment|timestamp|tags",
+        "rcprop": "ids|title|comment|timestamp|tags|userid",
         "rcdir": "newer"
     })
     GET_SCHEMA = {
@@ -34,6 +34,10 @@ class WikipediaRecentChanges(WikipediaQuery):
 
     CONFIG_NAMESPACE = "wikipedia"
     WIKI_RESULTS_KEY = "recentchanges"
+
+    class Meta:
+        verbose_name = "Wikipedia recent changes"
+        verbose_name_plural = "Wikipedia recent changes"
 
     def send(self, method, *args, **kwargs):
         args = (self.config.wiki_country, int(self.config.start_time), int(self.config.end_time))

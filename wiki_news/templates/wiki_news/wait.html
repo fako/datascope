@@ -1,0 +1,33 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block body-js %}
+    <script type="text/javascript">
+        $(function pollService() {
+
+            var uri = new URI(location);
+            var segments = uri.segment();
+            var serviceSegments = segments.slice(0, {{ segments_to_service }});
+            serviceSegments.push("service");
+            serviceSegments.push("{{ service_query }}");
+            serviceSegments.push("");  // this adds a trailing slash Django expects
+            uri.segment(serviceSegments);
+
+            $.getJSON(uri.path(), uri.query(), function (data, textStatus, jqXHR) {
+
+                if (jqXHR.status === 202) {
+                    $('#wait-text').append('.');
+                    setTimeout(pollService, 800);
+                } else {
+                    window.location = "{{ continue_path | escapejs }}" + uri.search();
+                }
+            });
+
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    <p>Please wait while the algorithm adjusts {{ page_title }}</p>
+    <p id="wait-text">...</p>
+{% endblock %}

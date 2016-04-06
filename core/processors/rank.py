@@ -1,5 +1,9 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
+# noinspection PyUnresolvedReferences
+from six.moves import reduce
 import six
+
+from copy import deepcopy
 
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.processors.base import Processor
@@ -19,8 +23,8 @@ class RankProcessor(Processor):
         config_dict = self.config.to_dict()
         hooks = [
             getattr(self, hook[1:])
-            for hook in six.iterkeys(config_dict)  # config gets whitelisted by Community
-            if isinstance(hook, str) and hook.startswith("$") and callable(getattr(self, hook[1:], None))
+            for hook, weight in six.iteritems(config_dict)  # config gets whitelisted by Community
+            if isinstance(hook, str) and hook.startswith("$") and callable(getattr(self, hook[1:], None)) and weight
         ]
         # TODO: There are problems with the memory consumption of this piece of code.
         # 1)   Give the kernel to "body" processor methods instead of the content. Make a default content reader processor
@@ -31,16 +35,24 @@ class RankProcessor(Processor):
         # 6)   Read all ranked hook files as batches and combine the ratings in new tmp files that are sorted
         # 7)   Return an iterator over all combined files using heapq.merge
         # 8)   Make manifestations always work with iterators and use itertools.islice for wiki_news
-        for hook in hooks:
-            total = 0
-            for individual in individuals:
-                total += hook(individual)
-            if not total:
-                return individuals
-            for individual in individuals:
-                weight = hook(individual) / total * float(config_dict["$"+hook.__name__])
-                if "ds_rank" not in individual:
-                    individual["ds_rank"] = weight
-                else:
-                    individual["ds_rank"] *= weight
-        return sorted(individuals, key=lambda el: el.get("ds_rank", 0), reverse=True)
+
+        for individual in individuals:
+            individual_copy = deepcopy(individual)
+            individual["ds_rank"] = {hook.__name__: 0 for hook in hooks}
+            for hook in hooks:
+                hook_name = hook.__name__
+                module_value = hook(individual_copy)
+                module_weight = float(config_dict["$"+hook_name])
+                if not module_value:
+                    continue
+                if isinstance(module_value, bool):
+                    module_value = int(module_value)
+                if not isinstance(module_value, six.integer_types):
+                    continue
+                individual["ds_rank"][hook_name] = module_value * module_weight
+            rankings = [ranking for ranking in six.itervalues(individual["ds_rank"]) if ranking]
+            if rankings:
+                individual["ds_rank"]["rank"] = reduce(lambda reduced, rank: reduced * rank, rankings, 1)
+            else:
+                individual["ds_rank"]["rank"] = 0
+        return sorted(individuals, key=lambda el: el["ds_rank"].get("rank", 0), reverse=True)

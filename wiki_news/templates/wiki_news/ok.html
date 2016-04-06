@@ -11,7 +11,7 @@
                 Categories: {{ page.categories | length }}<br/>
                 Rank: {{ page.ds_rank }}<br/>
                 Wikipedia: <a href="https://en.wikipedia.org/wiki/{{ page.title }}">{{ page.title }}</a><br/>
-                Wikidata: <a href="https://www.wikidata.org/wiki/{{ page.wikidata }}">{{ page.wikidata }}</a>
+                Wikidata: <a href="https://www.wikidata.org/wiki/{{ page.wikidata.wikidata }}">{{ page.wikidata.wikidata }}</a>
             </p>
         {% endfor %}
     </div>

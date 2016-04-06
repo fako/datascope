@@ -30,7 +30,7 @@ class CommunityState(object):
     ABORTED = "Aborted"
 
 COMMUNITY_STATE_CHOICES = [
-    (value, value) for attr, value in six.iteritems(CommunityState.__dict__) if not attr.startswith("_")
+    (value, value) for attr, value in sorted(CommunityState.__dict__.items()) if not attr.startswith("_")
 ]
 
 
@@ -125,7 +125,7 @@ class Community(models.Model, ProcessorMixin):
             for key, value in six.iteritems(kwargs)
             if key in cls.PUBLIC_CONFIG and not key.startswith("$")
         ]
-        signature = filter(bool, signature)
+        signature = list(filter(bool, signature))
         signature.sort()
         created = False
         try:
@@ -156,6 +156,8 @@ class Community(models.Model, ProcessorMixin):
         errors.order_by('-status')
         phase_config = self.COMMUNITY_SPIRIT[phase]
         error_config = phase_config["errors"]
+        if error_config is None:
+            return True
         fatal_error = not bool(len(out.content))
         for status, error_group in groupby(errors, lambda err: err.status):
             if status in error_config:
@@ -306,6 +308,8 @@ class Community(models.Model, ProcessorMixin):
 
     @classmethod
     def get_name(cls):
+        if hasattr(cls, 'COMMUNITY_NAME'):
+            return cls.COMMUNITY_NAME
         word_separator = '_'
         class_name = cls.__name__
         class_name = class_name.replace('Community', '')

@@ -3,11 +3,11 @@ log = logging.getLogger(__name__)
 
 try:
     # We load variables that control how settings should be loaded
-    from bootstrap import *
+    from .bootstrap import *
 except ImportError:
     log.warning("Could not import setup settings. Are they created?")
 try:
-    from secrets import *
+    from .secrets import *
 except ImportError:
     log.warning("Could not import secret settings. Are they created?")
 
@@ -40,7 +40,6 @@ INSTALLED_APPS = (
     # Framework apps
     'core',
     'sources',
-    'legacy',
     # Algorithms
     'wiki_news',
     'visual_translations',
@@ -57,8 +56,6 @@ DATABASES = {
     },
 }
 
-TEMPLATE_DEBUG = DEBUG
-
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.4/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = [
@@ -67,7 +64,8 @@ ALLOWED_HOSTS = [
     '.globe-scope.org',
     '.data-scope.com',
     '.data-scope.org',
-    'tools.wmflabs.org',
+    '.tools.wmflabs.org',
+    '37.139.16.242',
 ]
 
 APPEND_SLASH = False
@@ -97,7 +95,7 @@ DATETIME_FORMAT = 'd-m-y H:i:s/u'  # default would get overridden by L18N
 USE_TZ = False
 
 # Available languages for all projects
-ugettext = lambda s: s # a dummy ugettext to prevent circular import
+ugettext = lambda s: s  # a dummy ugettext to prevent circular import
 LANGUAGES = (
     ('en', ugettext('English')),
     ('pt', ugettext('Portuguese')),
@@ -111,6 +109,9 @@ LOCALE_PATHS = (
     PATH_TO_PROJECT + 'src/locale/',
 )
 
+SEGMENTS_BEFORE_PROJECT_ROOT = len([segment for segment in URL_TO_PROJECT.split('/') if segment])
+SEGMENTS_TO_SERVICE = SEGMENTS_BEFORE_PROJECT_ROOT + 3  # /data/v1/<service-name>/
+
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = PATH_TO_PROJECT + 'system/files/media/'
@@ -118,7 +119,7 @@ MEDIA_ROOT = PATH_TO_PROJECT + 'system/files/media/'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = '/media/'
+MEDIA_URL = URL_TO_PROJECT + 'media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
@@ -128,11 +129,10 @@ STATIC_ROOT = PATH_TO_PROJECT + 'system/files/static/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
+STATIC_URL = URL_TO_PROJECT + 'static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    PATH_TO_PROJECT + 'legacy/output/http/static',
     # Put strings here, like "/home/html/static" or "C:/www/django/static".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -145,22 +145,29 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.contrib.auth.context_processors.auth",
-    "django.template.context_processors.debug",
-    "django.template.context_processors.i18n",
-    "django.template.context_processors.media",
-    "django.template.context_processors.static",
-    "django.template.context_processors.tz",
-    "django.contrib.messages.context_processors.messages",
-    'core.templatetags.template_context.core_context',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            # insert your TEMPLATE_DIRS here
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                # Insert your TEMPLATE_CONTEXT_PROCESSORS here or use this
+                # list if you haven't customized them:
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+                'core.templatetags.template_context.core_context',
+            ]
+        },
+    },
+]
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -235,7 +242,7 @@ REST_FRAMEWORK = {
 # Celery settings
 import djcelery
 djcelery.setup_loader()
-BROKER_URL = 'amqp://guest:guest@localhost:5672/'
+BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = "djcelery.backends.database.DatabaseBackend"
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
@@ -245,9 +252,6 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.fakoberkers.nl"
 EMAIL_PORT = 587
 
-import requests.packages.urllib3.contrib.pyopenssl
-requests.packages.urllib3.contrib.pyopenssl.inject_into_urllib3()
-
 #######################################################
 # PLUGIN SETTINGS
 #######################################################
@@ -256,24 +260,9 @@ if USE_WEBSOCKETS:
     INSTALLED_APPS += (
         'ws4redis',
     )
-    TEMPLATE_CONTEXT_PROCESSORS += (
-        'ws4redis.context_processors.default',
-    )
+    TEMPLATES[0]["OPTIONS"]["context_processors"].append('ws4redis.context_processors.default')
     WEBSOCKET_URL = '/ws/'
     WS4REDIS_PREFIX = 'ws'
     WSGI_APPLICATION = 'ws4redis.django_runserver.application'
     WS4REDIS_EXPIRE = 0
     WS4REDIS_HEARTBEAT = '--heartbeat--'
-
-#######################################################
-# LEGACY SETTINGS
-#######################################################
-
-TEMPLATE_DIRS = (
-    PATH_TO_PROJECT + "legacy/output/http/html",
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
-
-HIF_SKIP_EXTERNAL_RESOURCE_INTEGRATION_TESTS = True

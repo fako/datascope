@@ -4,7 +4,7 @@ clean:
 docs:
 	cd system/docs && make html
 
-deploy-transip: clean
+deploy: clean
 	sudo service uwsgi restart
 	sudo /etc/init.d/celeryd restart
 

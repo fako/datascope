@@ -20,7 +20,7 @@ def reach(path, data):
     "test.test" as path would return "second level test"
     while "test.1" as path would return "test1"
     """
-    if path and path.startswith("$"):  # backward compatibility for "legacy" algorithms
+    if path and path.startswith("$"):  # TODO: fix now that legacy is gone
         if len(path) > 1:
             path = path[2:]
         else:

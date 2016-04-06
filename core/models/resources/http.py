@@ -1,11 +1,13 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
+import six
+# noinspection PyUnresolvedReferences
+from six.moves.urllib.parse import urlencode
 
 import hashlib
 import json
 from copy import copy, deepcopy
 
 import requests
-from OpenSSL.SSL import SysCallError
 import jsonschema
 from jsonschema.exceptions import ValidationError as SchemaValidationError
 from urlobject import URLObject
@@ -141,7 +143,7 @@ class HttpResource(models.Model):
         """
         Returns True if status is within HTTP success range
         """
-        return 200 <= self.status < 209
+        return self.status is not None and 200 <= self.status < 209
 
     @property
     def content(self):
@@ -154,7 +156,7 @@ class HttpResource(models.Model):
             if content_type == "application/json":
                 return content_type, json.loads(self.body)
             elif content_type == "text/html":
-                return content_type, BeautifulSoup(self.body)
+                return content_type, BeautifulSoup(self.body, "html.parser")
             else:
                 return content_type, None
         return None, None
@@ -191,12 +193,12 @@ class HttpResource(models.Model):
         }, validate_input=False)
 
     def _create_url(self, *args):
-        url_template = copy(unicode(self.URI_TEMPLATE))
+        url_template = copy(self.URI_TEMPLATE)
         url = URLObject(url_template.format(*args))
         params = url.query.dict
         params.update(self.parameters())
         url = url.set_query_params(params)
-        return unicode(url)
+        return str(url)
 
     def headers(self):
         """
@@ -253,12 +255,16 @@ class HttpResource(models.Model):
             try:
                 jsonschema.validate(list(args), args_schema)
             except SchemaValidationError as ex:
-                raise ValidationError(str(ex))
+                raise ValidationError(
+                    "{}: {}".format(self.__class__.__name__, str(ex))
+                )
         if kwargs_schema:
             try:
                 jsonschema.validate(kwargs, kwargs_schema)
             except SchemaValidationError as ex:
-                raise ValidationError(str(ex))
+                raise ValidationError(
+                    "{}: {}".format(self.__class__.__name__, str(ex))
+                )
 
     #######################################################
     # AUTH LOGIC
@@ -275,14 +281,14 @@ class HttpResource(models.Model):
         params.update(self.auth_parameters())
         url = url.set_query_params(params)
         request = deepcopy(self.request)
-        request["url"] = unicode(url)
+        request["url"] = str(url)
         return request
 
     def request_without_auth(self):
         url = URLObject(self.request.get("url"))
         url = url.del_query_params(self.auth_parameters())
         request = deepcopy(self.request)
-        request["url"] = unicode(url)
+        request["url"] = str(url)
         return request
 
     #######################################################
@@ -302,7 +308,7 @@ class HttpResource(models.Model):
         params.update(self.next_parameters())
         url = url.set_query_params(params)
         request = deepcopy(self.request)
-        request["url"] = unicode(url)
+        request["url"] = str(url)
         return request
 
     #######################################################
@@ -338,7 +344,7 @@ class HttpResource(models.Model):
                 verify=settings.REQUESTS_VERIFY,
                 timeout=self.timeout
             )
-        except (requests.ConnectionError, IOError, SysCallError):
+        except (requests.ConnectionError, IOError):
             self.set_error(502)
             return
         except requests.Timeout:
@@ -349,9 +355,9 @@ class HttpResource(models.Model):
     def _update_from_response(self, response):
         self.head = dict(response.headers)
         self.status = response.status_code
-        self.body = unicode(
-            response.content, 'utf-8', errors='replace'  # HTML can have some weird bytes, so replace errors!
-        )
+        # TODO: check what to do with responses that contain invalid character bytes
+        # TODO: check why sometimes we get strings and sometimes bytes in response.body
+        self.body = response.content if isinstance(response.content, six.string_types) else response.content.decode("utf-8")
 
     def _handle_errors(self):
         """
@@ -384,7 +390,7 @@ class HttpResource(models.Model):
         if self.request and not self.data_hash:
             uri_request = self.request_without_auth()
             self.data_hash = HttpResource.hash_from_data(uri_request.get("data"))
-        if self.uri > 255:  # TODO: test this
+        if len(self.uri) > 255:  # TODO: test this
             self.uri = self.uri[:255]
 
     #######################################################
@@ -395,14 +401,17 @@ class HttpResource(models.Model):
     @staticmethod
     def uri_from_url(url):
         url = URLObject(url)
-        return unicode(url).replace(url.scheme + u"://", u"")
+        params = sorted(url.query.dict.items(), key=lambda item: item[0])
+        url = url.with_query(urlencode(params))
+        return str(url).replace(url.scheme + u"://", u"")
 
     @staticmethod
     def hash_from_data(data):
         if not data:
             return ""
         hsh = hashlib.sha1()
-        hsh.update(json.dumps(data))
+        hash_data = json.dumps(data).encode("utf-8")
+        hsh.update(hash_data)
         return hsh.hexdigest()
 
     def set_error(self, status):  # TODO: test
@@ -443,7 +452,7 @@ class BrowserResource(HttpResource):  # TODO: write tests
         self.head = dict()
         self.status = 1
         self.body = response.page_source
-        self.soup = BeautifulSoup(self.body)
+        self.soup = BeautifulSoup(self.body, "html.parser")
 
     @property
     def success(self):
@@ -474,7 +483,7 @@ class BrowserResource(HttpResource):  # TODO: write tests
 
     def __init__(self, *args, **kwargs):
         super(HttpResource, self).__init__(*args, **kwargs)
-        self.soup = BeautifulSoup(self.body if self.body else "")
+        self.soup = BeautifulSoup(self.body if self.body else "", "html.parser")
 
     class Meta:
         abstract = True

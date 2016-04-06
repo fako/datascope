@@ -15,8 +15,6 @@ system/files/static/
 
 */settings/secrets.py
 */settings/bootstrap.py
-# Legacy setting files
-*/settings/setup.py
 
 # Internet Archive files
 *.warc.gz
@@ -26,6 +24,3 @@ nl-hyves*.html
 
 # Wikipedia labs specific file
 app.py
-
-# Legacy
-system/files/media/image-translations/

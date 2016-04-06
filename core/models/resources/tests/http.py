@@ -1,7 +1,8 @@
 import six
+# noinspection PyUnresolvedReferences
+from six.moves.urllib.parse import urlencode
 
 import json
-import urllib
 from copy import deepcopy
 
 from django.test import TestCase
@@ -95,7 +96,7 @@ class HttpResourceTestMixin(TestCase):
         preq = args[0]
         self.assertEqual(preq.url, test_url)
         self.assertEqual(preq.headers, content_header)
-        self.assertEqual(preq.body, urllib.urlencode(test_data))
+        self.assertEqual(preq.body, urlencode(test_data))
         # Make sure that response fields are set to something and do not remain None
         self.assertIsNotNone(self.instance.head)
         self.assertIsNotNone(self.instance.body)
@@ -129,7 +130,7 @@ class HttpResourceTestMixin(TestCase):
             except DSHttpError50X as exc:
                 self.assertIsInstance(exc.resource, HttpResource)
                 self.assertEqual(exc.resource.status, status)
-            except Exception, exception:
+            except Exception as exception:
                 self.fail("Handle error throws wrong exception '{}' expecting 50X".format(exception))
         for status in statuses_40x:
             self.instance.status = status
@@ -139,14 +140,14 @@ class HttpResourceTestMixin(TestCase):
             except DSHttpError40X as exc:
                 self.assertIsInstance(exc.resource, HttpResource)
                 self.assertEqual(exc.resource.status, status)
-            except Exception, exception:
+            except Exception as exception:
                 self.fail("Handle error throws wrong exception '{}' expecting 40X".format(exception))
 
     def test_uri_from_url(self):
-        uri = HttpResource.uri_from_url("http://localhost:8000/")
-        self.assertEqual(uri, "localhost:8000/")
-        uri = HttpResource.uri_from_url("https://localhost:8000/")
-        self.assertEqual(uri, "localhost:8000/")
+        uri = HttpResource.uri_from_url("http://localhost:8000/?z=z&a=a")
+        self.assertEqual(uri, "localhost:8000/?a=a&z=z")
+        uri = HttpResource.uri_from_url("https://localhost:8000/?a=a&z=z")
+        self.assertEqual(uri, "localhost:8000/?a=a&z=z")
 
     def test_hash_from_data(self):
         # Give no data
@@ -274,7 +275,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         instance = self.model().get("success")
         self.assertFalse(instance.session.send.called)
         self.assertEqual(instance.head, self.content_type_header)
-        self.assertEqual(instance.body, json.dumps(MOCK_DATA))
+        self.assertJSONEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
         self.assertTrue(instance.id)
         # Load an existing resource from its request
@@ -282,7 +283,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         instance = self.model(request=request).get()
         self.assertFalse(instance.session.send.called)
         self.assertEqual(instance.head, self.content_type_header)
-        self.assertEqual(instance.body, json.dumps(MOCK_DATA))
+        self.assertJSONEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
         self.assertTrue(instance.id)
 
@@ -344,7 +345,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         instance = self.model().post(query="success")
         self.assertFalse(instance.session.send.called)
         self.assertEqual(instance.head, self.content_type_header)
-        self.assertEqual(instance.body, json.dumps(MOCK_DATA))
+        self.assertJSONEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
         self.assertTrue(instance.id)
         self.assertTrue(instance.data_hash)
@@ -353,7 +354,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         instance = self.model(request=request).post()
         self.assertFalse(instance.session.send.called)
         self.assertEqual(instance.head, self.content_type_header)
-        self.assertEqual(instance.body, json.dumps(MOCK_DATA))
+        self.assertJSONEqual(instance.body, json.dumps(MOCK_DATA))
         self.assertEqual(instance.status, 200)
         self.assertTrue(instance.id)
         self.assertTrue(instance.data_hash)

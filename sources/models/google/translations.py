@@ -21,7 +21,7 @@ class GoogleTranslate(BrowserResource):
         words = soup.find_all(class_="gt-baf-word-clickable")
         meanings = soup.find_all(class_="gt-baf-translations")
         try:
-            fallback = next(word for word in soup.find_all(class_="hps") if word.parent["id"] == "result_box")
+            fallback = next(word for word in soup.find_all("span") if word.parent.get("id") == "result_box")
         except StopIteration:
             log.error("No fallback for: {}".format(self.uri))
 
@@ -30,7 +30,7 @@ class GoogleTranslate(BrowserResource):
                 word = word.text
                 meaning = meaning.text
             else:
-                word = unicode(fallback)  # TODO: make Python3 variant
+                word = str(fallback)
                 meaning = ""
             if confidence is not None:
                 confidence = int(confidence["style"].split(" ")[1][:-3])  # confidence expressed like: "width: 24px;"

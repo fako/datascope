@@ -29,15 +29,16 @@ class GrowthState(object):
     RETRY = "Retry"
 
 GROWTH_STATE_CHOICES = [
-    (value, value) for attr, value in six.iteritems(GrowthState.__dict__) if not attr.startswith("_")
+    (value, value) for attr, value in sorted(GrowthState.__dict__.items()) if not attr.startswith("_")
 ]
 
 
 class ContributeType(object):
     APPEND = "Append"
+    INLINE = "Inline"
 
 CONTRIBUTE_TYPE_CHOICES = [
-    (value, value) for attr, value in six.iteritems(ContributeType.__dict__) if not attr.startswith("_")
+    (value, value) for attr, value in sorted(ContributeType.__dict__.items()) if not attr.startswith("_")
 ]
 
 
@@ -125,8 +126,14 @@ class Growth(models.Model, ProcessorMixin):
 
         if self.state == GrowthState.CONTRIBUTE:
             scc, err = processor.results(result)
+            contributions = self.prepare_contributions(scc)
             if self.contribute_type == ContributeType.APPEND:
-                self.append_to_output(scc)
+                self.append_to_output(contributions)
+            elif self.contribute_type == ContributeType.INLINE:
+                assert self.config.inline_key, \
+                    "No inline_key specified in configuration for Growth with inline contribution"
+                # TODO: assert that contributions and output fully match?
+                self.inline_by_key(contributions, self.config.inline_key)
             elif self.contribute is None:  # TODO: test
                 pass
             else:
@@ -138,20 +145,35 @@ class Growth(models.Model, ProcessorMixin):
 
         return self.output, self.resources
 
-    def append_to_output(self, contributions):
+    def prepare_contributions(self, success_resources):
+        if not success_resources or not self.contribute:
+            return []
         contribute_processor, callback, args_type = self.prepare_process(self.contribute)
-        results = []
-        for contribution in contributions:
+        contributions = []
+        for success_resource in success_resources:
             try:
-                results += callback(contribution)
+                contributions += callback(success_resource)
             except DSNoContent as exc:
                 log.debug("No content for {} with id {}: {}".format(
-                    contribution.__class__.__name__,
-                    contribution.id,
+                    success_resource.__class__.__name__,
+                    success_resource.id,
                     exc
                 ))
-                contribution.retain(self)
-        self.output.update(results)
+                success_resource.retain(self)
+        return contributions
+
+    def append_to_output(self, contributions):
+        self.output.update(contributions)
+
+    def inline_by_key(self, contributions, inline_key):
+        groups = self.output.group_by(inline_key)
+        for contribution in contributions:
+            # TODO: figure out why we need to skip here at times
+            if contribution[inline_key] not in groups:
+                continue
+            for individual in groups[contribution[inline_key]]:
+                individual.properties[inline_key] = contribution
+                individual.save()
 
     def save(self, *args, **kwargs):
         self.is_finished = self.state in [GrowthState.COMPLETE, GrowthState.PARTIAL]

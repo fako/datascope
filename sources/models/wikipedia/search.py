@@ -1,4 +1,5 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
+import six
 
 from copy import copy
 
@@ -37,7 +38,7 @@ class WikipediaSearch(WikipediaQuery, WikipediaImagesMixin):
         """
         response = super(WikipediaSearch, self)._handle_errors()
         if isinstance(response, dict):
-            for page_id, page in response.iteritems():
+            for page_id, page in six.iteritems(response):
                 try:
                     if "disambiguation" in page['pageprops']:
                         self.status = 300

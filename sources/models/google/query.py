@@ -17,7 +17,7 @@ class GoogleQuery(HttpResource):
     def _handle_errors(self):
         try:
             return super(GoogleQuery, self)._handle_errors()
-        except DSHttpError40X, exception:
+        except DSHttpError40X as exception:
             if self.status == 403:
                 raise DSHttpError403LimitExceeded(exception, resource=self)
             else:
