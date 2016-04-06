@@ -1,15 +1,34 @@
 import logging
 log = logging.getLogger(__name__)
 
+
+#######################################################
+# DEFAULT BOOTSTRAP
+#######################################################
+
+PATH_TO_PROJECT = ''
+URL_TO_PROJECT = '/'
+USE_WEBSOCKETS = False
+SECRET_KEY = 'default'
+
+
+#######################################################
+# LOAD ENVIRONMENT
+#######################################################
+
 try:
-    # We load variables that control how settings should be loaded
     from .bootstrap import *
 except ImportError:
     log.warning("Could not import setup settings. Are they created?")
 try:
     from .secrets import *
 except ImportError:
-    log.warning("Could not import secret settings. Are they created?")
+    log.error("Could not import secret settings. Are they created? Do not run in production!")
+
+
+#######################################################
+# DJANGO SETTINGS
+#######################################################
 
 DEBUG = False
 REQUESTS_PROXIES = None
