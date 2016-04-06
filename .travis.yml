@@ -1,0 +1,8 @@
+language: python
+python:
+  - "3.4"
+# command to install dependencies
+install: "pip install -r system/requirements/production.txt"
+# command to run tests
+script: python manage.py test --settings=datascope.settings.test
+
