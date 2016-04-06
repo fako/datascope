@@ -25,7 +25,7 @@ DEFAULT_CONFIGURATION = {
     "wikipedia_wiki_query_param": "titles",
     "wikipedia_wiki_full_extracts": False,
 
-    "google_api_key": settings.GOOGLE_API_KEY,
+    "google_api_key": getattr(settings, 'GOOGLE_API_KEY', ''),
     "google_cx": "004613812033868156538:5pcwbuudj1m"
 }
 
