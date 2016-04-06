@@ -5,6 +5,7 @@ import logging
 from copy import copy
 
 from datascope.configuration import DEFAULT_CONFIGURATION
+from core.processors.base import Processor
 from core.exceptions import DSNoContent
 from core.utils.configuration import ConfigurationProperty
 from core.utils.data import reach
@@ -13,7 +14,7 @@ from core.utils.data import reach
 log = logging.getLogger("datascope")
 
 
-class ExtractProcessor(object):
+class ExtractProcessor(Processor):
 
     config = ConfigurationProperty(
         storage_attribute="_config",
@@ -23,10 +24,9 @@ class ExtractProcessor(object):
     )
 
     def __init__(self, config):
-        super(ExtractProcessor, self).__init__()
-        assert isinstance(config, dict) and ("_objective" in config or "objective" in config), \
+        super(ExtractProcessor, self).__init__(config)
+        assert "_objective" in config or "objective" in config, \
             "ExtractProcessor expects an objective to extract in the configuration."
-        self.config = config
         self._at = None
         self._context = {}
         self._objective = {}

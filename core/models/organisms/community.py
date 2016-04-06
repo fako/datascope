@@ -2,6 +2,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 import six
 from django.utils.encoding import python_2_unicode_compatible
 
+from itertools import groupby
 from collections import OrderedDict
 from datetime import datetime
 
@@ -12,13 +13,13 @@ from celery.result import AsyncResult
 from json_field import JSONField
 
 from datascope.configuration import DEFAULT_CONFIGURATION
-from core.models.organisms import Growth, Collective, Individual
+from core.models.organisms import Growth, Collective, Individual, Organism
 from core.models.organisms.mixins import ProcessorMixin
 from core.models.user import DataScopeUser
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
 from core.tasks import manifest_community
-from core.exceptions import DSProcessUnfinished
+from core.exceptions import DSProcessUnfinished, DSProcessError
 
 
 class CommunityState(object):
@@ -26,6 +27,7 @@ class CommunityState(object):
     ASYNC = "Asynchronous"
     SYNC = "Synchronous"
     READY = "Ready"
+    ABORTED = "Aborted"
 
 COMMUNITY_STATE_CHOICES = [
     (value, value) for attr, value in six.iteritems(CommunityState.__dict__) if not attr.startswith("_")
@@ -128,6 +130,7 @@ class Community(models.Model, ProcessorMixin):
         created = False
         try:
             community = cls.objects.get(signature="&".join(signature))
+            community.config = {key: value for key, value in six.iteritems(kwargs) if key in cls.PUBLIC_CONFIG}
         except cls.DoesNotExist:
             community = cls(
                 signature="&".join(signature),
@@ -149,6 +152,20 @@ class Community(models.Model, ProcessorMixin):
         if callback is not None and callable(callback):
             callback(inp)
 
+    def call_error_callbacks(self, phase, errors, out):
+        errors.order_by('-status')
+        phase_config = self.COMMUNITY_SPIRIT[phase]
+        error_config = phase_config["errors"]
+        fatal_error = not bool(len(out.content))
+        for status, error_group in groupby(errors, lambda err: err.status):
+            if status in error_config:
+                callback_name = "error_{}_{}".format(phase, error_config[status])
+                callback = getattr(self, callback_name, None)
+                if callback is not None and callable(callback):
+                    should_continue = callback(list(error_group), out)
+                    fatal_error = fatal_error or not should_continue
+        return not fatal_error
+
     def create_organism(self, organism_type, schema):
         model = get_any_model(organism_type)
         org = model(community=self, schema=schema)
@@ -161,7 +178,8 @@ class Community(models.Model, ProcessorMixin):
         """
         for growth_type, growth_config in six.iteritems(self.COMMUNITY_SPIRIT):
             sch = growth_config["schema"]
-            cnf = growth_config["config"]
+            cnf = self.config.to_dict(protected=True)
+            cnf.update(growth_config["config"])
             prc = growth_config["process"]
             if growth_config["contribute"]:
                 cont, con = growth_config["contribute"].split(":")
@@ -212,7 +230,11 @@ class Community(models.Model, ProcessorMixin):
 
         :return:
         """
-        raise NotImplementedError()
+        assert self.kernel is not None, \
+            "Community.set_kernel expected the kernel to be set. " \
+            "The overriding method is failing, is not implemented or is calling its parent before the kernel is set."
+        assert issubclass(self.kernel.__class__, Organism), \
+            "The kernel should be an Organism."
 
     def initial_input(self, *args):
         """
@@ -249,6 +271,11 @@ class Community(models.Model, ProcessorMixin):
         while self.kernel is None:
 
             output, errors = self.current_growth.finish(result)  # will raise when Growth is not finished
+            should_finish = self.call_error_callbacks(self.current_growth.type, errors, output) if errors else True
+            if not should_finish:
+                self.state = CommunityState.ABORTED
+                self.save()
+                raise DSProcessError("Could not finish growth according to error callbacks.")
             self.call_finish_callback(self.current_growth.type, output, errors)
             try:
                 self.current_growth = self.next_growth()
@@ -273,7 +300,7 @@ class Community(models.Model, ProcessorMixin):
         """
         content = self.kernel.content
         for part in self.COMMUNITY_BODY:
-            processor, method = self.prepare_process(part["process"])
+            processor, method, args_type = self.prepare_process(part["process"])
             content = method(content)
         return content
 

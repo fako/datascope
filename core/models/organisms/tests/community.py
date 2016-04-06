@@ -4,21 +4,21 @@ from django.test import TestCase
 
 from mock import Mock, patch
 
-from core.models.organisms import Individual, Collective, Growth
+from core.models.organisms import Individual, Collective, Growth, Community, Organism
 from core.models.organisms.community import CommunityState
-from core.models.organisms.tests.mixins import TestProcessorMixin
+from core.models.organisms.growth import GrowthState
 from core.tests.mocks.community import CommunityMock
-from core.exceptions import DSProcessUnfinished
+from core.tests.mocks.http import HttpResourceMock
+from core.exceptions import DSProcessUnfinished, DSProcessError
 
 
 class CommunityTestMixin(TestCase):
 
-    def test_set_kernel(self):
-        self.skipTest("Test that return type is an organism")
-        self.skipTest("No save!")
-
     def test_initial_input(self):
-        self.skipTest("Test that return type is an organism")
+        if not issubclass(self.instance.__class__, Community):
+            self.skipTest('CommunityTestMixin expected an self.instance that is a Community subclass')
+        initial_input = self.instance.initial_input()
+        self.assertIsInstance(initial_input, Organism)
 
 
 class TestCommunityMock(CommunityTestMixin):
@@ -30,6 +30,7 @@ class TestCommunityMock(CommunityTestMixin):
         self.instance = CommunityMock.objects.get(id=1)
         self.incomplete = CommunityMock.objects.get(id=2)
         self.complete = CommunityMock.objects.get(id=3)
+        self.error = CommunityMock.objects.get(id=4)
 
     def raise_unfinished(self, result):
         raise DSProcessUnfinished("Raised for test")
@@ -37,6 +38,8 @@ class TestCommunityMock(CommunityTestMixin):
     def set_callback_mocks(self):
         self.instance.call_begin_callback = Mock()
         self.instance.call_finish_callback = Mock()
+        self.error.error_phase1_unreachable = Mock(return_value=True)
+        self.error.error_phase1_not_found = Mock(return_value=False)
 
     def test_get_or_create_by_input(self):
         community, created = CommunityMock.get_or_create_by_input("test", setting1="const", illegal="please")
@@ -74,8 +77,10 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertEqual(self.instance.growth_set.count(), 2)
         growth1 = self.instance.growth_set.first()
         growth2 = self.instance.growth_set.last()
+        self.assertTrue(growth1.config.test_flag)
+        self.assertTrue(growth2.config.test_flag)
         self.assertEqual(growth1.output.id, growth2.input.id)
-        self.assertEqual(growth1.contribute, "ExtractProcessor.extract_resource")
+        self.assertEqual(growth1.contribute, "ExtractProcessor.extract_from_resource")
         self.assertEqual(growth1.contribute_type, "Append")
         self.assertIsInstance(growth1.input, Individual)
         self.assertIsInstance(growth1.output, Collective)
@@ -91,8 +96,70 @@ class TestCommunityMock(CommunityTestMixin):
         except Growth.DoesNotExist:
             pass
 
-    def test_error_callback(self):
-        self.skipTest("not tested")
+    @patch("core.models.CommunityMock.set_kernel")
+    def test_erroneous_community(self, set_kernel):
+        empty_output = Collective.objects.get(id=2)
+        full_output = Collective.objects.get(id=3)
+        self.set_callback_mocks()
+        try:
+            self.error.grow()
+            self.fail("Community did not raise error when dealing with errors and empty results.")
+        except DSProcessError:
+            pass
+        self.assertEqual(self.error.state, CommunityState.ABORTED)
+        self.error.error_phase1_unreachable.assert_called_once_with(
+            list(self.error.current_growth.resources.filter(status=502)),
+            empty_output
+        )
+        self.error.error_phase1_not_found.assert_called_once_with(
+            list(self.error.current_growth.resources.filter(status=404)),
+            empty_output
+        )
+        set_kernel.assert_not_called()
+
+        self.set_callback_mocks()
+        self.error.state = CommunityState.ASYNC
+        self.error.save()
+        self.error.current_growth.state = GrowthState.COMPLETE  # bypass growth logic
+        self.error.current_growth.output = full_output
+        self.error.current_growth.save()
+
+        try:
+            self.error.grow()
+            self.fail("Community did not raise error when dealing with fatal errors in results.")
+        except DSProcessError:
+            pass
+        self.assertEqual(self.error.state, CommunityState.ABORTED)
+        self.error.error_phase1_unreachable.assert_called_once_with(
+            list(self.error.current_growth.resources.filter(status=502)),
+            full_output
+        )
+        self.error.error_phase1_not_found.assert_called_once_with(
+            list(self.error.current_growth.resources.filter(status=404)),
+            full_output
+        )
+        set_kernel.assert_not_called()
+
+        self.set_callback_mocks()
+        self.error.state = CommunityState.ASYNC
+        self.error.save()
+        self.error.current_growth.state = GrowthState.COMPLETE  # bypass growth logic
+        self.error.current_growth.save()
+        error_resource = HttpResourceMock.objects.get(status=404)
+        error_resource.retainer = None
+        error_resource.save()
+
+        try:
+            self.error.grow()
+        except DSProcessError:
+            self.fail("Community raised an error when dealing with non-fatal errors in results")
+        self.assertEqual(self.error.state, CommunityState.READY)
+        self.error.error_phase1_unreachable.assert_called_once_with(
+            list(self.error.current_growth.resources.filter(status=502)),
+            full_output
+        )
+        self.error.error_phase1_not_found.assert_not_called()
+        set_kernel.assert_called_once()
 
     @patch("core.models.organisms.community.Growth.begin")
     def test_grow_async(self, begin_growth):
@@ -181,10 +248,17 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertFalse(finish_growth.called)
         self.assertEqual(self.instance.state, CommunityState.READY)
 
-    def test_grow_sync(self):
+    @patch('core.processors.resources.HttpResourceProcessor.get_link', return_value=HttpResourceMock())
+    def test_grow_sync(self, get_link):
         self.instance.config.async = False
-        # self.instance.grow()
-        self.skipTest("update test for sync flow")
+        self.set_callback_mocks()
+        self.assertEqual(self.instance.state, CommunityState.NEW)
+        done = self.instance.grow()
+        self.assertTrue(done)
+        self.assertEqual(self.instance.growth_set.filter(state=GrowthState.COMPLETE).count(), 2)
+        self.assertIsInstance(self.instance.current_growth, Growth)
+        self.assertEqual(self.instance.current_growth.id, self.instance.growth_set.last().id)
+        self.assertEqual(self.instance.state, CommunityState.READY)
 
     def test_manifestation(self):
         self.complete.config.include_odd = True

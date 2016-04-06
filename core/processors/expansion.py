@@ -3,13 +3,11 @@ import six
 
 import re
 
+from core.processors.base import Processor
 from core.models.organisms import Collective
 
 
-class ExpansionProcessor(object):
-
-    def __init__(self, *args, **kwargs):
-        super(ExpansionProcessor, self).__init__()
+class ExpansionProcessor(Processor):
 
     def collective_content(self, individuals):
 

@@ -2,7 +2,8 @@ import logging
 log = logging.getLogger(__name__)
 
 try:
-    from setup import *
+    # We load variables that control how settings should be loaded
+    from bootstrap import *
 except ImportError:
     log.warning("Could not import setup settings. Are they created?")
 try:
@@ -34,7 +35,6 @@ INSTALLED_APPS = (
     # 3rd party
     'djcelery',
     'rest_framework',
-    #'ws4redis',
     # Main app
     'datascope',
     # Framework apps
@@ -159,7 +159,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.template.context_processors.static",
     "django.template.context_processors.tz",
     "django.contrib.messages.context_processors.messages",
-    #'ws4redis.context_processors.default',
     'core.templatetags.template_context.core_context',
 )
 
@@ -242,19 +241,29 @@ CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['application/json']
 
-# Websockets
-WEBSOCKET_URL = '/ws/'
-WS4REDIS_PREFIX = 'ws'
-#WSGI_APPLICATION = 'ws4redis.django_runserver.application'
-WS4REDIS_EXPIRE = 0
-WS4REDIS_HEARTBEAT = '--heartbeat--'
-
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.fakoberkers.nl"
 EMAIL_PORT = 587
 
 import requests.packages.urllib3.contrib.pyopenssl
 requests.packages.urllib3.contrib.pyopenssl.inject_into_urllib3()
+
+#######################################################
+# PLUGIN SETTINGS
+#######################################################
+
+if USE_WEBSOCKETS:
+    INSTALLED_APPS += (
+        'ws4redis',
+    )
+    TEMPLATE_CONTEXT_PROCESSORS += (
+        'ws4redis.context_processors.default',
+    )
+    WEBSOCKET_URL = '/ws/'
+    WS4REDIS_PREFIX = 'ws'
+    WSGI_APPLICATION = 'ws4redis.django_runserver.application'
+    WS4REDIS_EXPIRE = 0
+    WS4REDIS_HEARTBEAT = '--heartbeat--'
 
 #######################################################
 # LEGACY SETTINGS

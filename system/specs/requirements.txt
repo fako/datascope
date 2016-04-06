@@ -18,3 +18,14 @@
 + Use Django 1.8 or 1.7
 + Use JSON path
 + Use JSON schema
+
+
+- Fork and patch JSONField
+- Make websockets optional through setup
+- Finish tests
+
+
+- Resource (base class for Html, Shell and Email resource. Handles waiting states (202, job on queue and email send). Use Celery retries?
+- ShellResource (send a command and optionally check file updates)
+- EmailResource (send an email and poll an imap for response)
+- EmailResourceProcessor

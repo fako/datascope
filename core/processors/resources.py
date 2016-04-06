@@ -11,6 +11,7 @@ from celery import current_app as app
 from celery.result import AsyncResult, states as TaskStates
 
 from datascope.configuration import DEFAULT_CONFIGURATION
+from core.processors.base import Processor
 from core.utils.configuration import ConfigurationProperty, ConfigurationType, load_config
 from core.utils.helpers import get_any_model
 from core.exceptions import DSResourceException, DSProcessUnfinished, DSProcessError
@@ -18,7 +19,7 @@ from core.exceptions import DSResourceException, DSProcessUnfinished, DSProcessE
 log = logging.getLogger("datascope")
 
 
-class HttpResourceProcessor(object):
+class HttpResourceProcessor(Processor):
     # TODO: make sphinx friendly and doc all methods
     """
     A collection of Celery tasks that share their need for specific a configuration.
@@ -28,6 +29,9 @@ class HttpResourceProcessor(object):
     - a HttpResource class name to be loaded with Django
     - a guideline to how deep a single resource should collect data
     """
+
+    ARGS_BATCH_METHODS = ['fetch_mass', 'send_mass']
+
     config = ConfigurationProperty(
         storage_attribute="_config",
         defaults=DEFAULT_CONFIGURATION,
@@ -36,10 +40,9 @@ class HttpResourceProcessor(object):
     )
 
     def __init__(self, config):
-        super(HttpResourceProcessor, self).__init__()
-        assert isinstance(config, dict) and ("_resource" in config or "resource" in config), \
+        super(HttpResourceProcessor, self).__init__(config)
+        assert "_resource" in config or "resource" in config, \
             "HttpResourceProcessor expects a resource that it should fetch in the configuration."
-        self.config = config
         self._resource = None
 
     #######################################################
