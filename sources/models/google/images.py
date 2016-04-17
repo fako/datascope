@@ -36,7 +36,7 @@ class GoogleImage(GoogleQuery):
     }
 
     def variables(self, *args):
-        args = args or self.request.args
+        args = args or self.request["args"]
         variables = {}
         variables["url"] = (args[0],)
         try:

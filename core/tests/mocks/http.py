@@ -93,12 +93,16 @@ class HttpResourceMock(HttpResource):
 
     @property
     def meta(self):
-        try:
-            return self.request["args"][1]
-        except (KeyError, IndexError, TypeError):
-            return None
+        return self.variables()["meta"]
 
     def data(self, **kwargs):
         return {
             "test": kwargs.get("query")
+        }
+
+    def variables(self, *args):
+        args = args or (self.request["args"] if self.request else tuple())
+        return {
+            "url": args,
+            "meta": args[1] if len(args) > 1 else None
         }
