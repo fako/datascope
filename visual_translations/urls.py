@@ -9,15 +9,31 @@ from visual_translations.views.eu import visual_translation_map, visual_translat
 
 
 urlpatterns = [
-    url(r'^visual-translations-bric/service/(?P<path>.+)/$', CommunityView.as_view(),
-        {"community_class": VisualTranslationsBRICCommunity}),
-    url(r'^visual-translations-bric/html/(?P<path>.+)?/?$', VisualTranslationsHtmlView.as_view(),
-        {"community_class": VisualTranslationsBRICCommunity}),
+    url(
+        r'^visual-translations-bric/service/(?P<path>.+)/$',
+        CommunityView.as_view(),
+        kwargs={"community_class": VisualTranslationsBRICCommunity},
+        name=VisualTranslationsBRICCommunity.get_name() + "_service"
+    ),
+    url(
+        r'^visual-translations-bric/html/(?P<path>.+)?/?$',
+        VisualTranslationsHtmlView.as_view(),
+        kwargs={"community_class": VisualTranslationsBRICCommunity},
+        name=VisualTranslationsBRICCommunity.get_name() + "_html"
+    ),
 
-    url(r'^visual-translations-eu/service/(?P<path>.+)/$', CommunityView.as_view(),
-        {"community_class": VisualTranslationsEUCommunity}),
-    url(r'^visual-translations-eu/html/(?P<path>.+)?/?$', VisualTranslationsHtmlView.as_view(),
-        {"community_class": VisualTranslationsEUCommunity}),
+    url(
+        r'^visual-translations-eu/service/(?P<path>.+)/$',
+        CommunityView.as_view(),
+        kwargs={"community_class": VisualTranslationsEUCommunity},
+        name=VisualTranslationsEUCommunity.get_name() + "_service"
+    ),
+    url(
+        r'^visual-translations-eu/html/(?P<path>.+)?/?$',
+        VisualTranslationsHtmlView.as_view(),
+        kwargs={"community_class": VisualTranslationsEUCommunity},
+        name=VisualTranslationsEUCommunity.get_name() + "_html"
+    ),
 
     url(r'^visual-translations-eu/map/(?P<term>[a-z+]+)/?$', visual_translation_map),
     url(r'^visual-translations-eu/controller/$', visual_translations_controller),

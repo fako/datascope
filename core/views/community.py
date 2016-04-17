@@ -86,13 +86,13 @@ class CommunityView(APIView):
 
     def get_service_data_response(self, community_class, query_path, query_parameters):
         assert isinstance(query_parameters, dict), \
-            "query_parameters for ger_service_data_response should be a dictionary without urlencoded values"
+            "query_parameters for get_service_data_response should be a dictionary without urlencoded values"
         service_view = "v1:{}_service".format(community_class.get_name())
         # Order of the given parameters matters
         # for database lookups of previously calculated results for these parameters
         parameters_sorted_by_keys = sorted(six.iteritems(query_parameters), key=lambda item: item[0])
         full_path = "{}?{}".format(
-            reverse(service_view, kwargs={"path": "latest-news"}),
+            reverse(service_view, kwargs={"path": query_path}),
             "&".join("{}={}".format(key, value) for key, value in parameters_sorted_by_keys)
         )
         return self._get_data_response(
