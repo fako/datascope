@@ -36,7 +36,7 @@ class GoogleImage(GoogleQuery):
     }
 
     def variables(self, *args):
-        args = args or self.request["args"]
+        args = args or self.request.get("args")
         variables = {}
         variables["url"] = (args[0],)
         try:
@@ -66,3 +66,22 @@ class GoogleImage(GoogleQuery):
         except (KeyError, IndexError):
             raise DSInvalidResource("Google Image resource does not specify searchTerms", self)
         return content_type, data
+
+    def next_parameters(self):
+        if self.request["quantity"] <= 0:
+            return {}
+        content_type, data = super(GoogleImage, self).content
+        missing_quantity = self.request["quantity"] - 10
+        try:
+            nextData = data["queries"]["nextPage"][0]
+        except KeyError:
+            return {}
+        return {
+            "start": nextData["startIndex"],
+            "quantity": missing_quantity
+        }
+
+    def _create_request(self, method, *args, **kwargs):
+        request = super(GoogleImage, self)._create_request(method, *args, **kwargs)
+        request["quantity"] = self.variables(*args)["quantity"]
+        return request
