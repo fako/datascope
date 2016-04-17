@@ -8,21 +8,47 @@ from sources.models.google.query import GoogleQuery
 
 class GoogleImage(GoogleQuery):
 
-    URI_TEMPLATE = 'https://www.googleapis.com/customsearch/v1?{}="{}"'
+    URI_TEMPLATE = 'https://www.googleapis.com/customsearch/v1?q="{}"'
     PARAMETERS = {
         "searchType": "image",
         "cr": None  # set at runtime if present
     }
+    GET_SCHEMA = {
+        "args": {
+            "type": "array",
+            "items": [
+                {
+                    "type": "string",  # the query string
+                },
+                {
+                    "type": "integer",  # amount of desired images
+                },
+                {
+                    "type": "string",  # example: countryXX
+                    "maxLength": 9,
+                    "minLength": 9
+                },
+            ],
+            "additionalItems": False,
+            "minItems": 1
+        },
+        "kwargs": None
+    }
 
-    def send(self, method, *args, **kwargs):
-        if len(args) > 1:
-            self.config.country = args[1]
-            args = (args[0],)
-        return super(GoogleImage, self).send(method, *args, **kwargs)
+    def variables(self, *args):
+        args = args or self.request.args
+        variables = {}
+        variables["url"] = (args[0],)
+        try:
+            variables["quantity"] = args[1]
+            variables["country"] = args[2]
+        except IndexError:
+            pass
+        return variables
 
-    def parameters(self):
+    def parameters(self, **kwargs):
         params = copy(self.PARAMETERS)
-        params["cr"] = self.config.country
+        params["cr"] = kwargs.get("country")
         return params
 
     def auth_parameters(self):
