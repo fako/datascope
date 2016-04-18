@@ -37,11 +37,11 @@ class GoogleImage(GoogleQuery):
 
     def variables(self, *args):
         args = args or self.request.get("args")
-        variables = {}
-        variables["url"] = (args[0],)
-        variables["quantity"] = args[1] if len(args) > 1 else 0
-        variables["country"] = args[2] if len(args) > 2 else None
-        return variables
+        return {
+            "url": (args[0],),
+            "quantity": args[1] if len(args) > 1 else 0,
+            "country": args[2] if len(args) > 2 else None
+        }
 
     def parameters(self, **kwargs):
         params = copy(self.PARAMETERS)
