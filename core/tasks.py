@@ -17,4 +17,4 @@ def manifest_community(manifestation_id):
     manifestation = Manifestation.objects.get(id=manifestation_id)
     community = manifestation.community
     community.config = manifestation.config
-    return community.manifestation
+    return list(community.manifestation)

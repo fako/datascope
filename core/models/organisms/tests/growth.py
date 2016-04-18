@@ -82,7 +82,7 @@ class TestGrowth(TestProcessorMixin):
         self.assertTrue(async_result.called)
         self.assertTrue(self.processing.is_finished)
         self.assertEqual(self.processing.state, GrowthState.PARTIAL)
-        self.assertEqual(output.content, self.expected_append_output)
+        self.assertEqual(list(output.content), self.expected_append_output)
         self.assertEqual(self.processing.resources.count(), 2)
         self.assertEqual(len(errors), 2)
         self.assertIsInstance(errors[0], HttpResourceMock)
@@ -94,7 +94,7 @@ class TestGrowth(TestProcessorMixin):
         self.assertTrue(async_result.called)
         self.assertTrue(self.processing.is_finished)
         self.assertEqual(self.processing.state, GrowthState.COMPLETE)
-        self.assertEqual(output.content, self.expected_append_output)
+        self.assertEqual(list(output.content), self.expected_append_output)
         self.assertEqual(len(errors), 0)
         self.assertEqual(self.processing.resources.count(), 0)
 
@@ -115,7 +115,7 @@ class TestGrowth(TestProcessorMixin):
         self.assertFalse(async_result.called)
         self.assertTrue(self.finished.is_finished)
         self.assertEqual(self.finished.state, GrowthState.COMPLETE)
-        self.assertEqual(output.content, self.expected_finished_output)
+        self.assertEqual(list(output.content), self.expected_finished_output)
         self.assertEqual(len(errors), 0)
         self.assertEqual(self.finished.resources.count(), 0)
         self.finished.state = GrowthState.PARTIAL
@@ -126,7 +126,7 @@ class TestGrowth(TestProcessorMixin):
         self.assertFalse(async_result.called)
         self.assertTrue(self.finished.is_finished)
         self.assertEqual(self.finished.state, GrowthState.PARTIAL)
-        self.assertEqual(output.content, self.expected_finished_output)
+        self.assertEqual(list(output.content), self.expected_finished_output)
         self.assertEqual(len(errors), 1)
         self.assertEqual(self.finished.resources.count(), 1)
         self.assertEqual([resource.id for resource in self.finished.resources], [error.id for error in errors])
@@ -152,13 +152,13 @@ class TestGrowth(TestProcessorMixin):
         qs = HttpResourceMock.objects.filter(id=1)
         contributions = self.new.prepare_contributions(qs)
         self.new.append_to_output(contributions)
-        self.assertEqual(self.new.output.content, self.expected_append_output[:3])
+        self.assertEqual(list(self.new.output.content), self.expected_append_output[:3])
 
     def test_inline_by_key(self):
         qs = HttpResourceMock.objects.filter(id__in=[6, 7, 8])
         contributions = self.collective_input.prepare_contributions(qs)
         self.collective_input.inline_by_key(contributions, "value")
-        self.assertEqual(self.collective_input.output.content, self.expected_inline_output)
+        self.assertEqual(list(self.collective_input.output.content), self.expected_inline_output)
 
     def test_is_finished(self):
         self.new.state = GrowthState.COMPLETE

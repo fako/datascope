@@ -158,7 +158,7 @@ class Community(models.Model, ProcessorMixin):
         error_config = phase_config["errors"]
         if error_config is None:
             return True
-        fatal_error = not bool(len(out.content))
+        fatal_error = not out.has_content
         for status, error_group in groupby(errors, lambda err: err.status):
             if status in error_config:
                 callback_name = "error_{}_{}".format(phase, error_config[status])
