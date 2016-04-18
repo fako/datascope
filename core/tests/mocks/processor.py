@@ -16,20 +16,19 @@ class MockProcessor(Processor):
 class MockNumberProcessor(MockProcessor):
 
     def number_individuals(self, individuals):
-        for index, individual in enumerate(individuals):
-            individual["number"] = index + 1
-        return individuals
+        def number_individual(individual, number):
+            individual["number"] = number
+            return individual
+        return (number_individual(individual, idx+1) for idx, individual in enumerate(individuals))
 
 
 class MockFilterProcessor(MockProcessor):
 
     def filter_individuals(self, individuals):
-        results = []
         for individual in individuals:
             if self.config.include_odd and individual.get("number") % 2:
-                results.append(individual)
+                yield individual
             elif self.config.include_even and not individual.get("number") % 2:
-                results.append(individual)
+                yield individual
             elif self.config.include_odd and self.config.include_even:
-                results.append(individual)
-        return results
+                yield individual
