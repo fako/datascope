@@ -39,11 +39,8 @@ class GoogleImage(GoogleQuery):
         args = args or self.request.get("args")
         variables = {}
         variables["url"] = (args[0],)
-        try:
-            variables["quantity"] = args[1]
-            variables["country"] = args[2]
-        except IndexError:
-            pass
+        variables["quantity"] = args[1] if len(args) > 1 else 0
+        variables["country"] = args[2] if len(args) > 2 else None
         return variables
 
     def parameters(self, **kwargs):
