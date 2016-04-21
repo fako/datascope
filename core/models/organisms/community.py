@@ -3,9 +3,8 @@ import six
 from django.utils.encoding import python_2_unicode_compatible
 
 from itertools import groupby
-from collections import OrderedDict
+from collections import OrderedDict, Iterator
 from datetime import datetime
-from types import GeneratorType
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, ContentType
@@ -305,8 +304,8 @@ class Community(models.Model, ProcessorMixin):
         for part in self.COMMUNITY_BODY:
             processor, method, args_type = self.prepare_process(part["process"])
             content = method(content)
-            assert isinstance(content, GeneratorType), \
-                "To prevent high memory usage processors should return generators when manifestating"
+            assert isinstance(content, Iterator), \
+                "To prevent high memory usage processors should return iterators when manifestating"
         return content
 
     @classmethod
