@@ -1,6 +1,7 @@
 from core.utils.configuration import ConfigurationProperty
 from datascope.configuration import MOCK_CONFIGURATION
 from core.processors.base import Processor
+from core.processors import RankProcessor
 
 
 class MockProcessor(Processor):
@@ -32,3 +33,9 @@ class MockFilterProcessor(MockProcessor):
                 yield individual
             elif self.config.include_odd and self.config.include_even:
                 yield individual
+
+
+class MockRankProcessor(RankProcessor):
+
+    def rank_by_value(self, individual):
+        return individual["value"]
