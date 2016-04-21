@@ -26,7 +26,10 @@ DEFAULT_CONFIGURATION = {
     "wikipedia_wiki_full_extracts": False,
 
     "google_api_key": getattr(settings, 'GOOGLE_API_KEY', ''),
-    "google_cx": "004613812033868156538:5pcwbuudj1m"
+    "google_cx": "004613812033868156538:5pcwbuudj1m",
+
+    "rank_processor_batch_size": 1000,
+    "rank_processor_result_size": 20
 }
 
 
