@@ -1,4 +1,6 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
+# noinspection PyUnresolvedReferences
+from six.moves import reduce
 
 from collections import Iterator
 from operator import itemgetter
@@ -59,7 +61,7 @@ class TestRankProcessor(TestCase):
         expected_keys = sorted(modules + ['rank'])
         self.assertEqual(rank_detail_keys, expected_keys)
         rank = details.pop('rank')
-        self.assertEqual(rank, sum(details.values()))
+        self.assertEqual(rank, reduce(lambda reduced, rank: reduced * rank, details.values(), 1))
 
     def assert_ranking(self, ranking, size, modules):
         ranking = list(ranking)
@@ -88,7 +90,17 @@ class TestRankProcessor(TestCase):
         self.assertEqual(names, ['highest', 'highest-of-triple'], "Order of ranked dictionaries is not correct.")
 
     def test_ranking_with_multiple_hooks(self):
-        self.skipTest("not tested")
+        instance = MockRankProcessor({
+            "result_size": 2,
+            "batch_size": 3,
+            "$rank_by_value": 1,
+            "$boost_double": 2
+        })
+        ranking = instance.hooks(self.test_content)
+        self.assertTrue(issubclass(ranking.__class__, Iterator))
+        ranking = self.assert_ranking(ranking, 2, ['rank_by_value', 'boost_double'])
+        names = list(map(itemgetter('name'), ranking))
+        self.assertEqual(names, ['double-1', 'double-2'], "Order of ranked dictionaries is not correct.")
 
     def test_floats_as_weights(self):
         self.skipTest("not tested")
