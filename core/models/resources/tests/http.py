@@ -41,6 +41,12 @@ class HttpResourceTestMixin(TestCase):
     def test_parameters(self):
         self.assertIsInstance(self.instance.parameters(), dict)
 
+    def test_variables(self):
+        variables = self.instance.variables(["args"])
+        self.assertIsInstance(variables, dict)
+        self.assertIn("url", variables)
+        self.assertIsInstance(variables["url"], tuple)
+
     def test_data(self):
         self.assertIsInstance(self.instance.data(), dict)
 

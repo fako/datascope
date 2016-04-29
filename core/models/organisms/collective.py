@@ -101,9 +101,18 @@ class Collective(Organism):
         """
         Returns the content of the members of this Collective
 
-        :return: a list of properties from Individual members
+        :return: a generator yielding properties from Individual members
         """
-        return [ind.content for ind in self.individual_set.all()]
+        return (ind.content for ind in self.individual_set.iterator())
+
+    @property
+    def has_content(self):
+        """
+        Indicates if Collective entails Individuals or not
+
+        :return: True if there are Individuals, False otherwise
+        """
+        return self.individual_set.exists()
 
     @property
     def json_content(self):

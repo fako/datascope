@@ -6,7 +6,6 @@ from core.exceptions import DSHttpError40X, DSHttpError403LimitExceeded
 
 class GoogleQuery(HttpResource):
 
-    GOOGLE_QUERY_PARAM = "q"
     CONFIG_NAMESPACE = "google"
 
     def auth_parameters(self):
@@ -22,10 +21,6 @@ class GoogleQuery(HttpResource):
                 raise DSHttpError403LimitExceeded(exception, resource=self)
             else:
                 raise exception
-
-    def send(self, method, *args, **kwargs):
-        args = (self.GOOGLE_QUERY_PARAM,) + args
-        return super(GoogleQuery, self).send(method, *args, **kwargs)
 
     class Meta:
         abstract = True

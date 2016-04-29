@@ -11,6 +11,7 @@ class ExpansionProcessor(Processor):
 
     def collective_content(self, individuals):
 
+        individuals = list(individuals)
         updates = {}
         pattern = re.compile("/data/v\d+/collective/(?P<collective_id>\d+)/?(content/)?")
         for ind in individuals:
@@ -20,6 +21,7 @@ class ExpansionProcessor(Processor):
                     if match is not None:
                         updates[(key, match.group("collective_id"),)] = ind
 
+        # TODO: make this a true generator and do not traverse the whole list to gather nested collectives?
         qs = Collective.objects.prefetch_related("individual_set").filter(pk__in=[int(pk) for prop, pk in six.iterkeys(updates)])
         collectives = {
             collective.id: collective
@@ -28,6 +30,6 @@ class ExpansionProcessor(Processor):
 
         for key, value in six.iteritems(updates):
             prop, pk = key
-            value[prop] = collectives[int(pk)].content
+            value[prop] = list(collectives[int(pk)].content)
 
-        return individuals
+        return (individual for individual in individuals)

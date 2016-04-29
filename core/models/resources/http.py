@@ -194,9 +194,10 @@ class HttpResource(models.Model):
 
     def _create_url(self, *args):
         url_template = copy(self.URI_TEMPLATE)
-        url = URLObject(url_template.format(*args))
+        variables = self.variables(*args)
+        url = URLObject(url_template.format(*variables["url"]))
         params = url.query.dict
-        params.update(self.parameters())
+        params.update(self.parameters(**variables))
         url = url.set_query_params(params)
         return str(url)
 
@@ -207,7 +208,7 @@ class HttpResource(models.Model):
         """
         return self.HEADERS
 
-    def parameters(self):
+    def parameters(self, **kwargs):
         """
 
         :return: dict
@@ -220,6 +221,15 @@ class HttpResource(models.Model):
         :return:
         """
         return kwargs
+
+    def variables(self, *args):
+        """
+
+        :return:
+        """
+        return {
+            "url": args
+        }
 
     def create_request_from_url(self, url):
         raise NotImplementedError()

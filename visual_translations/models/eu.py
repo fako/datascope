@@ -44,7 +44,7 @@ class VisualTranslationsEUCommunity(Community):
             "contribute": "Append:ExtractProcessor.extract_from_resource",
             "output": "Collective",
             "config": {
-                "_args": ["$.word", "$.country"],
+                "_args": ["$.word", "$.country", "$.images_quantity"],
                 "_kwargs": {},
                 "_resource": "GoogleImage",
                 "_objective": {
@@ -56,6 +56,7 @@ class VisualTranslationsEUCommunity(Community):
                     "height": "$.image.height",
                     "thumbnail": "$.image.thumbnailLink",
                 },
+                "_continuation_limit": 10
             },
             "schema": {},
             "errors": {},
@@ -158,6 +159,7 @@ class VisualTranslationsEUCommunity(Community):
                         "word": inp.properties["query"],
                         "confidence": None,
                         "meanings": None,
+                        "images_quantity": grid["columns"] * grid["rows"],
                         "locale": "{}_{}".format(language, country)
                     })
                 elif index == 0:  # only an update needed
@@ -166,6 +168,7 @@ class VisualTranslationsEUCommunity(Community):
                             continue
                         ind.properties["country"] = "country" + country
                         ind.properties["locale"] = "{}_{}".format(language, country)
+                        ind.properties["images_quantity"] = grid["columns"] * grid["rows"]
                         new.append(ind)
                 else:  # new individuals need to be created
                     for ind in individuals:  # TODO: simplify by using Collective.select (re-use querysets!)
@@ -174,6 +177,7 @@ class VisualTranslationsEUCommunity(Community):
                         properties = copy(ind.properties)
                         properties["country"] = "country" + country
                         properties["locale"] = "{}_{}".format(language, country)
+                        properties["images_quantity"] = grid["columns"] * grid["rows"]
                         new.append(properties)
         if new:
             out.update(new)

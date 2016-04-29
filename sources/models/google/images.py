@@ -8,21 +8,44 @@ from sources.models.google.query import GoogleQuery
 
 class GoogleImage(GoogleQuery):
 
-    URI_TEMPLATE = 'https://www.googleapis.com/customsearch/v1?{}="{}"'
+    URI_TEMPLATE = 'https://www.googleapis.com/customsearch/v1?q="{}"'
     PARAMETERS = {
         "searchType": "image",
         "cr": None  # set at runtime if present
     }
+    GET_SCHEMA = {
+        "args": {
+            "type": "array",
+            "items": [
+                {
+                    "type": "string",  # the query string
+                },
+                {
+                    "type": "string",  # example: countryXX
+                    "maxLength": 9,
+                    "minLength": 9
+                },
+                {
+                    "type": "integer",  # amount of desired images
+                },
+            ],
+            "additionalItems": False,
+            "minItems": 1
+        },
+        "kwargs": None
+    }
 
-    def send(self, method, *args, **kwargs):
-        if len(args) > 1:
-            self.config.country = args[1]
-            args = (args[0],)
-        return super(GoogleImage, self).send(method, *args, **kwargs)
+    def variables(self, *args):
+        args = args or self.request.get("args")
+        return {
+            "url": (args[0],),
+            "country": args[1] if len(args) > 1 else None,
+            "quantity": args[2] if len(args) > 2 else 0,
+        }
 
-    def parameters(self):
+    def parameters(self, **kwargs):
         params = copy(self.PARAMETERS)
-        params["cr"] = self.config.country
+        params["cr"] = kwargs.get("country")
         return params
 
     def auth_parameters(self):
@@ -40,3 +63,22 @@ class GoogleImage(GoogleQuery):
         except (KeyError, IndexError):
             raise DSInvalidResource("Google Image resource does not specify searchTerms", self)
         return content_type, data
+
+    def next_parameters(self):
+        if self.request["quantity"] <= 0:
+            return {}
+        content_type, data = super(GoogleImage, self).content
+        missing_quantity = self.request["quantity"] - 10
+        try:
+            nextData = data["queries"]["nextPage"][0]
+        except KeyError:
+            return {}
+        return {
+            "start": nextData["startIndex"],
+            "quantity": missing_quantity
+        }
+
+    def _create_request(self, method, *args, **kwargs):
+        request = super(GoogleImage, self)._create_request(method, *args, **kwargs)
+        request["quantity"] = self.variables(*args)["quantity"]
+        return request

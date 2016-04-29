@@ -3,7 +3,7 @@ import six
 from django.utils.encoding import python_2_unicode_compatible
 
 from itertools import groupby
-from collections import OrderedDict
+from collections import OrderedDict, Iterator
 from datetime import datetime
 
 from django.db import models
@@ -158,7 +158,7 @@ class Community(models.Model, ProcessorMixin):
         error_config = phase_config["errors"]
         if error_config is None:
             return True
-        fatal_error = not bool(len(out.content))
+        fatal_error = not out.has_content
         for status, error_group in groupby(errors, lambda err: err.status):
             if status in error_config:
                 callback_name = "error_{}_{}".format(phase, error_config[status])
@@ -304,6 +304,8 @@ class Community(models.Model, ProcessorMixin):
         for part in self.COMMUNITY_BODY:
             processor, method, args_type = self.prepare_process(part["process"])
             content = method(content)
+            assert isinstance(content, Iterator), \
+                "To prevent high memory usage processors should return iterators when manifestating"
         return content
 
     @classmethod
