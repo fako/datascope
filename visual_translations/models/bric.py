@@ -49,6 +49,7 @@ class VisualTranslationsBRICCommunity(Community):
                     "height": "$.image.height",
                     "thumbnail": "$.image.thumbnailLink",
                 },
+                "_continuation_limit": 10
             },
             "schema": {},
             "errors": {},

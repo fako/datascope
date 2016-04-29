@@ -21,12 +21,12 @@ class GoogleImage(GoogleQuery):
                     "type": "string",  # the query string
                 },
                 {
-                    "type": "integer",  # amount of desired images
-                },
-                {
                     "type": "string",  # example: countryXX
                     "maxLength": 9,
                     "minLength": 9
+                },
+                {
+                    "type": "integer",  # amount of desired images
                 },
             ],
             "additionalItems": False,
@@ -39,8 +39,8 @@ class GoogleImage(GoogleQuery):
         args = args or self.request.get("args")
         return {
             "url": (args[0],),
-            "quantity": args[1] if len(args) > 1 else 0,
-            "country": args[2] if len(args) > 2 else None
+            "country": args[1] if len(args) > 1 else None,
+            "quantity": args[2] if len(args) > 2 else 0,
         }
 
     def parameters(self, **kwargs):

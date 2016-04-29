@@ -44,7 +44,7 @@ class VisualTranslationsEUCommunity(Community):
             "contribute": "Append:ExtractProcessor.extract_from_resource",
             "output": "Collective",
             "config": {
-                "_args": ["$.word", "$.images_quantity", "$.country"],
+                "_args": ["$.word", "$.country", "$.images_quantity"],
                 "_kwargs": {},
                 "_resource": "GoogleImage",
                 "_objective": {
