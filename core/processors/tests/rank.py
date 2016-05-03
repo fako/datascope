@@ -94,16 +94,24 @@ class TestRankProcessor(TestCase):
             "result_size": 2,
             "batch_size": 3,
             "$rank_by_value": 1,
-            "$boost_double": 2
+            "$is_double": 2
         })
         ranking = instance.hooks(self.test_content)
         self.assertTrue(issubclass(ranking.__class__, Iterator))
-        ranking = self.assert_ranking(ranking, 2, ['rank_by_value', 'boost_double'])
+        ranking = self.assert_ranking(ranking, 2, ['rank_by_value', 'is_double'])
         names = list(map(itemgetter('name'), ranking))
         self.assertEqual(names, ['double-1', 'double-2'], "Order of ranked dictionaries is not correct.")
 
     def test_floats_as_weights(self):
-        self.skipTest("not tested")
+        instance = MockRankProcessor({
+            "result_size": 3,
+            "batch_size": 4,
+            "$rank_by_value": 1,
+            "$is_highest": 0.8
+        })
+        ranking = instance.hooks(self.test_content)
+        names = list(map(itemgetter('name'), ranking))
+        self.assertEqual(names, ['highest', 'double-1', 'double-2'], "Order of ranked dictionaries is not correct.")
 
     def test_boolean_ranking(self):
         self.skipTest("not tested")

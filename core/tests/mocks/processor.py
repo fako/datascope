@@ -40,5 +40,8 @@ class MockRankProcessor(RankProcessor):
     def rank_by_value(self, individual):
         return individual["value"]
 
-    def boost_double(self, individual):
+    def is_double(self, individual):
         return 1 if "double" in individual["name"] else 0
+
+    def is_highest(self, individual):
+        return 1 if "highest" in individual["name"] else 0
