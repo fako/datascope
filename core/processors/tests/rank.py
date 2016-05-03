@@ -124,7 +124,13 @@ class TestRankProcessor(TestCase):
         self.assertEqual(names, ['highest', 'highest-of-triple'], "Order of ranked dictionaries is not correct.")
         self.assertEqual(ranking[0]["ds_rank"]["rank"], ranking[1]["ds_rank"]["rank"])
 
-    def test_invalid_hooks(self):
+    def test_no_hooks(self):
+        self.skipTest("not tested")
+
+    def test_not_existing_hooks(self):
+        self.skipTest("not tested")
+
+    def test_invalid_hook_name(self):
         self.skipTest("not tested")
 
     @patch('core.processors.rank.islice')
