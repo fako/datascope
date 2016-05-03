@@ -114,7 +114,15 @@ class TestRankProcessor(TestCase):
         self.assertEqual(names, ['highest', 'double-1', 'double-2'], "Order of ranked dictionaries is not correct.")
 
     def test_boolean_ranking(self):
-        self.skipTest("not tested")
+        instance = MockRankProcessor({
+            "result_size": 2,
+            "batch_size": 3,
+            "$is_highest": 1
+        })
+        ranking = list(instance.hooks(self.test_content))
+        names = list(map(itemgetter('name'), ranking))
+        self.assertEqual(names, ['highest', 'highest-of-triple'], "Order of ranked dictionaries is not correct.")
+        self.assertEqual(ranking[0]["ds_rank"]["rank"], ranking[1]["ds_rank"]["rank"])
 
     def test_invalid_hooks(self):
         self.skipTest("not tested")
