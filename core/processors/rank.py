@@ -51,11 +51,15 @@ class RankProcessor(Processor):
                     pass
                 if not module_value:
                     continue
-                individual["ds_rank"][hook_name] = module_value * module_weight
+                individual["ds_rank"][hook_name] = {
+                    "rank": module_value * module_weight,
+                    "weight": module_weight,
+                    "value": module_value
+                }
             # Aggregate all ranks to a single rank
             rankings = [ranking for ranking in six.itervalues(individual["ds_rank"]) if ranking]
             if rankings:
-                individual["ds_rank"]["rank"] = reduce(lambda reduced, rank: reduced * rank, rankings, 1)
+                individual["ds_rank"]["rank"] = reduce(lambda reduced, rank_info: reduced * rank_info["rank"], rankings, 1)
             else:
                 individual["ds_rank"]["rank"] = 0
             # Write batch to results when appropriate

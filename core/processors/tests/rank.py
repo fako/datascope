@@ -55,13 +55,18 @@ class TestRankProcessor(TestCase):
         ]
 
     def assert_rank_details(self, details, modules):
-        for key, value in details.items():
-            self.assertIsInstance(value, float)
         rank_detail_keys = sorted(details.keys())
         expected_keys = sorted(modules + ['rank'])
         self.assertEqual(rank_detail_keys, expected_keys)
         rank = details.pop('rank')
-        self.assertEqual(rank, reduce(lambda reduced, rank: reduced * rank, details.values(), 1))
+        self.assertIsInstance(rank, float)
+        for module, result in details.items():
+            self.assertEqual(len(result.keys()), 3)
+            self.assertEqual(result["rank"], result["weight"] * result["value"])
+            for value in result.values():
+                self.assertIsInstance(value, float)
+
+        self.assertEqual(rank, reduce(lambda reduced, rank_info: reduced * rank_info["rank"], details.values(), 1))
 
     def assert_ranking(self, ranking, size, modules):
         ranking = list(ranking)
