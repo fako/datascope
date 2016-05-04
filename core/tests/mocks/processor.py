@@ -51,3 +51,7 @@ class MockRankProcessor(RankProcessor):
 
     def wrong_return_value(self, individual):
         return "wrong"
+
+    def alter_individual(self, individual):
+        individual["name"] += "-highest"
+        return 0
