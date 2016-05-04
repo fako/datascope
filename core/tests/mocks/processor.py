@@ -48,3 +48,6 @@ class MockRankProcessor(RankProcessor):
 
     def ban_highest(self, individual):
         return 0.5 if "highest" in individual["name"] else 1
+
+    def wrong_return_value(self, individual):
+        return "wrong"
