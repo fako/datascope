@@ -218,13 +218,13 @@ class TestRankProcessor(TestCase):
         self.assertEqual(names, ['double-1', 'double-2'], "Order of ranked dictionaries is not correct.")
 
     def test_module_changing_individual(self):
-        instance = MockRankProcessor(OrderedDict({  # ordered dict to assure module execution order
+        instance = MockRankProcessor({
             "result_size": 2,
             "batch_size": 3,
             "$alter_individual": 1,
             "$rank_by_value": 1,
             "$ban_highest": 1
-        }))
+        })
         ranking = list(instance.hooks(self.test_content))
         names = list(map(itemgetter('name'), ranking))
         self.assertEqual(names, ['double-1', 'double-2'], "Order of ranked dictionaries is not correct.")
