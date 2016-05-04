@@ -37,7 +37,7 @@ class RankProcessor(Processor):
 
         for idx, individual in enumerate(individuals):
             # Get ranks from modules
-            individual["ds_rank"] = {hook.__name__: 0 for hook in hooks}
+            individual["ds_rank"] = {hook.__name__: {"rank": 0.0} for hook in hooks}
             for hook in hooks:
                 hook_name = hook.__name__
                 try:
@@ -57,11 +57,11 @@ class RankProcessor(Processor):
                     "value": module_value
                 }
             # Aggregate all ranks to a single rank
-            rankings = [ranking for ranking in six.itervalues(individual["ds_rank"]) if ranking]
+            rankings = [ranking for ranking in six.itervalues(individual["ds_rank"]) if ranking["rank"]]
             if rankings:
                 individual["ds_rank"]["rank"] = reduce(lambda reduced, rank_info: reduced * rank_info["rank"], rankings, 1)
             else:
-                individual["ds_rank"]["rank"] = 0
+                individual["ds_rank"]["rank"] = 0.0
             # Write batch to results when appropriate
             if not idx % self.config.batch_size and len(batch):
                 flush_batch(batch, self.config.result_size)
