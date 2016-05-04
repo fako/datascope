@@ -40,14 +40,16 @@ class RankProcessor(Processor):
             individual["ds_rank"] = {hook.__name__: 0 for hook in hooks}
             for hook in hooks:
                 hook_name = hook.__name__
-                module_value = hook(individual)
-                # TODO: assert hash equality
-                module_weight = float(config_dict["$"+hook_name])
-                if not module_value:
+                try:
+                    module_weight = float(config_dict["$"+hook_name])
+                    hook_result = hook(individual)
+                    module_value = float(hook_result)
+                except ValueError:
                     continue
-                if isinstance(module_value, bool):
-                    module_value = int(module_value)
-                if not isinstance(module_value, six.integer_types):
+                finally:
+                    # TODO: assert hash equality
+                    pass
+                if not module_value:
                     continue
                 individual["ds_rank"][hook_name] = module_value * module_weight
             # Aggregate all ranks to a single rank

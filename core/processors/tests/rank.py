@@ -153,6 +153,16 @@ class TestRankProcessor(TestCase):
         names = list(map(itemgetter('name'), ranking))
         self.assertEqual(names, ['lowest', 'lowest-2'], "Order of ranked dictionaries is not correct.")
 
+    def test_invalid_hook_weight(self):
+        instance = MockRankProcessor({
+            "result_size": 2,
+            "batch_size": 3,
+            "$rank_by_value": "makes no sense"
+        })
+        ranking = list(instance.hooks(self.test_content))
+        names = list(map(itemgetter('name'), ranking))
+        self.assertEqual(names, ['lowest', 'lowest-2'], "Order of ranked dictionaries is not correct.")
+
     def test_disabled_hook(self):
         instance = MockRankProcessor({
             "result_size": 2,
@@ -187,7 +197,16 @@ class TestRankProcessor(TestCase):
     ########################################
 
     def test_floats_as_values(self):
-        self.skipTest("not tested")
+
+        instance = MockRankProcessor({
+            "result_size": 2,
+            "batch_size": 3,
+            "$rank_by_value": 1,
+            "$ban_highest": 1
+        })
+        ranking = list(instance.hooks(self.test_content))
+        names = list(map(itemgetter('name'), ranking))
+        self.assertEqual(names, ['double-1', 'double-2'], "Order of ranked dictionaries is not correct.")
 
     def test_rejected_ranking(self):
         self.skipTest("not tested")
