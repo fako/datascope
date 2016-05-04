@@ -207,10 +207,6 @@ class TestRankProcessor(TestCase):
         )
         self.assertEqual(args[1], 2, "Slice should be the size of the result")
 
-    ########################################
-    # NOT IMPLEMENTED
-    ########################################
-
     def test_floats_as_values(self):
         instance = MockRankProcessor({
             "result_size": 2,
@@ -221,9 +217,6 @@ class TestRankProcessor(TestCase):
         ranking = list(instance.hooks(self.test_content))
         names = list(map(itemgetter('name'), ranking))
         self.assertEqual(names, ['double-1', 'double-2'], "Order of ranked dictionaries is not correct.")
-
-    def test_verbal_ranking(self):
-        self.skipTest("not tested, test that value, weight and fail rate get returned as part of module rankings")
 
     def test_module_changing_individual(self):
         self.skipTest("not tested")
