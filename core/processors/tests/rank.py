@@ -217,9 +217,6 @@ class TestRankProcessor(TestCase):
         names = list(map(itemgetter('name'), ranking))
         self.assertEqual(names, ['double-1', 'double-2'], "Order of ranked dictionaries is not correct.")
 
-    def test_rejected_ranking(self):
-        self.skipTest("not tested")
-
     def test_verbal_ranking(self):
         self.skipTest("not tested, test that value, weight and fail rate get returned as part of module rankings")
 
