@@ -6,8 +6,8 @@
 {{  page.wikidata.description }}
 
 {% templatetag openvariable %}collapse top|title=Algorithm Rank: {{ page.ds_rank.rank }}{% templatetag closevariable %}
-{% for module, value in modules %}
-{{ module }} = {{ value }}
+{% for module, rank_info in modules %}
+Ranking by {{ module }} = {{ rank_info['value'] }} * {{ rank_info['weight'] }} = {{ rank_info['rank'] }}
 {% endfor %}
 {% templatetag openvariable %}collapse bottom{% templatetag closevariable %}
 {% templatetag openvariable %}clear{% templatetag closevariable %}
