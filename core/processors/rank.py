@@ -4,6 +4,7 @@ from six.moves import reduce
 import six
 
 from itertools import islice
+from copy import deepcopy
 
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.processors.base import Processor
@@ -37,12 +38,12 @@ class RankProcessor(Processor):
 
         for idx, individual in enumerate(individuals):
             # Get ranks from modules
-            individual["ds_rank"] = {hook.__name__: {"rank": 0.0} for hook in hooks}
+            rank_info = {hook.__name__: {"rank": 0.0} for hook in hooks}
             for hook in hooks:
                 hook_name = hook.__name__
                 try:
                     module_weight = float(config_dict["$"+hook_name])
-                    hook_result = hook(individual)
+                    hook_result = hook(deepcopy(individual))
                     module_value = float(hook_result)
                 except ValueError:
                     continue
@@ -51,17 +52,23 @@ class RankProcessor(Processor):
                     pass
                 if not module_value:
                     continue
-                individual["ds_rank"][hook_name] = {
+                rank_info[hook_name] = {
                     "rank": module_value * module_weight,
                     "weight": module_weight,
                     "value": module_value
                 }
+
             # Aggregate all ranks to a single rank
-            rankings = [ranking for ranking in six.itervalues(individual["ds_rank"]) if ranking["rank"]]
-            if rankings:
-                individual["ds_rank"]["rank"] = reduce(lambda reduced, rank_info: reduced * rank_info["rank"], rankings, 1)
+            hook_rankings = [ranking for ranking in six.itervalues(rank_info) if ranking["rank"]]
+            if hook_rankings:
+                rank_info["rank"] = reduce(
+                    lambda reduced, hook_rank_info: reduced * hook_rank_info["rank"],
+                    hook_rankings,
+                    1
+                )
             else:
-                individual["ds_rank"]["rank"] = 0.0
+                rank_info["rank"] = 0.0
+            individual['ds_rank'] = rank_info
             # Write batch to results when appropriate
             if not idx % self.config.batch_size and len(batch):
                 flush_batch(batch, self.config.result_size)
