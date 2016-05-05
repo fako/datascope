@@ -6,8 +6,9 @@
 {{  page.wikidata.description }}
 
 {% templatetag openvariable %}collapse top|title=Algorithm Rank: {{ page.ds_rank.rank }}{% templatetag closevariable %}
+The rank of a page is calculated by the product of all module rankings for a page. A module ranking is the output of the module multiplied with the weight of the module. The ranking of this page ({{ page.ds_rank.rank }}) comes from these module rankings:
 {% for module, rank_info in modules %}
-Ranking by {{ module }} = {{ rank_info['value'] }} * {{ rank_info['weight'] }} = {{ rank_info['rank'] }}
+* Rank by "{{ module }}" module = {{ rank_info.value }} * {{ rank_info.weight }} = {{ rank_info.rank }}
 {% endfor %}
 {% templatetag openvariable %}collapse bottom{% templatetag closevariable %}
 {% templatetag openvariable %}clear{% templatetag closevariable %}

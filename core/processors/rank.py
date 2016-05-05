@@ -42,22 +42,18 @@ class RankProcessor(Processor):
             for hook in hooks:
                 hook_name = hook.__name__
                 try:
-                    module_weight = float(config_dict["$"+hook_name])
                     hook_result = hook(deepcopy(individual))
                     module_value = float(hook_result)
-                except ValueError:
+                    module_weight = float(config_dict["$"+hook_name])
+                except (ValueError, TypeError):
                     continue
-                finally:
-                    # TODO: assert hash equality
-                    pass
                 if not module_value:
                     continue
                 rank_info[hook_name] = {
                     "rank": module_value * module_weight,
-                    "weight": module_weight,
-                    "value": module_value
+                    "value": module_value,
+                    "weight": module_weight
                 }
-
             # Aggregate all ranks to a single rank
             hook_rankings = [ranking for ranking in six.itervalues(rank_info) if ranking["rank"]]
             if hook_rankings:
@@ -66,10 +62,8 @@ class RankProcessor(Processor):
                     hook_rankings,
                     1
                 )
-            else:
-                rank_info["rank"] = 0.0
+            # Set info on individual and write batch to results when appropriate
             individual['ds_rank'] = rank_info
-            # Write batch to results when appropriate
             if not idx % self.config.batch_size and len(batch):
                 flush_batch(batch, self.config.result_size)
                 batch = []

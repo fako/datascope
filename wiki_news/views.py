@@ -97,10 +97,12 @@ def wiki_page_update(request, page):
         if page_key in existing_sections:
             content += "\n".join(existing_sections[page_key])
         else:
-            modules = sorted(six.iteritems(page_details["ds_rank"]), key=lambda item: item[1], reverse=True)[1:]
+            rank_info = page_details["ds_rank"]
+            modules = (info for info in six.iteritems(rank_info) if info[0] != 'rank')
+            sorted_modules = sorted(modules, key=lambda item: float(item[1]['rank']), reverse=True)
             content += render_to_string("wiki_news/section.wml", {
                 "page": page_details,
-                "modules": modules
+                "modules": sorted_modules
             })
     edit_wiki(page, content)
     return redirect("{}wiki/{}".format(TARGET_WIKI, page))

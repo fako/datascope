@@ -55,3 +55,6 @@ class MockRankProcessor(RankProcessor):
     def alter_individual(self, individual):
         individual["name"] += "-highest"
         return 0
+
+    def i_think_none_of_it(self, individual):
+        return None

@@ -187,6 +187,16 @@ class TestRankProcessor(TestCase):
         names = list(map(itemgetter('name'), ranking))
         self.assertEqual(names, ['lowest', 'lowest-2'], "Order of ranked dictionaries is not correct.")
 
+    def test_hook_none_value(self):
+        instance = MockRankProcessor({
+            "result_size": 2,
+            "batch_size": 3,
+            "$i_think_none_of_it": 1
+        })
+        ranking = list(instance.hooks(self.test_content))
+        names = list(map(itemgetter('name'), ranking))
+        self.assertEqual(names, ['lowest', 'lowest-2'], "Order of ranked dictionaries is not correct.")
+
     @patch('core.processors.rank.islice')
     def test_order(self, islice_patch):
         instance = MockRankProcessor({
