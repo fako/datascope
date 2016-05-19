@@ -1,9 +1,10 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
-import six
 from django.utils.encoding import python_2_unicode_compatible
 
 import logging
 from operator import xor
+from itertools import chain
+from collections import Iterator
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
@@ -157,14 +158,14 @@ class Growth(models.Model, ProcessorMixin):
         if not success_resources.exists() or not self.contribute:
             return []
         contribute_processor, callback, args_type = self.prepare_process(self.contribute)
-        contributions = []
+        contributions_iterators = []
         for success_resource in success_resources:
             try:
                 contribution = callback(success_resource)
                 if isinstance(contribution, dict):
-                    contributions.append(contribution)
-                elif isinstance(contribution, (list, tuple)):
-                    contributions += contribution
+                    contributions_iterators.append((contribution,))
+                elif isinstance(contribution, Iterator):
+                    contributions_iterators.append(contribution)
             except DSNoContent as exc:
                 log.debug("No content for {} with id {}: {}".format(
                     success_resource.__class__.__name__,
@@ -172,7 +173,7 @@ class Growth(models.Model, ProcessorMixin):
                     exc
                 ))
                 success_resource.retain(self)
-        return contributions
+        return chain(*contributions_iterators)
 
     def append_to_output(self, contributions):
         self.output.update(contributions)

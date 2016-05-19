@@ -2,6 +2,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 
 from bs4 import BeautifulSoup
 from mock import Mock
+from types import GeneratorType
 
 from django.test import TestCase
 
@@ -59,11 +60,11 @@ class TestExtractProcessor(TestCase):
 
     def test_html_text(self):
         rsl = self.html_prc.text_html(self.soup)
-        self.assertEqual(rsl, MOCK_SCRAPE_DATA)
-        self.assertIsInstance(rsl, list, "Extractors are expected to return lists with 0 or more elements inside.")
+        self.assertEqual(list(rsl), MOCK_SCRAPE_DATA)
+        self.assertIsInstance(rsl, GeneratorType, "Extractors are expected to return generators.")
 
     def test_application_json(self):
         rsl = self.json_prc.application_json(self.json)
-        self.assertEqual(rsl, MOCK_JSON_DATA)
-        self.assertIsInstance(rsl, list, "Extractors are expected to return lists with 0 or more elements inside.")
+        self.assertEqual(list(rsl), MOCK_JSON_DATA)
+        self.assertIsInstance(rsl, GeneratorType, "Extractors are expected to return generators.")
         self.skipTest("test with nodes being a dict")
