@@ -1,6 +1,9 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 import six
 
+from collections import Iterator
+from itertools import tee, islice
+
 from django.db import models
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -9,6 +12,7 @@ import json_field
 from json_field.fields import JSONEncoder, JSONDecoder
 
 from core.models.organisms import Organism, Individual
+from core.utils.helpers import ibatch
 
 
 class IndexEncoder(JSONEncoder):
@@ -49,14 +53,10 @@ class Collective(Organism):
         :param schema: The JSON schema to use for validation.
         :return: Valid data
         """
-        if not isinstance(data, list):
+        if not isinstance(data, Iterator):
             data = [data]
-        return [
+        for instance in data:
             Individual.validate(instance, schema)
-            if isinstance(instance, dict)
-            else Individual.validate(instance.properties, schema)
-            for instance in data
-        ]
 
     def update(self, data, validate=True):
         """
@@ -67,10 +67,13 @@ class Collective(Organism):
         :param validate: (optional) whether to validate data or not (yes by default)
         :return: A list of updated or created instances.
         """
+        validate_data, update_data = tee(data)
         if validate:
-            data = Collective.validate(data, self.schema)
-        assert isinstance(data, (list, dict,)), \
-            "Collective.update expects data to be formatted as list or dict not {}".format(type(data))
+            Collective.validate(validate_data, self.schema)
+        assert isinstance(data, (Iterator, list, tuple, dict, Individual)), \
+            "Collective.update expects data to be formatted as iteratable, dict or Individual not {}".format(type(data))
+
+        self.individual_set.all().delete()
 
         def prepare_updates(data):
 
@@ -92,9 +95,9 @@ class Collective(Organism):
                     prepared += prepare_updates(instance)
             return prepared
 
-        updates = prepare_updates(data)
-        self.individual_set.all().delete()
-        Individual.objects.bulk_create(updates, batch_size=settings.MAX_BATCH_SIZE)
+        for updates in ibatch(update_data, 500):
+            updates = prepare_updates(updates)
+            Individual.objects.bulk_create(updates, batch_size=settings.MAX_BATCH_SIZE)
 
     @property
     def content(self):

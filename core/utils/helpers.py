@@ -2,6 +2,8 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 
 import operator
 from datetime import datetime
+from itertools import islice
+
 
 from django.apps import apps as django_apps
 from django.conf import settings
@@ -56,6 +58,15 @@ def merge_iter(*iterables, **kwargs):
             del iterables[i]
             if not iterables:
                 raise
+
+
+def ibatch(iterable, batch_size):
+    it = iter(iterable)
+    while True:
+        batch = list(islice(it, batch_size))
+        if not batch:
+            return
+        yield batch
 
 
 # def get_json(model_instance):
