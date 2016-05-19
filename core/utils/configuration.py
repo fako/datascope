@@ -267,15 +267,18 @@ class ConfigurationField(fields.TextField):
             try:
                 return json.loads(value)
             except ValueError:
-                raise ValidationError("Enter valid JSON")
+                # due to legacy some fixtures may contain stringyfied dicts instead of JSON objects
+                # uncomment below and comment the raise statement to fix this during fixture load
+                # value = dict(eval(value))
+                raise ValidationError("Enter valid JSON: " + value)
         return super(ConfigurationField, self).to_python(value)
 
     def get_prep_value(self, value):
         if value is None:
             return super(ConfigurationField, self).get_prep_value({})
         if not isinstance(value, dict):
-            value = json.dumps(value.to_dict(private=True, protected=True))
-        return super(ConfigurationField, self).get_prep_value(value)
+            value = value.to_dict(private=True, protected=True)
+        return super(ConfigurationField, self).get_prep_value(json.dumps(value))
 
     def value_from_object(self, obj):
         value = super(ConfigurationField, self).value_from_object(obj)
