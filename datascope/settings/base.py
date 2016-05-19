@@ -65,7 +65,7 @@ INSTALLED_APPS = (
     'visual_translations',
 )
 
-DATABASES = {
+DATABASE_TYPES = {
     'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': PATH_TO_PROJECT + 'datascope.db',  # Or path to database file if using sqlite3.
@@ -86,7 +86,9 @@ DATABASES = {
         }
     }
 }
-DATABASES['default'] = DATABASES[DATABASE_TYPE]
+DATABASES = {
+    'default': DATABASE_TYPES[DATABASE_TYPE]
+}
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.4/ref/settings/#allowed-hosts

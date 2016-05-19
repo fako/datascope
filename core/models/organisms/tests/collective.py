@@ -34,7 +34,7 @@ class TestCollective(TransactionTestCase):
         for index, individual in enumerate(self.instance2.individual_set.all()):
             individual.properties["value"] = 3
             updates.append(individual) if index % 2 else updates.append(individual.properties)
-        with self.assertNumQueries(6):
+        with self.assertNumQueries(4):
             self.instance2.update(updates, validate=False)
         values = [
             ind.properties["value"] for ind in
