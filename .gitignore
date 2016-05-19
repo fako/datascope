@@ -3,6 +3,7 @@
 
 *.pyc
 *.db
+db-dump.*.json
 
 system/docs/_build/
 system/coverage/
