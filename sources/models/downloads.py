@@ -3,6 +3,7 @@ from six import BytesIO
 
 from PIL import Image
 from urlobject import URLObject
+from datetime import datetime
 
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
@@ -60,7 +61,8 @@ class ImageDownload(HttpResource):  # TODO: write tests
         file_name_position = path.rfind('/') + 1
         extension_position = path.rfind('.') + 1
         assert file_name_position >= 1, "Can't determine file name for {}".format(url)
-        file_name = path[file_name_position:]
+        now = datetime.utcnow()
+        file_name = "{}.{}".format(now.strftime("%Y%m%d%H%M%S%f"), path[file_name_position:])
         if len(file_name) > 150:
             file_name = file_name[:150] + '.' + path[extension_position:]
         image = ImageFile(BytesIO(content))
