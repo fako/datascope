@@ -413,7 +413,7 @@ class HttpResource(models.Model):
         url = URLObject(url)
         params = sorted(url.query.dict.items(), key=lambda item: item[0])
         url = url.with_query(urlencode(params))
-        return str(url).replace(url.scheme + u"://", u"")
+        return str(url).replace(url.scheme + "://", "")
 
     @staticmethod
     def hash_from_data(data):
