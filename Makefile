@@ -17,5 +17,5 @@ dump:
 	./manage.py dumpdata --natural-foreign -e contenttypes -e auth.Permission -e admin -e sessions --indent=4 > db-dump.$(now).json
 
 start-development:
-	/usr/local/bin/mysql.server start
+	/usr/local/bin/mysql.server restart
 	redis-server

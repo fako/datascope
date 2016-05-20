@@ -19,17 +19,24 @@ class ImageDownload(HttpResource):  # TODO: write tests
             "type": "array",
             "items": [
                 {
-
                     "type": "string",
                     "pattern": "^http"
+                },
+                {
+                    "type": "string"
                 }
             ],
+            "minItems": 1,
             "additionalItems": False
         }
     }
 
-    def _validate_input(self, method, *args, **kwargs):
-        super(ImageDownload, self)._validate_input("get", *args, **kwargs)
+    def variables(self, *args):
+        args = args or self.request.get("args")
+        return {
+            "url": args[0],
+            "prefix": args[1] + "." if len(args) > 1 else ""
+        }
 
     def _send(self):
         if self.request["cancel"]:
@@ -38,19 +45,20 @@ class ImageDownload(HttpResource):  # TODO: write tests
 
     def _create_request(self, method, *args, **kwargs):
         cancel_request = False
+        variables = self.variables(*args)
         try:
             self._validate_input("get", *args, **kwargs)
         except ValidationError as exc:
-            if len(args) > 1:
+            if variables["url"].startswith("http"):
                 raise exc
-            # Only given argument will be a wrong URL
+            # Wrong URL given
             self.set_error(404)
             cancel_request = True
         return self.validate_request({
-            "args": [],
-            "kwargs": {},
+            "args": args,
+            "kwargs": kwargs,
             "method": "get",
-            "url": args[0],
+            "url": variables["url"],
             "headers": {},
             "data": None,
             "cancel": cancel_request
@@ -61,8 +69,13 @@ class ImageDownload(HttpResource):  # TODO: write tests
         file_name_position = path.rfind('/') + 1
         extension_position = path.rfind('.') + 1
         assert file_name_position >= 1, "Can't determine file name for {}".format(url)
+        variables = self.variables()
         now = datetime.utcnow()
-        file_name = "{}.{}".format(now.strftime("%Y%m%d%H%M%S%f"), path[file_name_position:])
+        file_name = "{}.{}{}".format(
+            now.strftime("%Y%m%d%H%M%S%f"),
+            variables["prefix"],
+            path[file_name_position:]
+        )
         if len(file_name) > 150:
             file_name = file_name[:150] + '.' + path[extension_position:]
         image = ImageFile(BytesIO(content))
