@@ -42,7 +42,7 @@ class FutureFashionCommunity(Community):
         "$euclidean_distance": 1
     }
 
-    def initial_input(self, *args, **kwargs):
+    def initial_input(self, *args):
         return Individual.objects.create(community=self, properties={}, schema={})
 
     def set_kernel(self):
