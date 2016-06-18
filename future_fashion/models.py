@@ -2,10 +2,11 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 import six
 
 from django.conf import settings
+from django.core.files.storage import default_storage
 
 from collections import OrderedDict
 
-from core.models.organisms import Community, Individual
+from core.models.organisms import Community, Collective, Individual
 
 
 class FutureFashionCommunity(Community):
@@ -17,7 +18,7 @@ class FutureFashionCommunity(Community):
             "contribute": "Inline:ExtractProcessor.extract_from_resource",
             "output": "Collective",
             "config": {
-                "_args": [],
+                "_args": ["$.file"],
                 "_kwargs": {},
                 "_resource": "",
                 "_objective": {
@@ -43,7 +44,23 @@ class FutureFashionCommunity(Community):
     }
 
     def initial_input(self, *args):
-        return Individual.objects.create(community=self, properties={}, schema={})
+        directory = args[0]
+        initial = Collective.objects.create(community=self, schema={})
+        directories, files = default_storage.listdir(directory)
+        for file in files:
+            full_name = directory + '/' + file
+            size = default_storage.size(full_name)
+            if size < 3 * 1024:
+                continue
+
+            properties = {
+                "size": size,
+                "name": file,
+                "file": default_storage.path(full_name),
+                "url": default_storage.url(full_name)
+            }
+            Individual.objects.create(community=self, collective=initial, properties=properties, schema={})
+        return initial
 
     def set_kernel(self):
         self.kernel = self.current_growth.output
