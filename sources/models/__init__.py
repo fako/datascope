@@ -12,3 +12,5 @@ from .google.images import GoogleImage
 from .google.translations import GoogleTranslate
 
 from .downloads import ImageDownload
+
+from .indico.images import ImageFeatures

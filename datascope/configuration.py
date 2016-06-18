@@ -28,6 +28,8 @@ DEFAULT_CONFIGURATION = {
     "google_api_key": getattr(settings, 'GOOGLE_API_KEY', ''),
     "google_cx": "004613812033868156538:5pcwbuudj1m",
 
+    "indico_api_key": getattr(settings, 'INDICO_API_KEY', ''),
+
     "rank_processor_batch_size": 1000,
     "rank_processor_result_size": 20
 }
