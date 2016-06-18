@@ -46,6 +46,10 @@ class ExtractProcessor(Processor):
             "Make sure that '@' is specified".format(objective)
         assert self._objective, "No objectives loaded from objective {}".format(objective)
 
+    def pass_resource_through(self, resource):
+        mime_type, data = resource.content
+        return data
+
     def extract_from_resource(self, resource):
         return self.extract(*resource.content)
 
