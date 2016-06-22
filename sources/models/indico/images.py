@@ -70,3 +70,7 @@ class ImageFeatures(HttpResource):
     @staticmethod
     def uri_from_url(url):
         return url
+
+    class Meta:
+        verbose_name = "Image features"
+        verbose_name_plural = "Image features"

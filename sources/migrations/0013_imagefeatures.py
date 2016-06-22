@@ -17,9 +17,9 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ImageFeatures',
             fields=[
-                ('id', models.AutoField(serialize=False, primary_key=True, verbose_name='ID', auto_created=True)),
-                ('uri', models.CharField(db_index=True, max_length=255, default=None)),
-                ('data_hash', models.CharField(db_index=True, max_length=255, default='')),
+                ('id', models.AutoField(primary_key=True, serialize=False, verbose_name='ID', auto_created=True)),
+                ('uri', models.CharField(db_index=True, default=None, max_length=255)),
+                ('data_hash', models.CharField(db_index=True, default='', max_length=255)),
                 ('config', core.utils.configuration.ConfigurationField()),
                 ('request', json_field.fields.JSONField(help_text='Enter a valid JSON object', default=None)),
                 ('head', json_field.fields.JSONField(help_text='Enter a valid JSON object', default=None)),
@@ -27,12 +27,13 @@ class Migration(migrations.Migration):
                 ('status', models.PositiveIntegerField(default=None)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('modified_at', models.DateTimeField(auto_now=True)),
-                ('purge_at', models.DateTimeField(null=True, blank=True)),
+                ('purge_at', models.DateTimeField(blank=True, null=True)),
                 ('retainer_id', models.PositiveIntegerField(null=True)),
-                ('retainer_type', models.ForeignKey(null=True, to='contenttypes.ContentType')),
+                ('retainer_type', models.ForeignKey(to='contenttypes.ContentType', null=True)),
             ],
             options={
-                'abstract': False,
+                'verbose_name': 'Image features',
+                'verbose_name_plural': 'Image features',
             },
         ),
     ]
