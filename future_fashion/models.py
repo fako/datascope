@@ -16,7 +16,7 @@ class FutureFashionCommunity(Community):
             "process": "HttpResourceProcessor.fetch_mass",
             "input": None,
             "contribute": "Inline:ExtractProcessor.pass_resource_through",
-            "output": "Collective",
+            "output": "&input",  # same as initial_input
             "config": {
                 "_args": ["$.file"],
                 "_kwargs": {},

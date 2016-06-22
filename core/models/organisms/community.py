@@ -209,7 +209,7 @@ class Community(models.Model, ProcessorMixin):
                         "Could not find growth with type {} for output of {}".format(out[1:], growth_type)
                     )
                 out = grw.output
-            elif out == "&":
+            elif out == "&input":
                 out = inp
             elif out in ["Individual", "Collective"]:
                 out = self.create_organism(out, sch)
