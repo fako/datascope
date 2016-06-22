@@ -182,9 +182,7 @@ class Growth(models.Model, ProcessorMixin):
         super(Growth, self).save(*args, **kwargs)
 
     def clean(self):
-        print("clean called {} {}".format(self.contribute_type, self.contribute))
         if xor(bool(self.contribute_type), bool(self.contribute)):
-            print("raising validation")
             raise ValidationError(
                 "Contribution is partially specified "
                 "with a type of {} and a value of {}".format(self.contribute_type, self.contribute)
