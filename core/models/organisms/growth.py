@@ -3,9 +3,11 @@ import six
 from django.utils.encoding import python_2_unicode_compatible
 
 import logging
+from operator import xor
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
+from django.core.exceptions import ValidationError
 
 from datascope.configuration import PROCESS_CHOICE_LIST, DEFAULT_CONFIGURATION
 from core.processors.base import ArgumentsTypes
@@ -178,6 +180,15 @@ class Growth(models.Model, ProcessorMixin):
     def save(self, *args, **kwargs):
         self.is_finished = self.state in [GrowthState.COMPLETE, GrowthState.PARTIAL]
         super(Growth, self).save(*args, **kwargs)
+
+    def clean(self):
+        print("clean called {} {}".format(self.contribute_type, self.contribute))
+        if xor(bool(self.contribute_type), bool(self.contribute)):
+            print("raising validation")
+            raise ValidationError(
+                "Contribution is partially specified "
+                "with a type of {} and a value of {}".format(self.contribute_type, self.contribute)
+            )
 
     @property
     def resources(self):

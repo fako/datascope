@@ -219,6 +219,7 @@ class Community(models.Model, ProcessorMixin):
                 input=inp,
                 output=out
             )
+            growth.clean()
             growth.save()
 
     def next_growth(self):
