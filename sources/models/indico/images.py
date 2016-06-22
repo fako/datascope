@@ -1,6 +1,8 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
 import logging
+import json
+
 import indicoio
 
 from core.models.resources.http import HttpResource
@@ -15,7 +17,7 @@ class ImageFeatures(HttpResource):
     def variables(self, *args):
         args = args or self.request.get("args")
         return {
-            "image": args[0],
+            "file": args[0],
         }
 
     def _create_request(self, method, *args, **kwargs):
@@ -25,7 +27,7 @@ class ImageFeatures(HttpResource):
             "args": args,
             "kwargs": kwargs,
             "method": method,
-            "input": vars["image"]
+            "url": vars["file"]
         }, validate_input=False)
 
     def _send(self):
@@ -39,7 +41,7 @@ class ImageFeatures(HttpResource):
         response = None
         indicoio.config.api_key = self.config.api_key
         try:
-            response = indicoio.image_features(self.request["input"])
+            response = indicoio.image_features(self.request["url"])
         except Exception as exc:
             log.exception(exc)
             self.set_error(-1)
@@ -50,10 +52,10 @@ class ImageFeatures(HttpResource):
         vars = self.variables()
         self.head = {}
         self.status = 1
-        self.body = {
-            "image": vars["image"],
+        self.body = json.dumps({
+            "file": vars["file"],
             "vectors": response
-        }
+        })
 
     @property
     def success(self):
@@ -62,5 +64,9 @@ class ImageFeatures(HttpResource):
     @property
     def content(self):
         if self.success:
-            return "application/json", self.body
+            return "application/json", json.loads(self.body)
         return None, None
+
+    @staticmethod
+    def uri_from_url(url):
+        return url
