@@ -12,13 +12,20 @@ class ImageFeatures(HttpResource):
 
     CONFIG_NAMESPACE = "indico"
 
+    def variables(self, *args):
+        args = args or self.request.get("args")
+        return {
+            "image": args[0],
+        }
+
     def _create_request(self, method, *args, **kwargs):
         self._validate_input(method, *args, **kwargs)
+        vars = self.variables(*args)
         return self.validate_request({
             "args": args,
             "kwargs": kwargs,
             "method": method,
-            "input": args[0]
+            "input": vars["image"]
         }, validate_input=False)
 
     def _send(self):
@@ -40,9 +47,13 @@ class ImageFeatures(HttpResource):
         self._update_from_response(response)
 
     def _update_from_response(self, response):
+        vars = self.variables()
         self.head = {}
         self.status = 1
-        self.body = response
+        self.body = {
+            "image": vars["image"],
+            "vectors": response
+        }
 
     @property
     def success(self):
