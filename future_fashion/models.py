@@ -15,13 +15,13 @@ class FutureFashionCommunity(Community):
         ("vectors", {
             "process": "HttpResourceProcessor.fetch_mass",
             "input": None,
-            "contribute": "Inline:ExtractProcessor.pass_resource_through",
+            "contribute": "Update:ExtractProcessor.pass_resource_through",
             "output": "&input",  # same as initial_input
             "config": {
                 "_args": ["$.file"],
                 "_kwargs": {},
                 "_resource": "ImageFeatures",
-                "_inline_key": "vectors"
+                "_update_key": "file"
             },
             "schema": {},
             "errors": {},

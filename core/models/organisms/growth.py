@@ -38,6 +38,7 @@ GROWTH_STATE_CHOICES = [
 class ContributeType(object):
     APPEND = "Append"
     INLINE = "Inline"
+    UPDATE = "Update"
 
 CONTRIBUTE_TYPE_CHOICES = [
     (value, value) for attr, value in sorted(ContributeType.__dict__.items()) if not attr.startswith("_")
@@ -136,6 +137,11 @@ class Growth(models.Model, ProcessorMixin):
                     "No inline_key specified in configuration for Growth with inline contribution"
                 # TODO: assert that contributions and output fully match?
                 self.inline_by_key(contributions, self.config.inline_key)
+            elif self.contribute_type == ContributeType.UPDATE:  # TODO: test
+                assert self.config.update_key, \
+                    "No update_key specified in configuration for Growth with update contribution"
+                # TODO: assert that contributions and output fully match?
+                self.update_by_key(contributions, self.config.update_key)
             elif self.contribute is None:  # TODO: test
                 pass
             else:
@@ -179,6 +185,16 @@ class Growth(models.Model, ProcessorMixin):
                 continue
             for individual in groups[contribution[inline_key]]:
                 individual.properties[inline_key] = contribution
+                individual.save()
+
+    def update_by_key(self, contributions, update_key):
+        groups = self.output.group_by(update_key)
+        for contribution in contributions:
+            # TODO: figure out why we need to skip here at times
+            if contribution[update_key] not in groups:
+                continue
+            for individual in groups[contribution[update_key]]:
+                individual.update(contribution)
                 individual.save()
 
     def save(self, *args, **kwargs):
