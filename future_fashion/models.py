@@ -13,7 +13,7 @@ class FutureFashionCommunity(Community):
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("vectors", {
-            "process": "HttpResourceProcessor.fetch",
+            "process": "HttpResourceProcessor.fetch_mass",
             "input": None,
             "contribute": "Inline:ExtractProcessor.pass_resource_through",
             "output": "Collective",
