@@ -154,7 +154,11 @@ class Growth(models.Model, ProcessorMixin):
         contributions = []
         for success_resource in success_resources:
             try:
-                contributions += callback(success_resource)
+                contribution = callback(success_resource)
+                if isinstance(contribution, dict):
+                    contributions.append(contribution)
+                elif isinstance(contribution, (list, tuple)):
+                    contributions += contribution
             except DSNoContent as exc:
                 log.debug("No content for {} with id {}: {}".format(
                     success_resource.__class__.__name__,
