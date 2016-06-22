@@ -8,9 +8,9 @@ class Command(CommunityCommand):
     Continuously polls a Community until it's completely grown.
     """
 
-    def handle_community(self, community, **options):
+    def handle_community(self, community, *args, **options):
         community.config = {"async": False}
         community.save()
-        community.grow()
+        community.grow(*args)
         print("Result:", community.kernel)
         print("Growth:", [growth.id for growth in community.growth_set.all()])
