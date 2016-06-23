@@ -2,8 +2,9 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 
 from django.conf.urls import url
 
-from core.views.community import CommunityView, HtmlCommunityView
+from core.views.community import CommunityView
 from future_fashion.models import FutureFashionCommunity
+from future_fashion.views import FutureFashionHtmlView
 
 
 urlpatterns = [
@@ -15,7 +16,7 @@ urlpatterns = [
     ),
     url(
         r'^future-fashion/html/(?P<path>.+)/$',
-        HtmlCommunityView.as_view(),
+        FutureFashionHtmlView.as_view(),
         kwargs={"community_class": FutureFashionCommunity},
         name=FutureFashionCommunity.get_name() + "_html"
     )
