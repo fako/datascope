@@ -19,6 +19,10 @@ apt-get install libmysqlclient-dev
 apt-get install python3-dev
 apt-get install tcl8.5
 apt-get install htop
+# SciPy
+apt-get install libblas-dev liblapack-dev libatlas-base-dev gfortran
+# Pillow
+apt-get install libtiff5-dev libjpeg8-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk
 
 # SETUP: install redis
 # From: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-redis
