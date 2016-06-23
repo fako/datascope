@@ -10,6 +10,7 @@ PATH_TO_PROJECT = ''
 URL_TO_PROJECT = '/'
 USE_WEBSOCKETS = False
 SECRET_KEY = 'default'
+DATABASE_TYPE = 'mysql'
 
 
 #######################################################
@@ -64,8 +65,8 @@ INSTALLED_APPS = (
     'visual_translations',
 )
 
-DATABASES = {
-    'default': {
+DATABASE_TYPES = {
+    'sqlite': {
         'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': PATH_TO_PROJECT + 'datascope.db',  # Or path to database file if using sqlite3.
         'USER': '',                      # Not used with sqlite3.
@@ -73,6 +74,20 @@ DATABASES = {
         'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
     },
+    'mysql': {
+        'ENGINE': 'django.db.backends.mysql',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'datascope',
+        'USER': 'root',                      # Not used with sqlite3.
+        'PASSWORD': '',                  # Not used with sqlite3.
+        'HOST': '',
+        'PORT': '',
+        'OPTIONS': {
+            'charset': 'utf8mb4'
+        }
+    }
+}
+DATABASES = {
+    'default': DATABASE_TYPES[DATABASE_TYPE]
 }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
