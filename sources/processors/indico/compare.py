@@ -5,8 +5,9 @@ from scipy.spatial.distance import euclidean
 from core.processors.compare import ComparisonProcessor
 
 
-class ImageFeatureProcessor(ComparisonProcessor):
+class ImageFeaturesCompareProcessor(ComparisonProcessor):
 
     @staticmethod
-    def euclidian_distance(individual, reference_individual):
-        return euclidean(individual["vectors"], reference_individual["vectors"])
+    def euclidean_distance(individual, reference_individual):
+        distance = euclidean(individual["vectors"], reference_individual["vectors"])
+        return distance

@@ -30,7 +30,7 @@ class FutureFashionCommunity(Community):
 
     COMMUNITY_BODY = [
         {
-            "process": "WikipediaRankProcessor.hooks",
+            "process": "ImageFeaturesCompareProcessor.hooks",
             "config": {}
         }
     ]
@@ -38,6 +38,7 @@ class FutureFashionCommunity(Community):
     INPUT_THROUGH_PATH = False
 
     PUBLIC_CONFIG = {
+        "$reference": None,
         "$euclidean_distance": 1
     }
 
