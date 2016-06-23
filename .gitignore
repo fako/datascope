@@ -13,6 +13,7 @@ system/files/media/downloads/
 system/files/media/uploads/
 
 system/files/media/visual_translations/
+system/files/media/kleding/
 system/files/static/
 
 */settings/secrets.py
