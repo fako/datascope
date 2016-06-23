@@ -30,6 +30,7 @@ class ConfigurationType(object):
     Upon initialization (which typically happens when application loads) defaults can be specified,
     which then may get overridden at runtime (typically during requests).
     """
+    # FEATURE: protect against unexpected user input configurations
 
     _private_defaults = ["_private", "_defaults", "_namespace"]
     _global_prefix = "global"
@@ -88,6 +89,7 @@ class ConfigurationType(object):
         This function tries to find configurations on self other than configurations set as direct attributes.
 
         It will first try to append a _ to the configuration to see if the configuration is protected/private.
+        Then it will append a $ to the configuration to see if it is configuration from user input
         Then it will prefix the configuration with self._namespace
         and see if it exists on the defaults object as an attribute.
         If the configuration still isn't found it will prefix with self._global_prefix
@@ -100,11 +102,14 @@ class ConfigurationType(object):
         :return: (mixed) the configuration variable
         """
         shielded_key = '_' + config
+        variable_key = '$' + config  # TODO: test this config option
         namespace_attr = self._namespace + '_' + config
         global_attr = self._global_prefix + '_' + config
 
         if shielded_key in self.__dict__:
             return self.__dict__[shielded_key]
+        elif variable_key in self.__dict__:
+            return self.__dict__[variable_key]
         if namespace_attr in self._defaults:
             return self._defaults[namespace_attr]
         elif global_attr in self._defaults:
