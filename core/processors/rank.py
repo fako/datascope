@@ -21,6 +21,9 @@ class RankProcessor(Processor):
         namespace="rank_processor"
     )
 
+    def get_hook_arguments(self, individual):
+        return (deepcopy(individual),)
+
     def hooks(self, individuals):
         config_dict = self.config.to_dict()
         hooks = [
@@ -42,7 +45,7 @@ class RankProcessor(Processor):
             for hook in hooks:
                 hook_name = hook.__name__
                 try:
-                    hook_result = hook(deepcopy(individual))
+                    hook_result = hook(*self.get_hook_arguments(individual))
                     module_value = float(hook_result)
                     module_weight = float(config_dict["$"+hook_name])
                 except (ValueError, TypeError):
