@@ -97,7 +97,7 @@ class WikiNewsCommunity(Community):
         "$women": 1
     }
 
-    def initial_input(self, *args, **kwargs):
+    def initial_input(self, *args):
         return Individual.objects.create(community=self, properties={}, schema={})
 
     def finish_revisions(self, out, err):

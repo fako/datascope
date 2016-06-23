@@ -25,12 +25,11 @@ class ExtractProcessor(Processor):
 
     def __init__(self, config):
         super(ExtractProcessor, self).__init__(config)
-        assert "_objective" in config or "objective" in config, \
-            "ExtractProcessor expects an objective to extract in the configuration."
         self._at = None
         self._context = {}
         self._objective = {}
-        self.load_objective(self.config.objective)
+        if "_objective" in config or "objective" in config:
+            self.load_objective(self.config.objective)
 
     def load_objective(self, objective):
         assert isinstance(objective, dict), "An objective should be a dict."
@@ -46,10 +45,16 @@ class ExtractProcessor(Processor):
             "Make sure that '@' is specified".format(objective)
         assert self._objective, "No objectives loaded from objective {}".format(objective)
 
+    def pass_resource_through(self, resource):
+        mime_type, data = resource.content
+        return data
+
     def extract_from_resource(self, resource):
         return self.extract(*resource.content)
 
     def extract(self, content_type, data):
+        assert self.config.objective, \
+            "ExtractProcessor.extract expects an objective to extract in the configuration."
         content_type_method = content_type.replace("/", "_")
         method = getattr(self, content_type_method, None)
         if method is not None:

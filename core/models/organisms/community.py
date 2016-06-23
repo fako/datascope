@@ -187,8 +187,8 @@ class Community(models.Model, ProcessorMixin):
                 cont, con = growth_config["contribute"].split(":")
             else:
                 cont, con = None, None
+
             inp = growth_config["input"]
-            out = growth_config["output"]
             if inp is not None and inp.startswith("@"):
                 grw = self.growth_set.filter(type=inp[1:]).last()
                 if grw is None:
@@ -198,6 +198,10 @@ class Community(models.Model, ProcessorMixin):
                 inp = grw.output
             elif inp is None:
                 inp = self.initial_input(*args)
+            elif inp in ["Individual", "Collective"]:
+                inp = self.create_organism(inp, sch)
+
+            out = growth_config["output"]
             if out is not None and out.startswith("@"):
                 grw = self.growth_set.filter(type=out[1:]).last()
                 if grw is None:
@@ -205,9 +209,9 @@ class Community(models.Model, ProcessorMixin):
                         "Could not find growth with type {} for output of {}".format(out[1:], growth_type)
                     )
                 out = grw.output
-            if inp in ["Individual", "Collective"]:
-                inp = self.create_organism(inp, sch)
-            if out in ["Individual", "Collective"]:
+            elif out == "&input":
+                out = inp
+            elif out in ["Individual", "Collective"]:
                 out = self.create_organism(out, sch)
             growth = Growth(
                 community=self,
@@ -219,6 +223,7 @@ class Community(models.Model, ProcessorMixin):
                 input=inp,
                 output=out
             )
+            growth.clean()
             growth.save()
 
     def next_growth(self):

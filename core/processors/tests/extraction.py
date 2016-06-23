@@ -54,6 +54,9 @@ class TestExtractProcessor(TestCase):
     def test_extract_from_resource(self):
         self.skipTest("not tested")
 
+    def test_pass_resource_through(self):
+        self.skipTest("not tested")
+
     def test_html_text(self):
         rsl = self.html_prc.text_html(self.soup)
         self.assertEqual(rsl, MOCK_SCRAPE_DATA)

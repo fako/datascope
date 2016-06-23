@@ -84,6 +84,7 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertEqual(growth1.contribute_type, "Append")
         self.assertIsInstance(growth1.input, Individual)
         self.assertIsInstance(growth1.output, Collective)
+        self.skipTest("test a config with & for output (it should set output of a growth equal to the input")
 
     def test_next_growth(self):
         result = self.incomplete.next_growth()

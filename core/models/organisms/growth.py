@@ -3,9 +3,11 @@ import six
 from django.utils.encoding import python_2_unicode_compatible
 
 import logging
+from operator import xor
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
+from django.core.exceptions import ValidationError
 
 from datascope.configuration import PROCESS_CHOICE_LIST, DEFAULT_CONFIGURATION
 from core.processors.base import ArgumentsTypes
@@ -36,6 +38,7 @@ GROWTH_STATE_CHOICES = [
 class ContributeType(object):
     APPEND = "Append"
     INLINE = "Inline"
+    UPDATE = "Update"
 
 CONTRIBUTE_TYPE_CHOICES = [
     (value, value) for attr, value in sorted(ContributeType.__dict__.items()) if not attr.startswith("_")
@@ -134,6 +137,11 @@ class Growth(models.Model, ProcessorMixin):
                     "No inline_key specified in configuration for Growth with inline contribution"
                 # TODO: assert that contributions and output fully match?
                 self.inline_by_key(contributions, self.config.inline_key)
+            elif self.contribute_type == ContributeType.UPDATE:  # TODO: test
+                assert self.config.update_key, \
+                    "No update_key specified in configuration for Growth with update contribution"
+                # TODO: assert that contributions and output fully match?
+                self.update_by_key(contributions, self.config.update_key)
             elif self.contribute is None:  # TODO: test
                 pass
             else:
@@ -152,7 +160,11 @@ class Growth(models.Model, ProcessorMixin):
         contributions = []
         for success_resource in success_resources:
             try:
-                contributions += callback(success_resource)
+                contribution = callback(success_resource)
+                if isinstance(contribution, dict):
+                    contributions.append(contribution)
+                elif isinstance(contribution, (list, tuple)):
+                    contributions += contribution
             except DSNoContent as exc:
                 log.debug("No content for {} with id {}: {}".format(
                     success_resource.__class__.__name__,
@@ -175,9 +187,26 @@ class Growth(models.Model, ProcessorMixin):
                 individual.properties[inline_key] = contribution
                 individual.save()
 
+    def update_by_key(self, contributions, update_key):
+        groups = self.output.group_by(update_key)
+        for contribution in contributions:
+            # TODO: figure out why we need to skip here at times
+            if contribution[update_key] not in groups:
+                continue
+            for individual in groups[contribution[update_key]]:
+                individual.update(contribution)
+                individual.save()
+
     def save(self, *args, **kwargs):
         self.is_finished = self.state in [GrowthState.COMPLETE, GrowthState.PARTIAL]
         super(Growth, self).save(*args, **kwargs)
+
+    def clean(self):
+        if xor(bool(self.contribute_type), bool(self.contribute)):
+            raise ValidationError(
+                "Contribution is partially specified "
+                "with a type of {} and a value of {}".format(self.contribute_type, self.contribute)
+            )
 
     @property
     def resources(self):

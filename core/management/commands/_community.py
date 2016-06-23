@@ -26,5 +26,5 @@ class CommunityCommand(BaseCommand):
         Community = get_any_model(options.pop("community"))
         community, created = Community.get_or_create_by_input(*args, **options["config"])
         print("Start:", datetime.now())
-        self.handle_community(community, **options)
+        self.handle_community(community, *args, **options)
         print("End:", datetime.now())

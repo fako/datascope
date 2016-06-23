@@ -28,6 +28,8 @@ DEFAULT_CONFIGURATION = {
     "google_api_key": getattr(settings, 'GOOGLE_API_KEY', ''),
     "google_cx": "004613812033868156538:5pcwbuudj1m",
 
+    "indico_api_key": getattr(settings, 'INDICO_API_KEY', ''),
+
     "rank_processor_batch_size": 1000,
     "rank_processor_result_size": 20
 }
@@ -55,4 +57,5 @@ PROCESS_CHOICE_LIST = [
     ("HttpResourceProcessor.fetch", "Fetch content from HTTP resource"),
     ("HttpResourceProcessor.fetch_mass", "Fetch content from multiple HTTP resources"),
     ("ExtractProcessor.extract_from_resource", "Extract content from one or more resources"),
+    ("ExtractProcessor.pass_resource_through", "Take content 'as is' from one or more resources"),
 ]
