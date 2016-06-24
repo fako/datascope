@@ -10,4 +10,7 @@ class ImageFeaturesCompareProcessor(ComparisonProcessor):
     @staticmethod
     def euclidean_distance(individual, reference_individual):
         distance = euclidean(individual["vectors"], reference_individual["vectors"])
-        return distance
+        if not distance:
+            return 0.99999999
+        else:
+            return 1/distance
