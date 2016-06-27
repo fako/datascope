@@ -41,17 +41,24 @@ class TestCommunityMock(CommunityTestMixin):
         self.error.error_phase1_unreachable = Mock(return_value=True)
         self.error.error_phase1_not_found = Mock(return_value=False)
 
-    def test_get_or_create_by_input(self):
-        community, created = CommunityMock.get_or_create_by_input("test", setting1="const", illegal="please")
-        self.assertIsNotNone(community)
-        self.assertIsNotNone(community.id)
-        self.assertFalse(created)
-        self.assertEqual(community.config.setting1, "const")
-        self.assertFalse(hasattr(community.config, "illegal"))
-        community, created = CommunityMock.get_or_create_by_input("test", **{"$setting2": "variable"})
-        self.assertIsNotNone(community)
-        self.assertTrue(created)
-        self.assertTrue(hasattr(community.config, "$setting2"))
+    def test_get_signature_by_input(self):
+        # Legal and illegal config mixed
+        signature = CommunityMock.get_signature_by_input("test", setting1="const", illegal="please")
+        self.assertEqual(signature, "setting1=const&test")
+        # With variable config
+        signature = CommunityMock.get_signature_by_input("test", **{"$setting2": "variable"})
+        self.assertEqual(signature, "test")
+
+    def test_configuration_by_input(self):
+        # Legal and illegal config mixed
+        configuration = CommunityMock.get_configuration_through_input("test", setting1="const", illegal="please")
+        self.assertIsInstance(configuration, dict)
+        self.assertEqual(configuration["setting1"], "const")
+        self.assertNotIn("illegal", configuration)
+        # With variable config
+        configuration = CommunityMock.get_configuration_through_input("test", **{"$setting2": "variable"})
+        self.assertIsInstance(configuration, dict)
+        self.assertEqual(configuration["$setting2"], "variable")
 
     def test_callbacks(self):
         self.instance.begin_phase1 = Mock()

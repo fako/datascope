@@ -15,6 +15,7 @@ from json_field import JSONField
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.models.organisms import Growth, Collective, Individual, Organism
 from core.models.organisms.mixins import ProcessorMixin
+from core.models.organisms.managers.community import CommunityManager
 from core.models.user import DataScopeUser
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
@@ -121,8 +122,10 @@ class Community(models.Model, ProcessorMixin):
     INPUT_THROUGH_PATH = True
     PUBLIC_CONFIG = {}
 
+    objects = CommunityManager()
+
     @classmethod
-    def get_or_create_by_input(cls, *args, **kwargs):
+    def get_signature_by_input(cls, *args, **kwargs):
         signature = list(args) + [
             "{}={}".format(key, value)
             for key, value in six.iteritems(kwargs)
@@ -130,18 +133,11 @@ class Community(models.Model, ProcessorMixin):
         ]
         signature = list(filter(bool, signature))
         signature.sort()
-        created = False
-        try:
-            community = cls.objects.get(signature="&".join(signature))
-            community.config = {key: value for key, value in six.iteritems(kwargs) if key in cls.PUBLIC_CONFIG}
-        except cls.DoesNotExist:
-            community = cls(
-                signature="&".join(signature),
-                config={key: value for key, value in six.iteritems(kwargs) if key in cls.PUBLIC_CONFIG}
-            )
-            community.save()
-            created = True
-        return community, created
+        return "&".join(signature)
+
+    @classmethod
+    def get_configuration_through_input(cls, *args, **kwargs):
+        return {key: value for key, value in six.iteritems(kwargs) if key in cls.PUBLIC_CONFIG}
 
     def call_finish_callback(self, phase, out, errors):
         callback_name = "finish_" + phase

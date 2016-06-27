@@ -28,7 +28,7 @@
         "current_growth": 1,
         "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
         "purge_at": null,
-        "signature": "$setting2=variable&test"
+        "signature": "test"
     },
     "model": "core.CommunityMock",
     "pk": 2
@@ -45,7 +45,7 @@
         "current_growth": 1,
         "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
         "purge_at": null,
-        "signature": "$setting2=variable&test"
+        "signature": "test-multiple"
     },
     "model": "core.CommunityMock",
     "pk": 3
@@ -62,7 +62,7 @@
         "current_growth": 3,
         "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
         "purge_at": null,
-        "signature": "$setting2=with-errors&test"
+        "signature": "test-multiple"
     },
     "model": "core.CommunityMock",
     "pk": 4

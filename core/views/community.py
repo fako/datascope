@@ -6,7 +6,7 @@ from six.moves.urllib.parse import urlencode
 from copy import copy
 
 from django.core.exceptions import ValidationError
-from django.shortcuts import render_to_response, RequestContext
+from django.shortcuts import render_to_response, RequestContext, Http404
 from django.views.generic import View
 from django.core.urlresolvers import reverse
 
@@ -17,6 +17,7 @@ from rest_framework.status import (HTTP_200_OK, HTTP_202_ACCEPTED, HTTP_204_NO_C
 
 from core.models.organisms.community import CommunityState, Manifestation
 from core.exceptions import DSProcessUnfinished, DSProcessError
+from core.utils.helpers import parse_datetime_string
 
 
 class CommunityView(APIView):
@@ -42,15 +43,31 @@ class CommunityView(APIView):
 
     def _get_data_response(self, community_class, query_path, query_parameters, full_path):
         response_data = copy(self.RESPONSE_DATA)
+
         try:
             manifestation = Manifestation.objects.get(uri=full_path)
+
             community = manifestation.community
         except Manifestation.DoesNotExist:
             manifestation = None
-            community, created = community_class.get_or_create_by_input(
+            signature = community_class.get_signature_by_input(
                 *query_path.split('/'),
                 **query_parameters
             )
+            created_at = parse_datetime_string(query_parameters.get("t", None))
+            if "t" not in query_parameters:
+                community, created = community_class.objects.get_or_create_by_signature(
+                    signature,
+                    **query_parameters
+                )
+            elif created_at is not None:
+                community = community_class.objects.get(
+                    signature=signature,
+                    created_at=created_at
+                )
+                community.config = community_class.get_configuration_through_input(**query_parameters)
+            else:
+                raise Http404("Can not find community with t={}".format(query_parameters.get("t")))
 
         try:
 
