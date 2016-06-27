@@ -8,6 +8,7 @@ from datetime import datetime
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
 from django.core.files.images import ImageFile
+from django.conf import settings
 
 from core.models.resources.http import HttpResource
 
@@ -72,7 +73,7 @@ class ImageDownload(HttpResource):  # TODO: write tests
         variables = self.variables()
         now = datetime.utcnow()
         file_name = "{}.{}{}".format(
-            now.strftime("%Y%m%d%H%M%S%f"),
+            now.strftime(settings.DATASCOPE_DATETIME_FORMAT),
             variables["prefix"],
             path[file_name_position:]
         )
