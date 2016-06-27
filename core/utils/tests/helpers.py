@@ -13,3 +13,6 @@ class TestUtilHelpers(TestCase):
 
     def test_merge_iter(self):
         self.skipTest("not tested")
+
+    def test_parse_datetime_string(self):
+        self.skipTest("not tested")

@@ -1,8 +1,10 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
 import operator
+from datetime import datetime
 
 from django.apps import apps as django_apps
+from django.conf import settings
 
 
 def get_any_model(name):
@@ -14,6 +16,13 @@ def get_any_model(name):
     except StopIteration:
         raise LookupError("Could not find {} in any app_labels".format(name))
     return django_apps.get_model(app_label, name)
+
+
+def parse_datetime_string(time_str):
+    try:
+        return datetime.strptime(time_str, settings.DATASCOPE_DATETIME_FORMAT)
+    except ValueError:
+        return None
 
 
 def override_dict(parent, child):
