@@ -51,6 +51,9 @@ class Manifestation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
 
+    class Meta:
+        get_latest_by = "created_at"
+
     @staticmethod
     def generate_config(allowed_config, **kwargs):
         config = {key: value for key, value in six.iteritems(kwargs) if key in allowed_config}
@@ -337,3 +340,4 @@ class Community(models.Model, ProcessorMixin):
 
     class Meta:
         abstract = True
+        get_latest_by = "created_at"
