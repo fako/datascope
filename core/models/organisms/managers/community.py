@@ -5,8 +5,8 @@ from django.db.models.manager import Manager
 
 class CommunityManager(Manager):
 
-    def get_by_signature(self, signature, **kwargs):
-        community = self.get_queryset().get(signature=signature)
+    def get_latest_by_signature(self, signature, **kwargs):
+        community = self.get_queryset().filter(signature=signature).latest()
         community.config = self.model.get_configuration_from_input(**kwargs)
         return community
 
@@ -16,10 +16,10 @@ class CommunityManager(Manager):
             config=self.model.get_configuration_from_input(**kwargs)
         )
 
-    def get_or_create_by_signature(self, signature, **kwargs):
+    def get_latest_or_create_by_signature(self, signature, **kwargs):
         created = False
         try:
-            community = self.get_by_signature(signature, **kwargs)
+            community = self.get_latest_by_signature(signature, **kwargs)
         except self.model.DoesNotExist:
             community = self.create_by_signature(signature, **kwargs)
             created = True

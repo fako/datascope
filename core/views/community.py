@@ -55,7 +55,7 @@ class CommunityView(APIView):
             )
             created_at = parse_datetime_string(query_parameters.get("t", None))
             if "t" not in query_parameters:
-                community, created = community_class.objects.get_or_create_by_signature(
+                community, created = community_class.objects.get_latest_or_create_by_signature(
                     signature,
                     **query_parameters
                 )
