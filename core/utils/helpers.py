@@ -25,6 +25,10 @@ def parse_datetime_string(time_str):
         return None
 
 
+def format_datetime(datetime):
+    return datetime.strftime(settings.DATASCOPE_DATETIME_FORMAT)
+
+
 def override_dict(parent, child):
     assert isinstance(parent, dict), "The parent is not a dictionary."
     assert isinstance(child, dict), "The child is not a dictionary"

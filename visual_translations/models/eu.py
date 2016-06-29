@@ -4,10 +4,10 @@ import six
 from collections import OrderedDict
 from itertools import groupby
 from copy import copy
-from datetime import datetime
 
 from core.models.organisms import Community, Collective, Individual
 from core.utils.image import ImageGrid
+from core.utils.helpers import format_datetime
 from core.processors.expansion import ExpansionProcessor
 
 from sources.models.downloads import ImageDownload
@@ -209,8 +209,7 @@ class VisualTranslationsEUCommunity(Community):
         translation_growth = self.growth_set.filter(type="translations").last()
         grids = {"{}_{}".format(language, country): (grid, factor) for language, country, grid, factor in self.LOCALES}
         grouped_translations = translation_growth.output.group_by("locale")
-        now = datetime.utcnow()
-        results_directory = now.strftime("%Y%m%d%H%M%S%f"),
+        directory = format_datetime(self.created_at)
         for locale, translations in six.iteritems(grouped_translations):
             expansion_processor = ExpansionProcessor(self.config.to_dict())
             translations = expansion_processor.collective_content(
@@ -237,7 +236,7 @@ class VisualTranslationsEUCommunity(Community):
                 grid_specs["cell_height"] = int(grid_specs["cell_height"] * factor)
                 image_grid = ImageGrid(**grid_specs)
                 image_grid.fill(downloads)
-                image_grid.export("visual_translations/{}/{}/{}_{}.jpg".format(results_directory, query, size, locale))
+                image_grid.export("visual_translations/{}/{}/{}_{}.jpg".format(query, directory, size, locale))
 
     def set_kernel(self):
         self.kernel = self.growth_set.filter(type="translations").last().output

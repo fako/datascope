@@ -1,16 +1,24 @@
 from django.conf import settings
-from django.shortcuts import render_to_response, RequestContext, HttpResponse
+from django.shortcuts import render_to_response, RequestContext, HttpResponse, Http404
+from django.core.files.storage import default_storage
 
 from visual_translations.models import VisualTranslationsEUCommunity
 
 
 def visual_translation_map(request, term):
+    dirs, files = default_storage.listdir('visual_translations/{}/'.format(term))
+    time = request.GET.dict().get("t", None)
+    if time is not None and time not in dirs:
+        raise Http404("Visual translation with t={} not found or not ready".format(time))
+    elif time is None:
+        time = str(max((int(dir) for dir in dirs)))
+
     locales_info = [
         {
             "locale": "{}_{}".format(language, country),
-            "small_image_file": "visual_translations/{}/S_{}_{}.jpg".format(term, language, country),
-            "large_image_file": "visual_translations/{}/L_{}_{}.jpg".format(term, language, country),
-            "xlarge_image_file": "visual_translations/{}/XL_{}_{}.jpg".format(term, language, country),
+            "small_image_file": "visual_translations/{}/{}/S_{}_{}.jpg".format(term, time, language, country),
+            "large_image_file": "visual_translations/{}/{}/L_{}_{}.jpg".format(term, time, language, country),
+            "xlarge_image_file": "visual_translations/{}/{}/XL_{}_{}.jpg".format(term, time, language, country),
             "grid": {
                 "width": grid["cell_width"] * grid["columns"],
                 "height": grid["cell_height"] * grid["rows"],
