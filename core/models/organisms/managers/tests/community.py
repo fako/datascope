@@ -74,3 +74,24 @@ class TestCommunityManager(TestCase):
         self.assertIsNotNone(community.id)
         self.assertTrue(created)
         self.assertEqual(community.config.setting1, "created")
+
+    def test_create_by_signature(self):
+        # Non existant config
+        non_existant = {
+            "setting1": "created",
+        }
+        signature = CommunityMock.get_signature_from_input("test", **non_existant)
+        community = CommunityMock.objects.create_by_signature(signature, **non_existant)
+        self.assertIsNotNone(community)
+        self.assertIsNotNone(community.id)
+        self.assertEqual(community.config.setting1, "created")
+        # Static config should create duplicate
+        constant_config = {
+            "setting1": "const",
+        }
+        signature = CommunityMock.get_signature_from_input("test", **constant_config)
+        community = CommunityMock.objects.create_by_signature(signature, **constant_config)
+        self.assertIsNotNone(community)
+        self.assertIsNotNone(community.id)
+        self.assertEqual(community.config.setting1, "const")
+        self.assertEqual(CommunityMock.objects.filter(signature=signature).count(), 2)
