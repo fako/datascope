@@ -13,8 +13,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         dirs, files = default_storage.listdir('visual_translations')
-        for dir in dirs:
-            term = dir
+        for term in dirs:
             euc = VisualTranslationsEUCommunity.objects.get(signature=term)
             time = format_datetime(euc.created_at)
             source_path = default_storage.path('visual_translations/{}'.format(term))
@@ -23,4 +22,3 @@ class Command(BaseCommand):
             shutil.move(source_path, temp_path)
             os.mkdir(source_path)
             shutil.move(temp_path, destination_path)
-
