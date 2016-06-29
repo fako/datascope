@@ -6,7 +6,7 @@ from django.db.models.manager import Manager
 class CommunityManager(Manager):
 
     def get_latest_by_signature(self, signature, **kwargs):
-        community = self.get_queryset().filter(signature=signature).latest()
+        community = self.get_queryset().filter(signature=signature).latest("created_at")
         community.config = self.model.get_configuration_from_input(**kwargs)
         return community
 
