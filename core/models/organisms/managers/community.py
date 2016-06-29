@@ -17,7 +17,7 @@ class CommunityManager(Manager):
             community = self.get_by_signature(signature, **kwargs)
         except self.model.DoesNotExist:
             community = self.get_queryset().create(
-                signature="&".join(signature),
+                signature=signature,
                 config=self.model.get_configuration_through_input(**kwargs)
             )
             created = True
