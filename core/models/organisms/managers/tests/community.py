@@ -53,7 +53,7 @@ class TestCommunityManager(TestCase):
         self.assertIsNotNone(community)
         self.assertIsNotNone(community.id)
         self.assertTrue(hasattr(community.config, "$setting2"))
-        self.assertEqual(format_datetime(community.created_at), "20150605161754436000")
+        self.assertEqual(format_datetime(community.created_at), "20150605161754000000")
 
     def test_get_latest_or_create_by_signature(self):
         # Static config with an illegal key
@@ -102,7 +102,7 @@ class TestCommunityManager(TestCase):
         self.assertIsNotNone(community.id)
         self.assertFalse(created)
         self.assertTrue(hasattr(community.config, "$setting2"))
-        self.assertEqual(format_datetime(community.created_at), "20150605161754436000")
+        self.assertEqual(format_datetime(community.created_at), "20150605161754000000")
 
     def test_create_by_signature(self):
         # Non existant config
