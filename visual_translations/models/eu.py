@@ -4,6 +4,7 @@ import six
 from collections import OrderedDict
 from itertools import groupby
 from copy import copy
+import os
 
 from core.models.organisms import Community, Collective, Individual
 from core.utils.image import ImageGrid
@@ -124,7 +125,6 @@ class VisualTranslationsEUCommunity(Community):
             schema={}
         )
         query = args[0]
-        # TODO: create dir here
         for language, country, grid, factor in self.LOCALES:
             if language == "en":
                 continue
@@ -207,16 +207,18 @@ class VisualTranslationsEUCommunity(Community):
 
     def finish_download(self, out, err):  # TODO: move images in downloads folder? another way?
         translation_growth = self.growth_set.filter(type="translations").last()
+        query = translation_growth.input.individual_set.last().properties["query"]
         grids = {"{}_{}".format(language, country): (grid, factor) for language, country, grid, factor in self.LOCALES}
         grouped_translations = translation_growth.output.group_by("locale")
-        directory = format_datetime(self.created_at)
+        directory = "{}/{}".format(query, format_datetime(self.created_at))
+        os.makedirs(directory, 0o0755)
         for locale, translations in six.iteritems(grouped_translations):
             expansion_processor = ExpansionProcessor(self.config.to_dict())
             translations = expansion_processor.collective_content(
                 [translation.properties for translation in translations]
             )
             images = []
-            query = translation_growth.input.individual_set.last().properties["query"]
+
             for translation in translations:
                 for image in translation["images"]:
                     images.append(image)

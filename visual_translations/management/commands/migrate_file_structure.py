@@ -20,5 +20,5 @@ class Command(BaseCommand):
             temp_path = default_storage.path('visual_translations/{}'.format(time))
             destination_path = os.path.join(source_path, time)
             shutil.move(source_path, temp_path)
-            os.mkdir(source_path)
+            os.mkdir(source_path, 0o0755)
             shutil.move(temp_path, destination_path)
