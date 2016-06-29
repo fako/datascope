@@ -103,13 +103,16 @@ class HttpResource(models.Model):
             self.validate_request(self.request)
 
         self.clean()  # sets self.uri and self.data_hash based on request
+        resource = None
         try:
             resource = self.__class__.objects.get(
                 uri=self.uri,
                 data_hash=self.data_hash
             )
             self.validate_request(resource.request)
-        except self.DoesNotExist:
+        except (self.DoesNotExist, ValidationError):
+            if resource is not None:
+                resource.delete()
             resource = self
 
         if resource.success:
