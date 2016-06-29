@@ -15,7 +15,7 @@ class TestCommunityManager(TestCase):
             "setting1": "const",
             "illegal": "please"
         }
-        signature = CommunityMock.get_signature_by_input("test", **constant_config)
+        signature = CommunityMock.get_signature_from_input("test", **constant_config)
         community = CommunityMock.objects.get_by_signature(signature, **constant_config)
         self.assertIsNotNone(community)
         self.assertIsNotNone(community.id)
@@ -25,7 +25,7 @@ class TestCommunityManager(TestCase):
         variable_config = {
             "$setting2": "variable"
         }
-        signature = CommunityMock.get_signature_by_input("test", **variable_config)
+        signature = CommunityMock.get_signature_from_input("test", **variable_config)
         community = CommunityMock.objects.get_by_signature(signature, **variable_config)
         self.assertIsNotNone(community)
         self.assertIsNotNone(community.id)
@@ -34,7 +34,7 @@ class TestCommunityManager(TestCase):
         non_existant = {
             "setting1": "variable",
         }
-        signature = CommunityMock.get_signature_by_input("test", **non_existant)
+        signature = CommunityMock.get_signature_from_input("test", **non_existant)
         try:
             CommunityMock.objects.get_by_signature(signature, **non_existant)
             self.fail("CommunityManager.get_by_signature did not raise with non-existant community")
@@ -47,7 +47,7 @@ class TestCommunityManager(TestCase):
             "setting1": "const",
             "illegal": "please"
         }
-        signature = CommunityMock.get_signature_by_input("test", **constant_config)
+        signature = CommunityMock.get_signature_from_input("test", **constant_config)
         community, created = CommunityMock.objects.get_or_create_by_signature(signature, **constant_config)
         self.assertIsNotNone(community)
         self.assertIsNotNone(community.id)
@@ -58,7 +58,7 @@ class TestCommunityManager(TestCase):
         variable_config = {
             "$setting2": "variable"
         }
-        signature = CommunityMock.get_signature_by_input("test", **variable_config)
+        signature = CommunityMock.get_signature_from_input("test", **variable_config)
         community, created = CommunityMock.objects.get_or_create_by_signature(signature, **variable_config)
         self.assertIsNotNone(community)
         self.assertIsNotNone(community.id)
@@ -68,7 +68,7 @@ class TestCommunityManager(TestCase):
         non_existant = {
             "setting1": "created",
         }
-        signature = CommunityMock.get_signature_by_input("test", **non_existant)
+        signature = CommunityMock.get_signature_from_input("test", **non_existant)
         community, created = CommunityMock.objects.get_or_create_by_signature(signature, **non_existant)
         self.assertIsNotNone(community)
         self.assertIsNotNone(community.id)

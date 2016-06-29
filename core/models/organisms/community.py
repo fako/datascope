@@ -125,7 +125,7 @@ class Community(models.Model, ProcessorMixin):
     objects = CommunityManager()
 
     @classmethod
-    def get_signature_by_input(cls, *args, **kwargs):
+    def get_signature_from_input(cls, *args, **kwargs):
         signature = list(args) + [
             "{}={}".format(key, value)
             for key, value in six.iteritems(kwargs)
@@ -136,7 +136,7 @@ class Community(models.Model, ProcessorMixin):
         return "&".join(signature)
 
     @classmethod
-    def get_configuration_through_input(cls, *args, **kwargs):
+    def get_configuration_from_input(cls, *args, **kwargs):
         return {key: value for key, value in six.iteritems(kwargs) if key in cls.PUBLIC_CONFIG}
 
     def call_finish_callback(self, phase, out, errors):

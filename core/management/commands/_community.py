@@ -24,7 +24,7 @@ class CommunityCommand(BaseCommand):
 
     def handle(self, *args, **options):
         Community = get_any_model(options.pop("community"))
-        signature = Community.get_signature_by_input(*args, **options["config"])
+        signature = Community.get_signature_from_input(*args, **options["config"])
         community, created = Community.objects.get_or_create_by_signature(signature, **options["config"])
         print("Start:", datetime.now())
         self.handle_community(community, *args, **options)

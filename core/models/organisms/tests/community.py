@@ -41,22 +41,22 @@ class TestCommunityMock(CommunityTestMixin):
         self.error.error_phase1_unreachable = Mock(return_value=True)
         self.error.error_phase1_not_found = Mock(return_value=False)
 
-    def test_get_signature_by_input(self):
+    def test_get_signature_from_input(self):
         # Legal and illegal config mixed
-        signature = CommunityMock.get_signature_by_input("test", setting1="const", illegal="please")
+        signature = CommunityMock.get_signature_from_input("test", setting1="const", illegal="please")
         self.assertEqual(signature, "setting1=const&test")
         # With variable config
-        signature = CommunityMock.get_signature_by_input("test", **{"$setting2": "variable"})
+        signature = CommunityMock.get_signature_from_input("test", **{"$setting2": "variable"})
         self.assertEqual(signature, "test")
 
-    def test_configuration_by_input(self):
+    def test_configuration_from_input(self):
         # Legal and illegal config mixed
-        configuration = CommunityMock.get_configuration_through_input("test", setting1="const", illegal="please")
+        configuration = CommunityMock.get_configuration_from_input("test", setting1="const", illegal="please")
         self.assertIsInstance(configuration, dict)
         self.assertEqual(configuration["setting1"], "const")
         self.assertNotIn("illegal", configuration)
         # With variable config
-        configuration = CommunityMock.get_configuration_through_input("test", **{"$setting2": "variable"})
+        configuration = CommunityMock.get_configuration_from_input("test", **{"$setting2": "variable"})
         self.assertIsInstance(configuration, dict)
         self.assertEqual(configuration["$setting2"], "variable")
 

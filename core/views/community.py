@@ -46,11 +46,10 @@ class CommunityView(APIView):
 
         try:
             manifestation = Manifestation.objects.get(uri=full_path)
-
             community = manifestation.community
         except Manifestation.DoesNotExist:
             manifestation = None
-            signature = community_class.get_signature_by_input(
+            signature = community_class.get_signature_from_input(
                 *query_path.split('/'),
                 **query_parameters
             )
@@ -65,7 +64,7 @@ class CommunityView(APIView):
                     signature=signature,
                     created_at=created_at
                 )
-                community.config = community_class.get_configuration_through_input(**query_parameters)
+                community.config = community_class.get_configuration_from_input(**query_parameters)
             else:
                 raise Http404("Can not find community with t={}".format(query_parameters.get("t")))
 
