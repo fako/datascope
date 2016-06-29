@@ -21,7 +21,7 @@ def get_any_model(name):
 def parse_datetime_string(time_str):
     try:
         return datetime.strptime(time_str, settings.DATASCOPE_DATETIME_FORMAT)
-    except ValueError:
+    except (ValueError, TypeError):
         return None
 
 
