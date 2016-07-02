@@ -124,3 +124,6 @@ class TestCommunityManager(TestCase):
         self.assertIsNotNone(community.id)
         self.assertEqual(community.config.setting1, "const")
         self.assertEqual(CommunityMock.objects.filter(signature=signature).count(), 2)
+
+    def test_delete_manifestations_by_signature(self):
+        self.skipTest("not tested")

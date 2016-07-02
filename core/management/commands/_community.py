@@ -22,15 +22,17 @@ class CommunityCommand(BaseCommand):
     def handle_community(self, community, *arguments, **options):
         raise NotImplementedError("You should implement the handle_community method.")
 
-    def get_community_from_signature(self, signature, **config):
-        community, created = self.model.objects.get_latest_or_create_by_signature(signature, **config)
+    def get_community(self):
+        community, created = self.model.objects.get_latest_or_create_by_signature(self.signature, **self.config)
         return community
 
     def handle(self, *args, **options):
         Community = get_any_model(options.pop("community"))
         self.model = Community
-        signature = Community.get_signature_from_input(*args, **options["config"])
-        community = self.get_community_from_signature(signature, **options["config"])
+        self.config = options["config"]
+        self.signature = Community.get_signature_from_input(*args, **self.config)
+
+        community = self.get_community()
         print("Start:", datetime.now())
         self.handle_community(community, *args, **options)
         print("End:", datetime.now())

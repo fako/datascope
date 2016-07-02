@@ -9,10 +9,11 @@ class Command(GrowCommunityCommand):
 
     community_model = "VisualTranslationsEUCommunity"
 
-    def get_community_from_signature(self, signature, **config):
-        return self.model.objects.create_by_signature(signature, **config)
+    def get_community(self):
+        return self.model.objects.create_by_signature(self.signature, **self.config)
 
     def handle(self, *args, **kwargs):
         GoogleTranslate.objects.all().delete()
         GoogleImage.objects.all().delete()
         super(Command, self).handle(*args, **kwargs)
+        self.model.objects.delete_manifestations_by_signature(signature=self.signature)
