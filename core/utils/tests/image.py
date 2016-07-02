@@ -125,13 +125,6 @@ class TestImageGrid(TestCase):
         image.crop.called_once_with((0, 4, 16, 22))
         self.assertEqual(horizontal, 1)
         self.assertEqual(vertical, 2)
-        # Landscape size where resize shouldn't happen
-        small_portrait = monkey_patch_mock_image(Mock(Image.Image, size=(19, 26)))
-        image, horizontal, vertical = self.image_grid.size_image(small_portrait)
-        image.resize.assert_not_called()
-        image.crop.called_once_with((1, 4, 17, 22))
-        self.assertEqual(horizontal, 1)
-        self.assertEqual(vertical, 2)
 
     def test_center_image(self):
         image = self.image_grid.center_image(self.fit, 1, 1)

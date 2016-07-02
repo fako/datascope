@@ -113,7 +113,7 @@ class ImageGrid(object):
         else:
             new_height, new_width = self.get_new_size(image_height, image_width, self.cell_height*vertical)
 
-        if new_width >= self.cell_width and new_height >= self.cell_height:
+        if new_width >= self.cell_width * horizontal and new_height >= self.cell_height * vertical:
             image = image.resize((new_width, new_height,), Image.ANTIALIAS)
         image = self.center_image(image, horizontal, vertical)
 
