@@ -50,9 +50,9 @@ class ImageDownload(HttpResource):  # TODO: write tests
         try:
             self._validate_input("get", *args, **kwargs)
         except ValidationError as exc:
-            if not variables["url"].startswith("http"):
+            if variables["url"].startswith("http"):
                 raise exc
-            # Wrong URL given
+            # Wrong protocol given, like: x-raw-image://
             self.set_error(404)
             cancel_request = True
         return self.validate_request({
