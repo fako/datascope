@@ -63,7 +63,7 @@ class VisualTranslationsBRICCommunity(Community):
         }
     ]
 
-    LOCALES = [("pt", "BR",), ("ru", "RU",), ("zh", "CN",), ("zh", "TW",)]
+    LOCALES = [("pt", "BR",), ("ru", "RU",), ("zh", "CN",)]
 
     def initial_input(self, *args):
         collective = Collective.objects.create(
