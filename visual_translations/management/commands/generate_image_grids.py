@@ -7,5 +7,5 @@ class Command(CommunityCommand):
 
     community_model = "VisualTranslationsEUCommunity"
 
-    def handle_community(self, community, **options):
+    def handle_community(self, community, *arguments, **options):
         community.finish_download(None, None)

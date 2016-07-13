@@ -213,7 +213,7 @@ class VisualTranslationsEUCommunity(Community):
         grids = {"{}_{}".format(language, country): (grid, factor) for language, country, grid, factor in self.LOCALES}
         grouped_translations = translation_growth.output.group_by("locale")
         directory = "visual_translations/{}/{}".format(query, format_datetime(self.created_at))
-        os.makedirs(os.path.join(settings.MEDIA_ROOT, directory), 0o0755)
+        os.makedirs(os.path.join(settings.MEDIA_ROOT, directory), 0o0755, True)
         for locale, translations in six.iteritems(grouped_translations):
             expansion_processor = ExpansionProcessor(self.config.to_dict())
             translations = expansion_processor.collective_content(
