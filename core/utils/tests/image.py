@@ -138,14 +138,15 @@ class TestImageGrid(TestCase):
 
     def test_fill(self):
         self.image_grid.fill([
+            self.portrait,
+            self.landscape,
             self.landscape,
             self.panorama,
-            self.portrait
         ])
         self.assertEqual(self.image_grid.cells, [
-            self.landscape, self.panorama, False, self.portrait,
-            self.landscape, self.panorama, False, False,
-            self.landscape, self.panorama, False, self.landscape,
+            self.portrait, self.landscape, self.landscape, self.portrait,
+            False, self.landscape, self.landscape, False,
+            self.panorama, False, self.landscape, self.landscape,
         ])
         three_by_three = ImageGrid(3, 3, 16, 9)
         try:

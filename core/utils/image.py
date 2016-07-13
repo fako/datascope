@@ -125,6 +125,9 @@ class ImageGrid(object):
 
         # Reserve cells for landscape and panorama
         if horizontal > 1:
+            row_position = cell_index % self.columns
+            if row_position + horizontal >= self.columns:
+                raise ImageRejected("Panorama image does not fit remaining row")
             for cell_index_modifier in range(0, horizontal):
                 index = cell_index + cell_index_modifier
                 self.cells[index] = image if not cell_index_modifier else False
@@ -133,7 +136,10 @@ class ImageGrid(object):
         if vertical > 1:
             for cell_index_modifier in range(0, vertical*self.columns, self.columns):
                 index = cell_index + cell_index_modifier
-                self.cells[index] = image if not cell_index_modifier else False
+                try:
+                    self.cells[index] = image if not cell_index_modifier else False
+                except IndexError:
+                    raise ImageRejected("Portrait image does not fit remaining column")
 
     def fill(self, images):
         for image in images:
@@ -150,7 +156,7 @@ class ImageGrid(object):
                 try:
                     self._cell_image(index, self.next_carousel_image())
                     break
-                except IndexError:
+                except ImageRejected:
                     pass
             else:
                 raise CouldNotFillGrid("Unable to fill the grid with provided images")
