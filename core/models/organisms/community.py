@@ -5,6 +5,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from itertools import groupby
 from collections import OrderedDict, Iterator
 from datetime import datetime
+import logging
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, ContentType
@@ -21,6 +22,9 @@ from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
 from core.tasks import manifest_community
 from core.exceptions import DSProcessUnfinished, DSProcessError
+
+
+log = logging.getLogger(__name__)
 
 
 class CommunityState(object):
@@ -280,11 +284,14 @@ class Community(models.Model, ProcessorMixin):
 
         result = None
         if self.state in [CommunityState.NEW]:
+            log.info("Preparing community")
             self.state = CommunityState.ASYNC if self.config.async else CommunityState.SYNC
             self.setup_growth(*args)
             self.current_growth = self.next_growth()
             self.save()  # in between save because next operations may take long and community needs to be claimed.
+            log.info("Preparing", self.current_growth.type)
             self.call_begin_callback(self.current_growth.type, self.current_growth.input)
+            log.info("Starting", self.current_growth.type)
             result = self.current_growth.begin()  # when synchronous result contains actual results
             self.save()
 
@@ -296,6 +303,7 @@ class Community(models.Model, ProcessorMixin):
                 self.state = CommunityState.ABORTED
                 self.save()
                 raise DSProcessError("Could not finish growth according to error callbacks.")
+            log.info("Finishing", self.current_growth.type)
             self.call_finish_callback(self.current_growth.type, output, errors)
             try:
                 self.current_growth = self.next_growth()
@@ -304,7 +312,9 @@ class Community(models.Model, ProcessorMixin):
                 self.state = CommunityState.READY
                 self.save()
                 return True
+            log.info("Preparing", self.current_growth.type)
             self.call_begin_callback(self.current_growth.type, self.current_growth.input)
+            log.info("Starting", self.current_growth.type)
             result = self.current_growth.begin()
             self.save()
 
