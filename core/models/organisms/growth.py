@@ -176,25 +176,28 @@ class Growth(models.Model, ProcessorMixin):
         return chain(*contributions_iterators)
 
     def append_to_output(self, contributions):
+        assert isinstance(self.output, Collective), "append_to_output expects a Collective as output"
         self.output.update(contributions)
 
     def inline_by_key(self, contributions, inline_key):
-        groups = self.output.group_by(inline_key)
+        assert isinstance(self.output, Collective), "inline_by_key expects a Collective as output"
         for contribution in contributions:
-            # TODO: figure out why we need to skip here at times
-            if contribution[inline_key] not in groups:
-                continue
-            for individual in groups[contribution[inline_key]]:
+            identifier = self.output.identifier
+            assert identifier == inline_key, \
+                "Identifier of output '{}' does not match inline key '{}'".format(identifier, inline_key)
+            affected_individuals = self.output.individual_set.filter(identity=contribution[inline_key])
+            for individual in affected_individuals.all():
                 individual.properties[inline_key] = contribution
                 individual.save()
 
     def update_by_key(self, contributions, update_key):
-        groups = self.output.group_by(update_key)
+        assert isinstance(self.output, Collective), "update_by_key expects a Collective as output"
         for contribution in contributions:
-            # TODO: figure out why we need to skip here at times
-            if contribution[update_key] not in groups:
-                continue
-            for individual in groups[contribution[update_key]]:
+            identifier = self.output.identifier
+            assert identifier == update_key, \
+                "Identifier of output '{}' does not match update key '{}'".format(identifier, update_key)
+            affected_individuals = self.output.individual_set.filter(identity=contribution[update_key])
+            for individual in affected_individuals.all():
                 individual.update(contribution)
                 individual.save()
 
