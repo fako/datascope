@@ -144,7 +144,8 @@
         "modified_at": "2015-06-04T11:34:06.960",
         "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}",
         "community_type": 21,
-        "community_id": 1
+        "community_id": 1,
+        "identifier": "value"
     },
     "model": "core.collective",
     "pk": 3
@@ -183,7 +184,8 @@
         "created_at": "2015-06-02T10:00:20.247",
         "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}",
         "community_type": 21,
-        "community_id": 1
+        "community_id": 1,
+        "identity": "nested value 0"
     },
     "model": "core.individual",
     "pk": 3
@@ -196,7 +198,8 @@
         "created_at": "2015-06-02T10:00:20.247",
         "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}",
         "community_type": 21,
-        "community_id": 1
+        "community_id": 1,
+        "identity": "nested value 1"
     },
     "model": "core.individual",
     "pk": 4
@@ -209,7 +212,8 @@
         "created_at": "2015-06-02T10:00:20.247",
         "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}",
         "community_type": 21,
-        "community_id": 1
+        "community_id": 1,
+        "identity": "nested value 2"
     },
     "model": "core.individual",
     "pk": 5

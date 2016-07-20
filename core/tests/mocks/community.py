@@ -64,7 +64,20 @@ class CommunityMock(Community):
                     "value": {"type": "string"}
                 }
             },
-            "output": "Collective",  # TODO: make this individual
+            "output": "&input"
+        }),
+        ("phase3", {
+            "process": "HttpResourceProcessor.fetch_mass",
+            "config": {
+                "_args": ["$.value"],
+                "_kwargs": {},
+                "_resource": "HttpResourceMock",
+            },
+            "input": "@phase2",
+            "contribute": None,
+            "errors": {},
+            "output": "Individual",
+            "schema": {}
         })
     ])
 
@@ -99,5 +112,5 @@ class CommunityMock(Community):
         return False  # abort community
 
     def set_kernel(self):
-        self.kernel = self.growth_set.filter(type="phase2").last().output
+        self.kernel = self.growth_set.filter(type="phase3").last().output
         super(CommunityMock, self).set_kernel()
