@@ -167,9 +167,11 @@ class Community(models.Model, ProcessorMixin):
                     fatal_error = fatal_error or not should_continue
         return not fatal_error
 
-    def create_organism(self, organism_type, schema):
+    def create_organism(self, organism_type, schema, identifier=None):
         model = get_any_model(organism_type)
         org = model(community=self, schema=schema)
+        if identifier and hasattr(org, "identifier"):
+            org.identifier = identifier
         org.save()
         return org
 
@@ -201,7 +203,10 @@ class Community(models.Model, ProcessorMixin):
                 inp = self.create_organism(inp, sch)
 
             out = growth_config["output"]
-            if out is not None and out.startswith("@"):
+
+            if out is None:
+                pass
+            elif out.startswith("@"):
                 grw = self.growth_set.filter(type=out[1:]).last()
                 if grw is None:
                     raise AssertionError(
@@ -210,8 +215,17 @@ class Community(models.Model, ProcessorMixin):
                 out = grw.output
             elif out == "&input":
                 out = inp
-            elif out in ["Individual", "Collective"]:
+            elif out.startswith("Collective"):
+                if "#" in out:
+                    out, identifier = out.split("#")
+                else:
+                    identifier = None
+                out = self.create_organism(out, sch, identifier)
+                out.identifier = identifier
+            elif out == "Individual":
                 out = self.create_organism(out, sch)
+            else:
+                raise AssertionError("Invalid value for output: {}".format(out))
             growth = Growth(
                 community=self,
                 type=growth_type,

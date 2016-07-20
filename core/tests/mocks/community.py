@@ -38,7 +38,7 @@ class CommunityMock(Community):
                     "value": {"type": "string"}
                 }
             },
-            "output": "Collective",
+            "output": "Collective#value",
         }),
         ("phase2", {
             "process": "HttpResourceProcessor.fetch_mass",

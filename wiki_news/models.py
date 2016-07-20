@@ -37,7 +37,7 @@ class WikiNewsCommunity(Community):
             "process": "HttpResourceProcessor.fetch_mass",
             "input": "@revisions",
             "contribute": "Append:ExtractProcessor.extract_from_resource",
-            "output": "Collective",
+            "output": "Collective#wikidata",
             "config": {
                 "_args": ["$.pageid"],
                 "_kwargs": {},
