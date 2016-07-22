@@ -186,7 +186,7 @@ class Growth(models.Model, ProcessorMixin):
             assert identifier == inline_key, \
                 "Identifier of output '{}' does not match inline key '{}'".format(identifier, inline_key)
             affected_individuals = self.output.individual_set.filter(identity=contribution[inline_key])
-            for individual in affected_individuals.all():
+            for individual in affected_individuals.iterator():
                 individual.properties[inline_key] = contribution
                 individual.save()
 
@@ -197,7 +197,7 @@ class Growth(models.Model, ProcessorMixin):
             assert identifier == update_key, \
                 "Identifier of output '{}' does not match update key '{}'".format(identifier, update_key)
             affected_individuals = self.output.individual_set.filter(identity=contribution[update_key])
-            for individual in affected_individuals.all():
+            for individual in affected_individuals.iterator():
                 individual.update(contribution)
                 individual.save()
 
