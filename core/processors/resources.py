@@ -146,7 +146,7 @@ class HttpResourceProcessor(Processor):
                     joined = symbol.join(map(str, args))
                     joined_slice.append(joined)
                 prc_args_list.append([symbol.join(joined_slice)])
-                prc_kwargs_list.append(kwargs_list[index*config.concat_args_size])
+                prc_kwargs_list.append(kwargs_list[0])
         else:
             prc_args_list = args_list
             prc_kwargs_list = kwargs_list
