@@ -58,7 +58,7 @@ class Collective(Organism):
         for instance in data:
             Individual.validate(instance, schema)
 
-    def update(self, data, validate=True):
+    def update(self, data, validate=True, reset=True):
         """
         Update the instance with new data by adding to the Collective
         or by updating Individuals that are on the Collective.
@@ -73,7 +73,8 @@ class Collective(Organism):
         assert isinstance(data, (Iterator, list, tuple, dict, Individual)), \
             "Collective.update expects data to be formatted as iteratable, dict or Individual not {}".format(type(data))
 
-        self.individual_set.all().delete()
+        if reset:
+            self.individual_set.all().delete()
 
         def prepare_updates(data):
 
