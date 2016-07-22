@@ -1,9 +1,7 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
-import six
-
-from django.conf import settings
 
 from collections import OrderedDict
+from itertools import groupby
 
 from core.models.organisms import Community, Individual
 
@@ -15,7 +13,7 @@ class WikiNewsCommunity(Community):
             "process": "HttpResourceProcessor.fetch",
             "input": None,
             "contribute": "Append:ExtractProcessor.extract_from_resource",
-            "output": "Collective",
+            "output": "Collective#pageid",
             "config": {
                 "_args": [],
                 "_kwargs": {},
@@ -35,9 +33,9 @@ class WikiNewsCommunity(Community):
         }),
         ("pages", {
             "process": "HttpResourceProcessor.fetch_mass",
-            "input": "@revisions",
-            "contribute": "Append:ExtractProcessor.extract_from_resource",
-            "output": "Collective#wikidata",
+            "input": "Collective#pageid",  # gets filled by finish_revisions
+            "contribute": "Update:ExtractProcessor.extract_from_resource",
+            "output": "&input",
             "config": {
                 "_args": ["$.pageid"],
                 "_kwargs": {},
@@ -52,33 +50,34 @@ class WikiNewsCommunity(Community):
                 },
                 "_concat_args_size": 50,
                 "_continuation_limit": 1000,
+                "_update_key": "pageid",
             },
             "schema": {},
             "errors": {},
         }),
-        ("wikidata", {
-            "process": "HttpResourceProcessor.fetch_mass",
-            "input": "Collective",  # gets a filter applied
-            "contribute": "Inline:ExtractProcessor.extract_from_resource",
-            "output": "@pages",
-            "config": {
-                "_args": ["$.wikidata"],
-                "_kwargs": {},
-                "_resource": "WikiDataItems",
-                "_objective": {
-                    "@": "$",
-                    "wikidata": "$.id",
-                    "claims": "$.claims",
-                    "references": "$.references",
-                    "description": "$.description",
-                },
-                "_inline_key": "wikidata",
-                "_concat_args_size": 50,
-                "_continuation_limit": 1000,
-            },
-            "schema": {},
-            "errors": {},
-        })
+        # ("wikidata", {
+        #     "process": "HttpResourceProcessor.fetch_mass",
+        #     "input": "Collective",  # gets a filter applied
+        #     "contribute": "Inline:ExtractProcessor.extract_from_resource",
+        #     "output": "@pages",
+        #     "config": {
+        #         "_args": ["$.wikidata"],
+        #         "_kwargs": {},
+        #         "_resource": "WikiDataItems",
+        #         "_objective": {
+        #             "@": "$",
+        #             "wikidata": "$.id",
+        #             "claims": "$.claims",
+        #             "references": "$.references",
+        #             "description": "$.description",
+        #         },
+        #         "_inline_key": "wikidata",
+        #         "_concat_args_size": 50,
+        #         "_continuation_limit": 1000,
+        #     },
+        #     "schema": {},
+        #     "errors": {},
+        # })
     ])
 
     COMMUNITY_BODY = [
@@ -101,45 +100,59 @@ class WikiNewsCommunity(Community):
         return Individual.objects.create(community=self, properties={}, schema={})
 
     def finish_revisions(self, out, err):
-        pages = {}
-        for ind in out.individual_set.all():
-            revision = ind.content
-            if ind.properties["pageid"] not in pages:
-                pages[ind.properties["pageid"]] = ind
-                ind.properties = {
-                    "pageid": ind.properties["pageid"],
-                    "revisions": [revision],
-                    "users": {revision["userid"]} if revision["userid"] else set()
-                }
-            else:
-                pages[ind.properties["pageid"]]["revisions"].append(ind.content)
-                if revision["userid"]:
-                    pages[ind.properties["pageid"]]["users"].add(revision["userid"])
-        for page in six.itervalues(pages):
-            page.properties["users"] = list(page["users"])
-        out.individual_set.all().delete()
-        out.individual_set.bulk_create(six.itervalues(pages), batch_size=settings.MAX_BATCH_SIZE)
+        pages_growth = self.next_growth()
+        grouped_pages = groupby(out.individual_set.order_by("identity").iterator(), lambda ind: ind.identity)
 
-    def finish_pages(self, out, err):
-        pages = {}
-        for ind in out.individual_set.all():
-            if ind.properties["pageid"] not in pages:
-                pages[ind.properties["pageid"]] = ind
-                if ind.properties["categories"] is None:
-                    ind.properties["categories"] = []
-            else:
-                if "categories" in ind.properties and ind.properties["categories"]:
-                    pages[ind.properties["pageid"]].properties["categories"] += ind.properties["categories"]
+        pages = []
+        for pageid, revision_individuals in grouped_pages:
+            revisions = list(revision_individuals)
+            pages.append({
+                "pageid": pageid,
+                "revisions": [revision.content for revision in revisions],
+                "users": list({revision.properties["userid"] for revision in revisions if revision.properties["userid"]})
+            })
+            if len(pages) >= 1000:
+                pages_growth.input.update(pages, reset=False)
+                pages = []
 
-        revisions = self.growth_set.filter(type="revisions").last().output
-        for page in revisions.individual_set.all():
-            try:
-                pages[page.properties["pageid"]].properties.update(page.properties)
-            except KeyError:
-                print("KeyError:", page.properties["pageid"])
+        # for ind in out.individual_set.all():
+        #     revision = ind.content
+        #     if ind.properties["pageid"] not in pages:
+        #         pages[ind.properties["pageid"]] = ind
+        #         ind.properties = {
+        #             "pageid": ind.properties["pageid"],
+        #             "revisions": [revision],
+        #             "users": {revision["userid"]} if revision["userid"] else set()
+        #         }
+        #     else:
+        #         pages[ind.properties["pageid"]]["revisions"].append(ind.content)
+        #         if revision["userid"]:
+        #             pages[ind.properties["pageid"]]["users"].add(revision["userid"])
+        # for page in six.itervalues(pages):
+        #     page.properties["users"] = list(page["users"])
+        # out.individual_set.all().delete()
+        # out.individual_set.bulk_create(six.itervalues(pages), batch_size=settings.MAX_BATCH_SIZE)
 
-        out.individual_set.all().delete()
-        out.individual_set.bulk_create(six.itervalues(pages), batch_size=settings.MAX_BATCH_SIZE)
+    # def finish_pages(self, out, err):
+    #     pages = {}
+    #     for ind in out.individual_set.all():
+    #         if ind.properties["pageid"] not in pages:
+    #             pages[ind.properties["pageid"]] = ind
+    #             if ind.properties["categories"] is None:
+    #                 ind.properties["categories"] = []
+    #         else:
+    #             if "categories" in ind.properties and ind.properties["categories"]:
+    #                 pages[ind.properties["pageid"]].properties["categories"] += ind.properties["categories"]
+    #
+    #     revisions = self.growth_set.filter(type="revisions").last().output
+    #     for page in revisions.individual_set.all():
+    #         try:
+    #             pages[page.properties["pageid"]].properties.update(page.properties)
+    #         except KeyError:
+    #             print("KeyError:", page.properties["pageid"])
+    #
+    #     out.individual_set.all().delete()
+    #     out.individual_set.bulk_create(six.itervalues(pages), batch_size=settings.MAX_BATCH_SIZE)
 
     def begin_wikidata(self, inp):
         wikidata_individuals = []
