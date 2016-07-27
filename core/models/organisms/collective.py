@@ -58,7 +58,7 @@ class Collective(Organism):
         for instance in data:
             Individual.validate(instance, schema)
 
-    def update(self, data, validate=True, reset=True):
+    def update(self, data, validate=True, reset=True, batch_size=500):
         """
         Update the instance with new data by adding to the Collective
         or by updating Individuals that are on the Collective.
@@ -67,9 +67,6 @@ class Collective(Organism):
         :param validate: (optional) whether to validate data or not (yes by default)
         :return: A list of updated or created instances.
         """
-        validate_data, update_data = tee(data)
-        if validate:
-            Collective.validate(validate_data, self.schema)
         assert isinstance(data, (Iterator, list, tuple, dict, Individual)), \
             "Collective.update expects data to be formatted as iteratable, dict or Individual not {}".format(type(data))
 
@@ -80,6 +77,8 @@ class Collective(Organism):
 
             prepared = []
             if isinstance(data, dict):
+                if validate:
+                    Individual.validate(data, self.schema)
                 individual = Individual(
                     community=self.community,
                     collective=self,
@@ -89,6 +88,10 @@ class Collective(Organism):
                 individual.clean()
                 prepared.append(individual)
             elif isinstance(data, Individual):
+                if validate:
+                    Individual.validate(data, self.schema)
+                data.id = None
+                data.collective = self
                 data.clean()
                 prepared.append(data)
             else:  # type is list
@@ -96,7 +99,7 @@ class Collective(Organism):
                     prepared += prepare_updates(instance)
             return prepared
 
-        for updates in ibatch(update_data, 500):
+        for updates in ibatch(data, batch_size=batch_size):
             updates = prepare_updates(updates)
             Individual.objects.bulk_create(updates, batch_size=settings.MAX_BATCH_SIZE)
 

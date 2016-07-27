@@ -23,3 +23,5 @@ start-development:
 stop-development:
 	/usr/local/bin/mysql.server stop
 
+test:
+	./manage.py test --settings=datascope.settings.test
