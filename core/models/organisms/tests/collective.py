@@ -90,6 +90,9 @@ class TestCollective(TransactionTestCase):
             self.instance2.update(updates, validate=False, reset=True, batch_size=20)
         self.assertEqual(self.instance2.individual_set.count(), 25)
 
+    def test_copy_update(self):
+        self.skipTest("test that updating with Individuals from other Collective will copy Individuals")
+
     def test_output(self):
         results = self.instance.output("$.value")
         self.assertEqual(results, self.value_outcome)
