@@ -9,6 +9,7 @@
 # 4)  Add bootstrap.py and secrets.py to /root
 
 # SETUP: install software
+apt-get install vim
 apt-get install nginx
 apt-get install uwsgi
 apt-get install uwsgi-plugin-python3
