@@ -127,7 +127,9 @@ class HttpResourceProcessor(Processor):
     @app.task(name="HttpFetch.send_mass")
     @load_config(defaults=DEFAULT_CONFIGURATION)
     def _send_mass(config, args_list, kwargs_list, session=None, method=None):
-        # FEATURE: chain "batches" of fetch_mass if configured through batch_size
+        # FEATURE: chain "batches" of send_mass if configured through batch_size
+
+        assert args_list and kwargs_list, "No args list and/or kwargs list given to send mass"
 
         if config.concat_args_size:
             # Set some vars based on config
