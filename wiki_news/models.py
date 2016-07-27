@@ -2,6 +2,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 
 from collections import OrderedDict
 from itertools import groupby
+from datetime import datetime
 
 from core.models.organisms import Community, Individual
 
@@ -55,29 +56,29 @@ class WikiNewsCommunity(Community):
             "schema": {},
             "errors": {},
         }),
-        # ("wikidata", {
-        #     "process": "HttpResourceProcessor.fetch_mass",
-        #     "input": "Collective",  # gets a filter applied
-        #     "contribute": "Inline:ExtractProcessor.extract_from_resource",
-        #     "output": "@pages",
-        #     "config": {
-        #         "_args": ["$.wikidata"],
-        #         "_kwargs": {},
-        #         "_resource": "WikiDataItems",
-        #         "_objective": {
-        #             "@": "$",
-        #             "wikidata": "$.id",
-        #             "claims": "$.claims",
-        #             "references": "$.references",
-        #             "description": "$.description",
-        #         },
-        #         "_inline_key": "wikidata",
-        #         "_concat_args_size": 50,
-        #         "_continuation_limit": 1000,
-        #     },
-        #     "schema": {},
-        #     "errors": {},
-        # })
+        ("wikidata", {
+            "process": "HttpResourceProcessor.fetch_mass",
+            "input": "Collective",  # gets a filter applied
+            "contribute": "Inline:ExtractProcessor.extract_from_resource",
+            "output": "@pages",
+            "config": {
+                "_args": ["$.wikidata"],
+                "_kwargs": {},
+                "_resource": "WikiDataItems",
+                "_objective": {
+                    "@": "$",
+                    "wikidata": "$.id",
+                    "claims": "$.claims",
+                    "references": "$.references",
+                    "description": "$.description",
+                },
+                "_inline_key": "wikidata",
+                "_concat_args_size": 50,
+                "_continuation_limit": 1000,
+            },
+            "schema": {},
+            "errors": {},
+        })
     ])
 
     COMMUNITY_BODY = [
@@ -105,6 +106,9 @@ class WikiNewsCommunity(Community):
 
         pages = []
         for pageid, revision_individuals in grouped_pages:
+            # Filter mysterious pageids like None and "0"
+            if not pageid:
+                continue
             revisions = list(revision_individuals)
             pages.append({
                 "pageid": pageid,
@@ -115,52 +119,14 @@ class WikiNewsCommunity(Community):
                 pages_growth.input.update(pages, reset=False)
                 pages = []
 
-        # for ind in out.individual_set.all():
-        #     revision = ind.content
-        #     if ind.properties["pageid"] not in pages:
-        #         pages[ind.properties["pageid"]] = ind
-        #         ind.properties = {
-        #             "pageid": ind.properties["pageid"],
-        #             "revisions": [revision],
-        #             "users": {revision["userid"]} if revision["userid"] else set()
-        #         }
-        #     else:
-        #         pages[ind.properties["pageid"]]["revisions"].append(ind.content)
-        #         if revision["userid"]:
-        #             pages[ind.properties["pageid"]]["users"].add(revision["userid"])
-        # for page in six.itervalues(pages):
-        #     page.properties["users"] = list(page["users"])
-        # out.individual_set.all().delete()
-        # out.individual_set.bulk_create(six.itervalues(pages), batch_size=settings.MAX_BATCH_SIZE)
-
-    # def finish_pages(self, out, err):
-    #     pages = {}
-    #     for ind in out.individual_set.all():
-    #         if ind.properties["pageid"] not in pages:
-    #             pages[ind.properties["pageid"]] = ind
-    #             if ind.properties["categories"] is None:
-    #                 ind.properties["categories"] = []
-    #         else:
-    #             if "categories" in ind.properties and ind.properties["categories"]:
-    #                 pages[ind.properties["pageid"]].properties["categories"] += ind.properties["categories"]
-    #
-    #     revisions = self.growth_set.filter(type="revisions").last().output
-    #     for page in revisions.individual_set.all():
-    #         try:
-    #             pages[page.properties["pageid"]].properties.update(page.properties)
-    #         except KeyError:
-    #             print("KeyError:", page.properties["pageid"])
-    #
-    #     out.individual_set.all().delete()
-    #     out.individual_set.bulk_create(six.itervalues(pages), batch_size=settings.MAX_BATCH_SIZE)
-
     def begin_wikidata(self, inp):
-        wikidata_individuals = []
         pages = self.growth_set.filter(type="pages").last().output
-        for individual in pages.individual_set.all():
-            if individual.properties.get("wikidata"):
-                wikidata_individuals.append(individual.content)
-        inp.update(wikidata_individuals)
+        pages.identifier = "wikidata"
+        pages.save()
+        now = datetime.now()
+        pages.update(pages.content, reset=False, validate=False)
+        pages.individual_set.filter(created_at__lt=now).delete()
+        inp.update(pages.individual_set.filter(identity__isnull=False).exclude(identity="").iterator())
 
     def set_kernel(self):
         self.kernel = self.current_growth.output
