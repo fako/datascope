@@ -4,7 +4,7 @@ from datetime import date, datetime
 
 from core.management.commands.grow_community import Command as GrowCommand
 from core.utils.configuration import DecodeConfigAction
-from sources.models.wikipedia import WikipediaListPages, WikipediaRecentChanges
+from sources.models.wikipedia import WikipediaListPages, WikipediaRecentChanges, WikiDataItems
 from wiki_news.models import WikiNewsCommunity
 
 class Command(GrowCommand):
@@ -19,6 +19,7 @@ class Command(GrowCommand):
         WikiNewsCommunity.objects.all().delete()
         WikipediaRecentChanges.objects.all().delete()
         WikipediaListPages.objects.all().delete()
+        WikiDataItems.objects.all().delete()
 
     @staticmethod
     def archive_growth():
