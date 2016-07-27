@@ -63,8 +63,8 @@ cp celery/celeryd.cnf.sh /etc/default/celeryd
 cp celery/celeryd.cnf.sh /etc/default/S99celeryd
 cp celery/celeryd.sh /etc/init.d/celeryd
 chmod a+x /etc/init.d/celeryd
-sudo service celeryd start
 update-rc.d celeryd defaults 99
+sudo service celeryd start
 # UWSGI
 cp uwsgi/datascope-3.ini /etc/uwsgi/apps-available/datascope.ini
 ln -s /etc/uwsgi/apps-available/datascope.ini /etc/uwsgi/apps-enabled/datascope.ini
