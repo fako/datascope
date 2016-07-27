@@ -11,10 +11,13 @@ six==1.9.0
 jsonfield==1.0.3  # deprecated
 jsonschema==2.4.0
 beautifulsoup4==4.4.1
+numpy==1.11.1
 scipy==0.15.1
 pandas==0.16.1
 
 # Celery plugins
+kombu==3.0.35
+billiard==3.3.0.23
 amqp==1.4.9
 anyjson==0.3.3
 redis==2.10.5
