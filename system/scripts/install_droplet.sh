@@ -39,6 +39,8 @@ mkdir /srv
 cd /srv
 git clone https://github.com/fako/datascope.git datascope/src
 git clone https://github.com/fako/ds-server.git
+mv /root/bootstrap.py datascope/src/datascope/settings/
+mv /root/secrets.py datascope/src/datascope/settings/
 mkdir /srv/logs
 chown www-data:www-data -R /srv
 
