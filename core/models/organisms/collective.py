@@ -2,7 +2,6 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 import six
 
 from collections import Iterator
-from itertools import tee, islice
 
 from django.db import models
 from django.conf import settings
@@ -13,6 +12,7 @@ from json_field.fields import JSONEncoder, JSONDecoder
 
 from core.models.organisms import Organism, Individual
 from core.utils.helpers import ibatch
+from core.utils.data import reach
 
 
 class IndexEncoder(JSONEncoder):
@@ -195,7 +195,7 @@ class Collective(Organism):
         :return: The influenced individual
         """
         if self.identifier:
-            individual.identity = individual[self.identifier]
+            individual.identity = reach("$." + self.identifier, individual.properties)
         if self.indexes:
             index_keys = self._get_index_keys()
             individual = self.set_index_for_individual(individual, index_keys)
