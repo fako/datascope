@@ -81,17 +81,24 @@ class TestCommunityMock(CommunityTestMixin):
 
     def test_setup_growth(self):
         self.instance.setup_growth()
-        self.assertEqual(self.instance.growth_set.count(), 2)
-        growth1 = self.instance.growth_set.first()
-        growth2 = self.instance.growth_set.last()
+        self.assertEqual(self.instance.growth_set.count(), 3)
+        growth1, growth2, growth3 = self.instance.growth_set.all()
+
         self.assertTrue(growth1.config.test_flag)
         self.assertTrue(growth2.config.test_flag)
+        self.assertTrue(growth3.config.test_flag)
         self.assertEqual(growth1.output.id, growth2.input.id)
+        self.assertEqual(growth2.input.id, growth2.output.id)
+        self.assertEqual(growth1.output.identifier, "value")
         self.assertEqual(growth1.contribute, "ExtractProcessor.extract_from_resource")
         self.assertEqual(growth1.contribute_type, "Append")
         self.assertIsInstance(growth1.input, Individual)
         self.assertIsInstance(growth1.output, Collective)
-        self.skipTest("test a config with & for output (it should set output of a growth equal to the input")
+        self.assertIsInstance(growth2.input, Collective)
+        self.assertIsInstance(growth2.output, Collective)
+        self.assertIsInstance(growth3.input, Collective)
+        self.assertIsInstance(growth3.output, Individual)
+        self.skipTest("test that input of a Collective might set an identifier")
 
     def test_next_growth(self):
         result = self.incomplete.next_growth()
@@ -202,7 +209,7 @@ class TestCommunityMock(CommunityTestMixin):
 
             first_growth = self.instance.growth_set.first()
             self.assertFalse(done)
-            self.assertEqual(self.instance.growth_set.count(), 2)
+            self.assertEqual(self.instance.growth_set.count(), 3)
             self.assertIsInstance(self.instance.current_growth, Growth)
             self.assertEqual(self.instance.current_growth.id, first_growth.id)  # first new Growth
             self.instance.call_begin_callback.assert_called_once_with("phase1", first_growth.input)
@@ -218,7 +225,7 @@ class TestCommunityMock(CommunityTestMixin):
             except DSProcessUnfinished:
                 pass
             self.assertFalse(done)
-            self.assertEqual(self.instance.growth_set.count(), 2)
+            self.assertEqual(self.instance.growth_set.count(), 3)
             self.assertIsInstance(self.instance.current_growth, Growth)
             self.assertFalse(self.instance.call_begin_callback.called)
             self.assertFalse(self.instance.call_finish_callback.called)
@@ -226,14 +233,14 @@ class TestCommunityMock(CommunityTestMixin):
             self.assertEqual(self.instance.state, CommunityState.ASYNC)
 
         with patch(growth_finish_method, return_value=(first_growth.output, [])) as finish_growth:
-            second_growth = self.instance.growth_set.last()
+            second_growth = self.instance.growth_set.all()[1]
             with patch("core.models.organisms.community.Community.next_growth", return_value=second_growth):
                 try:
                     self.instance.grow()  # first stage done, start second stage
                     self.fail("Unfinished community didn't raise any exception.")
                 except DSProcessUnfinished:
                     pass
-            self.assertEqual(self.instance.growth_set.count(), 2)
+            self.assertEqual(self.instance.growth_set.count(), 3)
             self.assertIsInstance(self.instance.current_growth, Growth)
             self.assertEqual(self.instance.current_growth.id, second_growth.id)
             self.instance.call_finish_callback.assert_called_once_with("phase1", first_growth.output, [])
@@ -243,31 +250,48 @@ class TestCommunityMock(CommunityTestMixin):
 
         self.set_callback_mocks()
         begin_growth.reset_mock()
-        with patch(growth_finish_method, return_value=(second_growth.output, [])) as finish_growth:
+        with patch(growth_finish_method, return_value=(first_growth.output, [])) as finish_growth:
+            third_growth = self.instance.growth_set.last()
+            with patch("core.models.organisms.community.Community.next_growth", return_value=third_growth):
+                try:
+                    self.instance.grow()  # second stage done, start third stage
+                    self.fail("Unfinished community didn't raise any exception.")
+                except DSProcessUnfinished:
+                    pass
+            self.assertEqual(self.instance.growth_set.count(), 3)
+            self.assertIsInstance(self.instance.current_growth, Growth)
+            self.assertEqual(self.instance.current_growth.id, third_growth.id)
+            self.instance.call_finish_callback.assert_called_once_with("phase2", second_growth.output, [])
+            self.instance.call_begin_callback.assert_called_once_with("phase3", second_growth.output)
+            begin_growth.assert_called_once_with()
+            self.assertEqual(self.instance.state, CommunityState.ASYNC)
+
+        self.set_callback_mocks()
+        begin_growth.reset_mock()
+        with patch(growth_finish_method, return_value=(third_growth.output, [])) as finish_growth:
             self.set_callback_mocks()
             with patch("core.models.organisms.community.Community.next_growth", side_effect=Growth.DoesNotExist):
                 done = self.instance.grow()  # finish growth
             self.assertTrue(done)
-            self.assertEqual(self.instance.growth_set.count(), 2)
+            self.assertEqual(self.instance.growth_set.count(), 3)
             self.assertIsInstance(self.instance.current_growth, Growth)
-            self.assertEqual(self.instance.current_growth.id, second_growth.id)
-            self.instance.call_finish_callback.assert_called_once_with("phase2", second_growth.output, [])
-            self.assertIsInstance(self.instance.kernel, Collective)
-            self.assertEqual(self.instance.kernel.id, second_growth.output.id)
+            self.assertEqual(self.instance.current_growth.id, third_growth.id)
+            self.instance.call_finish_callback.assert_called_once_with("phase3", third_growth.output, [])
+            self.assertIsInstance(self.instance.kernel, Individual)
             self.assertFalse(self.instance.call_begin_callback.called)
             self.assertFalse(begin_growth.called)
             self.assertEqual(self.instance.state, CommunityState.READY)
 
-            second_growth.state = "Complete"
-            second_growth.save()
+            third_growth.state = "Complete"
+            third_growth.save()
 
         self.set_callback_mocks()
         with patch(growth_finish_method) as finish_growth:
             done = self.instance.grow()  # don't grow further
         self.assertTrue(done)
-        self.assertEqual(self.instance.growth_set.count(), 2)
+        self.assertEqual(self.instance.growth_set.count(), 3)
         self.assertIsInstance(self.instance.current_growth, Growth)
-        self.assertEqual(self.instance.current_growth.id, second_growth.id)
+        self.assertEqual(self.instance.current_growth.id, third_growth.id)
         self.assertFalse(self.instance.call_finish_callback.called)
         self.assertFalse(self.instance.call_begin_callback.called)
         self.assertFalse(begin_growth.called)
@@ -281,7 +305,7 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertEqual(self.instance.state, CommunityState.NEW)
         done = self.instance.grow()
         self.assertTrue(done)
-        self.assertEqual(self.instance.growth_set.filter(state=GrowthState.COMPLETE).count(), 2)
+        self.assertEqual(self.instance.growth_set.filter(state=GrowthState.COMPLETE).count(), 3)
         self.assertIsInstance(self.instance.current_growth, Growth)
         self.assertEqual(self.instance.current_growth.id, self.instance.growth_set.last().id)
         self.assertEqual(self.instance.state, CommunityState.READY)

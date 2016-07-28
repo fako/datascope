@@ -33,17 +33,20 @@ class Individual(Organism):
         :param schema: The JSON schema to use for validation.
         :return: Valid data
         """
-        if not isinstance(data, dict):
+
+        if isinstance(data, dict):
+            properties = data
+        elif isinstance(data, Individual):
+            properties = data.properties
+        else:
             raise ValidationError(
                 "An Individual can only work with a dict as data and got {} instead".format(type(data))
             )
 
         try:
-            jsonschema.validate(data, schema)
+            jsonschema.validate(properties, schema)
         except SchemaValidationError as exc:
             raise ValidationError(exc)
-
-        return data
 
     def update(self, data, validate=True):
         """

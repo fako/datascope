@@ -74,14 +74,12 @@ class ExtractProcessor(Processor):
         if nodes is None:
             raise DSNoContent("Found no nodes at {}".format(self._at))
 
-        results = []
         for node in nodes:
             result = copy(context)
             for name, objective in six.iteritems(self._objective):
                 result[name] = reach(objective, node)
-            results.append(result)
+            yield result
 
-        return results
 
     def text_html(self, soup):  # soup used in eval!
 
@@ -93,11 +91,8 @@ class ExtractProcessor(Processor):
         if not isinstance(at, list):
             elements = [at]
 
-        results = []
         for el in elements:  # el used in eval!
             result = copy(context)
             for name, objective in six.iteritems(self._objective):
                 result[name] = eval(objective) if objective else objective
-            results.append(result)
-
-        return results
+            yield result

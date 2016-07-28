@@ -1,6 +1,8 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 import six
 
+from collections import Iterator
+
 from django.db import models
 from django.conf import settings
 from django.core.urlresolvers import reverse
@@ -9,6 +11,8 @@ import json_field
 from json_field.fields import JSONEncoder, JSONDecoder
 
 from core.models.organisms import Organism, Individual
+from core.utils.helpers import ibatch
+from core.utils.data import reach
 
 
 class IndexEncoder(JSONEncoder):
@@ -49,16 +53,12 @@ class Collective(Organism):
         :param schema: The JSON schema to use for validation.
         :return: Valid data
         """
-        if not isinstance(data, list):
+        if not isinstance(data, Iterator):
             data = [data]
-        return [
+        for instance in data:
             Individual.validate(instance, schema)
-            if isinstance(instance, dict)
-            else Individual.validate(instance.properties, schema)
-            for instance in data
-        ]
 
-    def update(self, data, validate=True):
+    def update(self, data, validate=True, reset=True, batch_size=500):
         """
         Update the instance with new data by adding to the Collective
         or by updating Individuals that are on the Collective.
@@ -67,15 +67,18 @@ class Collective(Organism):
         :param validate: (optional) whether to validate data or not (yes by default)
         :return: A list of updated or created instances.
         """
-        if validate:
-            data = Collective.validate(data, self.schema)
-        assert isinstance(data, (list, dict,)), \
-            "Collective.update expects data to be formatted as list or dict not {}".format(type(data))
+        assert isinstance(data, (Iterator, list, tuple, dict, Individual)), \
+            "Collective.update expects data to be formatted as iteratable, dict or Individual not {}".format(type(data))
+
+        if reset:
+            self.individual_set.all().delete()
 
         def prepare_updates(data):
 
             prepared = []
             if isinstance(data, dict):
+                if validate:
+                    Individual.validate(data, self.schema)
                 individual = Individual(
                     community=self.community,
                     collective=self,
@@ -85,6 +88,10 @@ class Collective(Organism):
                 individual.clean()
                 prepared.append(individual)
             elif isinstance(data, Individual):
+                if validate:
+                    Individual.validate(data, self.schema)
+                data.id = None
+                data.collective = self
                 data.clean()
                 prepared.append(data)
             else:  # type is list
@@ -92,9 +99,9 @@ class Collective(Organism):
                     prepared += prepare_updates(instance)
             return prepared
 
-        updates = prepare_updates(data)
-        self.individual_set.all().delete()
-        Individual.objects.bulk_create(updates, batch_size=settings.MAX_BATCH_SIZE)
+        for updates in ibatch(data, batch_size=batch_size):
+            updates = prepare_updates(updates)
+            Individual.objects.bulk_create(updates, batch_size=settings.MAX_BATCH_SIZE)
 
     @property
     def content(self):
@@ -188,7 +195,7 @@ class Collective(Organism):
         :return: The influenced individual
         """
         if self.identifier:
-            individual.identity = individual[self.identifier]
+            individual.identity = reach("$." + self.identifier, individual.properties)
         if self.indexes:
             index_keys = self._get_index_keys()
             individual = self.set_index_for_individual(individual, index_keys)

@@ -5,6 +5,7 @@ from django.utils.encoding import python_2_unicode_compatible
 from itertools import groupby
 from collections import OrderedDict, Iterator
 from datetime import datetime
+import logging
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, ContentType
@@ -21,6 +22,9 @@ from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
 from core.tasks import manifest_community
 from core.exceptions import DSProcessUnfinished, DSProcessError
+
+
+log = logging.getLogger("datascope")
 
 
 class CommunityState(object):
@@ -167,9 +171,11 @@ class Community(models.Model, ProcessorMixin):
                     fatal_error = fatal_error or not should_continue
         return not fatal_error
 
-    def create_organism(self, organism_type, schema):
+    def create_organism(self, organism_type, schema, identifier=None):
         model = get_any_model(organism_type)
         org = model(community=self, schema=schema)
+        if identifier and hasattr(org, "identifier"):
+            org.identifier = identifier
         org.save()
         return org
 
@@ -197,11 +203,21 @@ class Community(models.Model, ProcessorMixin):
                 inp = grw.output
             elif inp is None:
                 inp = self.initial_input(*args)
-            elif inp in ["Individual", "Collective"]:
+            elif inp.startswith("Collective"):
+                if "#" in inp:
+                    inp, identifier = inp.split("#")
+                else:
+                    identifier = None
+                inp = self.create_organism(inp, sch, identifier)
+                inp.identifier = identifier
+            elif inp == "Individual":
                 inp = self.create_organism(inp, sch)
 
             out = growth_config["output"]
-            if out is not None and out.startswith("@"):
+
+            if out is None:
+                pass
+            elif out.startswith("@"):
                 grw = self.growth_set.filter(type=out[1:]).last()
                 if grw is None:
                     raise AssertionError(
@@ -210,8 +226,17 @@ class Community(models.Model, ProcessorMixin):
                 out = grw.output
             elif out == "&input":
                 out = inp
-            elif out in ["Individual", "Collective"]:
+            elif out.startswith("Collective"):
+                if "#" in out:
+                    out, identifier = out.split("#")
+                else:
+                    identifier = None
+                out = self.create_organism(out, sch, identifier)
+                out.identifier = identifier
+            elif out == "Individual":
                 out = self.create_organism(out, sch)
+            else:
+                raise AssertionError("Invalid value for output: {}".format(out))
             growth = Growth(
                 community=self,
                 type=growth_type,
@@ -266,11 +291,14 @@ class Community(models.Model, ProcessorMixin):
 
         result = None
         if self.state in [CommunityState.NEW]:
+            log.info("Preparing community")
             self.state = CommunityState.ASYNC if self.config.async else CommunityState.SYNC
             self.setup_growth(*args)
             self.current_growth = self.next_growth()
             self.save()  # in between save because next operations may take long and community needs to be claimed.
+            log.info("Preparing " + self.current_growth.type)
             self.call_begin_callback(self.current_growth.type, self.current_growth.input)
+            log.info("Starting " + self.current_growth.type)
             result = self.current_growth.begin()  # when synchronous result contains actual results
             self.save()
 
@@ -282,6 +310,7 @@ class Community(models.Model, ProcessorMixin):
                 self.state = CommunityState.ABORTED
                 self.save()
                 raise DSProcessError("Could not finish growth according to error callbacks.")
+            log.info("Finishing " + self.current_growth.type)
             self.call_finish_callback(self.current_growth.type, output, errors)
             try:
                 self.current_growth = self.next_growth()
@@ -290,7 +319,9 @@ class Community(models.Model, ProcessorMixin):
                 self.state = CommunityState.READY
                 self.save()
                 return True
+            log.info("Preparing " + self.current_growth.type)
             self.call_begin_callback(self.current_growth.type, self.current_growth.input)
+            log.info("Starting " + self.current_growth.type)
             result = self.current_growth.begin()
             self.save()
 

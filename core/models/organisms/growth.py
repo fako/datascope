@@ -1,9 +1,10 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
-import six
 from django.utils.encoding import python_2_unicode_compatible
 
 import logging
 from operator import xor
+from itertools import chain
+from collections import Iterator
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
@@ -157,14 +158,14 @@ class Growth(models.Model, ProcessorMixin):
         if not success_resources.exists() or not self.contribute:
             return []
         contribute_processor, callback, args_type = self.prepare_process(self.contribute)
-        contributions = []
+        contributions_iterators = []
         for success_resource in success_resources:
             try:
                 contribution = callback(success_resource)
                 if isinstance(contribution, dict):
-                    contributions.append(contribution)
-                elif isinstance(contribution, (list, tuple)):
-                    contributions += contribution
+                    contributions_iterators.append((contribution,))
+                elif isinstance(contribution, Iterator):
+                    contributions_iterators.append(contribution)
             except DSNoContent as exc:
                 log.debug("No content for {} with id {}: {}".format(
                     success_resource.__class__.__name__,
@@ -172,29 +173,36 @@ class Growth(models.Model, ProcessorMixin):
                     exc
                 ))
                 success_resource.retain(self)
-        return contributions
+        return chain(*contributions_iterators)
 
     def append_to_output(self, contributions):
+        assert isinstance(self.output, Collective), "append_to_output expects a Collective as output"
         self.output.update(contributions)
 
     def inline_by_key(self, contributions, inline_key):
-        groups = self.output.group_by(inline_key)
+        assert isinstance(self.output, Collective), "inline_by_key expects a Collective as output"
+        original_identifier = self.output.identifier
+        self.output.identifier = "{}.{}".format(original_identifier, original_identifier)
+        self.output.save()
         for contribution in contributions:
-            # TODO: figure out why we need to skip here at times
-            if contribution[inline_key] not in groups:
-                continue
-            for individual in groups[contribution[inline_key]]:
+            assert original_identifier == inline_key, \
+                "Identifier of output '{}' does not match inline key '{}'".format(original_identifier, inline_key)
+            affected_individuals = self.output.individual_set.filter(identity=contribution[inline_key])
+            for individual in affected_individuals.iterator():
                 individual.properties[inline_key] = contribution
+                individual.clean()
                 individual.save()
 
     def update_by_key(self, contributions, update_key):
-        groups = self.output.group_by(update_key)
+        assert isinstance(self.output, Collective), "update_by_key expects a Collective as output"
         for contribution in contributions:
-            # TODO: figure out why we need to skip here at times
-            if contribution[update_key] not in groups:
-                continue
-            for individual in groups[contribution[update_key]]:
+            identifier = self.output.identifier
+            assert identifier == update_key, \
+                "Identifier of output '{}' does not match update key '{}'".format(identifier, update_key)
+            affected_individuals = self.output.individual_set.filter(identity=contribution[update_key])
+            for individual in affected_individuals.iterator():
                 individual.update(contribution)
+                individual.clean()
                 individual.save()
 
     def save(self, *args, **kwargs):

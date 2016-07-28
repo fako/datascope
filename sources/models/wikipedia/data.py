@@ -25,6 +25,10 @@ class WikiDataItems(HttpResource):
         "kwargs": None
     }
 
+    ERROR_CODE_TO_STATUS = {
+        "no-such-entity": 404
+    }
+
     class Meta:
         verbose_name = "Wikidata items"
         verbose_name_plural = "Wikidata items"
@@ -91,6 +95,13 @@ class WikiDataItems(HttpResource):
         item["claims"] = claim_entities
         item["references"] = list(references)
         return item
+
+    def _handle_errors(self):
+        content_type, data = super(WikiDataItems, self).content
+        if data is not None and "error" in data:
+            error_code = data["error"]["code"]
+            self.set_error(self.ERROR_CODE_TO_STATUS[error_code])
+        super(WikiDataItems, self)._handle_errors()
 
     @property
     def content(self):

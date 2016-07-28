@@ -1,6 +1,8 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
-from django.test import TransactionTestCase, TestCase
+from mock import patch
+
+from django.test import TransactionTestCase
 from django.db.models.query import QuerySet
 
 from core.models.organisms import Collective, Individual
@@ -26,22 +28,70 @@ class TestCollective(TransactionTestCase):
     def test_validate(self):
         self.skipTest("not tested")
 
-    # TODO: patch validate and assert it being used or not
-    # TODO: patch influence and assert it is being used
-    # TODO: queries vary per database, make development and production use the same database
-    def test_update(self):
+    def get_update_list_and_ids(self, value):
         updates = []
+        individual_ids = []
         for index, individual in enumerate(self.instance2.individual_set.all()):
-            individual.properties["value"] = 3
+            individual_ids.append(individual.id)
+            individual.properties["value"] = value
             updates.append(individual) if index % 2 else updates.append(individual.properties)
-        with self.assertNumQueries(4):
-            self.instance2.update(updates, validate=False)
-        values = [
-            ind.properties["value"] for ind in
-            self.instance2.individual_set.all()
-        ]
-        self.assertEqual(len(values), 5)
-        map(lambda v: self.assertEqual(v, 3), values)
+        return updates, individual_ids
+
+    @patch('core.models.organisms.collective.Individual.validate')
+    @patch('core.models.organisms.collective.Collective.influence')
+    def test_update(self, influence_method, validate_method):
+        updates, individual_ids = self.get_update_list_and_ids(value="value 3")
+        with self.assertNumQueries(3):
+            # Query 1: reset
+            # Query 2: fetch community to set it for pure dicts becoming Individuals
+            # Query 3: insert individuals
+            self.instance2.update(updates, validate=False, reset=True)
+        validate_method.assert_not_called()
+        self.assertEqual(influence_method.call_count, 5)
+        self.assertEqual(self.instance2.individual_set.count(), 5)
+        for individual in self.instance2.individual_set.all():
+            self.assertEqual(individual.properties["value"], "value 3")
+            self.assertNotIn(individual.id, individual_ids)
+
+        influence_method.reset_mock()
+        updates, individual_ids = self.get_update_list_and_ids(value="value 4")
+        with self.assertNumQueries(2):
+            # Query 1: reset
+            # NB: no need to fetch community as this has been done
+            # Query 2: insert individuals
+            self.instance2.update(updates, validate=True, reset=True)
+        self.assertEqual(validate_method.call_count, 5)
+        self.assertEqual(influence_method.call_count, 5)
+        self.assertEqual(self.instance2.individual_set.count(), 5)
+        for individual in self.instance2.individual_set.all():
+            self.assertEqual(individual.properties["value"], "value 4")
+            self.assertNotIn(individual.id, individual_ids)
+
+        influence_method.reset_mock()
+        updates, individual_ids = self.get_update_list_and_ids(value="value 5")
+        with self.assertNumQueries(1):  # query set cache is filled, -1 query
+            # NB: no reset
+            # NB: no need to fetch community as this has been done
+            # Query 1: insert individuals
+            self.instance2.update(updates, validate=True, reset=False)
+        self.assertEqual(validate_method.call_count, 10)
+        self.assertEqual(influence_method.call_count, 5)
+        self.assertEqual(self.instance2.individual_set.count(), 10)
+        new_ids = []
+        for individual in self.instance2.individual_set.all():
+            self.assertIn(individual.properties["value"], ["value 4", "value 5"])
+            new_ids.append(individual.id)
+        for id_value in individual_ids:
+            self.assertIn(id_value, new_ids)
+
+    def test_update_batch(self):
+        updates = list(self.instance2.individual_set.all()) * 5
+        with self.assertNumQueries(3):
+            self.instance2.update(updates, validate=False, reset=True, batch_size=20)
+        self.assertEqual(self.instance2.individual_set.count(), 25)
+
+    def test_copy_update(self):
+        self.skipTest("test that updating with Individuals from other Collective will copy Individuals")
 
     def test_output(self):
         results = self.instance.output("$.value")

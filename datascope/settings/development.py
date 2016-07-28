@@ -19,6 +19,4 @@ MIDDLEWARE_CLASSES += (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
-MAX_BATCH_SIZE = None  # better for sqlite to let Django determine batch size
-
 STATIC_IP = "127.0.0.1"
