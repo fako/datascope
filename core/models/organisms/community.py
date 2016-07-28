@@ -203,7 +203,14 @@ class Community(models.Model, ProcessorMixin):
                 inp = grw.output
             elif inp is None:
                 inp = self.initial_input(*args)
-            elif inp in ["Individual", "Collective"]:
+            elif inp.startswith("Collective"):
+                if "#" in inp:
+                    inp, identifier = inp.split("#")
+                else:
+                    identifier = None
+                inp = self.create_organism(inp, sch, identifier)
+                inp.identifier = identifier
+            elif inp == "Individual":
                 inp = self.create_organism(inp, sch)
 
             out = growth_config["output"]

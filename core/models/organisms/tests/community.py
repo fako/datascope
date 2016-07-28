@@ -98,6 +98,7 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertIsInstance(growth2.output, Collective)
         self.assertIsInstance(growth3.input, Collective)
         self.assertIsInstance(growth3.output, Individual)
+        self.skipTest("test that input of a Collective might set an identifier")
 
     def test_next_growth(self):
         result = self.incomplete.next_growth()
