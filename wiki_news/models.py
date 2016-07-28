@@ -118,6 +118,8 @@ class WikiNewsCommunity(Community):
             if len(pages) >= 1000:
                 pages_growth.input.update(pages, reset=False)
                 pages = []
+        if len(pages):
+            pages_growth.input.update(pages, reset=False)
 
     def begin_wikidata(self, inp):
         pages = self.growth_set.filter(type="pages").last().output
