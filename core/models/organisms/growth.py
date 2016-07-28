@@ -181,13 +181,16 @@ class Growth(models.Model, ProcessorMixin):
 
     def inline_by_key(self, contributions, inline_key):
         assert isinstance(self.output, Collective), "inline_by_key expects a Collective as output"
+        original_identifier = self.output.identifier
+        self.output.identifier = "{}.{}".format(original_identifier, original_identifier)
+        self.output.save()
         for contribution in contributions:
-            identifier = self.output.identifier
-            assert identifier == inline_key, \
-                "Identifier of output '{}' does not match inline key '{}'".format(identifier, inline_key)
+            assert original_identifier == inline_key, \
+                "Identifier of output '{}' does not match inline key '{}'".format(original_identifier, inline_key)
             affected_individuals = self.output.individual_set.filter(identity=contribution[inline_key])
             for individual in affected_individuals.iterator():
                 individual.properties[inline_key] = contribution
+                individual.clean()
                 individual.save()
 
     def update_by_key(self, contributions, update_key):
@@ -199,6 +202,7 @@ class Growth(models.Model, ProcessorMixin):
             affected_individuals = self.output.individual_set.filter(identity=contribution[update_key])
             for individual in affected_individuals.iterator():
                 individual.update(contribution)
+                individual.clean()
                 individual.save()
 
     def save(self, *args, **kwargs):
