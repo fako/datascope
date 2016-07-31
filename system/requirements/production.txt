@@ -24,6 +24,7 @@ redis==2.10.5
 # Advanced features
 selenium==2.47.1
 pillow==2.9.0
+IndicoIo==0.15.4
 
 # Debug and test
 ipdb==0.8
