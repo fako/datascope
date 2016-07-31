@@ -3,7 +3,6 @@ from django.utils.encoding import python_2_unicode_compatible
 
 import logging
 from operator import xor
-from itertools import chain
 from collections import Iterator
 
 from django.db import models
@@ -156,16 +155,16 @@ class Growth(models.Model, ProcessorMixin):
 
     def prepare_contributions(self, success_resources):
         if not success_resources.exists() or not self.contribute:
-            return []
+            yield None
         contribute_processor, callback, args_type = self.prepare_process(self.contribute)
-        contributions_iterators = []
-        for success_resource in success_resources:
+        for success_resource in success_resources.iterator():
             try:
                 contribution = callback(success_resource)
                 if isinstance(contribution, dict):
-                    contributions_iterators.append((contribution,))
+                    yield contribution
                 elif isinstance(contribution, Iterator):
-                    contributions_iterators.append(contribution)
+                    for contrib in contribution:
+                        yield contrib
             except DSNoContent as exc:
                 log.debug("No content for {} with id {}: {}".format(
                     success_resource.__class__.__name__,
@@ -173,7 +172,7 @@ class Growth(models.Model, ProcessorMixin):
                     exc
                 ))
                 success_resource.retain(self)
-        return chain(*contributions_iterators)
+                yield None
 
     def append_to_output(self, contributions):
         assert isinstance(self.output, Collective), "append_to_output expects a Collective as output"
