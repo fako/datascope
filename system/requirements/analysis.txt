@@ -1,0 +1,4 @@
+-r production.txt
+
+scipy==0.15.1
+IndicoIo==0.15.4
