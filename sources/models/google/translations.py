@@ -1,8 +1,10 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
 import logging
+from itertools import zip_longest, starmap
 
 from core.models.resources.http import BrowserResource
+from core.exceptions import DSNoContent
 
 
 log = logging.getLogger("datascope")
@@ -23,19 +25,23 @@ class GoogleTranslate(BrowserResource):
         try:
             fallback = next(word for word in soup.find_all("span") if word.parent.get("id") == "result_box")
         except StopIteration:
+            fallback = None
             log.error("No fallback for: {}".format(self.uri))
 
-        def process_info(word, meaning, confidence, fallback):
+        def process_info(word, meaning, confidence):
             if word is not None:
                 word = word.text
                 meaning = meaning.text
-            else:
+            elif fallback is not None:
                 word = str(fallback)
                 meaning = ""
+            else:
+                raise DSNoContent("GoogleTranslate could not find any content for: {}".format(self.uri))
             if confidence is not None:
                 confidence = int(confidence["style"].split(" ")[1][:-3])  # confidence expressed like: "width: 24px;"
             return word, meaning, confidence
 
+        info = zip_longest(words, meanings, confidences)
         return [
             {
                 "language": self.request["args"][1],
@@ -43,5 +49,5 @@ class GoogleTranslate(BrowserResource):
                 "meanings": meaning,
                 "confidence": confidence
             }
-            for word, meaning, confidence in map(process_info, words, meanings, confidences, fallback)
+            for word, meaning, confidence in starmap(process_info, info)
         ]
