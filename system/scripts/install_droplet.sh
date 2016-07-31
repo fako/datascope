@@ -7,6 +7,10 @@
 # 2)  Manage security: https://www.digitalocean.com/community/tutorials/how-to-setup-a-firewall-with-ufw-on-an-ubuntu-and-debian-cloud-server
 # 3)  Install artillery: https://www.digitalocean.com/community/tutorials/how-to-set-up-an-artillery-honeypot-on-an-ubuntu-vps
 # 4)  Add bootstrap.py and secrets.py to /root
+#
+# TODO: include all steps necessary instead of having an after install manual process
+# After execution:
+# 1)  Take care of redis security: https://www.digitalocean.com/community/tutorials/how-to-install-and-use-redis
 
 # SETUP: install software
 apt-get install vim
@@ -32,6 +36,10 @@ wget http://download.redis.io/releases/redis-stable.tar.gz
 tar xzf redis-stable.tar.gz
 cd redis-stable
 make
+make install
+cd utils
+./install_server.sh
+update-rc.d redis_6379 defaults
 
 # SETUP: basic repositories
 cd /
