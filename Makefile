@@ -11,7 +11,9 @@ deploy: clean
 	sudo service celeryd restart
 
 deploy-wiki-labs: clean
-	webservice2 uwsgi-python restart
+	webservice2 uwsgi-plain start
+	jstop celery
+	jstart -l release=trusty celery.sh
 
 dump:
 	./manage.py dumpdata --natural-foreign -e contenttypes -e auth.Permission -e admin -e sessions --indent=4 > db-dump.$(now).json
@@ -25,3 +27,6 @@ stop-development:
 
 test:
 	./manage.py test --settings=datascope.settings.test
+
+grow-feed-wiki-labs:
+	jsub -l release=trusty -mem 800m grow.sh
