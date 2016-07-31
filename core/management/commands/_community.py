@@ -1,11 +1,15 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
 from datetime import datetime
+import logging
 
 from django.core.management.base import BaseCommand
 
 from core.utils.helpers import get_any_model
 from core.utils.configuration import DecodeConfigAction
+
+
+log = logging.getLogger("datascope")
 
 
 class CommunityCommand(BaseCommand):
@@ -33,6 +37,8 @@ class CommunityCommand(BaseCommand):
         self.signature = Community.get_signature_from_input(*args, **self.config)
 
         community = self.get_community()
-        print("Start:", datetime.now())
+        log.info("Signature: {}".format(self.signature))
+        log.info("Community: {}".format(community))
+        log.info("Start: {}".format(datetime.now()))
         self.handle_community(community, *args, **options)
-        print("End:", datetime.now())
+        log.info("End: {}".format(datetime.now()))
