@@ -12,6 +12,9 @@ USE_WEBSOCKETS = False
 SECRET_KEY = 'default'
 DATABASE_TYPE = 'mysql'
 
+from PIL import ImageFile
+ImageFile.LOAD_TRUNCATED_IMAGES = True
+
 
 #######################################################
 # LOAD ENVIRONMENT
