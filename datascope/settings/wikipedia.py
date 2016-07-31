@@ -7,5 +7,6 @@ DATABASES["default"]["PASSWORD"] = MYSQL_PASSWORD
 DATABASES["default"]["HOST"] = 'tools-db'
 
 STATIC_URL = "http://tools-static.wmflabs.org/algo-news/static/"
+BROKER_URL = 'redis://tools-redis:6379/0'
 
 # TODO: add STATIC_IP

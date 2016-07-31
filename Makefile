@@ -11,9 +11,9 @@ deploy: clean
 	sudo service celeryd restart
 
 deploy-wiki-labs: clean
-	webservice2 uwsgi-plain start
+	webservice2 uwsgi-plain restart
 	jstop celery
-	jstart -l release=trusty celery.sh
+	jstart -l release=trusty -mem 1024m celery.sh
 
 dump:
 	./manage.py dumpdata --natural-foreign -e contenttypes -e auth.Permission -e admin -e sessions --indent=4 > db-dump.$(now).json
