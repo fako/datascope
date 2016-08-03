@@ -1,7 +1,14 @@
+from mock import Mock
+
 from datascope.configuration import MOCK_CONFIGURATION
+from django.db.models import QuerySet
 
 from core.models.resources.http import HttpResource
 from core.tests.mocks.requests import MockRequests
+
+
+MockErrorQuerySet = Mock(QuerySet)
+MockErrorQuerySet.count = Mock(return_value=0)
 
 
 class HttpResourceMock(HttpResource):

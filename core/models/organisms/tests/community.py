@@ -8,7 +8,7 @@ from core.models.organisms import Individual, Collective, Growth, Community, Org
 from core.models.organisms.community import CommunityState
 from core.models.organisms.growth import GrowthState
 from core.tests.mocks.community import CommunityMock
-from core.tests.mocks.http import HttpResourceMock
+from core.tests.mocks.http import HttpResourceMock, MockErrorQuerySet
 from core.exceptions import DSProcessUnfinished, DSProcessError
 
 
@@ -232,7 +232,7 @@ class TestCommunityMock(CommunityTestMixin):
             self.assertFalse(begin_growth.called)
             self.assertEqual(self.instance.state, CommunityState.ASYNC)
 
-        with patch(growth_finish_method, return_value=(first_growth.output, [])) as finish_growth:
+        with patch(growth_finish_method, return_value=(first_growth.output, MockErrorQuerySet)) as finish_growth:
             second_growth = self.instance.growth_set.all()[1]
             with patch("core.models.organisms.community.Community.next_growth", return_value=second_growth):
                 try:
@@ -243,14 +243,14 @@ class TestCommunityMock(CommunityTestMixin):
             self.assertEqual(self.instance.growth_set.count(), 3)
             self.assertIsInstance(self.instance.current_growth, Growth)
             self.assertEqual(self.instance.current_growth.id, second_growth.id)
-            self.instance.call_finish_callback.assert_called_once_with("phase1", first_growth.output, [])
+            self.instance.call_finish_callback.assert_called_once_with("phase1", first_growth.output, MockErrorQuerySet)
             self.instance.call_begin_callback.assert_called_once_with("phase2", second_growth.input)
             begin_growth.assert_called_once_with()
             self.assertEqual(self.instance.state, CommunityState.ASYNC)
 
         self.set_callback_mocks()
         begin_growth.reset_mock()
-        with patch(growth_finish_method, return_value=(first_growth.output, [])) as finish_growth:
+        with patch(growth_finish_method, return_value=(second_growth.output, MockErrorQuerySet)) as finish_growth:
             third_growth = self.instance.growth_set.last()
             with patch("core.models.organisms.community.Community.next_growth", return_value=third_growth):
                 try:
@@ -261,14 +261,14 @@ class TestCommunityMock(CommunityTestMixin):
             self.assertEqual(self.instance.growth_set.count(), 3)
             self.assertIsInstance(self.instance.current_growth, Growth)
             self.assertEqual(self.instance.current_growth.id, third_growth.id)
-            self.instance.call_finish_callback.assert_called_once_with("phase2", second_growth.output, [])
+            self.instance.call_finish_callback.assert_called_once_with("phase2", second_growth.output, MockErrorQuerySet)
             self.instance.call_begin_callback.assert_called_once_with("phase3", second_growth.output)
             begin_growth.assert_called_once_with()
             self.assertEqual(self.instance.state, CommunityState.ASYNC)
 
         self.set_callback_mocks()
         begin_growth.reset_mock()
-        with patch(growth_finish_method, return_value=(third_growth.output, [])) as finish_growth:
+        with patch(growth_finish_method, return_value=(third_growth.output, MockErrorQuerySet)) as finish_growth:
             self.set_callback_mocks()
             with patch("core.models.organisms.community.Community.next_growth", side_effect=Growth.DoesNotExist):
                 done = self.instance.grow()  # finish growth
@@ -276,7 +276,7 @@ class TestCommunityMock(CommunityTestMixin):
             self.assertEqual(self.instance.growth_set.count(), 3)
             self.assertIsInstance(self.instance.current_growth, Growth)
             self.assertEqual(self.instance.current_growth.id, third_growth.id)
-            self.instance.call_finish_callback.assert_called_once_with("phase3", third_growth.output, [])
+            self.instance.call_finish_callback.assert_called_once_with("phase3", third_growth.output, MockErrorQuerySet)
             self.assertIsInstance(self.instance.kernel, Individual)
             self.assertFalse(self.instance.call_begin_callback.called)
             self.assertFalse(begin_growth.called)
