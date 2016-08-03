@@ -305,7 +305,12 @@ class Community(models.Model, ProcessorMixin):
         while self.kernel is None:
 
             output, errors = self.current_growth.finish(result)  # will raise when Growth is not finished
-            should_finish = self.call_error_callbacks(self.current_growth.type, errors, output) if errors else True
+            error_count = errors.count()
+            if error_count > 1:
+                should_finish = self.call_error_callbacks(self.current_growth.type, errors, output)
+                log.info("{} errors occurred".format(error_count))
+            else:
+                should_finish = True
             if not should_finish:
                 self.state = CommunityState.ABORTED
                 self.save()
