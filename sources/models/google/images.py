@@ -59,7 +59,8 @@ class GoogleImage(GoogleQuery):
     def content(self):
         content_type, data = super(GoogleImage, self).content
         try:
-            data["queries"]["request"][0]["searchTerms"] = data["queries"]["request"][0]["searchTerms"][1:-1]
+            if data is not None:
+                data["queries"]["request"][0]["searchTerms"] = data["queries"]["request"][0]["searchTerms"][1:-1]
         except (KeyError, IndexError):
             raise DSInvalidResource("Google Image resource does not specify searchTerms", self)
         return content_type, data

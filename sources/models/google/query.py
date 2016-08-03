@@ -15,12 +15,19 @@ class GoogleQuery(HttpResource):
 
     def _handle_errors(self):
         try:
-            return super(GoogleQuery, self)._handle_errors()
+            no_errors = super(GoogleQuery, self)._handle_errors()
         except DSHttpError40X as exception:
             if self.status == 403:
                 raise DSHttpError403LimitExceeded(exception, resource=self)
             else:
                 raise exception
+        content_type, data = self.content
+        if no_errors and "items" not in data:
+            self.status = 204
+
+    @property
+    def success(self):
+        return super(GoogleQuery, self).success and self.status != 204
 
     class Meta:
         abstract = True

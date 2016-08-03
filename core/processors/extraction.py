@@ -80,7 +80,6 @@ class ExtractProcessor(Processor):
                 result[name] = reach(objective, node)
             yield result
 
-
     def text_html(self, soup):  # soup used in eval!
 
         context = {}
