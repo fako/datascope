@@ -21,6 +21,10 @@ class DSHttpWarning300(DSResourceException):
     pass
 
 
+class DSHttpWarning204(DSResourceException):
+    pass
+
+
 class DSInvalidResource(DSResourceException):
     pass
 

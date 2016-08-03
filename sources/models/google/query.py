@@ -1,7 +1,7 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
 from core.models.resources.http import HttpResource
-from core.exceptions import DSHttpError40X, DSHttpError403LimitExceeded
+from core.exceptions import DSHttpError40X, DSHttpError403LimitExceeded, DSHttpWarning204
 
 
 class GoogleQuery(HttpResource):
@@ -24,6 +24,8 @@ class GoogleQuery(HttpResource):
         content_type, data = self.content
         if no_errors and "items" not in data:
             self.status = 204
+            # TODO: make clear which results are missing through "variables" interface
+            raise DSHttpWarning204("Google Search did not yield any results.", resource=self)
 
     @property
     def success(self):
