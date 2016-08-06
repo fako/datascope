@@ -1,7 +1,7 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
 from collections import OrderedDict
-from itertools import groupby
+from itertools import groupby, islice
 from datetime import datetime
 
 from core.models.organisms import Community, Individual
@@ -135,7 +135,7 @@ class WikiNewsCommunity(Community):
 
     @property
     def manifestation(self):
-        return list(super(WikiNewsCommunity, self).manifestation)[:20]
+        return islice(super(WikiNewsCommunity, self).manifestation, 20)
 
     class Meta:
         verbose_name = "Wiki news"
