@@ -1,7 +1,7 @@
 PREPARATION
 + Rename core to legacy
 + Update all packages to latest version (mainly: Django, DRF and Celery)
-- Full test and deploy
++ Full test and deploy
 
 STORAGE
 + Simplify existing storage functionality in new "core"
@@ -30,19 +30,15 @@ COMMUNITY
 + Make a spirit provide growth for a community
 + See how scraping will fit into the picture
 
-FACEBOOK PROFILE
-- Provide a way to use OAuth as a process
-- Create resources
-- Create community
-
 PORT ALGORITHMS
-- Create new style visual-translations
-- Test and deploy
++ Create new style visual-translations
++ Test and deploy
+- Fix bug with not-found translations giving 500s
 - Create new style people-suggestions
 - Test and deploy
 - Create new style city-celebrities
 - Test and deploy
 
 DEPRECATE LEGACY
-- Remove all legacy code
-- Update to Python3
++ Remove all legacy code
++ Update to Python3
