@@ -19,7 +19,7 @@
                     <div class="{{ words|col_md }}">
 
                         <h3>{{ word.word }}</h3>
-                        {% for image in word.images %}
+                        {% for image in word.images|slice:":10" %}
                             <p><a href="{{ image.url }}"><img src="{{ image.thumbnail }}"/></a></p>
                         {% endfor %}
                         {% for video in word.videos %}
