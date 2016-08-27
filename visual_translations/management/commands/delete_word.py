@@ -15,9 +15,9 @@ class Command(CommunityCommand):
         parser.add_argument('-a', '--args', type=str, nargs="*", default="")
         parser.add_argument('-c', '--config', type=str, action=DecodeConfigAction, nargs="?", default={})
         parser.add_argument('-l', '--locale', type=str, nargs="?", default="")
-        parser.add_argument('-w', '--word', type=lambda s: str(s, encoding='utf-8'), nargs="?", default="")
+        parser.add_argument('-w', '--word', type=str, nargs="?", default="")
 
-    def handle_community(self, community, **options):
+    def handle_community(self, community, *arguments, **options):
         word_encoded = json.dumps(options["word"])
         qs = community.individual_set.filter(properties__contains="word\": {}".format(word_encoded))
         print("Deleting {} individuals".format(qs.count()))
