@@ -1,0 +1,28 @@
+{% extends "core/base.html" %}
+{% load bootstrap_tags i18n static %}
+
+{% block theme-css %}
+    {{ block.super }}
+    <link href="{% static "visual_translations/css/visual-translations.css" %}" rel="stylesheet" />
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        {% for language, words in response.results %}
+
+            <div class="row">
+                <div class="col-md-12"><h2>{{ language }}</h2></div>
+            </div>
+
+            <div class="row">
+                {% for word in words %}
+                    <h3>{{ word.word }}</h3>
+                    <p>{{ word.meanings }}</p>
+                {% endfor %}
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endblock %}

@@ -4,7 +4,7 @@ from django.conf.urls import url
 
 from core.views.community import CommunityView
 from visual_translations.models import VisualTranslationsEUCommunity, VisualTranslationsBRICCommunity
-from visual_translations.views.community import VisualTranslationsHtmlView
+from visual_translations.views.community import VisualTranslationsHtmlView, VisualTanslationsDisambiguationView
 from visual_translations.views.eu import visual_translation_map, visual_translations_controller, web_sockets_broadcast
 
 
@@ -33,6 +33,12 @@ urlpatterns = [
         VisualTranslationsHtmlView.as_view(),
         kwargs={"community_class": VisualTranslationsEUCommunity},
         name=VisualTranslationsEUCommunity.get_name() + "_html"
+    ),
+    url(
+        r'^visual-translations-eu/disambiguation/(?P<path>.+)?/?$',
+        VisualTanslationsDisambiguationView.as_view(),
+        kwargs={"community_class": VisualTranslationsEUCommunity},
+        name=VisualTranslationsEUCommunity.get_name() + "_disambiguation"
     ),
 
     url(r'^visual-translations-eu/map/(?P<term>[a-z+]+)/?$', visual_translation_map),

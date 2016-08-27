@@ -24,3 +24,10 @@ class VisualTranslationsHtmlView(HtmlCommunityView):
         """
         template = HtmlCommunityView.html_template_for(community_class, response)
         return template.replace(community_class.get_name(), "visual_translations")
+
+
+class VisualTanslationsDisambiguationView(VisualTranslationsHtmlView):
+
+    @staticmethod
+    def html_template_for(community_class, response):
+        return "visual_translations/disambiguation.html"
