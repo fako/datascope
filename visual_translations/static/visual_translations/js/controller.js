@@ -127,10 +127,12 @@ $(function(){
 
     $helpScreen.click(function(){
         $helpScreen.removeClass('active');
+        wsConnection.send("setHelpScreen:off")
     });
 
     $('#help-button').click(function(){
         $helpScreen.addClass('active');
+        wsConnection.send("setHelpScreen:on")
     });
 
 

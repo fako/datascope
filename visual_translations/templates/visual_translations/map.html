@@ -242,6 +242,13 @@
                     default:
                         throw "Invalid command to scroll document: " + command;
                 }
+            },
+            setHelpScreen(state) {
+                if(state === 'on') {
+                    $('#help-screen').addClass('active');
+                } else {
+                    $('#help-screen').removeClass('active');
+                }
             }
         };
         var wsEndpointURI = new URI("{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast&publish-broadcast");
