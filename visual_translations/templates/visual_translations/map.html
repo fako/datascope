@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block theme-css %}
+    <link rel="stylesheet" href="{% static "visual_translations/css/visual-translations.css" %}"/>
     <style>
 
         body {
@@ -253,6 +254,7 @@
     <script src="{% static "visual_translations/js/topojson.min.js" %}"></script>
     <script src="{% static "visual_translations/js/map.js" %}"></script>
     <script src="{% static "visual_translations/js/socket.js" %}"></script>
+    <script src="{% static "visual_translations/js/help.js" %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -271,4 +273,12 @@
             {% endfor %}
         </defs>
     </svg>
+
+    <div id="help-screen">
+        <h1>
+            discover how images<br/>
+            when searching for "<span id="word-highlight"></span>"<br/>
+            look different per country
+        </h1>
+    </div>
 {% endblock %}

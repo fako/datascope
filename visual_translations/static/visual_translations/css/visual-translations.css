@@ -1,1 +1,25 @@
 /* place for some custom CSS */
+html {
+    font-family: Verdana, sans-serif;
+}
+
+#help-screen {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 1000px;
+    z-index: 100;
+
+    color: white;
+    background-color: black;
+    opacity: .75;
+}
+#help-screen h1 {
+    line-height: 1.618;
+    margin-top: 50px;
+    margin-left: 80px;
+}
+#word-highlight {
+    text-transform: uppercase;
+}
