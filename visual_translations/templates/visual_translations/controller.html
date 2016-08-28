@@ -4,7 +4,9 @@
 {% block theme-css %}
     <link href="{% static "visual_translations/css/jquery-ui.min.css" %}" rel="stylesheet"/>
     <link href="{% static "visual_translations/css/jquery-ui.theme.min.css" %}" rel="stylesheet"/>
+    <link href="{% static "visual_translations/css/visual-translations.css" %}" rel="stylesheet"/>
     <link href="{% static "visual_translations/css/knob.css" %}" rel="stylesheet"/>
+    <link href="{% static "visual_translations/css/visual-translations.css" %}" rel="stylesheet"/>
     <link href="{% static "visual_translations/css/controller.css" %}" rel="stylesheet"/>
     <style>
         /* Styling fed by Django */
@@ -44,6 +46,10 @@
 
 {% block body %}
 
+    <div id="help-button">
+        <a href="#" onclick="$('#help-screen').addClass('active');">?</a>
+    </div>
+
     <section id="main" class="container-fluid">
         <div class="row">
             <div id="arrows" class="col-xs-5">
@@ -67,5 +73,13 @@
             </div>
         </div>
     </section>
+
+    <div id="help-screen" onclick="$(this).removeClass('active')" class="active">
+        <h1>
+            images originating from a country <br/>
+            are shown inside the country borders<br/>
+            press anywhere to start
+        </h1>
+    </div>
 
 {% endblock %}
