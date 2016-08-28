@@ -105,7 +105,6 @@ $(function() {
 // ZOOM SLIDER
 $(function(){
 
-
     // Init the slider
     $("#zoom-component" ).slider({
         orientation: "vertical",
@@ -120,6 +119,22 @@ $(function(){
 
 });
 
+
+// HELP
+$(function(){
+
+    var $helpScreen = $("#help-screen");
+
+    $helpScreen.click(function(){
+        $helpScreen.removeClass('active');
+    });
+
+    $('#help-button').click(function(){
+        $helpScreen.addClass('active');
+    });
+
+
+});
 
 // Reset projection when reloading
 $(window).unload(function() {
