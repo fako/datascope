@@ -121,18 +121,29 @@ $(function(){
 
 
 // HELP
-$(function(){
+$(function() {
+
+    function rotateLabel() {
+        var $knobComponent = $('#knob-component');
+        var $knobLabels = $knobComponent.find('.knobLabel');
+        var $control = $('#control');
+        var $currentLabel = $('.knobLabel.active');
+        $control.knob('snapTo', ($knobLabels.index($currentLabel)+1) * 60);
+    }
 
     var $helpScreen = $("#help-screen");
+    var $helpRotation = setInterval(rotateLabel, 7000);
 
     $helpScreen.click(function(){
         $helpScreen.removeClass('active');
-        wsConnection.send("setHelpScreen:off")
+        wsConnection.send("setHelpScreen:off");
+        clearInterval($helpRotation);
     });
 
     $('#help-button').click(function(){
         $helpScreen.addClass('active');
-        wsConnection.send("setHelpScreen:on")
+        wsConnection.send("setHelpScreen:on");
+        $helpRotation = setInterval(rotateLabel, 7000);
     });
 
 
