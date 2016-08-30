@@ -170,13 +170,14 @@
             getActiveZoom: function() {
                 return this.getParameterByName("zoom") || "small";
             },
-            setDocument: function(word, zoom) {
+            setDocument: function(word, zoom, help) {
 
                 // Get the vars
                 var current_url = new URI(window.location).removeSearch("x-offset", "y-offset");
                 var params = URI.parseQuery(current_url.query());
                 var current_zoom = params["zoom"];
                 params["zoom"] = zoom;
+                params["help"] = help;
                 var path = current_url.pathname().split('/');
                 path[path.length-2] = word;
 
@@ -244,6 +245,7 @@
                 }
             },
             setHelpScreen(state) {
+                VT.helpState = state;
                 if(state === 'on') {
                     $('#help-screen').addClass('active');
                 } else {
@@ -251,15 +253,18 @@
                 }
             }
         };
+
         var wsEndpointURI = new URI("{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast&publish-broadcast");
         wsEndpointURI.hostname("{{ STATIC_IP }}");
 
         VT.zoomLevel = VT.functions.getParameterByName("zoom") || "small";
         VT.xOffset = VT.functions.getParameterByName("x-offset");
         VT.yOffset = VT.functions.getParameterByName("y-offset");
+        VT.helpState = VT.functions.getParameterByName("help") || "on";
         VT.webSocketEndpoint = wsEndpointURI.toString();
         VT.webSocketHeartbeat = {{ WS4REDIS_HEARTBEAT }};
         VT.topoJSONFile = "{% static region_topo_json %}";
+        VT.functions.setHelpScreen(VT.helpState);
     </script>
     <script src="{% static "visual_translations/js/d3.v3.min.js" %}"></script>
     <script src="{% static "visual_translations/js/topojson.min.js" %}"></script>
@@ -285,11 +290,12 @@
         </defs>
     </svg>
 
-    <div id="help-screen" class="active">
+    <div id="help-screen">
         <h1>
             discover how images<br/>
             when searching for "<span id="word-highlight"></span>"<br/>
             look different per country
         </h1>
     </div>
+
 {% endblock %}

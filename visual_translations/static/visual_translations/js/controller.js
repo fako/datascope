@@ -3,6 +3,7 @@ var rad2deg = 180/Math.PI;
 var deg = 0;
 var componentRadius = 200, topOffset = 220, leftOffset = 150;
 var zoomLevel = "small";
+var helpScreen = "on";
 
 
 // THE WORDS POINTER
@@ -82,7 +83,8 @@ $(function() {
                 $this.addClass('active');
                 var $self = $this;
                 interval = setInterval(function() {
-                    wsConnection.send("scrollDocument:" + arrowValues[$arrows.index($self)]);
+                    console.log("sending: " + "setDocument:" + arrowValues[$arrows.index($(this))] + ',' + zoomLevel + ',' + helpScreen);
+                    wsConnection.send("scrollDocument:" + arrowValues[$arrows.index($(this))] + ',' + zoomLevel + ',' + helpScreen);
                 }, 100);
             },
             'mouseup touchend touchcancel': function(event){
@@ -94,7 +96,8 @@ $(function() {
                 interval = false;
             },
             'click': function(event){
-                wsConnection.send("scrollDocument:" + arrowValues[$arrows.index($(this))]);
+                console.log("sending: " + "setDocument:" + arrowValues[$arrows.index($(this))] + ',' + zoomLevel + ',' + helpScreen);
+                wsConnection.send("scrollDocument:" + arrowValues[$arrows.index($(this))] + ',' + zoomLevel + ',' + helpScreen);
             }
         });
     });
@@ -111,8 +114,8 @@ $(function(){
         change: function(event, ui) {
             var zoomLevels = ["small", "large", "xlarge"];
             window.zoomLevel = zoomLevels[ui.value];
-            console.log("sending: " + "setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel);
-            wsConnection.send("setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel);
+            console.log("sending: " + "setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel + ',' + helpScreen);
+            wsConnection.send("setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel + ',' + helpScreen);
         },
         max: 2
     });
@@ -123,27 +126,18 @@ $(function(){
 // HELP
 $(function() {
 
-    function rotateLabel() {
-        var $knobComponent = $('#knob-component');
-        var $knobLabels = $knobComponent.find('.knobLabel');
-        var $control = $('#control');
-        var $currentLabel = $('.knobLabel.active');
-        $control.knob('snapTo', ($knobLabels.index($currentLabel)+1) * 60);
-    }
-
     var $helpScreen = $("#help-screen");
-    var $helpRotation = setInterval(rotateLabel, 7000);
 
     $helpScreen.click(function(){
         $helpScreen.removeClass('active');
+        helpScreen = "off";
         wsConnection.send("setHelpScreen:off");
-        clearInterval($helpRotation);
     });
 
     $('#help-button').click(function(){
         $helpScreen.addClass('active');
+        helpScreen = "on";
         wsConnection.send("setHelpScreen:on");
-        $helpRotation = setInterval(rotateLabel, 7000);
     });
 
 
@@ -151,6 +145,6 @@ $(function() {
 
 // Reset projection when reloading
 $(window).unload(function() {
-    wsConnection.send("setDocument:pension,small");
+    wsConnection.send("setDocument:pension,small," + helpScreen);
 
 });
