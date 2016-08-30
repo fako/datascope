@@ -139,10 +139,6 @@
         }
         body::-webkit-scrollbar { width: 0 !important }
 
-        #help-screen {
-            height: 1000px;
-        }
-
     </style>
 {% endblock %}
 
@@ -246,10 +242,16 @@
             },
             setHelpScreen(state) {
                 VT.helpState = state;
+                $helpScreen = $('#help-screen');
+                $map = $('#map');
+                console.log($map.width(), $map.height());
+                $helpScreen.width($map.width());
+                $helpScreen.height($map.height());
+
                 if(state === 'on') {
-                    $('#help-screen').addClass('active');
+                    $helpScreen.addClass('active');
                 } else {
-                    $('#help-screen').removeClass('active');
+                    $helpScreen.removeClass('active');
                 }
             }
         };
@@ -264,7 +266,7 @@
         VT.webSocketEndpoint = wsEndpointURI.toString();
         VT.webSocketHeartbeat = {{ WS4REDIS_HEARTBEAT }};
         VT.topoJSONFile = "{% static region_topo_json %}";
-        VT.functions.setHelpScreen(VT.helpState);
+
     </script>
     <script src="{% static "visual_translations/js/d3.v3.min.js" %}"></script>
     <script src="{% static "visual_translations/js/topojson.min.js" %}"></script>

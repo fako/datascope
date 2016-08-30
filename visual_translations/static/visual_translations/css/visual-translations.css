@@ -20,9 +20,10 @@ html {
     display: block;
 }
 #help-screen h1 {
+    position: fixed;
+    top: 50px;
+    left: 80px;
     line-height: 1.618;
-    margin-top: 50px;
-    margin-left: 80px;
 }
 #word-highlight {
     text-transform: uppercase;

@@ -74,3 +74,4 @@ var originalWidth = 1400, originalHeight = 1000,
         });
 
         window.scrollTo(horizontalOffset, verticalOffset);
+        VT.functions.setHelpScreen(VT.helpState);
