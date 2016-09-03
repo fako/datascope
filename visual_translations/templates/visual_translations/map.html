@@ -137,7 +137,7 @@
             left: 0;
             overflow: scroll !important;
         }
-        body::-webkit-scrollbar { width: 0 !important }
+        body::-webkit-scrollbar { width: 0 !important; height: 0 !important; }
 
     </style>
 {% endblock %}
@@ -243,11 +243,6 @@
             setHelpScreen(state) {
                 VT.helpState = state;
                 $helpScreen = $('#help-screen');
-                $map = $('#map');
-                console.log($map.width(), $map.height());
-                $helpScreen.width($map.width());
-                $helpScreen.height($map.height());
-
                 if(state === 'on') {
                     $helpScreen.addClass('active');
                 } else {
