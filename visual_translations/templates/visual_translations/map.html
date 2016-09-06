@@ -259,7 +259,7 @@
         VT.webSocketEndpoint = wsEndpointURI.toString();
         VT.webSocketHeartbeat = {{ WS4REDIS_HEARTBEAT }};
         VT.topoJSONFile = "{% static region_topo_json %}";
-        $(document).ready(function(){
+        $(window).load(function(){
             VT.functions.setHelpScreen(VT.helpState);
         });
 
