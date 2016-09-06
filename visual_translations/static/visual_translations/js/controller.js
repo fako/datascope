@@ -83,8 +83,8 @@ $(function() {
                 $this.addClass('active');
                 var $self = $this;
                 interval = setInterval(function() {
-                    console.log("sending: " + "setDocument:" + arrowValues[$arrows.index($(this))] + ',' + zoomLevel + ',' + helpScreen);
-                    wsConnection.send("scrollDocument:" + arrowValues[$arrows.index($(this))] + ',' + zoomLevel + ',' + helpScreen);
+                    console.log("sending: " + "scrollDocument:" + arrowValues[$arrows.index($self)]);
+                    wsConnection.send("scrollDocument:" + arrowValues[$arrows.index($self)]);
                 }, 100);
             },
             'mouseup touchend touchcancel': function(event){
@@ -96,8 +96,8 @@ $(function() {
                 interval = false;
             },
             'click': function(event){
-                console.log("sending: " + "setDocument:" + arrowValues[$arrows.index($(this))] + ',' + zoomLevel + ',' + helpScreen);
-                wsConnection.send("scrollDocument:" + arrowValues[$arrows.index($(this))] + ',' + zoomLevel + ',' + helpScreen);
+                console.log("sending: " + "scrollDocument:" + arrowValues[$arrows.index($(this))]);
+                wsConnection.send("scrollDocument:" + arrowValues[$arrows.index($(this))]);
             }
         });
     });
