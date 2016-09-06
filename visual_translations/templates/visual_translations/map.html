@@ -167,7 +167,6 @@
                 return this.getParameterByName("zoom") || "small";
             },
             setDocument: function(word, zoom, help) {
-
                 // Get the vars
                 var current_url = new URI(window.location).removeSearch("x-offset", "y-offset");
                 var params = URI.parseQuery(current_url.query());
@@ -178,17 +177,16 @@
                 path[path.length-2] = word;
 
                 var new_url = current_url.clone().pathname(path.join("/")).setQuery(params);
-                if(!current_url.equals(new_url)) {
-                    $win = $(window);
-{#                        console.log(current_zoom);#}
-{#                        console.log(VT.zoomFactors);#}
-{#                        console.log(zoom);#}
-                        var xCenter = ($win.scrollLeft() + ($win.width() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
-                        var yCenter = ($win.scrollTop() + ($win.height() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
-                        params["x-offset"] = xCenter - $win.width() / 2;
-                        params["y-offset"] = yCenter - $win.height() / 2;
-                    window.location = new_url.setQuery(params).toString();
+                if(current_url.equals(new_url)) {
+                    VT.functions.setHelpScreen(help);
+                    return;
                 }
+                $win = $(window);
+                var xCenter = ($win.scrollLeft() + ($win.width() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
+                var yCenter = ($win.scrollTop() + ($win.height() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
+                params["x-offset"] = xCenter - $win.width() / 2;
+                params["y-offset"] = yCenter - $win.height() / 2;
+                window.location = new_url.setQuery(params).toString();
                 return;
 
             },
@@ -261,6 +259,9 @@
         VT.webSocketEndpoint = wsEndpointURI.toString();
         VT.webSocketHeartbeat = {{ WS4REDIS_HEARTBEAT }};
         VT.topoJSONFile = "{% static region_topo_json %}";
+        $(document).ready(function(){
+            VT.functions.setHelpScreen(VT.helpState);
+        });
 
     </script>
     <script src="{% static "visual_translations/js/d3.v3.min.js" %}"></script>

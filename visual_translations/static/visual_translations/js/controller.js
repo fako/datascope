@@ -129,17 +129,16 @@ $(function() {
     var $helpScreen = $("#help-screen");
 
     $helpScreen.click(function(){
-        $helpScreen.removeClass('active');
         helpScreen = "off";
         wsConnection.send("setHelpScreen:off");
+        $helpScreen.removeClass('active');
     });
 
     $('#help-button').click(function(){
-        $helpScreen.addClass('active');
         helpScreen = "on";
         wsConnection.send("setHelpScreen:on");
+        $helpScreen.addClass('active');
     });
-
 
 });
 
