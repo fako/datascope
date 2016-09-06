@@ -9,11 +9,7 @@ db-dump.*.json
 system/docs/_build/
 system/coverage/
 system/profile/
-system/files/media/downloads/
-system/files/media/uploads/
-
-system/files/media/visual_translations/
-system/files/media/kleding/
+system/files/media/
 system/files/static/
 
 */settings/secrets.py
