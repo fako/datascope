@@ -10,7 +10,7 @@ from django.conf import settings
 
 from core.models.organisms import Community, Collective, Individual
 from core.utils.image import ImageGrid
-from core.utils.helpers import format_datetime
+from core.utils.helpers import format_datetime, iroundrobin
 from core.processors.expansion import ExpansionProcessor
 
 from sources.models.downloads import ImageDownload
@@ -220,19 +220,28 @@ class VisualTranslationsEUCommunity(Community):
             translations = expansion_processor.collective_content(
                 [translation.properties for translation in translations]
             )
-            images = []
-
+            image_sources = []
             for translation in translations:
-                for image in translation["images"]:
-                    images.append(image)
-            downloads_queryset = ImageDownload.objects.filter(
-                uri__in=[ImageDownload.uri_from_url(image["url"]) for image in images]
-            )
+                image_sources.append(iter(translation["images"]))
+            images = iroundrobin(*image_sources)
             downloads = []
-            for download in downloads_queryset:
+            grid, xlarge_factor = grids[locale]
+
+            while True:
+                try:
+                    image = next(images)
+                except StopIteration:
+                    break
+                try:
+                    download = ImageDownload.objects.get(uri=ImageDownload.uri_from_url(image["url"]))
+                except ImageDownload.DoesNotExist:
+                    continue
                 content_type, image = download.content
                 if image is not None:
                     downloads.append(image)
+                if len(downloads) >= (grid["rows"] * grid["columns"] + 10):
+                    break
+
             for size, factor in six.iteritems(self.zoom_levels):
                 grid, xlarge_factor = grids[locale]
                 factor = factor if size != "XL" else xlarge_factor
