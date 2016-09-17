@@ -34,7 +34,7 @@ class CommunityCommand(BaseCommand):
         Community = get_any_model(options.pop("community"))
         self.model = Community
         self.config = options["config"]
-        self.signature = Community.get_signature_from_input(*args, **self.config)
+        self.signature = getattr(self, "signature", Community.get_signature_from_input(*args, **self.config))
 
         community = self.get_community()
         log.info("Signature: {}".format(self.signature))
