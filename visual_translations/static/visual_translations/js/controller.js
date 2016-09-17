@@ -3,6 +3,7 @@ var rad2deg = 180/Math.PI;
 var deg = 0;
 var componentRadius = 200, topOffset = 220, leftOffset = 150;
 var zoomLevel = "small";
+var helpScreen = "on";
 
 
 // THE WORDS POINTER
@@ -82,6 +83,7 @@ $(function() {
                 $this.addClass('active');
                 var $self = $this;
                 interval = setInterval(function() {
+                    console.log("sending: " + "scrollDocument:" + arrowValues[$arrows.index($self)]);
                     wsConnection.send("scrollDocument:" + arrowValues[$arrows.index($self)]);
                 }, 100);
             },
@@ -94,6 +96,7 @@ $(function() {
                 interval = false;
             },
             'click': function(event){
+                console.log("sending: " + "scrollDocument:" + arrowValues[$arrows.index($(this))]);
                 wsConnection.send("scrollDocument:" + arrowValues[$arrows.index($(this))]);
             }
         });
@@ -105,15 +108,14 @@ $(function() {
 // ZOOM SLIDER
 $(function(){
 
-
     // Init the slider
     $("#zoom-component" ).slider({
         orientation: "vertical",
         change: function(event, ui) {
             var zoomLevels = ["small", "large", "xlarge"];
             window.zoomLevel = zoomLevels[ui.value];
-            console.log("sending: " + "setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel);
-            wsConnection.send("setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel);
+            console.log("sending: " + "setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel + ',' + helpScreen);
+            wsConnection.send("setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel + ',' + helpScreen);
         },
         max: 2
     });
@@ -121,8 +123,26 @@ $(function(){
 });
 
 
+// HELP
+$(function() {
+
+    var $helpScreen = $("#help-screen");
+
+    $helpScreen.click(function(){
+        helpScreen = "off";
+        wsConnection.send("setHelpScreen:off");
+        $helpScreen.removeClass('active');
+    });
+
+    $('#help-button').click(function(){
+        helpScreen = "on";
+        wsConnection.send("setHelpScreen:on");
+        $helpScreen.addClass('active');
+    });
+
+});
+
 // Reset projection when reloading
 $(window).unload(function() {
-    wsConnection.send("setDocument:pension,small");
-
+    wsConnection.send("setDocument:pension,small,on");
 });

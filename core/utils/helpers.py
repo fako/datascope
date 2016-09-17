@@ -2,7 +2,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 
 import operator
 from datetime import datetime
-from itertools import islice
+from itertools import islice, cycle
 
 
 from django.apps import apps as django_apps
@@ -67,6 +67,20 @@ def ibatch(iterable, batch_size):
         if not batch:
             return
         yield batch
+
+
+def iroundrobin(*iterables):
+    "iroundrobin('ABC', 'D', 'EF') --> A D E B F C"
+    # Recipe credited to George Sakkis
+    pending = len(iterables)
+    nexts = cycle(iter(it).__next__ for it in iterables)
+    while pending:
+        try:
+            for next in nexts:
+                yield next()
+        except StopIteration:
+            pending -= 1
+            nexts = cycle(islice(nexts, pending))
 
 
 # def get_json(model_instance):

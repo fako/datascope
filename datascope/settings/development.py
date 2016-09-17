@@ -19,4 +19,8 @@ MIDDLEWARE_CLASSES += (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
+
 STATIC_IP = "127.0.0.1"
+#STATIC_IP = "172.24.1.97"
+#MEDIA_URL = 'http://' + STATIC_IP + ':8080/media/'
+#STATIC_URL = 'http://' + STATIC_IP + ':8080/static/'

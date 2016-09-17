@@ -104,7 +104,7 @@
 					self.startDeg = -1;
 
                     if(wsConnection.ws4redis.get_state() == 1) {
-                        wsConnection.send("setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel);
+                        wsConnection.send("setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel + ',' + helpScreen);
                     }
 				});
 
@@ -118,7 +118,7 @@
         self.rotation = degrees;
         self.startDeg = -1;
 		if(wsConnection.ws4redis.get_state() == 1) {
-			wsConnection.send("setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel);
+			wsConnection.send("setDocument:" + $('.knobLabel.active').text() + ',' + zoomLevel + ',' + helpScreen);
 		}
     }
 

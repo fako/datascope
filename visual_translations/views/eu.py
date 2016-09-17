@@ -41,7 +41,7 @@ def visual_translation_map(request, term):
 
 def visual_translations_controller(request):
     context = {
-        "words": ["pension", "peace", "women", "immigrants", "cowshed", "privatization"]
+        "words": ["pension", "peace", "women", "immigrants", "cowshed", "leave"]
     }
     return render_to_response("visual_translations/controller.html", context, RequestContext(request))
 

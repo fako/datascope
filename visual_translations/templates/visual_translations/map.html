@@ -7,6 +7,7 @@
 {% endblock %}
 
 {% block theme-css %}
+    <link rel="stylesheet" href="{% static "visual_translations/css/visual-translations.css" %}"/>
     <style>
 
         body {
@@ -136,7 +137,7 @@
             left: 0;
             overflow: scroll !important;
         }
-        body::-webkit-scrollbar { width: 0 !important }
+        body::-webkit-scrollbar { width: 0 !important; height: 0 !important; }
 
     </style>
 {% endblock %}
@@ -165,28 +166,27 @@
             getActiveZoom: function() {
                 return this.getParameterByName("zoom") || "small";
             },
-            setDocument: function(word, zoom) {
-
+            setDocument: function(word, zoom, help) {
                 // Get the vars
                 var current_url = new URI(window.location).removeSearch("x-offset", "y-offset");
                 var params = URI.parseQuery(current_url.query());
                 var current_zoom = params["zoom"];
                 params["zoom"] = zoom;
+                params["help"] = help;
                 var path = current_url.pathname().split('/');
                 path[path.length-2] = word;
 
                 var new_url = current_url.clone().pathname(path.join("/")).setQuery(params);
-                if(!current_url.equals(new_url)) {
-                    $win = $(window);
-{#                        console.log(current_zoom);#}
-{#                        console.log(VT.zoomFactors);#}
-{#                        console.log(zoom);#}
-                        var xCenter = ($win.scrollLeft() + ($win.width() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
-                        var yCenter = ($win.scrollTop() + ($win.height() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
-                        params["x-offset"] = xCenter - $win.width() / 2;
-                        params["y-offset"] = yCenter - $win.height() / 2;
-                    window.location = new_url.setQuery(params).toString();
+                if(current_url.equals(new_url)) {
+                    VT.functions.setHelpScreen(help);
+                    return;
                 }
+                $win = $(window);
+                var xCenter = ($win.scrollLeft() + ($win.width() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
+                var yCenter = ($win.scrollTop() + ($win.height() / 2)) / VT.zoomFactors[current_zoom] * VT.zoomFactors[zoom];
+                params["x-offset"] = xCenter - $win.width() / 2;
+                params["y-offset"] = yCenter - $win.height() / 2;
+                window.location = new_url.setQuery(params).toString();
                 return;
 
             },
@@ -237,22 +237,38 @@
                     default:
                         throw "Invalid command to scroll document: " + command;
                 }
+            },
+            setHelpScreen(state) {
+                VT.helpState = state;
+                $helpScreen = $('#help-screen');
+                if(state === 'on') {
+                    $helpScreen.addClass('active');
+                } else {
+                    $helpScreen.removeClass('active');
+                }
             }
         };
+
         var wsEndpointURI = new URI("{{ WEBSOCKET_URI }}visual-translations-map?subscribe-broadcast&publish-broadcast");
         wsEndpointURI.hostname("{{ STATIC_IP }}");
 
         VT.zoomLevel = VT.functions.getParameterByName("zoom") || "small";
         VT.xOffset = VT.functions.getParameterByName("x-offset");
         VT.yOffset = VT.functions.getParameterByName("y-offset");
+        VT.helpState = VT.functions.getParameterByName("help") || "on";
         VT.webSocketEndpoint = wsEndpointURI.toString();
         VT.webSocketHeartbeat = {{ WS4REDIS_HEARTBEAT }};
         VT.topoJSONFile = "{% static region_topo_json %}";
+        $(window).load(function(){
+            VT.functions.setHelpScreen(VT.helpState);
+        });
+
     </script>
     <script src="{% static "visual_translations/js/d3.v3.min.js" %}"></script>
     <script src="{% static "visual_translations/js/topojson.min.js" %}"></script>
     <script src="{% static "visual_translations/js/map.js" %}"></script>
     <script src="{% static "visual_translations/js/socket.js" %}"></script>
+    <script src="{% static "visual_translations/js/help.js" %}"></script>
 {% endblock %}
 
 {% block body %}
@@ -271,4 +287,13 @@
             {% endfor %}
         </defs>
     </svg>
+
+    <div id="help-screen">
+        <h1>
+            discover how images<br/>
+            when searching for "<span id="word-highlight"></span>"<br/>
+            look different per country
+        </h1>
+    </div>
+
 {% endblock %}
