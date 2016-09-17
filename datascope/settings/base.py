@@ -100,8 +100,10 @@ ALLOWED_HOSTS = [
     '.localhost',
     '.globe-scope.com',
     '.globe-scope.org',
+    '.globe-scope.info',
     '.data-scope.com',
     '.data-scope.org',
+    '.data-scope.info',
     '.tools.wmflabs.org',
     '37.139.16.242',
 ]
