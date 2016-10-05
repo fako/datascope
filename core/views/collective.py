@@ -26,6 +26,7 @@ class CollectiveSerializer(serializers.ModelSerializer):
             "created_at",
             "modified_at",
             "schema",
+            "identifier",
             "content",
         )
 
