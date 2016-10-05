@@ -1,3 +1,4 @@
 -r production.txt
 
 scipy==0.15.1
+matplotlib==1.5.3

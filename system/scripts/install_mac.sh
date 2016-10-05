@@ -10,21 +10,18 @@ brew install redis
 brew install phantomjs
 brew install libjpeg
 brew install mysql
-brew install python3
-
-pip3 install virtualenv
+brew install python3 --framework
 
 cd ~
 mkdir Datascope
 cd Datascope
 git clone https://github.com/fako/datascope.git
 
-cd ~
-mkdir .envs
-cd .envs
-virualenv -p python3 ds-env
+mkdir envs
+cd envs
+python3 -m venv ds-env
 source ds-env/bin/activate
-cd ../Datascope/datascope
+cd datascope
 pip install -r system/requirements/websockets.txt
 
 export DJANGO_SETTINGS_MODULE=datascope.settings.development;
