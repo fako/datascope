@@ -51,30 +51,53 @@ class TestGrowth(TestProcessorMixin):
         MockAsyncResultError.reset_mock()
         MockAsyncResultPartial.reset_mock()
 
-    def test_begin(self):
+    def test_begin_with_individual_input_async(self):
+        # Async
         with patch('core.processors.HttpResourceProcessor._send.s', return_value=MockTask) as send_s:
             self.new.begin()
         MockTask.delay.assert_called_once_with(1024, 768, name="modest")
         self.assertEqual(self.new.result_id, "result-id")
         self.assertEqual(self.new.state, GrowthState.PROCESSING)
         self.assertFalse(self.new.is_finished)
-        try:
-            self.processing.begin()
-            self.fail("Growth.begin did not warn against 'beginning' an already started growth.")
-        except AssertionError:
-            pass
-        MockTask.reset_mock()
+
+    def test_begin_with_individual_input_sync(self):
+        self.new.config = {"async": False}
+        with patch('core.processors.HttpResourceProcessor._send.s', return_value=MockTask) as send_s:
+            self.new.begin()
+        MockTask.delay.assert_called_once_with(1024, 768, name="modest")
+        self.assertEqual(self.new.result_id, None)
+        self.assertEqual(self.new.state, GrowthState.CONTRIBUTE)
+        self.assertFalse(self.new.is_finished)
+
+    def test_begin_with_collective_input_async(self):
         with patch('core.processors.HttpResourceProcessor._send_mass.s', return_value=MockTask) as send_mass_s:
             self.collective_input.begin()
         MockTask.delay.assert_called_once_with(
             [["nested value 0"], ["nested value 1"], ["nested value 2"]],
             [{"context": "nested value"}, {"context": "nested value"}, {"context": "nested value"}]
         )
-        self.assertEqual(self.new.result_id, "result-id")
-        self.assertEqual(self.new.state, GrowthState.PROCESSING)
-        self.assertFalse(self.new.is_finished)
+        self.assertEqual(self.collective_input.result_id, "result-id")
+        self.assertEqual(self.collective_input.state, GrowthState.PROCESSING)
+        self.assertFalse(self.collective_input.is_finished)
 
-        self.skipTest("test contribute state (sync processing)")
+    def test_begin_with_collective_input_sync(self):
+        self.collective_input.config = {"async": False}
+        with patch('core.processors.HttpResourceProcessor._send_mass.s', return_value=MockTask) as send_mass_s:
+            self.collective_input.begin()
+        MockTask.delay.assert_called_once_with(
+            [["nested value 0"], ["nested value 1"], ["nested value 2"]],
+            [{"context": "nested value"}, {"context": "nested value"}, {"context": "nested value"}]
+        )
+        self.assertEqual(self.collective_input.result_id, None)
+        self.assertEqual(self.collective_input.state, GrowthState.CONTRIBUTE)
+        self.assertFalse(self.collective_input.is_finished)
+
+    def test_begin_with_processing_state(self):
+        try:
+            self.processing.begin()
+            self.fail("Growth.begin did not warn against 'beginning' an already started growth.")
+        except AssertionError:
+            pass
 
     @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultPartial)
     def test_finish_with_errors(self, async_result):
