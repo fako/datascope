@@ -125,7 +125,7 @@ class Growth(models.Model, ProcessorMixin):
             except DSProcessError as exc:
                 self.state = GrowthState.ERROR
                 self.save()
-                raise exc  # TODO: reraise?
+                raise
 
         if self.state == GrowthState.CONTRIBUTE:
             scc, err = processor.results(result)
