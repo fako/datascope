@@ -118,6 +118,26 @@
 },
 {
     "fields": {
+        "output_id": 1,
+        "result_id": null,
+        "contribute": "ExtractProcessor.extract_from_resource",
+        "contribute_type": "Append",
+        "process": "HttpResourceProcessor.fetch_mass",
+        "type": "test_appending",
+        "state": "Contribute",
+        "input_id": 1,
+        "input_type": 17,
+        "output_type": 18,
+        "is_finished": false,
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
+        "community_type": 21,
+        "community_id": 1
+    },
+    "model": "core.growth",
+    "pk": 6
+},
+{
+    "fields": {
         "created_at": "2015-06-04T11:31:27.940",
         "modified_at": "2015-06-04T11:34:06.960",
         "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}",

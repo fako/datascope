@@ -46,6 +46,7 @@ class TestGrowth(TestProcessorMixin):
         self.collective_input = Growth.objects.get(type="test_col_input")
         self.processing = Growth.objects.get(type="test_processing")
         self.finished = Growth.objects.get(type="test_finished")
+        self.appending = Growth.objects.get(type="test_appending")
         MockTask.reset_mock()
         MockAsyncResultSuccess.reset_mock()
         MockAsyncResultError.reset_mock()
@@ -165,11 +166,23 @@ class TestGrowth(TestProcessorMixin):
         self.assertFalse(self.processing.is_finished)
         self.assertEqual(self.processing.state, GrowthState.PROCESSING)
 
-    def test_finish_synchronous(self):
-        self.skipTest("not tested")
+    @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultPartial)
+    def test_appending_contribution(self, async_result):
+        output, errors = self.appending.finish(([1, 2, 3], [4, 5],))
+        self.assertFalse(async_result.called)
+        self.assertTrue(self.appending.is_finished)
+        self.assertEqual(self.appending.state, GrowthState.PARTIAL)
+        self.assertEqual(list(output.content), self.expected_append_output)
+        self.assertEqual(self.appending.resources.count(), 2)
+        self.assertEqual(len(errors), 2)
+        self.assertIsInstance(errors[0], HttpResourceMock)
+        self.assertEqual([resource.id for resource in self.appending.resources], [error.id for error in errors])
 
     def test_prepare_contributions(self):
-        self.skipTest("not tested")
+        pass
+
+    def test_synchronous_growth_flow(self):
+        pass
 
     def test_append_to_output(self):
         qs = HttpResourceMock.objects.filter(id=1)
