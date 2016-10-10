@@ -32,4 +32,15 @@ class TestProcessorMixin(TestCase):
             self.assertEqual(args_type, ArgumentsTypes.BATCH)
 
     def test_prepare_process_normal(self):
-        pass
+        for normal_method in [cll for cll in self.processor.__dict__.keys() if callable(cll)]:
+            print(normal_method)
+            process, method, args_type = self.instance.prepare_process(
+                "{}.{}".format(self.processor.__name__, normal_method),
+                async=True
+            )
+            self.assertEqual(args_type, ArgumentsTypes.NORMAL)
+
+    def test_config(self):
+        self.instance.config = {"test": "config"}
+        process, method, args_type = self.instance.prepare_process(self.instance.process, async=True)
+        self.assertEqual(process.config.test, "config")
