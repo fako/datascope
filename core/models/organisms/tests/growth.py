@@ -292,9 +292,6 @@ class TestGrowth(TestProcessorMixin):
         self.assertIsInstance(errors[0], HttpResourceMock)
         self.assertEqual([resource.id for resource in self.contributing.resources], [error.id for error in errors])
 
-    def test_synchronous_growth_flow(self):
-        pass
-
     def test_append_to_output(self):
         qs = HttpResourceMock.objects.filter(id=1)
         contributions = self.new.prepare_contributions(qs)
