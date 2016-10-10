@@ -41,6 +41,13 @@ class TestGrowth(TestProcessorMixin):
                 "value": "nested value 0"
             }
         ]
+        cls.expected_dict_contributions = [
+            {
+                "value": "dict value {}".format(index),
+                "type": "a pure dict"
+            }
+            for index in range(0, 2)
+        ]
 
     def setUp(self):
         self.new = Growth.objects.get(type="test_new")
@@ -187,7 +194,12 @@ class TestGrowth(TestProcessorMixin):
             pass
 
     def test_prepare_contributions_dict_contributions(self):
-        pass
+        self.contributing.contribute = "ExtractProcessor.pass_resource_through"
+        self.contributing.contribute_type = "Anything"
+        self.contributing.save()
+        qs = HttpResourceMock.objects.filter(id__in=[9, 10])
+        contributions = self.contributing.prepare_contributions(qs)
+        self.assertEqual(list(contributions), self.expected_dict_contributions)
 
     def test_prepare_contributions_list_contributions(self):
         pass
