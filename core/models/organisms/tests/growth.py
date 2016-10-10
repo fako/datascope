@@ -200,11 +200,47 @@ class TestGrowth(TestProcessorMixin):
         self.assertIsInstance(errors[0], HttpResourceMock)
         self.assertEqual([resource.id for resource in self.contributing.resources], [error.id for error in errors])
 
-    def test_inline_contribution(self):
-        pass
+    @patch('core.processors.resources.AsyncResult')
+    def test_inline_contribution(self, async_result):
+        self.contributing.contribute = "ExtractProcessor.extract_from_resource"
+        self.contributing.contribute_type = "Inline"
+        contribution_key = "value"
+        self.contributing.config = {"_inline_key": contribution_key}
+        self.contributing.save()
+        output, errors = self.contributing.finish(([1, 2, 3], [4, 5],))
+        self.assertFalse(async_result.called)
+        self.assertTrue(self.contributing.is_finished)
+        self.assertEqual(self.contributing.state, GrowthState.PARTIAL)
+        self.assertEqual(self.contributing.inline_by_key.call_count, 1)
+        args, kwargs = self.contributing.inline_by_key.call_args
+        contributions = args[0]
+        self.assertEqual(list(contributions), self.expected_contributions)
+        self.assertEqual(args[1], contribution_key)
+        self.assertEqual(self.contributing.resources.count(), 2)
+        self.assertEqual(len(errors), 2)
+        self.assertIsInstance(errors[0], HttpResourceMock)
+        self.assertEqual([resource.id for resource in self.contributing.resources], [error.id for error in errors])
 
-    def test_update_contribution(self):
-        pass
+    @patch('core.processors.resources.AsyncResult')
+    def test_update_contribution(self, async_result):
+        self.contributing.contribute = "ExtractProcessor.extract_from_resource"
+        self.contributing.contribute_type = "Update"
+        contribution_key = "value"
+        self.contributing.config = {"_update_key": contribution_key}
+        self.contributing.save()
+        output, errors = self.contributing.finish(([1, 2, 3], [4, 5],))
+        self.assertFalse(async_result.called)
+        self.assertTrue(self.contributing.is_finished)
+        self.assertEqual(self.contributing.state, GrowthState.PARTIAL)
+        self.assertEqual(self.contributing.update_by_key.call_count, 1)
+        args, kwargs = self.contributing.update_by_key.call_args
+        contributions = args[0]
+        self.assertEqual(list(contributions), self.expected_contributions)
+        self.assertEqual(args[1], contribution_key)
+        self.assertEqual(self.contributing.resources.count(), 2)
+        self.assertEqual(len(errors), 2)
+        self.assertIsInstance(errors[0], HttpResourceMock)
+        self.assertEqual([resource.id for resource in self.contributing.resources], [error.id for error in errors])
 
     def test_prepare_contributions(self):
         pass
