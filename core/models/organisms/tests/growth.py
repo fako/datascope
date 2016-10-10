@@ -48,6 +48,14 @@ class TestGrowth(TestProcessorMixin):
             }
             for index in range(0, 2)
         ]
+        cls.expected_update_output = [
+            {
+                "context": "nested value",
+                "value": "nested value {}".format(index % 3),
+                "extra": "test {}".format(index % 3)
+            }
+            for index in range(0, 3)
+        ]
 
     def setUp(self):
         self.new = Growth.objects.get(type="test_new")
@@ -64,7 +72,6 @@ class TestGrowth(TestProcessorMixin):
         MockAsyncResultPartial.reset_mock()
 
     def test_begin_with_individual_input_async(self):
-        # Async
         with patch('core.processors.HttpResourceProcessor._send.s', return_value=MockTask) as send_s:
             self.new.begin()
         MockTask.delay.assert_called_once_with(1024, 768, name="modest")
@@ -306,7 +313,14 @@ class TestGrowth(TestProcessorMixin):
         self.assertEqual(self.collective_input.output.identifier, "value.value")
 
     def test_update_by_key(self):
-        self.skipTest("not tested")
+        qs = HttpResourceMock.objects.filter(id__in=[6, 7, 8])
+        contributions = self.collective_input.prepare_contributions(qs)
+        self.collective_input.update_by_key(contributions, "value")
+        self.assertEqual(list(self.collective_input.output.content), self.expected_update_output)
+        self.assertEqual(
+            self.collective_input.output.identifier,
+            "value"  # doesn't update in contrast to inline_by_key
+        )
 
     def test_is_finished(self):
         self.new.state = GrowthState.COMPLETE
