@@ -1,6 +1,6 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
-from mock import patch
+from mock import patch, Mock
 
 from core.models.organisms.growth import Growth, GrowthState
 from core.tests.mocks.celery import (MockTask, MockAsyncResultSuccess, MockAsyncResultPartial,
@@ -17,13 +17,14 @@ class TestGrowth(TestProcessorMixin):
     @classmethod
     def setUpClass(cls):
         super(TestGrowth, cls).setUpClass()
-        cls.expected_append_output = [
+        cls.expected_contributions = [
             {
                 "context": "nested value",
                 "value": "nested value {}".format(index % 3)
             }
             for index in range(0, 9)
         ]
+        cls.expected_append_output = cls.expected_contributions
         cls.expected_inline_output = [
             {
                 "context": "nested value",
@@ -46,7 +47,10 @@ class TestGrowth(TestProcessorMixin):
         self.collective_input = Growth.objects.get(type="test_col_input")
         self.processing = Growth.objects.get(type="test_processing")
         self.finished = Growth.objects.get(type="test_finished")
-        self.appending = Growth.objects.get(type="test_appending")
+        self.contributing = Growth.objects.get(type="test_contributing")
+        self.contributing.append_to_output = Mock()
+        self.contributing.inline_by_key = Mock()
+        self.contributing.update_by_key = Mock()
         MockTask.reset_mock()
         MockAsyncResultSuccess.reset_mock()
         MockAsyncResultError.reset_mock()
@@ -166,17 +170,41 @@ class TestGrowth(TestProcessorMixin):
         self.assertFalse(self.processing.is_finished)
         self.assertEqual(self.processing.state, GrowthState.PROCESSING)
 
-    @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultPartial)
-    def test_appending_contribution(self, async_result):
-        output, errors = self.appending.finish(([1, 2, 3], [4, 5],))
+    @patch('core.processors.resources.AsyncResult')
+    def test_none_contribution(self, async_result):
+        output, errors = self.contributing.finish(([1, 2, 3], [4, 5],))
         self.assertFalse(async_result.called)
-        self.assertTrue(self.appending.is_finished)
-        self.assertEqual(self.appending.state, GrowthState.PARTIAL)
-        self.assertEqual(list(output.content), self.expected_append_output)
-        self.assertEqual(self.appending.resources.count(), 2)
+        self.assertTrue(self.contributing.is_finished)
+        self.assertEqual(self.contributing.state, GrowthState.PARTIAL)
+        self.assertEqual(list(output.content), [])
+        self.assertEqual(self.contributing.resources.count(), 2)
         self.assertEqual(len(errors), 2)
         self.assertIsInstance(errors[0], HttpResourceMock)
-        self.assertEqual([resource.id for resource in self.appending.resources], [error.id for error in errors])
+        self.assertEqual([resource.id for resource in self.contributing.resources], [error.id for error in errors])
+
+    @patch('core.processors.resources.AsyncResult')
+    def test_append_contribution(self, async_result):
+        self.contributing.contribute = "ExtractProcessor.extract_from_resource"
+        self.contributing.contribute_type = "Append"
+        self.contributing.save()
+        output, errors = self.contributing.finish(([1, 2, 3], [4, 5],))
+        self.assertFalse(async_result.called)
+        self.assertTrue(self.contributing.is_finished)
+        self.assertEqual(self.contributing.state, GrowthState.PARTIAL)
+        self.assertEqual(self.contributing.append_to_output.call_count, 1)
+        args, kwargs = self.contributing.append_to_output.call_args
+        contributions = args[0]
+        self.assertEqual(list(contributions), self.expected_contributions)
+        self.assertEqual(self.contributing.resources.count(), 2)
+        self.assertEqual(len(errors), 2)
+        self.assertIsInstance(errors[0], HttpResourceMock)
+        self.assertEqual([resource.id for resource in self.contributing.resources], [error.id for error in errors])
+
+    def test_inline_contribution(self):
+        pass
+
+    def test_update_contribution(self):
+        pass
 
     def test_prepare_contributions(self):
         pass

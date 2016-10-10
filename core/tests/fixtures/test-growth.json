@@ -120,10 +120,10 @@
     "fields": {
         "output_id": 1,
         "result_id": null,
-        "contribute": "ExtractProcessor.extract_from_resource",
-        "contribute_type": "Append",
+        "contribute": null,
+        "contribute_type": null,
         "process": "HttpResourceProcessor.fetch_mass",
-        "type": "test_appending",
+        "type": "test_contributing",
         "state": "Contribute",
         "input_id": 1,
         "input_type": 17,
