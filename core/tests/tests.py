@@ -1,6 +1,7 @@
 from core.utils.tests.configuration import TestConfigurationType, TestConfigurationProperty, TestLoadConfigDecorator
 from core.utils.tests.data import TestPythonReach
 from core.utils.tests.image import TestImageGrid
+from core.utils.tests.helpers import TestUtilHelpers
 
 from core.processors.tests.resources import (TestHttpResourceProcessor, TestHttpResourceProcessorGet,
                                              TestHttpResourceProcessorPost)
