@@ -87,7 +87,7 @@ class Growth(models.Model, ProcessorMixin):
 
         self.config = self.community.config.to_dict(protected=True)  # TODO: make this += operation instead
 
-        processor, method, args_type = self.prepare_process(self.process, async=self.config.async)  # TODO: unit test async
+        processor, method, args_type = self.prepare_process(self.process, async=self.config.async)
         assert args_type == ArgumentsTypes.NORMAL and isinstance(self.input, Individual) or \
             args_type == ArgumentsTypes.BATCH and isinstance(self.input, Collective), \
             "Unexpected arguments type '{}' for input of class {}".format(args_type, self.input.__class__.__name__)
@@ -135,12 +135,10 @@ class Growth(models.Model, ProcessorMixin):
             elif self.contribute_type == ContributeType.INLINE:
                 assert self.config.inline_key, \
                     "No inline_key specified in configuration for Growth with inline contribution"
-                # TODO: assert that contributions and output fully match?
                 self.inline_by_key(contributions, self.config.inline_key)
-            elif self.contribute_type == ContributeType.UPDATE:  # TODO: test
+            elif self.contribute_type == ContributeType.UPDATE:
                 assert self.config.update_key, \
                     "No update_key specified in configuration for Growth with update contribution"
-                # TODO: assert that contributions and output fully match?
                 self.update_by_key(contributions, self.config.update_key)
             elif self.contribute is None:
                 pass
