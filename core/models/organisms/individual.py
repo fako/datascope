@@ -59,10 +59,11 @@ class Individual(Organism):
         if isinstance(data, (list, tuple,)):
             data = data[0]
 
-        if validate:
-            self.validate(data, self.schema)
-
         self.properties.update(data)
+
+        if validate:
+            self.validate(self.properties, self.schema)
+
         self.save()
         return self.content
 
