@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 from mock import patch, Mock
 
 from core.models.organisms.growth import Growth, GrowthState
+from core.processors import HttpResourceProcessor
 from core.tests.mocks.celery import (MockTask, MockAsyncResultSuccess, MockAsyncResultPartial,
                                     MockAsyncResultError, MockAsyncResultWaiting)
 from core.tests.mocks.http import HttpResourceMock
@@ -70,6 +71,8 @@ class TestGrowth(TestProcessorMixin):
         MockAsyncResultSuccess.reset_mock()
         MockAsyncResultError.reset_mock()
         MockAsyncResultPartial.reset_mock()
+        self.instance = self.new
+        self.processor = HttpResourceProcessor
 
     def test_begin_with_individual_input_async(self):
         with patch('core.processors.HttpResourceProcessor._send.s', return_value=MockTask) as send_s:
