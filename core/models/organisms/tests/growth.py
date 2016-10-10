@@ -170,6 +170,9 @@ class TestGrowth(TestProcessorMixin):
         self.assertFalse(self.processing.is_finished)
         self.assertEqual(self.processing.state, GrowthState.PROCESSING)
 
+    def test_prepare_contributions(self):
+        pass
+
     @patch('core.processors.resources.AsyncResult')
     def test_none_contribution(self, async_result):
         output, errors = self.contributing.finish(([1, 2, 3], [4, 5],))
@@ -177,6 +180,9 @@ class TestGrowth(TestProcessorMixin):
         self.assertTrue(self.contributing.is_finished)
         self.assertEqual(self.contributing.state, GrowthState.PARTIAL)
         self.assertEqual(list(output.content), [])
+        self.assertEqual(self.contributing.append_to_output.call_count, 0)
+        self.assertEqual(self.contributing.inline_by_key.call_count, 0)
+        self.assertEqual(self.contributing.update_by_key.call_count, 0)
         self.assertEqual(self.contributing.resources.count(), 2)
         self.assertEqual(len(errors), 2)
         self.assertIsInstance(errors[0], HttpResourceMock)
@@ -241,9 +247,6 @@ class TestGrowth(TestProcessorMixin):
         self.assertEqual(len(errors), 2)
         self.assertIsInstance(errors[0], HttpResourceMock)
         self.assertEqual([resource.id for resource in self.contributing.resources], [error.id for error in errors])
-
-    def test_prepare_contributions(self):
-        pass
 
     def test_synchronous_growth_flow(self):
         pass
