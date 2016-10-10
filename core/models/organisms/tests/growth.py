@@ -303,7 +303,7 @@ class TestGrowth(TestProcessorMixin):
         contributions = self.collective_input.prepare_contributions(qs)
         self.collective_input.inline_by_key(contributions, "value")
         self.assertEqual(list(self.collective_input.output.content), self.expected_inline_output)
-        self.skipTest("test clean and correction of the identifier")
+        self.assertEqual(self.collective_input.output.identifier, "value.value")
 
     def test_update_by_key(self):
         self.skipTest("not tested")
