@@ -397,5 +397,21 @@
     },
     "model": "core.httpresourcemock",
     "pk": 10
+},
+{
+    "fields": {
+        "body": "[]",
+        "status": 204,
+        "head": "{\"content-type\":\"application/json\"}",
+        "modified_at": "2015-05-12T18:45:22.105",
+        "created_at": "2015-05-12T18:45:22.105",
+        "request": "{\"url\":\"http://localhost:8000/en/?nothing=1\",\"args\":[\"en\"],\"headers\":{\"Accept\":\"application/json\"},\"kwargs\":{},\"data\":{},\"method\":\"get\"}",
+        "uri": "localhost:8000/en/?nothing=1",
+        "data_hash": "",
+        "config": "{}",
+        "purge_at": null
+    },
+    "model": "core.httpresourcemock",
+    "pk": 11
 }
 ]

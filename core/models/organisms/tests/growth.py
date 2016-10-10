@@ -210,7 +210,12 @@ class TestGrowth(TestProcessorMixin):
         self.assertEqual(list(contributions), self.expected_contributions)
 
     def test_prepare_contributions_no_content(self):
-        pass
+        self.contributing.contribute = "ExtractProcessor.extract_from_resource"
+        self.contributing.contribute_type = "Anything"
+        self.contributing.save()
+        qs = HttpResourceMock.objects.filter(id__in=[11])
+        contributions = self.contributing.prepare_contributions(qs)
+        self.assertEqual(list(contributions), [])
 
     @patch('core.processors.resources.AsyncResult')
     def test_none_contribution(self, async_result):
