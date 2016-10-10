@@ -170,7 +170,29 @@ class TestGrowth(TestProcessorMixin):
         self.assertFalse(self.processing.is_finished)
         self.assertEqual(self.processing.state, GrowthState.PROCESSING)
 
-    def test_prepare_contributions(self):
+    def test_prepare_contributions_invalid_usage(self):
+        qs = HttpResourceMock.objects.filter(id__in=[100])  # empty queryset
+        contributions = self.contributing.prepare_contributions(qs)
+        try:
+            next(contributions)
+            self.fail("Unavailable resources did yield contributions")
+        except StopIteration:
+            pass
+        qs = HttpResourceMock.objects.filter(id__in=[1])
+        contributions = self.contributing.prepare_contributions(qs)
+        try:
+            next(contributions)
+            self.fail("Unspecified contribution field on Growth did yield contributions")
+        except StopIteration:
+            pass
+
+    def test_prepare_contributions_dict_contributions(self):
+        pass
+
+    def test_prepare_contributions_list_contributions(self):
+        pass
+
+    def test_prepare_contributions_no_content(self):
         pass
 
     @patch('core.processors.resources.AsyncResult')

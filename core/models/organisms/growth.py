@@ -142,7 +142,7 @@ class Growth(models.Model, ProcessorMixin):
                     "No update_key specified in configuration for Growth with update contribution"
                 # TODO: assert that contributions and output fully match?
                 self.update_by_key(contributions, self.config.update_key)
-            elif self.contribute is None:  # TODO: test
+            elif self.contribute is None:
                 pass
             else:
                 raise AssertionError("Growth.finish did not act on contribute_type {}".format(self.contribute_type))
