@@ -155,7 +155,7 @@ class Growth(models.Model, ProcessorMixin):
 
     def prepare_contributions(self, success_resources):
         if not success_resources.exists() or not self.contribute:
-            yield None
+            return
         contribute_processor, callback, args_type = self.prepare_process(self.contribute)
         for success_resource in success_resources.iterator():
             try:
@@ -172,7 +172,6 @@ class Growth(models.Model, ProcessorMixin):
                     exc
                 ))
                 success_resource.retain(self)
-                yield None
 
     def append_to_output(self, contributions):
         assert isinstance(self.output, Collective), "append_to_output expects a Collective as output"
