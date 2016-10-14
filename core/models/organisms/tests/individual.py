@@ -44,3 +44,18 @@ class TestIndividual(TestCase):
 
     def test_json_content(self):
         self.skipTest("not tested")
+
+    def test_getitem(self):
+        self.skipTest("not tested")
+
+    def test_setitem(self):
+        self.skipTest("not tested")
+
+    def test_items(self):
+        self.skipTest("not tested")
+
+    def test_keys(self):
+        self.skipTest("not tested")
+
+    def test_values(self):
+        self.skipTest("not tested")

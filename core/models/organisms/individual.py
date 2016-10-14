@@ -21,8 +21,11 @@ class Individual(Organism):
     identity = models.CharField(max_length=255, blank=True, null=True, db_index=True)
     index = models.SmallIntegerField(blank=True, null=True)
 
-    def __getitem__(self, item):
-        return self.properties[item]
+    def __getitem__(self, key):
+        return self.properties[key]
+
+    def __setitem__(self, key, value):
+        self.properties[key] = value
 
     @staticmethod
     def validate(data, schema):
@@ -96,6 +99,15 @@ class Individual(Organism):
             return {key: self.output(value) for key, value in six.iteritems(frm)}
         else:
             raise AssertionError("Expected a string, list or dict as argument got {} instead".format(type(frm)))
+
+    def items(self):
+        return self.properties.items()
+
+    def keys(self):
+        return self.properties.keys()
+
+    def values(self):
+        return self.properties.values()
 
     def clean(self):
         if self.collective:
