@@ -10,9 +10,10 @@ from datascope.configuration import MOCK_CONFIGURATION
 from core.processors.resources import HttpResourceProcessor
 from core.utils.configuration import ConfigurationType
 from core.tests.mocks.requests import MockRequestsWithAgent, MockRequests
-from core.tests.mocks.celery import MockTask
+from core.tests.mocks.celery import (MockTask, MockAsyncResultSuccess, MockAsyncResultPartial, MockAsyncResultError,
+                                     MockAsyncResultWaiting)
 from core.tests.mocks.http import HttpResourceMock
-
+from core.exceptions import DSProcessUnfinished, DSProcessError
 
 class TestHttpResourceProcessorMixin(TestCase):
 
@@ -88,6 +89,41 @@ class TestHttpResourceProcessor(TestHttpResourceProcessorMixin, TestCase):
         self.assertEqual(kwargs["method"], "post")
         self.assertIsInstance(kwargs["config"], dict)
         self.assertTrue(kwargs["config"].get("_resource"))
+
+    @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultSuccess)
+    def test_async_results_success(self, async_result):
+        scc, err = self.prc.async_results("result-id")
+        async_result.assert_called_once_with("result-id")
+        self.assertEqual(scc, [1, 2, 3])
+        self.assertEqual(err, [])
+
+    @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultPartial)
+    def test_async_results_partial(self, async_result):
+        scc, err = self.prc.async_results("result-id")
+        async_result.assert_called_once_with("result-id")
+        self.assertEqual(scc, [1, 2, 3])
+        self.assertEqual(err, [4, 5])
+
+    @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultWaiting)
+    def test_async_results_waiting(self, async_result):
+        try:
+            self.prc.async_results("result-id")
+            self.fail("async_results did not raise when waiting for results")
+        except DSProcessUnfinished:
+            pass
+        async_result.assert_called_once_with("result-id")
+
+    @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultError)
+    def test_async_results_error(self, async_result):
+        try:
+            self.prc.async_results("result-id")
+            self.fail("async_results did not raise when waiting for results")
+        except DSProcessError:
+            pass
+        async_result.assert_called_once_with("result-id")
+
+    def test_results(self):
+        self.skipTest("not tested")
 
 
 class TestHttpResourceProcessorBase(TestHttpResourceProcessorMixin, TestCase):
@@ -247,9 +283,3 @@ class TestHttpResourceProcessorPost(TestHttpResourceProcessorBase):
         self.check_results(err, 0)
         link = HttpResourceMock.objects.get(id=scc[0])
         self.assertIn("User-Agent", link.head)
-
-    def test_async_results(self):
-        self.skipTest("not tested")
-
-    def test_results(self):
-        self.skipTest("not tested")
