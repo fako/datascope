@@ -5,6 +5,7 @@ from mock import patch
 
 from django.test import TestCase
 from django.utils import six
+from django.db.models import QuerySet
 
 from datascope.configuration import MOCK_CONFIGURATION
 from core.processors.resources import HttpResourceProcessor
@@ -122,8 +123,38 @@ class TestHttpResourceProcessor(TestHttpResourceProcessorMixin, TestCase):
             pass
         async_result.assert_called_once_with("result-id")
 
-    def test_results(self):
-        self.skipTest("not tested")
+    def test_results_success(self):
+        scc, err = self.prc.results(([1, 2, 3], [],))
+        self.assertIsInstance(scc, QuerySet)
+        self.assertIsInstance(err, QuerySet)
+        for index, result in zip(range(1, 4), scc.all()):
+            self.assertIsInstance(result, HttpResourceMock)
+            self.assertEqual(result.id, index)
+        self.assertEqual(scc.count(), 3)
+        self.assertEqual(err.count(), 0)
+
+    def test_results_partial(self):
+        scc, err = self.prc.results(([1, 2, 3], [4, 5],))
+        self.assertIsInstance(scc, QuerySet)
+        self.assertIsInstance(err, QuerySet)
+        for index, result in zip(range(1, 4), scc.all()):
+            self.assertIsInstance(result, HttpResourceMock)
+            self.assertEqual(result.id, index)
+        for index, result in zip(range(4, 6), err.all()):
+            self.assertIsInstance(result, HttpResourceMock)
+            self.assertEqual(result.id, index)
+        self.assertEqual(scc.count(), 3)
+        self.assertEqual(err.count(), 2)
+
+    def test_results_error(self):
+        scc, err = self.prc.results(([], [4, 5],))
+        self.assertIsInstance(scc, QuerySet)
+        self.assertIsInstance(err, QuerySet)
+        for index, result in zip(range(4, 6), err.all()):
+            self.assertIsInstance(result, HttpResourceMock)
+            self.assertEqual(result.id, index)
+        self.assertEqual(scc.count(), 0)
+        self.assertEqual(err.count(), 2)
 
 
 class TestHttpResourceProcessorBase(TestHttpResourceProcessorMixin, TestCase):
