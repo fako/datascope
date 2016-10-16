@@ -16,6 +16,7 @@ from core.tests.mocks.celery import (MockTask, MockAsyncResultSuccess, MockAsync
 from core.tests.mocks.http import HttpResourceMock
 from core.exceptions import DSProcessUnfinished, DSProcessError
 
+
 class TestHttpResourceProcessorMixin(TestCase):
 
     fixtures = ["test-http-resource-mock"]
@@ -235,6 +236,7 @@ class TestHttpResourceProcessorBase(TestHttpResourceProcessorMixin, TestCase):
             session=MockRequests
         )
         send_serie.assert_called_with([["1|2|3"], ["4|5|5|6"], ["7"]], [{}, {}, {}], method=self.method, config=self.config, session=MockRequests)
+
 
 class TestHttpResourceProcessorGet(TestHttpResourceProcessorBase):
 
