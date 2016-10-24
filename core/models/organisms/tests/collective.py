@@ -23,10 +23,26 @@ class TestCollective(TransactionTestCase):
         self.dict_outcome = [{"value": "nested value 0"}, {"value": "nested value 1"}, {"value": "nested value 2"}]
 
     def test_url(self):
-        self.skipTest("not tested")
+        url = self.instance.url
+        self.assertEqual(url, '/data/v1/collective/1/content/')
+        self.instance.id = None
+        try:
+            url = self.instance.url
+            self.fail("url property did not raise when id is not known")
+        except ValueError:
+            pass
 
-    def test_validate(self):
-        self.skipTest("not tested")
+    @patch('core.models.organisms.collective.Individual.validate')
+    def test_validate_queryset(self, validate_method):
+        self.instance.validate(self.instance.individual_set.all(), self.instance.schema)
+        for ind in self.instance.individual_set.all():
+            validate_method.assert_any_call(ind, self.instance.schema)
+
+    @patch('core.models.organisms.collective.Individual.validate')
+    def test_validate_content(self, validate_method):
+        self.instance.validate(self.instance.content, self.instance.schema)
+        for ind in self.instance.content:
+            validate_method.assert_any_call(ind, self.instance.schema)
 
     def get_update_list_and_ids(self, value):
         updates = []
@@ -90,8 +106,22 @@ class TestCollective(TransactionTestCase):
             self.instance2.update(updates, validate=False, reset=True, batch_size=20)
         self.assertEqual(self.instance2.individual_set.count(), 25)
 
-    def test_copy_update(self):
-        self.skipTest("test that updating with Individuals from other Collective will copy Individuals")
+    @patch('core.models.organisms.collective.Collective.influence')
+    def test_copy_update(self, influence_method):
+        updates, original_ids = self.get_update_list_and_ids("copy")
+        self.instance.update(updates, validate=False, reset=False)
+        self.assertEqual(self.instance.individual_set.count(), 8)
+        for ind in self.instance.individual_set.all():
+            self.assertNotIn(ind.id, original_ids)
+        self.assertEqual(self.instance.individual_set.exclude(pk__in=[1, 2, 3]).count(), len(original_ids))
+        for args, kwargs in influence_method.call_args_list:
+            self.assertEqual(len(args), 1)
+            self.assertIsInstance(args[0], Individual)
+            self.assertEqual(kwargs, {})
+        self.assertEqual(
+            influence_method.call_count, len(original_ids),
+            "Collective should only influence new Individuals when updating"
+        )
 
     def test_output(self):
         results = self.instance.output("$.value")
@@ -138,10 +168,6 @@ class TestCollective(TransactionTestCase):
         self.assertIsInstance(qs, QuerySet)
         words = [ind["word"] for ind in qs.all()]
         self.assertEqual(words, ["pensioen", "ouderdom", "pensioen"])
-        self.skipTest(
-            "Make sure that QuerySet gets re-used through: "
-            "https://docs.djangoproject.com/en/dev/topics/testing/tools/#django.test.TransactionTestCase.assertNumQueries"
-        )
 
     def test_build_index(self):
         self.instance2.build_index(["language", "country"])

@@ -1,7 +1,7 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 import six
 
-from collections import Iterator
+from collections import Iterator, Iterable
 
 from django.db import models
 from django.conf import settings
@@ -53,7 +53,7 @@ class Collective(Organism):
         :param schema: The JSON schema to use for validation.
         :return: Valid data
         """
-        if not isinstance(data, Iterator):
+        if not isinstance(data, Iterable):
             data = [data]
         for instance in data:
             Individual.validate(instance, schema)

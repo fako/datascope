@@ -37,7 +37,7 @@ class TestIndividual(TestCase):
         self.skipTest("not tested")
 
     def test_validate(self):
-        self.skipTest("not tested")
+        self.skipTest("not tested (should validate with Individual and dicts)")
 
     def test_clean(self):
         self.skipTest("not tested")
