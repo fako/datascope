@@ -1,5 +1,6 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
+from json import loads
 from mock import patch
 
 from django.test import TransactionTestCase
@@ -21,6 +22,11 @@ class TestCollective(TransactionTestCase):
         self.list_outcome = [["nested value 0"], ["nested value 1"], ["nested value 2"]]
         self.double_list_outcome = [["nested value 0", "nested value 0"], ["nested value 1", "nested value 1"], ["nested value 2", "nested value 2"]]
         self.dict_outcome = [{"value": "nested value 0"}, {"value": "nested value 1"}, {"value": "nested value 2"}]
+        self.expected_content = [
+            {"context": "nested value", "value": "nested value 0"},
+            {"context": "nested value", "value": "nested value 1"},
+            {"context": "nested value", "value": "nested value 2"}
+        ]
 
     def test_url(self):
         url = self.instance.url
@@ -140,10 +146,20 @@ class TestCollective(TransactionTestCase):
         self.assertEqual(results, [{}, {}, {}])
 
     def test_json_content(self):
-        self.skipTest("not tested")
+        with patch('json.loads', return_value=[]) as json_loads:
+            json_content = self.instance.json_content
+            json_loads.assert_not_called()
+        content = loads(json_content)
+        self.assertEqual(
+            content, self.expected_content,
+            "JSON content did not meet expectation. Is get_json inside json_field.fields patched properly??"
+        )
 
     def test_group_by(self):
-        self.skipTest("not tested")
+        groups = self.instance2.group_by("country")
+        for country, individuals in groups.items():
+            for individual in individuals:
+                self.assertEqual(individual.properties["country"], country)
 
     def test_set_index_for_individual(self):
         individual = self.instance2.set_index_for_individual(self.individual, ["language"])
@@ -156,7 +172,18 @@ class TestCollective(TransactionTestCase):
         self.assertEqual(individual.index, 0)
 
     def test_influence(self):
-        self.skipTest("not tested")
+        self.individual.identity = None
+        self.instance2.influence(self.individual)
+        self.assertEqual(self.individual.identity, self.individual.properties["word"])
+        self.instance2.identifier = "country"
+        self.instance2.influence(self.individual)
+        self.assertEqual(self.individual.identity, self.individual.properties["country"])
+        self.instance2.identifier = None
+        self.instance2.influence(self.individual)
+        self.assertEqual(self.individual.identity, self.individual.properties["country"])
+        self.instance2.identifier = "does-not-exist"
+        self.instance2.influence(self.individual)
+        self.assertIsNone(self.individual.identity)
 
     def test_select(self):
         self.instance2.build_index(["language", "country"])
