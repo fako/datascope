@@ -6,6 +6,7 @@ from jsonschema.exceptions import ValidationError as SchemaValidationError
 
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 
 import json_field
 
@@ -26,6 +27,12 @@ class Individual(Organism):
 
     def __setitem__(self, key, value):
         self.properties[key] = value
+
+    @property
+    def url(self):
+        if not self.id:
+            raise ValueError("Can't get url for unsaved Individual")
+        return reverse("v1:individual-content", args=[self.id])  # TODO: make version aware
 
     @staticmethod
     def validate(data, schema):

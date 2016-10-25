@@ -10,8 +10,8 @@ from . import views
 urlpatterns = [
     url(r'^collective/(?P<pk>\d+)/content/$', views.CollectiveContentView.as_view(), name="collective-content"),
     url(r'^collective/(?P<pk>\d+)/$', views.CollectiveView.as_view(), name="collective"),
-    url(r'^individual/(?P<pk>\d+)/content/$', views.IndividualContentView.as_view(), name="individual"),
-    url(r'^individual/(?P<pk>\d+)/$', views.IndividualView.as_view(), name="individual-content"),
+    url(r'^individual/(?P<pk>\d+)/content/$', views.IndividualContentView.as_view(), name="individual-content"),
+    url(r'^individual/(?P<pk>\d+)/$', views.IndividualView.as_view(), name="individual"),
     url(r'^$', views.index, name="datascope-index"),
     url(r'^question/$', views.question, name="datascope-question")
 ]
