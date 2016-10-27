@@ -16,7 +16,6 @@ class TestCollectiveView(TestCase):
         self.client = Client()
         self.test_url = "/data/v1/collective/{}/"
 
-
     def test_get(self):
         response = self.client.get(self.test_url.format(1))
         self.assertEqual(response.status_code, 200)

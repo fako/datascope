@@ -19,4 +19,4 @@ from core.models.resources.tests.http import TestHttpResourceMock
 
 from core.views.tests.collective import TestCollectiveView, TestCollectiveContentView
 from core.views.tests.individual import TestIndividualView, TestIndividualContentView
-from core.views.tests.community import TestCommunityView
+from core.views.tests.community import TestCommunityView, TestHtmlCommunityView
