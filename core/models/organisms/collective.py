@@ -27,7 +27,7 @@ class IndexDecoder(JSONDecoder):
         return {key: int(value) for value, key in six.iteritems(obj)}
 
 
-class Collective(Organism):
+class Collective(Organism):  # TODO: rename to family
 
     indexes = json_field.JSONField(
         null=True,
@@ -58,7 +58,7 @@ class Collective(Organism):
         for instance in data:
             Individual.validate(instance, schema)
 
-    def update(self, data, validate=True, reset=True, batch_size=500):
+    def update(self, data, validate=True, reset=True, batch_size=500):  # TODO: rename to "add" and implement "update"
         """
         Update the instance with new data by adding to the Collective
         or by updating Individuals that are on the Collective.
