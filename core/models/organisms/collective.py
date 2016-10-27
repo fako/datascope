@@ -99,9 +99,13 @@ class Collective(Organism):
                     prepared += prepare_updates(instance)
             return prepared
 
+        update_count = 0
         for updates in ibatch(data, batch_size=batch_size):
             updates = prepare_updates(updates)
+            update_count += len(updates)
             Individual.objects.bulk_create(updates, batch_size=settings.MAX_BATCH_SIZE)
+
+        return update_count
 
     @property
     def content(self):

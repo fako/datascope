@@ -1,5 +1,7 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
+import json
+
 from django.core.exceptions import ValidationError
 from django.shortcuts import Http404
 
@@ -68,7 +70,7 @@ class CollectiveContentView(ContentView):
 
     def post(self, request, pk):
         try:
-            results = self.request.organism.update(request.data)
+            additions = self.request.organism.update(request.data, reset=False)
         except ValidationError as exc:
             raise serializers.ValidationError(exc)
-        return Response([result.content for result in results], status=status.HTTP_201_CREATED)
+        return Response({"detail": "Added {} individuals".format(additions)}, status=status.HTTP_201_CREATED)
