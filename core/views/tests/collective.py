@@ -65,3 +65,17 @@ class TestCollectiveContentView(TestCase):
         self.assertIsInstance(data, dict)
         self.assertIn("detail", data)
         self.assertEqual(data["detail"], "Added 3 individuals")
+
+    def test_post_schema_error(self):
+        additions = Collective.objects.get(id=1)
+        response = self.client.post(
+            self.test_url.format(2),
+            data=json.dumps(list(additions.content)),
+            content_type="application/json"
+        )
+        data = json.loads(response.content.decode("utf-8"))
+        self.assertEqual(response.status_code, 400)
+        self.assertIsInstance(data, dict)
+        self.assertIn("detail", data)
+        self.assertEqual(data["detail"]["message"], "Additional properties are not allowed ('context' was unexpected)")
+        self.assertIsInstance(data["detail"]["schema"], dict)

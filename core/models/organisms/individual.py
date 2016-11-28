@@ -56,7 +56,9 @@ class Individual(Organism):
         try:
             jsonschema.validate(properties, schema)
         except SchemaValidationError as exc:
-            raise ValidationError(exc)
+            djang_exception = ValidationError(exc.message)
+            djang_exception.schema = exc.schema
+            raise djang_exception
 
     def update(self, data, validate=True):
         """
