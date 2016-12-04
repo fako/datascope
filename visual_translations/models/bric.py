@@ -1,5 +1,7 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
+from django.shortcuts import Http404
+
 from collections import OrderedDict
 from itertools import groupby
 from copy import copy
@@ -29,7 +31,9 @@ class VisualTranslationsBRICCommunity(Community):
                 },
             },
             "schema": {},
-            "errors": {},
+            "errors": {
+                404: "not_found"
+            },
         }),
         ("images", {
             "process": "HttpResourceProcessor.fetch_mass",
@@ -109,6 +113,12 @@ class VisualTranslationsBRICCommunity(Community):
         for individuals in grouped_translations.values():
             updated += individuals
         out.update(updated + new)
+
+    def error_translations_not_found(self, errors, out):
+        if out.has_content:
+            return True
+        # FEATURE: make default error responses more in line with normal responses.
+        raise Http404()
 
     def finish_images(self, out, err):
         translations = self.growth_set.filter(type="translations").last()
