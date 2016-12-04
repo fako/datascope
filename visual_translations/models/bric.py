@@ -125,7 +125,7 @@ class VisualTranslationsBRICCommunity(Community):
         grouped_images = out.group_by("word")
         for ind in translations.output.individual_set.all():
             images = [
-                image.properties for image in grouped_images[ind.properties["word"]]
+                image.properties for image in grouped_images.get(ind.properties["word"], [])
                 if image.properties["country"] == ind.properties["country"]
             ]
             col = Collective.objects.create(
