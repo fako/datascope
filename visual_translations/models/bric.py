@@ -97,7 +97,7 @@ class VisualTranslationsBRICCommunity(Community):
             for index, value in enumerate(locales):
                 language, country = value
                 if index == 0:  # only an update needed
-                    for ind in grouped_translations[language]:
+                    for ind in grouped_translations.get(language, []):
                         ind.properties["country"] = "country" + country
                 else:  # new individuals need to be created
                     def copy_to_country(individual, new_country):
@@ -106,7 +106,7 @@ class VisualTranslationsBRICCommunity(Community):
                         return new_individual
                     new += [
                         copy_to_country(ind, country)
-                        for ind in grouped_translations[language]
+                        for ind in grouped_translations.get(language, [])
                     ]
 
         updated = []
