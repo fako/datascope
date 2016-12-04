@@ -85,7 +85,7 @@
     "fields": {
         "created_at": "2015-06-04T11:31:27.940",
         "modified_at": "2015-06-04T11:34:06.960",
-        "schema": "{\"additionalProperties\":false,\"required\":[\"word\",\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"country\":{\"type\":\"string\"}}}",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"country\":{\"type\":\"string\"}}}",
         "community_type": ["core", "communitymock"],
         "community_id": 2,
         "identifier": "word"
@@ -98,7 +98,7 @@
         "collective": 2,
         "modified_at": "2015-06-02T10:01:47.572",
         "created_at": "2015-06-02T10:00:20.247",
-        "schema": "{\"additionalProperties\":false,\"required\":[\"word\",\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"country\":{\"type\":\"string\"}}}",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"country\":{\"type\":\"string\"}}}",
         "community_type": ["core", "communitymock"],
         "community_id": 2
     },
@@ -110,7 +110,7 @@
         "collective": 2,
         "modified_at": "2015-06-02T10:01:47.572",
         "created_at": "2015-06-02T10:00:20.247",
-        "schema": "{\"additionalProperties\":false,\"required\":[\"word\",\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"country\":{\"type\":\"string\"}}}",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"country\":{\"type\":\"string\"}}}",
         "community_type": ["core", "communitymock"],
         "community_id": 2
     },
@@ -122,7 +122,7 @@
         "collective": 2,
         "modified_at": "2015-06-02T10:01:47.572",
         "created_at": "2015-06-02T10:00:20.247",
-        "schema": "{\"additionalProperties\":false,\"required\":[\"word\",\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"country\":{\"type\":\"string\"}}}",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"country\":{\"type\":\"string\"}}}",
         "community_type": ["core", "communitymock"],
         "community_id": 2
     },
@@ -134,7 +134,7 @@
         "collective": 2,
         "modified_at": "2015-06-02T10:01:47.572",
         "created_at": "2015-06-02T10:00:20.247",
-        "schema": "{\"additionalProperties\":false,\"required\":[\"word\",\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"country\":{\"type\":\"string\"}}}",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"country\":{\"type\":\"string\"}}}",
         "community_type": ["core", "communitymock"],
         "community_id": 2
     },
@@ -146,7 +146,7 @@
         "collective": 2,
         "modified_at": "2015-06-02T10:01:47.572",
         "created_at": "2015-06-02T10:00:20.247",
-        "schema": "{\"additionalProperties\":false,\"required\":[\"word\",\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"country\":{\"type\":\"string\"}}}",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"value\"],\"type\":\"object\",\"properties\":{\"word\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"language\":{\"type\":\"string\"},\"country\":{\"type\":\"string\"}}}",
         "community_type": ["core", "communitymock"],
         "community_id": 2
     },
