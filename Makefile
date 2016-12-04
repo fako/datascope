@@ -26,7 +26,7 @@ stop-development:
 	/usr/local/bin/mysql.server stop
 
 test:
-	./manage.py test --settings=datascope.settings.test
+	./manage.py test --settings=datascope.settings.test $(filter)
 
 grow-feed-wiki-labs:
 	jsub -l release=trusty -mem 800m grow.sh

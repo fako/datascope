@@ -27,7 +27,7 @@ class ContentSerializer(serializers.Serializer):
         return data
 
     def update(self, instance, validated_data):
-        instance.update(validated_data, validate=False)
+        instance.update(validated_data, validate=False, reset=False)
         instance.save()
         return instance
 

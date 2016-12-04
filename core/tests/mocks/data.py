@@ -22,6 +22,11 @@ MOCK_DATA_WITH_RECORDS["records"] = [
     {"id": 2, "record": "The Beatles"},
     {"id": 3, "record": "The Stones"},
 ]
+MOCK_DATA_WITH_KEYS = deepcopy(MOCK_DATA)
+MOCK_DATA_WITH_KEYS['keys'] = {
+    data['id']: deepcopy(data)
+    for data in MOCK_DATA_WITH_RECORDS["records"]
+}
 MOCK_JSON_DATA_CONTEXT = {
     "unicode": "überhaupt",
     "goal": "test"

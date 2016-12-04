@@ -30,7 +30,7 @@ class HttpResourceProcessor(Processor):
     - a guideline to how deep a single resource should collect data
     """
 
-    ARGS_BATCH_METHODS = ['fetch_mass', 'send_mass']
+    ARGS_BATCH_METHODS = ['fetch_mass', 'submit_mass']
 
     config = ConfigurationProperty(
         storage_attribute="_config",
@@ -50,15 +50,15 @@ class HttpResourceProcessor(Processor):
     #######################################################
 
     @staticmethod
-    def async_results(result_id):  # TODO: test
+    def async_results(result_id):
         async_result = AsyncResult(result_id)
         if not async_result.ready():
             raise DSProcessUnfinished("Result with id {} is not ready.".format(result_id))
         if async_result.status != TaskStates.SUCCESS:
-            raise DSProcessError("An error occurred during background processing.")  # TODO: reraise with celery trace?
+            raise DSProcessError("An error occurred during background processing.")
         return async_result.result
 
-    def results(self, result):  # TODO: test
+    def results(self, result):
         scc_ids, err_ids = result
         scc = self.resource.objects.filter(id__in=scc_ids)
         err = self.resource.objects.filter(id__in=err_ids)

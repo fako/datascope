@@ -1,7 +1,7 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 import six
 
-from collections import Iterator
+from collections import Iterator, Iterable
 
 from django.db import models
 from django.conf import settings
@@ -27,7 +27,7 @@ class IndexDecoder(JSONDecoder):
         return {key: int(value) for value, key in six.iteritems(obj)}
 
 
-class Collective(Organism):
+class Collective(Organism):  # TODO: rename to family
 
     indexes = json_field.JSONField(
         null=True,
@@ -53,12 +53,12 @@ class Collective(Organism):
         :param schema: The JSON schema to use for validation.
         :return: Valid data
         """
-        if not isinstance(data, Iterator):
+        if not isinstance(data, Iterable):
             data = [data]
         for instance in data:
             Individual.validate(instance, schema)
 
-    def update(self, data, validate=True, reset=True, batch_size=500):
+    def update(self, data, validate=True, reset=True, batch_size=500):  # TODO: rename to "add" and implement "update"
         """
         Update the instance with new data by adding to the Collective
         or by updating Individuals that are on the Collective.
@@ -99,9 +99,13 @@ class Collective(Organism):
                     prepared += prepare_updates(instance)
             return prepared
 
+        update_count = 0
         for updates in ibatch(data, batch_size=batch_size):
             updates = prepare_updates(updates)
+            update_count += len(updates)
             Individual.objects.bulk_create(updates, batch_size=settings.MAX_BATCH_SIZE)
+
+        return update_count
 
     @property
     def content(self):

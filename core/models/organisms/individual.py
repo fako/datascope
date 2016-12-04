@@ -6,6 +6,7 @@ from jsonschema.exceptions import ValidationError as SchemaValidationError
 
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.core.urlresolvers import reverse
 
 import json_field
 
@@ -21,8 +22,17 @@ class Individual(Organism):
     identity = models.CharField(max_length=255, blank=True, null=True, db_index=True)
     index = models.SmallIntegerField(blank=True, null=True)
 
-    def __getitem__(self, item):
-        return self.properties[item]
+    def __getitem__(self, key):
+        return self.properties[key]
+
+    def __setitem__(self, key, value):
+        self.properties[key] = value
+
+    @property
+    def url(self):
+        if not self.id:
+            raise ValueError("Can't get url for unsaved Individual")
+        return reverse("v1:individual-content", args=[self.id])  # TODO: make version aware
 
     @staticmethod
     def validate(data, schema):
@@ -46,7 +56,9 @@ class Individual(Organism):
         try:
             jsonschema.validate(properties, schema)
         except SchemaValidationError as exc:
-            raise ValidationError(exc)
+            djang_exception = ValidationError(exc.message)
+            djang_exception.schema = exc.schema
+            raise djang_exception
 
     def update(self, data, validate=True):
         """
@@ -59,10 +71,11 @@ class Individual(Organism):
         if isinstance(data, (list, tuple,)):
             data = data[0]
 
-        if validate:
-            self.validate(data, self.schema)
-
         self.properties.update(data)
+
+        if validate:
+            self.validate(self.properties, self.schema)
+
         self.save()
         return self.content
 
@@ -95,6 +108,15 @@ class Individual(Organism):
             return {key: self.output(value) for key, value in six.iteritems(frm)}
         else:
             raise AssertionError("Expected a string, list or dict as argument got {} instead".format(type(frm)))
+
+    def items(self):
+        return self.properties.items()
+
+    def keys(self):
+        return self.properties.keys()
+
+    def values(self):
+        return self.properties.values()
 
     def clean(self):
         if self.collective:

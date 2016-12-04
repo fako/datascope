@@ -87,7 +87,7 @@ class Growth(models.Model, ProcessorMixin):
 
         self.config = self.community.config.to_dict(protected=True)  # TODO: make this += operation instead
 
-        processor, method, args_type = self.prepare_process(self.process, async=self.config.async)  # TODO: unit test async
+        processor, method, args_type = self.prepare_process(self.process, async=self.config.async)
         assert args_type == ArgumentsTypes.NORMAL and isinstance(self.input, Individual) or \
             args_type == ArgumentsTypes.BATCH and isinstance(self.input, Collective), \
             "Unexpected arguments type '{}' for input of class {}".format(args_type, self.input.__class__.__name__)
@@ -125,7 +125,7 @@ class Growth(models.Model, ProcessorMixin):
             except DSProcessError as exc:
                 self.state = GrowthState.ERROR
                 self.save()
-                raise exc  # TODO: reraise?
+                raise
 
         if self.state == GrowthState.CONTRIBUTE:
             scc, err = processor.results(result)
@@ -135,14 +135,12 @@ class Growth(models.Model, ProcessorMixin):
             elif self.contribute_type == ContributeType.INLINE:
                 assert self.config.inline_key, \
                     "No inline_key specified in configuration for Growth with inline contribution"
-                # TODO: assert that contributions and output fully match?
                 self.inline_by_key(contributions, self.config.inline_key)
-            elif self.contribute_type == ContributeType.UPDATE:  # TODO: test
+            elif self.contribute_type == ContributeType.UPDATE:
                 assert self.config.update_key, \
                     "No update_key specified in configuration for Growth with update contribution"
-                # TODO: assert that contributions and output fully match?
                 self.update_by_key(contributions, self.config.update_key)
-            elif self.contribute is None:  # TODO: test
+            elif self.contribute is None:
                 pass
             else:
                 raise AssertionError("Growth.finish did not act on contribute_type {}".format(self.contribute_type))
@@ -155,7 +153,7 @@ class Growth(models.Model, ProcessorMixin):
 
     def prepare_contributions(self, success_resources):
         if not success_resources.exists() or not self.contribute:
-            yield None
+            return
         contribute_processor, callback, args_type = self.prepare_process(self.contribute)
         for success_resource in success_resources.iterator():
             try:
@@ -172,7 +170,6 @@ class Growth(models.Model, ProcessorMixin):
                     exc
                 ))
                 success_resource.retain(self)
-                yield None
 
     def append_to_output(self, contributions):
         assert isinstance(self.output, Collective), "append_to_output expects a Collective as output"
