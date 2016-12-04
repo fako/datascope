@@ -128,6 +128,9 @@ class VisualTranslationsBRICCommunity(Community):
                 image.properties for image in grouped_images.get(ind.properties["word"], [])
                 if image.properties["country"] == ind.properties["country"]
             ]
+            if not len(images):
+                ind.delete()
+                continue
             col = Collective.objects.create(
                 community=self,
                 schema=out.schema
