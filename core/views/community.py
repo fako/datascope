@@ -1,8 +1,3 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-import six
-# noinspection PyUnresolvedReferences
-from six.moves.urllib.parse import urlencode
-
 from copy import copy
 
 from django.core.exceptions import ValidationError
@@ -41,8 +36,23 @@ class CommunityView(APIView):
         response_data[results_key] = manifestation_data
         return Response(response_data, HTTP_200_OK)
 
-    def _get_data_response(self, community_class, query_path, query_parameters, full_path):
+    @staticmethod
+    def get_full_path(community_class, query_path, query_parameters):
+        service_view = "v1:{}_service".format(community_class.get_name())
+        # Order of the given parameters matters for database lookups,
+        # of previously calculated results for these parameters
+        parameters_sorted_by_keys = sorted(query_parameters.items(), key=lambda item: item[0])
+        return "{}?{}".format(
+            reverse(service_view, kwargs={"path": query_path}),
+            "&".join("{}={}".format(key, value) for key, value in parameters_sorted_by_keys)
+        )
+
+    def get_response(self, community_class, query_path, query_parameters):
+
+        assert isinstance(query_parameters, dict), \
+            "query_parameters for get_response should be a dictionary without urlencoded values"
         response_data = copy(self.RESPONSE_DATA)
+        full_path = self.get_full_path(community_class, query_path, query_parameters)
 
         try:
             manifestation = Manifestation.objects.get(uri=full_path)
@@ -93,29 +103,10 @@ class CommunityView(APIView):
             return Response(response_data, HTTP_500_INTERNAL_SERVER_ERROR)
 
     def get(self, request, community_class, path="", *args, **kwargs):
-        return self._get_data_response(
+        return self.get_response(
             community_class,
             query_path=path,
-            query_parameters=request.GET.dict(),
-            full_path=request.get_full_path()
-        )
-
-    def get_service_data_response(self, community_class, query_path, query_parameters):
-        assert isinstance(query_parameters, dict), \
-            "query_parameters for get_service_data_response should be a dictionary without urlencoded values"
-        service_view = "v1:{}_service".format(community_class.get_name())
-        # Order of the given parameters matters
-        # for database lookups of previously calculated results for these parameters
-        parameters_sorted_by_keys = sorted(six.iteritems(query_parameters), key=lambda item: item[0])
-        full_path = "{}?{}".format(
-            reverse(service_view, kwargs={"path": query_path}),
-            "&".join("{}={}".format(key, value) for key, value in parameters_sorted_by_keys)
-        )
-        return self._get_data_response(
-            community_class,
-            query_path=query_path,
-            query_parameters=query_parameters,
-            full_path=full_path
+            query_parameters=request.GET.dict()
         )
 
     # FEATURE: allow actions who's function lives on a Community through POST
@@ -165,7 +156,7 @@ class HtmlCommunityView(View):
                 RequestContext(request)
             )
         # Search request
-        api_response = CommunityView().get_service_data_response(community_class, path, request.GET.dict())
+        api_response = CommunityView().get_response(community_class, path, request.GET.dict())
         template_context = {
             'self_reverse': community_class.get_name() + '_html',
             'response': self.data_for(community_class, api_response)

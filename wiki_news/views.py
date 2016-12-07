@@ -85,7 +85,7 @@ def get_existing_sections(page):
 
 
 def wiki_page_update(request, page):
-    response = CommunityView().get_service_data_response(WikiNewsCommunity, "latest-news", request.GET.dict())
+    response = CommunityView().get_response(WikiNewsCommunity, "latest-news", request.GET.dict())
     if response.status_code == status.HTTP_202_ACCEPTED:
         wait_url = reverse("v1:wiki_page_wait", kwargs={"page": page})
         wait_query = request.META.get("QUERY_STRING")
