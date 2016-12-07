@@ -1,6 +1,6 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 from core.management.commands.grow_community import Command as GrowCommand
 from core.utils.configuration import DecodeConfigAction
@@ -16,7 +16,8 @@ class Command(GrowCommand):
 
     @staticmethod
     def clear_database():
-        WikiNewsCommunity.objects.all().delete()
+        three_days_ago = datetime.now() - timedelta(days=3)
+        WikiNewsCommunity.objects.filter(created_at__lte=three_days_ago).delete()
         WikipediaRecentChanges.objects.all().delete()
         WikipediaListPages.objects.all().delete()
         WikiDataItems.objects.all().delete()
@@ -44,5 +45,7 @@ class Command(GrowCommand):
         super(Command, self).handle_community(community, **options)
 
     def handle(self, *args, **options):
-        self.clear_database() if options["delete"] else self.archive_growth()
+        if options["delete"]:
+            self.clear_database()
+        self.archive_growth()
         super(Command, self).handle(*args, **options)
