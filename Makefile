@@ -13,7 +13,10 @@ deploy: clean
 deploy-wiki-labs: clean
 	webservice2 uwsgi-plain restart
 	jstop celery
-	jstart -l release=trusty -mem 1024m celery.sh
+	jstart -l release=trusty -mem 2048m celery.sh
+
+health-wiki-labs:
+	qstat
 
 dump:
 	./manage.py dumpdata --natural-foreign -e contenttypes -e auth.Permission -e admin -e sessions --indent=4 > db-dump.$(now).json

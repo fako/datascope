@@ -25,5 +25,6 @@ python src/manage.py collectstatic
 
 # SETUP: server
 wget https://raw.githubusercontent.com/fako/ds-server/master/deploy/uwsgi/algonews.ini
+wget https://raw.githubusercontent.com/fako/ds-server/master/deploy/misc/wikipedia/.bigbrotherrc
 mv algonews.ini uwsgi.ini
 webservice2 uwsgi-plain start
