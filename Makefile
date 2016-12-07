@@ -13,7 +13,7 @@ deploy: clean
 deploy-wiki-labs: clean
 	webservice2 uwsgi-plain restart
 	jstop celery
-	jstart -l release=trusty -mem 2048m celery.sh
+	jstart -N celery -l release=trusty -mem 2048m celery.sh
 
 health-wiki-labs:
 	qstat
