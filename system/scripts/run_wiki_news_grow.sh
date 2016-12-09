@@ -5,4 +5,4 @@
 source /data/project/algo-news/env/bin/activate
 cd /data/project/algo-news/src/
 export DJANGO_SETTINGS_MODULE=datascope.settings.wikipedia
-python manage.py grow_wiki_news
+python manage.py grow_wiki_news --delete
