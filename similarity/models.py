@@ -22,6 +22,7 @@ class WikipediaCategorySimularityCommunity(Community):
                     "title": "$.title",
                     "wikidata": "$.pageprops.wikibase_item",
                     "image": "$.pageprops.page_image_free",
+                    "categories": "$.categories",
                 },
                 "_update_key": "title"
             },

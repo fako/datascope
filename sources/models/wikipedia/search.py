@@ -14,8 +14,10 @@ class WikipediaSearch(WikipediaQuery, WikipediaImagesMixin):
 
     URI_TEMPLATE = 'http://{}.wikipedia.org/w/api.php?{}={}'
     PARAMETERS = override_dict(WikipediaQuery.PARAMETERS, {
-        "prop": "info|pageprops|extracts",
+        "prop": "info|pageprops|extracts|categories",
         "exintro": 1,
+        "clshow": "!hidden",
+        "cllimit": 500
     })
     GET_SCHEMA = {
         "args": {
