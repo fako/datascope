@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from core.admin.organisms import CommunityAdmin
+from similarity.models import WikipediaCategorySimularityCommunity
+
+
+admin.site.register(WikipediaCategorySimularityCommunity, CommunityAdmin)
