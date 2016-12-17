@@ -207,7 +207,7 @@ class Growth(models.Model, ProcessorMixin):
     def update_by_key(self, contributions, update_key):
         if isinstance(self.output, Collective):
             self._update_collection_by_key(contributions, update_key)
-        if isinstance(self.output, Individual):
+        elif isinstance(self.output, Individual):
             self._update_individual_by_key(contributions, update_key)
         else:
             raise AssertionError("update_by_key expects a Collective or Individual as output")

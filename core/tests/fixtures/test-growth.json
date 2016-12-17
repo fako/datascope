@@ -26,8 +26,14 @@
         "type": "test_new",
         "state": "New",
         "input_id": 1,
-        "input_type": 17,
-        "output_type": 18,
+        "input_type": [
+            "core",
+            "individual"
+        ],
+        "output_type": [
+            "core",
+            "collective"
+        ],
         "is_finished": false,
         "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\", \"args\": [\"$.width\", \"$.height\"], \"kwargs\": {\"name\": \"$.name\"}}",
         "community_type": 21,
@@ -46,8 +52,14 @@
         "type": "test_processing",
         "state": "Processing",
         "input_id": 1,
-        "input_type": 17,
-        "output_type": 18,
+        "input_type": [
+            "core",
+            "individual"
+        ],
+        "output_type": [
+            "core",
+            "collective"
+        ],
         "is_finished": false,
         "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
         "community_type": 21,
@@ -66,8 +78,14 @@
         "type": "test_finished",
         "state": "Complete",
         "input_id": 1,
-        "input_type": 17,
-        "output_type": 18,
+        "input_type": [
+            "core",
+            "individual"
+        ],
+        "output_type": [
+            "core",
+            "collective"
+        ],
         "is_finished": true,
         "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
         "community_type": 21,
@@ -86,8 +104,14 @@
         "type": "test_partial",
         "state": "Partial",
         "input_id": 1,
-        "input_type": 17,
-        "output_type": 18,
+        "input_type": [
+            "core",
+            "individual"
+        ],
+        "output_type": [
+            "core",
+            "collective"
+        ],
         "is_finished": false,
         "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
         "community_type": 21,
@@ -106,8 +130,14 @@
         "type": "test_col_input",
         "state": "New",
         "input_id": 3,
-        "input_type": 18,
-        "output_type": 18,
+        "input_type": [
+            "core",
+            "collective"
+        ],
+        "output_type": [
+            "core",
+            "collective"
+        ],
         "is_finished": false,
         "config": "{\"objective\": {\"@\": \"$\", \"value\":\"$.value\", \"extra\":\"$.extra\"}, \"resource\": \"HttpResourceMock\", \"args\": [\"$.value\"], \"kwargs\": {\"context\": \"$.context\"}}",
         "community_type": 21,
@@ -126,8 +156,14 @@
         "type": "test_contributing",
         "state": "Contribute",
         "input_id": 1,
-        "input_type": 17,
-        "output_type": 18,
+        "input_type": [
+            "core",
+            "individual"
+        ],
+        "output_type": [
+            "core",
+            "collective"
+        ],
         "is_finished": false,
         "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
         "community_type": 21,
