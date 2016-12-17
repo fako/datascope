@@ -27,7 +27,7 @@ class WikipediaSearch(WikipediaQuery, WikipediaImagesMixin):
         "kwargs": None
     }
 
-    def parameters(self):
+    def parameters(self, **kwargs):
         parameters = copy(self.PARAMETERS)
         parameters["exintro"] = int(not self.config.wiki_full_extracts)
         return parameters
