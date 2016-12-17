@@ -185,8 +185,7 @@ class Growth(models.Model, ProcessorMixin):
                 individual.clean()
                 individual.save()
 
-    def update_by_key(self, contributions, update_key):
-        assert isinstance(self.output, Collective), "update_by_key expects a Collective as output"
+    def _update_collection_by_key(self, contributions, update_key):
         for contribution in contributions:
             identifier = self.output.identifier
             assert identifier == update_key, \
@@ -196,6 +195,22 @@ class Growth(models.Model, ProcessorMixin):
                 individual.update(contribution)
                 individual.clean()
                 individual.save()
+
+    def _update_individual_by_key(self, contributions, update_key):
+        for contribution in contributions:
+            assert update_key in self.output.properties, \
+                "Output does not contain update key '{}'".format(update_key)
+            self.output.update(contribution)
+            self.output.clean()
+            self.output.save()
+
+    def update_by_key(self, contributions, update_key):
+        if isinstance(self.output, Collective):
+            self._update_collection_by_key(contributions, update_key)
+        if isinstance(self.output, Individual):
+            self._update_individual_by_key(contributions, update_key)
+        else:
+            raise AssertionError("update_by_key expects a Collective or Individual as output")
 
     def save(self, *args, **kwargs):
         self.is_finished = self.state in [GrowthState.COMPLETE, GrowthState.PARTIAL]
