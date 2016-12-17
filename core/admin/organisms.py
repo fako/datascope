@@ -1,6 +1,4 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
-import json
+import humanize
 
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
@@ -15,11 +13,10 @@ class IndividualInline(admin.StackedInline):
 
 
 class OrganismAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'pretty_content', 'created_at', 'modified_at']
+    list_display = ['__str__', 'size', 'created_at', 'modified_at']
 
-    def pretty_content(self, organism):
-        return json.dumps(organism.content)
-    pretty_content.short_description = "Content"
+    def size(self, organism):
+        return humanize.naturalsize(len(organism.json_content))
 
 
 class IndividualAdmin(OrganismAdmin):
