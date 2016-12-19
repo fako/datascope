@@ -103,6 +103,12 @@ class Community(models.Model, ProcessorMixin):
                     fatal_error = fatal_error or not should_continue
         return not fatal_error
 
+    def call_manifestation_callbacks(self, manifestation_part):
+        callback_name = "before_{}_manifestation".format(manifestation_part["name"])
+        callback = getattr(self, callback_name, None)
+        if callback is not None and callable(callback):
+            callback(manifestation_part)
+
     def create_organism(self, organism_type, schema, identifier=None):
         model = get_any_model(organism_type)
         org = model(community=self, schema=schema)
@@ -277,6 +283,7 @@ class Community(models.Model, ProcessorMixin):
         """
         content = self.kernel.content
         for part in self.COMMUNITY_BODY:
+            self.call_manifestation_callbacks(part)
             processor, method, args_type = self.prepare_process(part["process"], extra_config=part.get("config"))
             content = method(content)
             assert isinstance(content, Iterator), \

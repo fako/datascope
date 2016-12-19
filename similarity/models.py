@@ -77,11 +77,16 @@ class WikipediaCategorySimularityCommunity(Community):
     ])
 
     COMMUNITY_BODY = [
-        # {
-        #     "process": "ExpansionProcessor.collective_content",
-        #     "config": {}
-        # }
+        {
+            "name": "compare_categories",
+            "process": "WikipediaCompareProcessor.hooks",
+            "config": {}
+        }
     ]
+
+    PUBLIC_CONFIG = {
+        "$categories": 1
+    }
 
     def initial_input(self, *args):
         return Individual.objects.create(community=self, schema={}, properties={
@@ -93,6 +98,12 @@ class WikipediaCategorySimularityCommunity(Community):
 
     def error_search_not_found(self, errors, out):
         return False
+
+    def finish_search(self, out, err):
+        out["category_titles"] = [
+            category["title"] for category in out["categories"]
+        ]
+        out.save()
 
     def finish_categories(self, out, err):
         for category in out.individual_set.all().iterator():
@@ -137,8 +148,12 @@ class WikipediaCategorySimularityCommunity(Community):
         self.current_growth.output = filtered
         self.current_growth.save()
 
+    def before_compare_categories_manifestation(self, manifestation_part):
+        subject = self.get_growth("search").input
+        self.config = {"_reference": subject.id}
+
     def set_kernel(self):
-        self.kernel = self.growth_set.filter(type="search").last().input
+        self.kernel = self.get_growth("category_members").output
 
     class Meta:
         verbose_name = "Wikipedia category"
