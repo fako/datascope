@@ -1,3 +1,4 @@
+from itertools import islice
 from collections import OrderedDict
 
 from core.models.organisms import Community, Collective, Individual
@@ -154,6 +155,10 @@ class WikipediaCategorySimularityCommunity(Community):
 
     def set_kernel(self):
         self.kernel = self.get_growth("category_members").output
+
+    @property
+    def manifestation(self):
+        return islice(super(WikipediaCategorySimularityCommunity, self).manifestation, 1, 21)
 
     class Meta:
         verbose_name = "Wikipedia category"
