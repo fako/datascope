@@ -145,6 +145,9 @@ class WikipediaCategorySimularityCommunity(Community):
                         individual for index, individual in enumerate(categories)
                         if individual not in categories[index + 1:]
                     ]
+        else:
+            buffer.append(current)
+            filtered.update(buffer, batch_size=buffer_size, reset=False)
 
         self.current_growth.output = filtered
         self.current_growth.save()
