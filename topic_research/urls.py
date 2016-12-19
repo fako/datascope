@@ -3,7 +3,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 from django.conf.urls import url
 
 from core.views.community import CommunityView, HtmlCommunityView
-from similarity.models import WikipediaCategorySimularityCommunity
+from topic_research.models import WikipediaCategorySimularityCommunity
 
 
 urlpatterns = [

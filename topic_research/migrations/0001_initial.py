@@ -17,8 +17,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='WikipediaCategorySimularityCommunity',
             fields=[
-                ('id', models.AutoField(serialize=False, verbose_name='ID', primary_key=True, auto_created=True)),
-                ('signature', models.CharField(db_index=True, max_length=255)),
+                ('id', models.AutoField(serialize=False, primary_key=True, verbose_name='ID', auto_created=True)),
+                ('signature', models.CharField(max_length=255, db_index=True)),
                 ('config', core.utils.configuration.ConfigurationField()),
                 ('kernel_id', models.PositiveIntegerField(null=True, blank=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
@@ -26,13 +26,13 @@ class Migration(migrations.Migration):
                 ('completed_at', models.DateTimeField(null=True, blank=True)),
                 ('purge_at', models.DateTimeField(null=True, blank=True)),
                 ('views', models.IntegerField(default=0)),
-                ('state', models.CharField(choices=[('Aborted', 'Aborted'), ('Asynchronous', 'Asynchronous'), ('New', 'New'), ('Ready', 'Ready'), ('Synchronous', 'Synchronous')], max_length=255, default='New')),
-                ('current_growth', models.ForeignKey(to='core.Growth', null=True)),
+                ('state', models.CharField(max_length=255, choices=[('Aborted', 'Aborted'), ('Asynchronous', 'Asynchronous'), ('New', 'New'), ('Ready', 'Ready'), ('Synchronous', 'Synchronous')], default='New')),
+                ('current_growth', models.ForeignKey(null=True, to='core.Growth')),
                 ('kernel_type', models.ForeignKey(null=True, to='contenttypes.ContentType', blank=True)),
             ],
             options={
-                'get_latest_by': 'created_at',
-                'abstract': False,
+                'verbose_name_plural': 'Wikipedia categories similarities',
+                'verbose_name': 'Wikipedia category similarity',
             },
             bases=(models.Model, core.models.organisms.mixins.ProcessorMixin),
         ),

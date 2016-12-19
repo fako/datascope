@@ -5,7 +5,6 @@ from core.models.organisms import Community, Collective, Individual
 
 
 class WikipediaCategorySimularityCommunity(Community):
-    COMMUNITY_NAME = "visual_translations_bric"
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("search", {
@@ -164,5 +163,5 @@ class WikipediaCategorySimularityCommunity(Community):
         return islice(super(WikipediaCategorySimularityCommunity, self).manifestation, 1, 21)
 
     class Meta:
-        verbose_name = "Wikipedia category"
-        verbose_name_plural = "Wikipedia categories"
+        verbose_name = "Wikipedia category similarity"
+        verbose_name_plural = "Wikipedia categories similarities"

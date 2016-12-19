@@ -69,7 +69,7 @@ INSTALLED_APPS = (
     'visual_translations',
     'future_fashion',
     'open_data',
-    'similarity',
+    'topic_research',
 )
 
 DATABASE_TYPES = {
