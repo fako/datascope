@@ -11,6 +11,7 @@ from .wikipedia.metrics import WikipediaPageviewDetails
 from .wikipedia.transclusion import WikipediaTransclusions
 from .wikipedia.login import WikipediaToken, WikipediaLogin
 from .wikipedia.edit import WikipediaEdit
+from .wikipedia.categories import WikipediaCategories, WikipediaCategoryMembers
 
 from .google.images import GoogleImage
 from .google.translations import GoogleTranslate

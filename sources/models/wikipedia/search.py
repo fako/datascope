@@ -47,3 +47,7 @@ class WikipediaSearch(WikipediaQuery, WikipediaImagesMixin):
                         raise DSHttpWarning300("The search is ambiguous.", resource=self)
                 except KeyError:
                     pass
+
+    class Meta:
+        verbose_name = "Wikipedia search"
+        verbose_name_plural = "Wikipedia searches"
