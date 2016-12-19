@@ -104,7 +104,7 @@ class Community(models.Model, ProcessorMixin):
         return not fatal_error
 
     def call_manifestation_callbacks(self, manifestation_part):
-        callback_name = "before_{}_manifestation".format(manifestation_part["name"])
+        callback_name = "before_{}_manifestation".format(manifestation_part.get("name", ""))
         callback = getattr(self, callback_name, None)
         if callback is not None and callable(callback):
             callback(manifestation_part)
