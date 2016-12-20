@@ -277,7 +277,7 @@ class PersonProfile(Community):
     ])
 
 
-class WikiNewsFeed(Community):
+class WikiFeed(Community):
     pass
 
 

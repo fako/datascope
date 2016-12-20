@@ -2,7 +2,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 
 from django.conf.urls import url
 
-from wiki_news.urls import urlpatterns as wiki_news_patterns
+from wiki_feed.urls import urlpatterns as wiki_feed_patterns
 from visual_translations.urls import urlpatterns as visual_translations_patterns
 from future_fashion.urls import urlpatterns as future_fashion_patterns
 from . import views
@@ -16,6 +16,6 @@ urlpatterns = [
     url(r'^question/$', views.question, name="datascope-question")
 ]
 
-urlpatterns += wiki_news_patterns
+urlpatterns += wiki_feed_patterns
 urlpatterns += visual_translations_patterns
 urlpatterns += future_fashion_patterns

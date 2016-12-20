@@ -2,14 +2,14 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 
 from django.test import TestCase
 
-from wiki_news.models import WikiNewsCommunity
+from wiki_feed.models import WikiFeedCommunity
 
 
-class TestWikiNewsCommunity(TestCase):
+class TestWikiFeedCommunity(TestCase):
 
     def setUp(self):
-        super(TestWikiNewsCommunity, self).setUp()
-        self.instance = WikiNewsCommunity()
+        super(TestWikiFeedCommunity, self).setUp()
+        self.instance = WikiFeedCommunity()
         self.instance.save()
 
     def test_setup_growth(self):

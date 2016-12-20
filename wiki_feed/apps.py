@@ -3,6 +3,6 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 from django.apps import AppConfig
 
 
-class WikiNewsConfig(AppConfig):
-    name = 'wiki_news'
-    verbose_name = "Wiki News"
+class WikiFeedConfig(AppConfig):
+    name = 'wiki_feed'
+    verbose_name = "Wiki Feed"

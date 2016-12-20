@@ -13,7 +13,7 @@ from django.conf import settings
 from rest_framework import status
 
 from core.views import CommunityView
-from wiki_news.models import WikiNewsCommunity
+from wiki_feed.models import WikiFeedCommunity
 
 
 TARGET_WIKI = "https://wikitech.wikimedia.org/"
@@ -85,13 +85,13 @@ def get_existing_sections(page):
 
 
 def wiki_page_update(request, page):
-    response = CommunityView().get_response(WikiNewsCommunity, "latest-news", request.GET.dict())
+    response = CommunityView().get_response(WikiFeedCommunity, "latest-news", request.GET.dict())
     if response.status_code == status.HTTP_202_ACCEPTED:
         wait_url = reverse("v1:wiki_page_wait", kwargs={"page": page})
         wait_query = request.META.get("QUERY_STRING")
         return redirect("{}?{}".format(wait_url, wait_query))
     existing_sections = get_existing_sections(page)
-    content = render_to_string("wiki_news/header.wml", {"absolute_uri": request.build_absolute_uri()})
+    content = render_to_string("wiki_feed/header.wml", {"absolute_uri": request.build_absolute_uri()})
     for page_details in response.data["results"]:
         page_key = str(page_details["pageid"])
         if page_key in existing_sections:
@@ -100,7 +100,7 @@ def wiki_page_update(request, page):
             rank_info = page_details["ds_rank"]
             modules = (info for info in six.iteritems(rank_info) if info[0] != 'rank')
             sorted_modules = sorted(modules, key=lambda item: float(item[1]['rank']), reverse=True)
-            content += render_to_string("wiki_news/section.wml", {
+            content += render_to_string("wiki_feed/section.wml", {
                 "page": page_details,
                 "modules": sorted_modules
             })
@@ -109,7 +109,7 @@ def wiki_page_update(request, page):
 
 
 def wiki_page_wait(request, page):
-    return render_to_response("wiki_news/wait.html", {
+    return render_to_response("wiki_feed/wait.html", {
         "segments_to_service": settings.SEGMENTS_TO_SERVICE,
         "service_query": "latest-news",
         "continue_path": reverse("v1:wiki_page_update", args=(page,)),

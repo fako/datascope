@@ -64,7 +64,7 @@ INSTALLED_APPS = (
     'core',
     'sources',
     # Algorithms
-    'wiki_news',
+    'wiki_feed',
     'visual_translations',
     'future_fashion',
 )
