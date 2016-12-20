@@ -5,7 +5,7 @@ from django.conf.urls import url
 from wiki_feed.urls import urlpatterns as wiki_feed_patterns
 from visual_translations.urls import urlpatterns as visual_translations_patterns
 from future_fashion.urls import urlpatterns as future_fashion_patterns
-from similarity.urls import urlpatterns as similarity_patterns
+from topic_research.urls import urlpatterns as topic_research_patterns
 from . import views
 
 urlpatterns = [
@@ -20,4 +20,4 @@ urlpatterns = [
 urlpatterns += wiki_feed_patterns
 urlpatterns += visual_translations_patterns
 urlpatterns += future_fashion_patterns
-urlpatterns += similarity_patterns
+urlpatterns += topic_research_patterns
