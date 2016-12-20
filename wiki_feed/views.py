@@ -16,7 +16,7 @@ from core.views import CommunityView
 from wiki_feed.models import WikiFeedCommunity
 
 
-TARGET_WIKI = "https://wikitech.wikimedia.org/"
+TARGET_WIKI = "https://meta.wikimedia.org/"
 
 
 def edit_wiki(page, content):
