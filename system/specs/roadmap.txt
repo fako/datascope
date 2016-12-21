@@ -6,7 +6,7 @@ MUST
 - Fix security issues on Wikipedia tools
 
 GREAT
-- Base class for wiki generators
++ Base class for wiki generators
 - Base class for category similarity
 - Way to resolve spirits in a multi-inherit community
 - Parse hooks as javascript modules
@@ -21,6 +21,7 @@ SHOULD
 
 NICE
 - | parameter parser (processors)
+- Squash migrations
 
 DREAM
 - Category distance calculation
