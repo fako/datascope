@@ -71,3 +71,6 @@ class WikipediaGenerator(WikipediaQuery):
             # In practise it means the searched for title does not exist.
             self.status = 404
             raise DSHttpError40X(self.ERROR_MESSAGE, resource=self)
+
+    class Meta:
+        abstract = True
