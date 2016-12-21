@@ -1,44 +1,26 @@
-PREPARATION
-+ Rename core to legacy
-+ Update all packages to latest version (mainly: Django, DRF and Celery)
-+ Full test and deploy
+MUST
+- Filter through Wikidata by claims
+- Backlink topic research
+- Synonym and antonym API
+- Become a bot
+- Fix security issues on Wikipedia tools
 
-STORAGE
-+ Simplify existing storage functionality in new "core"
-+ Keep documentation and tests intact as much as possible
+GREAT
+- Base class for wiki generators
+- Base class for category similarity
+- Way to resolve spirits in a multi-inherit community
+- Parse hooks as javascript modules
+- Contribute generators with low mem usage
 
-EXTERNAL RESOURCES
-+ Rename HttpLink to HttpResource and move to new "core"
-+ Make resources use simplified storage
-+ Provide a POST mechanism
-
-PROCESSES
-+ Simplify processes (mainly: Retrieve) and move it to new "core"
-+ Rename Retrieve to Fetch
-+ Provide a Submit process
-
-NEW STYLE OBJECTS
-+ Create the Individual
-+ Create the Collective
-+ Create an Individual resource
-+ Create a Collective resource
-+ Make individuals and collectives collect data from a source
-
-COMMUNITY
-+ Create the Community
-+ Create Growth
-+ Make a spirit provide growth for a community
-+ See how scraping will fit into the picture
-
-PORT ALGORITHMS
-+ Create new style visual-translations
-+ Test and deploy
-- Fix bug with not-found translations giving 500s
+SHOULD
+- Collective pagination
+- $ parameter parser (variables)
 - Create new style people-suggestions
-- Test and deploy
 - Create new style city-celebrities
-- Test and deploy
+- Update readme
 
-DEPRECATE LEGACY
-+ Remove all legacy code
-+ Update to Python3
+NICE
+- | parameter parser (processors)
+
+DREAM
+- Category distance calculation
