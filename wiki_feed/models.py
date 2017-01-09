@@ -44,7 +44,7 @@ class WikiFeedCommunity(Community):
                     "pageid": "$.pageid",
                     "title": "$.title",
                     "categories": "$.categories",
-                    "image": "$.pageprops.page_image",
+                    "image": "$.pageprops.page_image_free",
                     "wikidata": "$.pageprops.wikibase_item"
                 },
                 "_concat_args_size": 50,
