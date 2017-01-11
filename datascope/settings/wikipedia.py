@@ -6,9 +6,9 @@ DATABASES["default"]["USER"] = 's52573'
 DATABASES["default"]["PASSWORD"] = MYSQL_PASSWORD
 DATABASES["default"]["HOST"] = 'tools-db'
 
-STATIC_URL = "http://tools-static.wmflabs.org/algo-news/static/"
-BROKER_URL = 'redis://tools-redis:6379/0'
-
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+STATIC_URL = "//tools-static.wmflabs.org/algo-news/static/"
+
+BROKER_URL = 'redis://tools-redis:6379/0'
 
 # TODO: add STATIC_IP
