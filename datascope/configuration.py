@@ -25,6 +25,7 @@ DEFAULT_CONFIGURATION = {
     "wikipedia_wiki_country": "en",
     "wikipedia_wiki_query_param": "titles",
     "wikipedia_wiki_full_extracts": False,
+    "wikipedia_wiki_domain": "en.wikipedia.org",
 
     "google_api_key": getattr(settings, 'GOOGLE_API_KEY', ''),
     "google_cx": "004613812033868156538:5pcwbuudj1m",
