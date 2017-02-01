@@ -1,13 +1,14 @@
 import json
 from pprint import pformat
 
+from django.conf import settings
 from django.shortcuts import HttpResponse
 from django.views.decorators import csrf, http
 from django.core.mail import mail_managers
 
 
 def index(request):
-    return HttpResponse("Datascope version 0.3 (Python 3)")
+    return HttpResponse("Datascope version {} (Python 3)".format(settings.DATASCOPE_VERSION))
 
 
 @http.require_http_methods(["OPTIONS", "POST"])

@@ -14,7 +14,7 @@ DEFAULT_CONFIGURATION = {
         'http://globe-scope.org',
     ],
     "global_async": True,  # by default offload to celery where possible
-    "global_user_agent": "DataScope (v0.3)",
+    "global_user_agent": "DataScope (v{})".format(settings.DATASCOPE_VERSION),
 
     "http_resource_batch_size": 0,
     "http_resource_continuation_limit": 1,
