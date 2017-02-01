@@ -186,12 +186,15 @@ class HttpResource(models.Model):
     def _create_request(self, method, *args, **kwargs):
         self._validate_input(method, *args, **kwargs)
         data = self.data(**kwargs) if not method == "get" else None
+        headers = requests.utils.default_headers()
+        headers["User-Agent"] = "{}; {}".format(self.config.user_agent, headers["User-Agent"])
+        headers.update(self.headers())
         return self.validate_request({
             "args": args,
             "kwargs": kwargs,
             "method": method,
             "url": self._create_url(*args),
-            "headers": self.headers(),
+            "headers": dict(headers),
             "data": data,
         }, validate_input=False)
 
@@ -337,9 +340,6 @@ class HttpResource(models.Model):
         assert self.request and isinstance(self.request, dict), \
             "Trying to make request before having a valid request dictionary."
 
-        if self.session is None:
-            self.session = requests.Session()
-
         method = self.request.get("method")
         data = self.request.get("data") if not method == "get" else None
         request = requests.Request(
@@ -393,7 +393,7 @@ class HttpResource(models.Model):
 
     def __init__(self, *args, **kwargs):
         super(HttpResource, self).__init__(*args, **kwargs)
-        self.session = kwargs.get("session")
+        self.session = kwargs.get("session", requests.Session())
         self.timeout = kwargs.get("timeout", 30)  # TODO: test this
 
     def clean(self):

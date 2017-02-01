@@ -238,7 +238,12 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertIn("auth=1", preq.url)
         self.assertIn("param=1", preq.url)
         self.assertEqual(len(expected_url), len(preq.url))
-        self.assertEqual(preq.headers, {"Accept": "application/json"})
+        self.assertEqual(preq.headers, {
+            "Connection": "keep-alive",
+            "Accept": "application/json",
+            "User-Agent": "DataScope (test); python-requests/2.7.0 CPython/3.5.1 Darwin/15.6.0",
+            "Accept-Encoding": "gzip, deflate"
+        })
 
     def assert_call_args_post(self, call_args, term):
         expected_url = "http://localhost:8000/en/?q={}&key=oehhh&auth=1&param=1".format(term)
@@ -252,7 +257,14 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertIn("auth=1", preq.url)
         self.assertIn("param=1", preq.url)
         self.assertEqual(len(expected_url), len(preq.url))
-        self.assertEqual(preq.headers, {'Content-Length': str(expected_length), 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json'})
+        self.assertEqual(preq.headers, {
+            "Content-Length": str(expected_length),
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "User-Agent": "DataScope (test); python-requests/2.7.0 CPython/3.5.1 Darwin/15.6.0",
+            "Accept-Encoding": "gzip, deflate"
+        })
         self.assertEqual(preq.body, expected_body)
 
     def test_get_new(self):
