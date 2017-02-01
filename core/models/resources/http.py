@@ -358,10 +358,10 @@ class HttpResource(models.Model):
                 timeout=self.timeout
             )
         except (requests.ConnectionError, IOError):
-            self.set_error(502)
+            self.set_error(502, connection_error=True)
             return
         except requests.Timeout:
-            self.set_error(504)
+            self.set_error(504, connection_error=True)
             return
         self._update_from_response(response)
 
@@ -427,9 +427,10 @@ class HttpResource(models.Model):
         hsh.update(hash_data)
         return hsh.hexdigest()
 
-    def set_error(self, status):  # TODO: test
-        self.head = {}
-        self.body = ""
+    def set_error(self, status, connection_error=False):  # TODO: test
+        if connection_error:
+            self.head = {}
+            self.body = ""
         self.status = status
 
     class Meta:
