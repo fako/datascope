@@ -1,6 +1,4 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
 import six
-from django.utils.encoding import python_2_unicode_compatible
 
 from itertools import groupby
 from collections import OrderedDict, Iterator
@@ -39,7 +37,6 @@ COMMUNITY_STATE_CHOICES = [
 ]
 
 
-@python_2_unicode_compatible
 class Manifestation(models.Model):
 
     uri = models.CharField(max_length=255, db_index=True, default=None)
@@ -89,7 +86,6 @@ class Manifestation(models.Model):
         )
 
 
-@python_2_unicode_compatible
 class Community(models.Model, ProcessorMixin):
     """
 

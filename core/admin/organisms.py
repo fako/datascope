@@ -50,7 +50,7 @@ class ManifestationInline(GenericStackedInline):
 
 class CommunityAdmin(admin.ModelAdmin):
     list_display = ["__str__", "signature", "state", "views", "config"]
-    readonly_fields = ("created_at", "modified_at")
+    readonly_fields = ("created_at", "modified_at", "current_growth")
     inlines = (
         GrowthInline,
         ManifestationInline

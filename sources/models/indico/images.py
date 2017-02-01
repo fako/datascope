@@ -44,7 +44,7 @@ class ImageFeatures(HttpResource):
             response = indicoio.image_features(self.request["url"])
         except Exception as exc:
             log.exception(exc)
-            self.set_error(-1)
+            self.set_error(-1, connection_error=True)
 
         self._update_from_response(response)
 

@@ -1,21 +1,20 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 import six
 
-from core.models.resources.http import HttpResource
+from core.utils.helpers import override_dict
+from sources.models.wikipedia.base import WikipediaAPI
 
 
-class WikiDataItems(HttpResource):
+class WikiDataItems(WikipediaAPI):
 
     URI_TEMPLATE = "https://www.wikidata.org/w/api.php?ids={}"
-    CONFIG_NAMESPACE = 'wikipedia'
 
-    PARAMETERS = {
+    PARAMETERS = override_dict(WikipediaAPI.PARAMETERS, {
         "action": "wbgetentities",
-        "format": "json",
-        "redirects": "yes",
         "languages": "en",
+        "redirects": "yes",
         "props": "info|claims|descriptions"
-    }
+    })
 
     GET_SCHEMA = {
         "args": {
@@ -23,10 +22,6 @@ class WikiDataItems(HttpResource):
             "items": [{"type": "string"}],  # TODO: use a pattern?
         },
         "kwargs": None
-    }
-
-    ERROR_CODE_TO_STATUS = {
-        "no-such-entity": 404
     }
 
     class Meta:

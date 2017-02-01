@@ -82,7 +82,6 @@ class HttpResourceProcessor(Processor):
         if session is not None:
             link.session = session
         # FEATURE: update session to use proxy when configured
-        # FEATURE: update session to use custom user agents when configured
         return link
 
     #######################################################

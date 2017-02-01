@@ -1,6 +1,3 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-from django.utils.encoding import python_2_unicode_compatible
-
 import logging
 from operator import xor
 from collections import Iterator
@@ -45,7 +42,6 @@ CONTRIBUTE_TYPE_CHOICES = [
 ]
 
 
-@python_2_unicode_compatible
 class Growth(models.Model, ProcessorMixin):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")

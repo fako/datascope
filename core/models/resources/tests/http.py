@@ -228,6 +228,12 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
             "data": {"test": "test"}
         }
 
+    def assert_agent_header(self, prepared_request, expected_agent):
+        agent_header = prepared_request.headers.pop("User-Agent")
+        datascope_agent, platform_agent = agent_header.split(';')
+        self.assertEqual(datascope_agent, expected_agent)
+        self.assertGreater(len(platform_agent), 0)
+
     def assert_call_args_get(self, call_args, term):
         expected_url = "http://localhost:8000/en/?q={}&key=oehhh&auth=1&param=1".format(term)
         args, kwargs = call_args
@@ -238,7 +244,12 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertIn("auth=1", preq.url)
         self.assertIn("param=1", preq.url)
         self.assertEqual(len(expected_url), len(preq.url))
-        self.assertEqual(preq.headers, {"Accept": "application/json"})
+        self.assert_agent_header(preq, "DataScope (test)")
+        self.assertEqual(preq.headers, {
+            "Connection": "keep-alive",
+            "Accept": "application/json",
+            "Accept-Encoding": "gzip, deflate"
+        })
 
     def assert_call_args_post(self, call_args, term):
         expected_url = "http://localhost:8000/en/?q={}&key=oehhh&auth=1&param=1".format(term)
@@ -252,7 +263,14 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertIn("auth=1", preq.url)
         self.assertIn("param=1", preq.url)
         self.assertEqual(len(expected_url), len(preq.url))
-        self.assertEqual(preq.headers, {'Content-Length': str(expected_length), 'Content-Type': 'application/x-www-form-urlencoded', 'Accept': 'application/json'})
+        self.assert_agent_header(preq, "DataScope (test)")
+        self.assertEqual(preq.headers, {
+            "Content-Length": str(expected_length),
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Accept-Encoding": "gzip, deflate"
+        })
         self.assertEqual(preq.body, expected_body)
 
     def test_get_new(self):
@@ -524,3 +542,14 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertIsNone(instance.meta)
         instance.get("new")
         self.assertEqual(instance.meta, "new")
+
+    def test_user_agent(self):
+        instance = self.model(config={"user_agent": "DataScope (custom)"}).get("agent")
+        self.assertTrue(instance.session.send.called)
+        self.assertEqual(instance.head, self.content_type_header)
+        self.assertEqual(instance.body, json.dumps(MOCK_DATA))
+        self.assertEqual(instance.status, 200)
+        self.assertFalse(instance.data_hash)
+        args, kwargs = instance.session.send.call_args
+        preq = args[0]
+        self.assert_agent_header(preq, "DataScope (custom)")

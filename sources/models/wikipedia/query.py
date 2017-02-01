@@ -1,27 +1,21 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
-from core.models.resources.http import HttpResource
+from core.utils.helpers import override_dict
 from core.exceptions import DSInvalidResource, DSHttpError40X
+from sources.models.wikipedia.base import WikipediaAPI
 
 
-class WikipediaQuery(HttpResource):
+class WikipediaQuery(WikipediaAPI):
 
     URI_TEMPLATE = 'http://{}.wikipedia.org/w/api.php?{}={}'
-    HEADERS = {
-        "Content-Type": "application/json; charset=utf-8"
-    }
-    PARAMETERS = {
+
+    PARAMETERS = override_dict(WikipediaAPI.PARAMETERS, {
         "action": "query",
-        "format": "json",
         "redirects": "1",
-        "continue": ""
-    }
+    })
     GET_SCHEMA = {
         "args": {},
         "kwargs": None
     }
 
-    CONFIG_NAMESPACE = "wikipedia"
     WIKI_RESULTS_KEY = "pages"
     WIKI_QUERY_PARAM = "titles"
 
@@ -30,10 +24,6 @@ class WikipediaQuery(HttpResource):
         return super(WikipediaQuery, self).send(method, *args, **kwargs)
 
     def _handle_errors(self):
-        """
-        Handles missing pages and ambiguity errors
-        You can only handle these errors by parsing the body :(
-        """
         super(WikipediaQuery, self)._handle_errors()
 
         # Check general response
@@ -52,8 +42,6 @@ class WikipediaQuery(HttpResource):
         elif isinstance(response, list) and not response:
             self.status = 404
             raise DSHttpError40X(message, resource=self)
-
-        return response
 
     @property
     def content(self):
