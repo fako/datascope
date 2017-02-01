@@ -83,6 +83,25 @@ class WikiFeedCommunity(Community):
             },
             "schema": {},
             "errors": {},
+        }),
+        ("pageviews", {
+            "process": "HttpResourceProcessor.fetch_mass",
+            "input": "@wikidata",
+            "contribute": "Inline:ExtractProcessor.extract_from_resource",
+            "output": "&input",
+            "config": {
+                "_args": ["$.title"],
+                "_kwargs": {},
+                "_resource": "WikipediaPageviewDetails",
+                "_objective": {
+                    "@": "$",
+                    "title": "$.article",
+                    "pageviews": "$.views"
+                },
+                "_inline_key": "title",
+            },
+            "schema": {},
+            "errors": {},
         })
     ])
 
