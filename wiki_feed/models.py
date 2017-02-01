@@ -2,10 +2,14 @@ from collections import OrderedDict
 from itertools import groupby, islice
 from datetime import datetime
 
+from django.conf import settings
+
 from core.models.organisms import Community, Individual
 
 
 class WikiFeedCommunity(Community):
+
+    USER_AGENT = "WikiFeedBot (DataScope v{})".format(settings.DATASCOPE_VERSION)
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("revisions", {
@@ -26,6 +30,7 @@ class WikiFeedCommunity(Community):
                     "userid": "$.userid"
                 },
                 "_continuation_limit": 1000,
+                "user_agent": USER_AGENT
             },
             "schema": {},
             "errors": {},
@@ -50,6 +55,7 @@ class WikiFeedCommunity(Community):
                 "_concat_args_size": 50,
                 "_continuation_limit": 1000,
                 "_update_key": "pageid",
+                "user_agent": USER_AGENT
             },
             "schema": {},
             "errors": {},
@@ -73,6 +79,7 @@ class WikiFeedCommunity(Community):
                 "_inline_key": "wikidata",
                 "_concat_args_size": 50,
                 "_continuation_limit": 1000,
+                "user_agent": USER_AGENT
             },
             "schema": {},
             "errors": {},
