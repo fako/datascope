@@ -536,3 +536,17 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertIsNone(instance.meta)
         instance.get("new")
         self.assertEqual(instance.meta, "new")
+
+    def test_user_agent(self):
+        instance = self.model(config={"user_agent": "DataScope (custom)"}).get("agent")
+        self.assertTrue(instance.session.send.called)
+        self.assertEqual(instance.head, self.content_type_header)
+        self.assertEqual(instance.body, json.dumps(MOCK_DATA))
+        self.assertEqual(instance.status, 200)
+        self.assertFalse(instance.data_hash)
+        args, kwargs = instance.session.send.call_args
+        preq = args[0]
+        self.assertEqual(
+            preq.headers["User-Agent"],
+            "DataScope (custom); python-requests/2.7.0 CPython/3.5.1 Darwin/15.6.0"
+        )
