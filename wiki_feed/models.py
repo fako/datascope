@@ -143,5 +143,5 @@ class WikiFeedCommunity(Community):
         return islice(super(WikiFeedCommunity, self).manifestation, 20)
 
     class Meta:
-        verbose_name = "Wiki news"
-        verbose_name_plural = "Wiki news"
+        verbose_name = "Wiki feed"
+        verbose_name_plural = "Wiki feeds"
