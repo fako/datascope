@@ -87,6 +87,11 @@ rm /etc/nginx/sites-enabled/default
 mkdir /srv/logs/nginx/
 nginx -s reload
 
+# Setup firewall
+ufw allow ssh/tcp
+ufw logging on
+ufw enable
+
 # SETUP: Django
 cd /srv/datascope/src
 python manage.py syncdb
