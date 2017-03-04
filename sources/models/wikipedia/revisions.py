@@ -1,12 +1,4 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
-import re
-from copy import copy
-import time
-import math
-
 from core.utils.helpers import override_dict
-from core.exceptions import DSHttpWarning300
 
 from sources.models.wikipedia.query import WikipediaQuery
 
@@ -43,3 +35,16 @@ class WikipediaRecentChanges(WikipediaQuery):
         args = (self.config.wiki_country, int(self.config.start_time), int(self.config.end_time))
         return super(WikipediaQuery, self).send(method, *args, **kwargs)
 
+
+class WikipediaRevisions(WikipediaQuery):
+
+    PARAMETERS = override_dict(WikipediaQuery.PARAMETERS, {
+        "prop": "revisions",
+        "rvlimit": 500,
+        "rvprop": "content|user|timestamp",
+        "rvdir": "older"
+    })
+
+    class Meta:
+        verbose_name = "Wikipedia revisions"
+        verbose_name_plural = "Wikipedia revisions"
