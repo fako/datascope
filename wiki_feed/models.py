@@ -171,3 +171,47 @@ class WikiFeedCommunity(Community):
     class Meta:
         verbose_name = "Wiki feed"
         verbose_name_plural = "Wiki feeds"
+
+
+class WikiFeedUsageCommunity(Community):
+
+    USER_AGENT = "WikiFeedBot (DataScope v{})".format(settings.DATASCOPE_VERSION)
+
+    COMMUNITY_SPIRIT = OrderedDict([
+        ("transclusions", {
+            "process": "HttpResourceProcessor.fetch",
+            "input": None,
+            "contribute": "Append:ExtractProcessor.extract_from_resource",
+            "output": "Collective",
+            "config": {
+                "_args": ["$.page"],
+                "_kwargs": {},
+                "_resource": "WikipediaTransclusions",
+                "_objective": {
+                    "@": "$.query.pages",
+                    "pageid": "$.pageid",
+                    "title": "$.title",
+                    "namespace": "$.ns"
+                },
+                "_continuation_limit": 1000,
+                "user_agent": USER_AGENT
+            },
+            "schema": {},
+            "errors": {},
+        })
+    ])
+
+    def initial_input(self, *args):
+        return Individual.objects.create(community=self, properties={"page": "User:Wiki_Feed_Bot/feed"}, schema={})
+
+    def finish_transclusions(self, out, err):
+        for individual in out.individual_set.iterator():
+            if individual["namespace"] != 2:
+                individual.delete()
+
+    def set_kernel(self):
+        self.kernel = self.current_growth.output
+
+    class Meta:
+        verbose_name = "Wiki feed usage"
+        verbose_name_plural = "Wiki feed usages"
