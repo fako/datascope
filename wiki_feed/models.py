@@ -84,25 +84,25 @@ class WikiFeedCommunity(Community):
             "schema": {},
             "errors": {},
         }),
-        ("pageviews", {
-            "process": "HttpResourceProcessor.fetch_mass",
-            "input": "@wikidata",
-            "contribute": "Update:ExtractProcessor.extract_from_resource",
-            "output": "&input",
-            "config": {
-                "_args": ["$.title"],
-                "_kwargs": {},
-                "_resource": "WikipediaPageviewDetails",
-                "_objective": {
-                    "@": "$.items",
-                    "title": "$.article",
-                    "pageviews": "$.views"
-                },
-                "_update_key": "title",
-            },
-            "schema": {},
-            "errors": {},
-        })
+        # ("pageviews", {
+        #     "process": "HttpResourceProcessor.fetch_mass",
+        #     "input": "@wikidata",
+        #     "contribute": "Update:ExtractProcessor.extract_from_resource",
+        #     "output": "&input",
+        #     "config": {
+        #         "_args": ["$.title"],
+        #         "_kwargs": {},
+        #         "_resource": "WikipediaPageviewDetails",
+        #         "_objective": {
+        #             "@": "$.items",
+        #             "title": "$.article",
+        #             "pageviews": "$.views"
+        #         },
+        #         "_update_key": "title",
+        #     },
+        #     "schema": {},
+        #     "errors": {},
+        # })
     ])
 
     COMMUNITY_BODY = [
