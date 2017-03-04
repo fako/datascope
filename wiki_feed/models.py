@@ -87,18 +87,18 @@ class WikiFeedCommunity(Community):
         ("pageviews", {
             "process": "HttpResourceProcessor.fetch_mass",
             "input": "@wikidata",
-            "contribute": "Inline:ExtractProcessor.extract_from_resource",
+            "contribute": "Update:ExtractProcessor.extract_from_resource",
             "output": "&input",
             "config": {
                 "_args": ["$.title"],
                 "_kwargs": {},
                 "_resource": "WikipediaPageviewDetails",
                 "_objective": {
-                    "@": "$",
+                    "@": "$.items",
                     "title": "$.article",
                     "pageviews": "$.views"
                 },
-                "_inline_key": "title",
+                "_update_key": "title",
             },
             "schema": {},
             "errors": {},
@@ -153,6 +153,13 @@ class WikiFeedCommunity(Community):
         pages.update(pages.content, reset=False, validate=False)
         pages.individual_set.filter(created_at__lt=now).delete()
         inp.update(pages.individual_set.filter(identity__isnull=False).exclude(identity="").iterator())
+
+    def begin_pageviews(self, inp):
+        inp.identifier = "title"
+        inp.save()
+        for individual in inp.individual_set.iterator():
+            individual.clean()
+            individual.save()
 
     def set_kernel(self):
         self.kernel = self.current_growth.output

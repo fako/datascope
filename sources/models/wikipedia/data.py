@@ -102,6 +102,6 @@ class WikiDataItems(WikipediaAPI):
     def content(self):
         content_type, data = super(WikiDataItems, self).content
         items = []
-        for raw_item in six.itervalues(data["entities"]):
+        for raw_item in data.get("entities", {}).values():
             items.append(self.get_item(raw_item))
         return content_type, items
