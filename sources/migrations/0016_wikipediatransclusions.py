@@ -33,6 +33,8 @@ class Migration(migrations.Migration):
             ],
             options={
                 'abstract': False,
+                'verbose_name': 'Wikipedia transclusions',
+                'verbose_name_plural': 'Wikipedia transclusions'
             },
         ),
     ]

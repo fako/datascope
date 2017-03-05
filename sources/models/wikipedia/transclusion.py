@@ -9,3 +9,7 @@ class WikipediaTransclusions(WikipediaGenerator):
         "gtishow": "!redirect",
         "gtilimit": 500
     })
+
+    class Meta:
+        verbose_name = "Wikipedia transclusions"
+        verbose_name_plural = "Wikipedia transclusions"
