@@ -74,3 +74,28 @@ class WikipediaGenerator(WikipediaQuery):
 
     class Meta:
         abstract = True
+
+
+class WikipediaPage(WikipediaQuery):
+
+    @property
+    def content(self):
+        """
+        This class gets revisions for a single page. So we only return the revisions and not all page info.
+        :return:
+        """
+        content_type, data = super(WikipediaQuery, self).content
+        if data is None:
+            return content_type, data
+        try:
+            page = next(iter(data["query"]["pages"].values()))
+        except (KeyError, StopIteration, TypeError):
+            raise DSInvalidResource(
+                "{} resource did not contain 'query', 'pages' or a first page".format(self.__class__.__name__),
+                resource=self
+            )
+        data["page"] = page
+        return content_type, data
+
+    class Meta:
+        abstract = True

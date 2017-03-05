@@ -1,6 +1,5 @@
 from core.utils.helpers import override_dict
-
-from sources.models.wikipedia.query import WikipediaQuery
+from sources.models.wikipedia.query import WikipediaQuery, WikipediaPage
 
 
 class WikipediaRecentChanges(WikipediaQuery):
@@ -36,9 +35,9 @@ class WikipediaRecentChanges(WikipediaQuery):
         return super(WikipediaQuery, self).send(method, *args, **kwargs)
 
 
-class WikipediaRevisions(WikipediaQuery):
+class WikipediaRevisions(WikipediaPage):
 
-    PARAMETERS = override_dict(WikipediaQuery.PARAMETERS, {
+    PARAMETERS = override_dict(WikipediaPage.PARAMETERS, {
         "prop": "revisions",
         "rvlimit": 500,
         "rvprop": "content|user|timestamp",

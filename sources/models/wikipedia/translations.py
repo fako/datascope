@@ -2,14 +2,14 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 
 from core.utils.helpers import override_dict
 from core.exceptions import DSHttpError40X, DSInvalidResource
-from sources.models.wikipedia.query import WikipediaQuery
+from sources.models.wikipedia.query import WikipediaPage
 
 
-class WikipediaTranslate(WikipediaQuery):
+class WikipediaTranslate(WikipediaPage):
 
     URI_TEMPLATE = 'http://{}.wiktionary.org/w/api.php?{}={}&iwprefix={}'  # updated at runtime
 
-    PARAMETERS = override_dict(WikipediaQuery.PARAMETERS, {
+    PARAMETERS = override_dict(WikipediaPage.PARAMETERS, {
         'prop': 'info|pageprops|iwlinks',
         'iwprop': 'url',
     })
@@ -18,22 +18,7 @@ class WikipediaTranslate(WikipediaQuery):
         super(WikipediaTranslate, self)._handle_errors()
         if not "iwlinks" in self.body:
             self.status = 404
-            raise DSHttpError40X("No translations found in {} for {}".format(*self.meta), resource=self)
-
-    @property
-    def content(self):
-        content_type, data = super(WikipediaQuery, self).content
-        if data is None:
-            return content_type, data
-        try:
-            page = next(iter(data["query"]["pages"].values()))
-        except (KeyError, StopIteration, TypeError):
-            raise DSInvalidResource(
-                "Translate resource did not contain 'query', 'pages' or a first page",
-                resource=self
-            )
-        data["page"] = page
-        return content_type, data
+            raise DSHttpError40X("No translations found for {} in {}".format(*self.meta), resource=self)
 
     @property
     def meta(self):
