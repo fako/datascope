@@ -1,3 +1,5 @@
+import re
+
 from collections import OrderedDict
 from itertools import groupby, islice
 from datetime import datetime
@@ -182,16 +184,37 @@ class WikiFeedUsageCommunity(Community):
             "process": "HttpResourceProcessor.fetch",
             "input": None,
             "contribute": "Append:ExtractProcessor.extract_from_resource",
-            "output": "Collective",
+            "output": "Collective#title",
             "config": {
                 "_args": ["$.page"],
                 "_kwargs": {},
                 "_resource": "WikipediaTransclusions",
                 "_objective": {
                     "@": "$.query.pages",
-                    "pageid": "$.pageid",
-                    "title": "$.title",
-                    "namespace": "$.ns"
+                    "title": "$.title"
+                },
+                "_continuation_limit": 1000,
+                "user_agent": USER_AGENT
+            },
+            "schema": {},
+            "errors": {},
+        }),
+        ("revisions", {
+            "process": "HttpResourceProcessor.fetch_mass",
+            "input": "@transclusions",
+            "contribute": "Append:ExtractProcessor.extract_from_resource",
+            "output": "Collective#title",
+            "config": {
+                "_args": ["$.title"],
+                "_kwargs": {},
+                "_resource": "WikipediaRevisions",
+                "_objective": {
+                    "@": "$.page.revisions",
+                    "#namespace": "$.page.ns",
+                    "#title": "$.page.title",
+                    "user": "$.user",
+                    "timestamp": "$.timestamp",
+                    "revision": "$.*"
                 },
                 "_continuation_limit": 1000,
                 "user_agent": USER_AGENT
@@ -201,16 +224,49 @@ class WikiFeedUsageCommunity(Community):
         })
     ])
 
+    WIKI_FEED_TEMPLATE_REGEX = "\{\{User:Wiki[_\w]Feed[_\w]Bot/feed(?P<params>[|a-z0-9_=.\-]+)\}\}"
+
     def initial_input(self, *args):
         return Individual.objects.create(community=self, properties={"page": "User:Wiki_Feed_Bot/feed"}, schema={})
 
-    def finish_transclusions(self, out, err):
-        for individual in out.individual_set.iterator():
-            if individual["namespace"] != 2:
-                individual.delete()
+    def finish_revisions(self, out, err):
+        pages = self.growth_set.filter(type="transclusions").last()
+        for page in pages.output.individual_set.iterator():
+            page["feed"] = None
+            for revision in out.individual_set.filter(identity=page["title"]).iterator():
+
+                # Basic validation for revision
+                if revision["namespace"] != 2:
+                    continue
+                elif "User:" + revision["user"] != page["title"]:
+                    continue
+                elif page["feed"] is not None:
+                    current_feed_time = datetime.strptime(page["feed"]["timestamp"][:-1], "%Y-%m-%dT%H:%M:%S")
+                    revision_feed_time = datetime.strptime(revision["timestamp"][:-1], "%Y-%m-%dT%H:%M:%S")
+                    if current_feed_time >= revision_feed_time:
+                        continue
+
+                # Extended validation and parsing of the template
+                template_match = re.search(self.WIKI_FEED_TEMPLATE_REGEX, revision["revision"])
+                if template_match is None:
+                    print("no match")
+                    continue
+                template_params = template_match.group("params")
+                template_params.replace(" ", "")
+                template_params = template_params[1:].split("|")
+                source = template_params.pop(0)
+                module_params = (module.split("=") for module in template_params)
+                modules = {module: float(weight) for module, weight in module_params}
+                page["feed"] = {
+                    "timestamp": revision["timestamp"],
+                    "source": source,
+                    "modules": modules
+                }
+
+            page.save()
 
     def set_kernel(self):
-        self.kernel = self.current_growth.output
+        self.kernel = self.growth_set.filter(type="transclusions").last().output
 
     class Meta:
         verbose_name = "Wiki feed usage"
