@@ -8,7 +8,7 @@ def test_task():
 
 @app.task(name="core.manifest_community")
 def manifest_community(manifestation_id):
-    from core.models import Manifestation
+    from core.models.resources.manifestation import Manifestation
     manifestation = Manifestation.objects.get(id=manifestation_id)
     community = manifestation.community
     community.config = manifestation.config
