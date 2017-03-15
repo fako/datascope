@@ -50,6 +50,7 @@ class TestIndividual(TestCase):
         self.assertEqual(list(results), [self.dict_outcome, self.dict_outcome])
         results = self.instance.output({})
         self.assertEqual(results, {})
+        self.skipTest("Refactor to output_from_content")
 
     def test_update(self):
         self.skipTest("not tested")

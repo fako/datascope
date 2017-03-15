@@ -1,17 +1,12 @@
-from time import sleep
 import logging
 
-import requests
-
-from celery import current_app as app
-from celery.result import AsyncResult, states as TaskStates
-
 from datascope.configuration import DEFAULT_CONFIGURATION
-from core.models.organisms import Individual
+from core.models.organisms.individual import Individual
+from core.models.organisms.manifestation import Manifestation
 from core.processors.base import Processor
-from core.utils.configuration import ConfigurationProperty, ConfigurationType, load_config
+from core.utils.configuration import ConfigurationProperty
 from core.utils.helpers import get_any_model
-from core.exceptions import DSResourceException, DSProcessUnfinished, DSProcessError
+from core.views.community import CommunityView
 
 
 log = logging.getLogger("datascope")
@@ -41,8 +36,6 @@ class ManifestProcessor(Processor):
         return self._community
 
     def manifest_from_individuals(self, individuals):
-        from core.views.community import CommunityView  # TODO: move out of method
-        from core.models.organisms.community import Manifestation
         for individual in individuals:
             args = Individual.output_from_content(individual, self.config.args)
             kwargs = Individual.output_from_content(individual, self.config.kwargs)
