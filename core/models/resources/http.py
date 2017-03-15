@@ -24,11 +24,12 @@ from django.contrib.contenttypes.models import ContentType
 import json_field
 
 from datascope.configuration import DEFAULT_CONFIGURATION
+from core.models.resources.resource import Resource
 from core.utils import configuration
 from core.exceptions import DSHttpError50X, DSHttpError40X
 
 
-class HttpResource(models.Model):
+class HttpResource(Resource):
     # TODO: make sphinx friendly and doc all methods
     """
     A representation of how to fetch/submit data from/to a HTTP resource.
@@ -40,13 +41,7 @@ class HttpResource(models.Model):
     """
 
     # Identification
-    uri = models.CharField(max_length=255, db_index=True, default=None)
     data_hash = models.CharField(max_length=255, db_index=True, default="")
-
-    # Configuration
-    config = configuration.ConfigurationField(
-        config_defaults=DEFAULT_CONFIGURATION,
-    )
 
     # Getting data
     request = json_field.JSONField(default=None)
@@ -55,16 +50,6 @@ class HttpResource(models.Model):
     head = json_field.JSONField(default=None)
     body = models.TextField(default=None)
     status = models.PositiveIntegerField(default=None)
-
-    # Archiving fields
-    created_at = models.DateTimeField(auto_now_add=True)
-    modified_at = models.DateTimeField(auto_now=True)
-    purge_at = models.DateTimeField(null=True, blank=True)
-
-    # Retention
-    retainer = GenericForeignKey(ct_field="retainer_type", fk_field="retainer_id")
-    retainer_type = models.ForeignKey(ContentType, null=True)
-    retainer_id = models.PositiveIntegerField(null=True)
 
     # Class constants that determine behavior
     URI_TEMPLATE = ""

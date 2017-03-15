@@ -3,7 +3,8 @@ import humanize
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
 
-from core.models import Individual, Growth, Manifestation
+from core.models import Individual, Growth
+from core.models.resources.manifestation import Manifestation
 
 
 class IndividualInline(admin.StackedInline):

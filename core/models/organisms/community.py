@@ -9,9 +9,10 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.models.organisms.states import CommunityState, COMMUNITY_STATE_CHOICES
-from core.models.organisms import Manifestation, Growth, Collective, Individual, Organism
+from core.models.organisms import Growth, Collective, Individual, Organism
 from core.models.organisms.mixins import ProcessorMixin
 from core.models.organisms.managers.community import CommunityManager
+from core.models.resources.manifestation import Manifestation
 from core.models.user import DataScopeUser
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model

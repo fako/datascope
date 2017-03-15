@@ -7,8 +7,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 from celery.result import AsyncResult
 from json_field import JSONField
 
-from datascope.configuration import DEFAULT_CONFIGURATION
-from core.utils.configuration import ConfigurationField
+from core.models.resources.resource import Resource
 from core.tasks import manifest_community
 from core.exceptions import DSProcessUnfinished
 
@@ -16,24 +15,16 @@ from core.exceptions import DSProcessUnfinished
 log = logging.getLogger("datascope")
 
 
-class Manifestation(models.Model):
+class Manifestation(Resource):
 
-    uri = models.CharField(max_length=255, db_index=True, default=None)
     data = JSONField(null=True)
-    config = ConfigurationField(
-        config_defaults=DEFAULT_CONFIGURATION
-    )
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+")
     community_id = models.PositiveIntegerField()
 
     task = models.CharField(max_length=255, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
     completed_at = models.DateTimeField(null=True, blank=True)
-
-    class Meta:
-        get_latest_by = "created_at"
 
     @staticmethod
     def generate_config(allowed_config, **kwargs):
@@ -63,3 +54,10 @@ class Manifestation(models.Model):
             self.id,
             self.community
         )
+
+    @property
+    def content(self):
+        return "application/json", {
+            "service": self.uri,
+            "data": self.get_data()
+        }

@@ -10,8 +10,8 @@ from rest_framework.response import Response
 from rest_framework.status import (HTTP_200_OK, HTTP_202_ACCEPTED, HTTP_204_NO_CONTENT, HTTP_400_BAD_REQUEST,
                                    HTTP_500_INTERNAL_SERVER_ERROR)
 
-from core.models.organisms.manifestation import Manifestation
 from core.models.organisms.states import CommunityState
+from core.models.resources.manifestation import Manifestation
 from core.exceptions import DSProcessUnfinished, DSProcessError
 from core.utils.helpers import parse_datetime_string
 

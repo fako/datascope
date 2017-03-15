@@ -1,10 +1,12 @@
 import logging
 
+from celery import current_app as app
+
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.models.organisms.individual import Individual
-from core.models.organisms.manifestation import Manifestation
+from core.models.resources.manifestation import Manifestation
 from core.processors.base import Processor
-from core.utils.configuration import ConfigurationProperty
+from core.utils.configuration import ConfigurationProperty, load_config
 from core.utils.helpers import get_any_model
 from core.views.community import CommunityView
 
