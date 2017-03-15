@@ -1,9 +1,4 @@
-from __future__ import unicode_literals
-
-from django.contrib.contenttypes.models import ContentType
-
 from celery import current_app as app
-
 
 
 @app.task(name="core.test_task")
