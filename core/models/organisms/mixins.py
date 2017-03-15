@@ -1,6 +1,6 @@
 class ProcessorMixin(object):
 
-    def prepare_process(self, process, async=False):
+    def prepare_process(self, process, async=False, extra_config=None):
         """
         Creates an instance of the processor based on requested process with a correct config set.
         Processors get loaded from core.processors
@@ -9,6 +9,9 @@ class ProcessorMixin(object):
         :param process: A dotted string indicating the processor and method that represent the process.
         :return: processor, method
         """
+        assert isinstance(extra_config, (dict, type(None))), \
+            "Extra config given to prepare_process should be None or a dictionary"
+
         import core.processors
         import sources.processors
 
@@ -21,7 +24,10 @@ class ProcessorMixin(object):
                 "Could not import a processor named {} "
                 "from core.processors or sources.processors.".format(processor_name)
             )
-        processor = processor_class(config=self.config.to_dict(protected=True))
+        config = self.config.to_dict(protected=True)
+        if extra_config is not None and isinstance(extra_config, dict):
+            config.update(extra_config)
+        processor = processor_class(config=config)
         method, args_type = processor.get_processor_method(method_name)
         if async:
             method = getattr(method, "delay")
