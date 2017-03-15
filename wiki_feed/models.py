@@ -139,7 +139,9 @@ class WikiFeedCommunity(Community):
             pages.append({
                 "pageid": pageid,
                 "revisions": [revision.content for revision in revisions],
-                "users": list({revision.properties["userid"] for revision in revisions if revision.properties["userid"]})
+                "users": list(
+                    {revision.properties["userid"] for revision in revisions if revision.properties["userid"]}
+                )
             })
             if len(pages) >= 1000:
                 pages_growth.input.update(pages, reset=False)
@@ -233,12 +235,13 @@ class WikiFeedUsageCommunity(Community):
         pages = self.growth_set.filter(type="transclusions").last()
         for page in pages.output.individual_set.iterator():
             page["feed"] = None
+            page_base = page["title"].split("/")[0]
             for revision in out.individual_set.filter(identity=page["title"]).iterator():
 
                 # Basic validation for revision
                 if revision["namespace"] != 2:
                     continue
-                elif "User:" + revision["user"] != page["title"]:
+                elif "User:" + revision["user"] != page_base:
                     continue
                 elif page["feed"] is not None:
                     current_feed_time = datetime.strptime(page["feed"]["timestamp"][:-1], "%Y-%m-%dT%H:%M:%S")
@@ -249,14 +252,13 @@ class WikiFeedUsageCommunity(Community):
                 # Extended validation and parsing of the template
                 template_match = re.search(self.WIKI_FEED_TEMPLATE_REGEX, revision["revision"])
                 if template_match is None:
-                    print("no match")
                     continue
                 template_params = template_match.group("params")
                 template_params.replace(" ", "")
                 template_params = template_params[1:].split("|")
                 source = template_params.pop(0)
                 module_params = (module.split("=") for module in template_params)
-                modules = {module: float(weight) for module, weight in module_params}
+                modules = {"$" + module: float(weight) for module, weight in module_params}
                 page["feed"] = {
                     "timestamp": revision["timestamp"],
                     "source": source,
