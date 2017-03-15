@@ -5,8 +5,10 @@ from itertools import groupby, islice
 from datetime import datetime
 
 from django.conf import settings
+from django.template.loader import render_to_string
 
 from core.models.organisms import Community, Individual
+from core.views import CommunityView
 
 
 class WikiFeedCommunity(Community):
@@ -224,17 +226,32 @@ class WikiFeedUsageCommunity(Community):
             "schema": {},
             "errors": {},
         }),
+        ("manifest", {
+            "process": "ManifestProcessor.manifest_mass",
+            "input": "@transclusions",
+            "contribute": "Update:ExtractProcessor.pass_resource_through",
+            "output": "@transclusions",
+            "config": {
+                "_args": ["$.feed.source"],
+                "_kwargs": "$.feed.modules",
+                "_community": "WikiFeedCommunity",
+                "_update_key": "service",
+                "_resource": "Manifestation"
+            },
+            "schema": {},
+            "errors": {},
+        })
     ])
 
     COMMUNITY_BODY = [
-        {
-            "process": "ManifestProcessor.manifest_from_individuals",
-            "config": {
-                "community": "WikiFeedCommunity",
-                "args": ["$.feed.source"],
-                "kwargs": "$.feed.modules"
-            }
-        }
+        # {
+        #     "process": "ManifestProcessor.manifest_from_individuals",
+        #     "config": {
+        #         "community": "WikiFeedCommunity",
+        #         "args": ["$.feed.source"],
+        #         "kwargs": "$.feed.modules"
+        #     }
+        # }
     ]
 
     WIKI_FEED_TEMPLATE_REGEX = "\{\{User:Wiki[_\w]Feed[_\w]Bot/feed(?P<params>[|a-z0-9_=.\-]+)\}\}"
@@ -244,6 +261,8 @@ class WikiFeedUsageCommunity(Community):
 
     def finish_revisions(self, out, err):
         pages = self.growth_set.filter(type="transclusions").last()
+        pages.output.identifier = "service"
+        pages.output.save()
         for page in pages.output.individual_set.iterator():
             page["feed"] = None
             page_base = page["title"].split("/")[0]
@@ -269,13 +288,36 @@ class WikiFeedUsageCommunity(Community):
                 template_params = template_params[1:].split("|")
                 source = template_params.pop(0)
                 module_params = (module.split("=") for module in template_params)
-                modules = {"$" + module: float(weight) for module, weight in module_params}
+                modules = {"$" + module: weight for module, weight in module_params}
                 page["feed"] = {
                     "timestamp": revision["timestamp"],
                     "source": source,
-                    "modules": modules
+                    "modules": modules,
                 }
+                page["service"] = CommunityView.get_full_path(WikiFeedCommunity, source, modules)
+            page.clean()
+            page.save()
 
+    def finish_manifest(self, out, err):
+        pages = self.growth_set.filter(type="transclusions").last()
+        for page in pages.output.individual_set.iterator():
+            content = render_to_string("wiki_feed/header.wml", {})
+            for page_details in page["data"]:
+                rank_info = page_details["ds_rank"]
+                modules = (info for info in rank_info.items() if info[0] != "rank")
+                sorted_modules = sorted(modules, key=lambda item: float(item[1]["rank"]), reverse=True)
+                content += render_to_string("wiki_feed/section.wml", {
+                    "page": page_details,
+                    "modules": sorted_modules
+                })
+            page.properties.update({
+                "action": "edit",
+                "assert": "user",
+                "format": "json",
+                "utf8": "",
+                "text": content,
+                "nocreate": 1,
+            })
             page.save()
 
     def set_kernel(self):
