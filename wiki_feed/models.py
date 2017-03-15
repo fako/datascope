@@ -223,8 +223,19 @@ class WikiFeedUsageCommunity(Community):
             },
             "schema": {},
             "errors": {},
-        })
+        }),
     ])
+
+    COMMUNITY_BODY = [
+        {
+            "process": "ManifestProcessor.manifest_from_individuals",
+            "config": {
+                "community": "WikiFeedCommunity",
+                "args": ["$.feed.source"],
+                "kwargs": "$.feed.modules"
+            }
+        }
+    ]
 
     WIKI_FEED_TEMPLATE_REGEX = "\{\{User:Wiki[_\w]Feed[_\w]Bot/feed(?P<params>[|a-z0-9_=.\-]+)\}\}"
 
