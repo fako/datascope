@@ -52,11 +52,17 @@ class ManifestProcessor(Processor):
         errors = []
         community_model = get_any_model(config.community)
         signature = community_model.get_signature_from_input(*args, **kwargs)
-        config = community_model.get_configuration_from_input(*args, **kwargs)
         community_instance = community_model.objects.get_latest_by_signature(signature, **kwargs)
         community_path = CommunityView.get_full_path(community_model, "/".join(args), kwargs)
-        manifestation = Manifestation(uri=community_path, community=community_instance, config=config)
-        manifestation.save()
+        try:
+            manifestation = Manifestation.objects.get(uri=community_path)
+        except Manifestation.DoesNotExist:
+            manifestation = Manifestation(
+                uri=community_path,
+                community=community_instance,
+                config=community_model.get_configuration_from_input(*args, **kwargs)
+            )
+            manifestation.save()
         manifestation.get_data()
         success.append(manifestation.id)
         return [success, errors]
