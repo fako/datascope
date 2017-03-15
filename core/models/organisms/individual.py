@@ -1,5 +1,4 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-import six
+from itertools import repeat
 
 import jsonschema
 from jsonschema.exceptions import ValidationError as SchemaValidationError
@@ -87,7 +86,7 @@ class Individual(Organism):
         :return: Dictionary filled with properties.
         """
         return dict(
-            {key: value for key, value in six.iteritems(self.properties) if not key.startswith('_')},
+            {key: value for key, value in self.properties.items() if not key.startswith('_')},
         )
 
     @property
@@ -95,17 +94,24 @@ class Individual(Organism):
         return self.get_properties_json()
 
     def output(self, *args):
+        return self.output_from_content(self.properties, *args)
+
+    @staticmethod
+    def output_from_content(content, *args):
         if len(args) > 1:
-            return map(self.output, args)
+            return map(Individual.output_from_content, repeat(content), args)
         frm = args[0]
         if not frm:
             return frm
-        if isinstance(frm, six.string_types):
-            return reach(frm, self.properties)
+        if isinstance(frm, str):
+            return reach(frm, content)
         elif isinstance(frm, list):
-            return self.output(*frm) if len(frm) > 1 else [self.output(*frm)]
+            if len(frm) > 1:
+                return Individual.output_from_content(content, *frm)
+            else:
+                return [Individual.output_from_content(content, *frm)]
         elif isinstance(frm, dict):
-            return {key: self.output(value) for key, value in six.iteritems(frm)}
+            return {key: Individual.output_from_content(content, value) for key, value in frm.items()}
         else:
             raise AssertionError("Expected a string, list or dict as argument got {} instead".format(type(frm)))
 
