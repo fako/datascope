@@ -61,7 +61,7 @@ class Manifestation(models.Model):
         config = {key: value for key, value in six.iteritems(kwargs) if key in allowed_config}
         return config
 
-    def get_data(self):
+    def get_data(self, async=False):
         if self.data:
             return self.data
         if self.task:
@@ -69,15 +69,15 @@ class Manifestation(models.Model):
             if not result.ready():
                 raise DSProcessUnfinished("Manifest processing is not done")
             self.data = result.result
-            self.completed_at = datetime.now()
-            self.save()
-            return self.data
-        if self.community.ASYNC_MANIFEST:
+        if async:
             self.task = manifest_community.delay(self.id)
             self.save()
             raise DSProcessUnfinished("Manifest started processing")
         else:
-            return manifest_community(self.id)
+            self.data = manifest_community(self.id)
+        self.completed_at = datetime.now()
+        self.save()
+        return self.data
 
     def __str__(self):
         return "Manifestation {} for {}".format(

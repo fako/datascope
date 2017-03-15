@@ -29,7 +29,7 @@ class CommunityView(APIView):
     }
 
     def _get_response_from_manifestation(self, manifestation, response_data):
-        manifestation_data = manifestation.get_data()
+        manifestation_data = manifestation.get_data(async=manifestation.community.ASYNC_MANIFEST)
         if not manifestation_data:
             return Response(None, HTTP_204_NO_CONTENT)
         results_key = "results" if isinstance(manifestation_data, list) else "result"
