@@ -1,7 +1,4 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-import six
-# noinspection PyUnresolvedReferences
-from six.moves.urllib.parse import urlencode
+from urllib.parse import urlencode
 
 import hashlib
 import json
@@ -18,14 +15,10 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.conf import settings
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 
 import json_field
 
-from datascope.configuration import DEFAULT_CONFIGURATION
 from core.models.resources.resource import Resource
-from core.utils import configuration
 from core.exceptions import DSHttpError50X, DSHttpError40X
 
 
@@ -54,6 +47,7 @@ class HttpResource(Resource):
     # Class constants that determine behavior
     URI_TEMPLATE = ""
     PARAMETERS = {}
+    DATA = {}
     HEADERS = {}
     GET_SCHEMA = {
         "args": {},
@@ -211,7 +205,9 @@ class HttpResource(Resource):
 
         :return:
         """
-        return kwargs
+        data = dict(self.DATA)
+        data.update(**kwargs)
+        return data
 
     def variables(self, *args):
         """
@@ -333,7 +329,7 @@ class HttpResource(Resource):
             headers=self.request.get("headers"),
             data=data
         )
-        preq = request.prepare()
+        preq = self.session.prepare_request(request)
 
         try:
             response = self.session.send(
@@ -355,7 +351,7 @@ class HttpResource(Resource):
         self.status = response.status_code
         # TODO: check what to do with responses that contain invalid character bytes
         # TODO: check why sometimes we get strings and sometimes bytes in response.body
-        self.body = response.content if isinstance(response.content, six.string_types) else response.content.decode("utf-8")
+        self.body = response.content if isinstance(response.content, str) else response.content.decode("utf-8")
 
     def _handle_errors(self):
         """
@@ -377,9 +373,10 @@ class HttpResource(Resource):
     # Methods and properties to tweak Django
 
     def __init__(self, *args, **kwargs):
+        self.session = kwargs.pop("session", requests.Session())
+        self.timeout = kwargs.pop("timeout", 30)  # TODO: test this
         super(HttpResource, self).__init__(*args, **kwargs)
-        self.session = kwargs.get("session", requests.Session())
-        self.timeout = kwargs.get("timeout", 30)  # TODO: test this
+
 
     def clean(self):
         if self.request and not self.uri:
