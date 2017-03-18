@@ -17,6 +17,10 @@ class DSHttpError403LimitExceeded(DSResourceException):
     pass
 
 
+class DSHttpError400NoToken(DSResourceException):
+    pass
+
+
 class DSHttpWarning300(DSResourceException):
     pass
 
