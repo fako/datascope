@@ -253,8 +253,8 @@ class WikiFeedUsageCommunity(Community):
                     "text": "$.text"
                 },
                 "_resource": "WikipediaEdit",
-                "_username": settings.WIKI_USER,
-                "_password": settings.WIKI_PASSWORD
+                "_username": getattr(settings, 'WIKI_USER', ''),
+                "_password": getattr(settings, 'WIKI_PASSWORD', '')
             },
             "schema": {},
             "errors": {},
