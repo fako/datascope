@@ -308,6 +308,7 @@ class WikiFeedUsageCommunity(Community):
                 module_params = (module.split("=") for module in template_params)
                 modules = {"$" + module: weight for module, weight in module_params}
                 page["feed"] = {
+                    "template": template_match.group(0),
                     "timestamp": revision["timestamp"],
                     "source": source,
                     "modules": modules,
@@ -319,7 +320,7 @@ class WikiFeedUsageCommunity(Community):
     def finish_manifest(self, out, err):
         pages = self.growth_set.filter(type="transclusions").last()
         for page in pages.output.individual_set.iterator():
-            content = render_to_string("wiki_feed/header.wml", {})
+            content = render_to_string("wiki_feed/header.wml", {"feed_template": page["feed"]["template"]})
             for page_details in page["data"]:
                 rank_info = page_details["ds_rank"]
                 modules = (info for info in rank_info.items() if info[0] != "rank")
