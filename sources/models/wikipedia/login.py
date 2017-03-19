@@ -108,16 +108,16 @@ class WikipediaLogin(WikipediaAPI):
     }
 
     def __init__(self, *args, **kwargs):
-        if not "token" in kwargs:
-            raise DSHttpError400NoToken(
-                "No login token specified for WikipediaLogin. Use WikipediaToken to fetch one",
-                resource=self
-            )
         self.token = kwargs.pop("token")
         super(WikipediaLogin, self).__init__(*args, **kwargs)
 
     def data(self, **kwargs):
         data = super(WikipediaLogin, self).data(**kwargs)
+        if not self.token:
+            raise DSHttpError400NoToken(
+                "No login token specified for WikipediaLogin. Use WikipediaToken to fetch one",
+                resource=self
+            )
         data["lgtoken"] = self.token
         return data
 

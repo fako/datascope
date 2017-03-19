@@ -81,8 +81,13 @@ class HttpResourceProcessor(Processor):
         link = Resource(config=config.to_dict(protected=True))
         if session is not None:
             link.session = session
+        if config.token:
+            link.token = config.token
         # FEATURE: update session to use proxy when configured
         return link
+
+    def get_session(self):
+        return requests.Session()
 
     #######################################################
     # PRIVATE
@@ -166,8 +171,6 @@ class HttpResourceProcessor(Processor):
     def _send_serie(config, args_list, kwargs_list, session=None, method=None):
         success = []
         errors = []
-        if session is None:
-            session = requests.Session()
         for args, kwargs in zip(args_list, kwargs_list):
             # Get the results
             scc, err = HttpResourceProcessor._send(method=method, config=config, session=session, *args, **kwargs)
@@ -187,28 +190,36 @@ class HttpResourceProcessor(Processor):
 
     @property
     def fetch(self):
+        session = self.get_session()
         return self._send.s(
             method="get",
-            config=self.config.to_dict(private=True, protected=True)
+            config=self.config.to_dict(private=True, protected=True),
+            session=session
         )
 
     @property
     def fetch_mass(self):
+        session = self.get_session()
         return self._send_mass.s(
             method="get",
-            config=self.config.to_dict(private=True, protected=True)
+            config=self.config.to_dict(private=True, protected=True),
+            session=session
         )
 
     @property
     def submit(self):
+        session = self.get_session()
         return self._send.s(
             method="post",
-            config=self.config.to_dict(private=True, protected=True)
+            config=self.config.to_dict(private=True, protected=True),
+            session=session
         )
 
     @property
     def submit_mass(self):
+        session = self.get_session()
         return self._send_mass.s(
             method="post",
-            config=self.config.to_dict(private=True, protected=True)
+            config=self.config.to_dict(private=True, protected=True),
+            session=session
         )

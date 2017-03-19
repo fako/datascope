@@ -15,6 +15,7 @@ DEFAULT_CONFIGURATION = {
     ],
     "global_async": True,  # by default offload to celery where possible
     "global_user_agent": "DataScope (v{})".format(settings.DATASCOPE_VERSION),
+    "global_token": "",
 
     "http_resource_batch_size": 0,
     "http_resource_continuation_limit": 1,
@@ -42,6 +43,7 @@ MOCK_CONFIGURATION = {
     "name_namespace_configuration": "namespace configuration",
     "global_global_configuration": "global configuration",
     "global_user_agent": "DataScope (test)",
+    "global_token": "",
     # mock configuration for testing HttpResourceMock
     "global_source_language": "en",
     "mock_secret": "oehhh",

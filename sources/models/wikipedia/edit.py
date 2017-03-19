@@ -44,16 +44,16 @@ class WikipediaEdit(WikipediaAPI):
     }
 
     def __init__(self, *args, **kwargs):
-        if not "token" in kwargs:
-            raise DSHttpError400NoToken(
-                "No edit token specified for WikipediaEdit. Use WikipediaToken to fetch one",
-                resource=self
-            )
-        self.token = kwargs.pop("token")
+        self.token = kwargs.pop("token", None)
         super(WikipediaEdit, self).__init__(*args, **kwargs)
 
     def data(self, **kwargs):
         data = super(WikipediaEdit, self).data(**kwargs)
+        if not self.token:
+            raise DSHttpError400NoToken(
+                "No edit token specified for WikipediaEdit. Use WikipediaToken to fetch one",
+                resource=self
+            )
         data["token"] = self.token
         return data
 
