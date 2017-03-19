@@ -6,3 +6,4 @@ source /srv/datascope/ds-env/bin/activate
 cd /srv/datascope/src/
 export DJANGO_SETTINGS_MODULE=datascope.settings.digital-ocean
 python manage.py grow_wiki_feed --delete
+python manage.py publish_wiki_feed --delete
