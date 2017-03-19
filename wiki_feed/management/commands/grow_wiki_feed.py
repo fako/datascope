@@ -26,7 +26,7 @@ class Command(GrowCommand):
 
     @staticmethod
     def archive_growth():
-        for community in WikiFeedCommunity.objects.filter(signature="latest-news"):
+        for community in WikiFeedCommunity.objects.filter(signature="recent_changes"):
             start = datetime.fromtimestamp(community.config.start_time)
             end = datetime.fromtimestamp(community.config.end_time)
             community.signature = "from:{}-till:{}".format(
@@ -43,7 +43,7 @@ class Command(GrowCommand):
             "start_time": yesterday_at_midnight,
             "end_time": today_at_midnight
         }
-        community.signature = "latest-news"
+        community.signature = "recent_changes"
         super(Command, self).handle_community(community, **options)
 
     def handle(self, *args, **options):
