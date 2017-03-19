@@ -119,6 +119,7 @@ class HttpResourceProcessor(Processor):
             except DSResourceException as exc:
                 log.debug(exc)
                 link = exc.resource
+                link.clean()
                 link.save()
                 errors.append(link.id)
             # Prepare next request
