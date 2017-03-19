@@ -34,6 +34,10 @@ error_response.content = json.dumps({"error": "internal error"})
 error_response.status_code = 500
 
 
+def prepare_request(request):
+    return requests.Session().prepare_request(request)
+
+
 def return_response(prepared_request, proxies, verify, timeout):
     if "404" in prepared_request.url:
         return not_found_response
@@ -46,7 +50,9 @@ def return_response(prepared_request, proxies, verify, timeout):
 MockRequests = NonCallableMock(spec=requests)
 MockRequestsSend = Mock(side_effect=return_response)
 MockRequests.send = MockRequestsSend
+MockRequests.prepare_request = Mock(side_effect=prepare_request)
 
 MockRequestsWithAgent = NonCallableMock(spec=requests)
 MockRequestsSendWithAgent = Mock(return_value=agent_response)
 MockRequestsWithAgent.send = MockRequestsSendWithAgent
+MockRequestsWithAgent.prepare_request = Mock(side_effect=prepare_request)

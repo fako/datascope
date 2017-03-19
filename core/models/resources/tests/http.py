@@ -59,7 +59,9 @@ class HttpResourceTestMixin(TestCase):
     def test_send_request_get(self):
         test_url = "http://localhost:8000/test/"
         content_header = {
-            "Accept": "application/json"
+            "Accept": "application/json",
+            "Connection": "keep-alive",
+            "Accept-Encoding": "gzip, deflate"
         }
         self.instance.request = {
             "args": tuple(),
@@ -73,6 +75,9 @@ class HttpResourceTestMixin(TestCase):
         # See if request was made properly
         args, kwargs = self.instance.session.send.call_args
         preq = args[0]
+        user_agent_header = preq.headers.pop("User-Agent", None)
+        if user_agent_header is None:
+            self.fail("No default User-Agent present on the request")
         self.assertEqual(preq.url, test_url)
         self.assertEqual(preq.headers, content_header)
         # Make sure that response fields are set to something and do not remain None
@@ -85,8 +90,10 @@ class HttpResourceTestMixin(TestCase):
         test_data = {"test": "test"}
         content_header = {
             "Accept": "application/json",
-            'Content-Length': '9',
-            'Content-Type': 'application/x-www-form-urlencoded'
+            "Content-Length": "9",
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Connection": "keep-alive",
+            "Accept-Encoding": "gzip, deflate"
         }
         self.instance.request = {
             "args": tuple(),
@@ -100,6 +107,9 @@ class HttpResourceTestMixin(TestCase):
         # See if request was made properly
         args, kwargs = self.instance.session.send.call_args
         preq = args[0]
+        user_agent_header = preq.headers.pop("User-Agent", None)
+        if user_agent_header is None:
+            self.fail("No default User-Agent present on the request")
         self.assertEqual(preq.url, test_url)
         self.assertEqual(preq.headers, content_header)
         self.assertEqual(preq.body, urlencode(test_data))
@@ -193,7 +203,7 @@ class ConfigurationFieldTestMixin(TestCase):
 
 class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
 
-    fixtures = ['test-http-resource-mock']
+    fixtures = ["test-http-resource-mock"]
 
     @staticmethod
     def get_test_instance():
@@ -230,7 +240,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
 
     def assert_agent_header(self, prepared_request, expected_agent):
         agent_header = prepared_request.headers.pop("User-Agent")
-        datascope_agent, platform_agent = agent_header.split(';')
+        datascope_agent, platform_agent = agent_header.split(";")
         self.assertEqual(datascope_agent, expected_agent)
         self.assertGreater(len(platform_agent), 0)
 
