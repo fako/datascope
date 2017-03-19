@@ -228,9 +228,9 @@ class WikiFeedUsageCommunity(Community):
         }),
         ("manifest", {
             "process": "ManifestProcessor.manifest_mass",
-            "input": "@transclusions",
+            "input": "Collective#service",
             "contribute": "Update:ExtractProcessor.pass_resource_through",
-            "output": "@transclusions",
+            "output": "&input",
             "config": {
                 "_args": ["$.feed.source"],
                 "_kwargs": "$.feed.modules",
@@ -279,8 +279,6 @@ class WikiFeedUsageCommunity(Community):
 
     def finish_revisions(self, out, err):
         pages = self.growth_set.filter(type="transclusions").last()
-        pages.output.identifier = "service"
-        pages.output.save()
         for page in pages.output.individual_set.iterator():
             page["feed"] = None
             page_base = page["title"].split("/")[0]
@@ -317,9 +315,18 @@ class WikiFeedUsageCommunity(Community):
             page.clean()
             page.save()
 
-    def finish_manifest(self, out, err):
+    def begin_manifest(self, inp):
         pages = self.growth_set.filter(type="transclusions").last()
         for page in pages.output.individual_set.iterator():
+            if page["feed"] is None:
+                continue
+            page.id = None
+            page.collective = inp
+            page.clean()
+            page.save()
+
+    def finish_manifest(self, out, err):
+        for page in out.individual_set.iterator():
             content = render_to_string("wiki_feed/header.wml", {"feed_template": page["feed"]["template"]})
             for page_details in page["data"]:
                 rank_info = page_details["ds_rank"]
@@ -335,7 +342,7 @@ class WikiFeedUsageCommunity(Community):
             page.save()
 
     def set_kernel(self):
-        self.kernel = self.growth_set.filter(type="transclusions").last().output
+        self.kernel = self.growth_set.filter(type="manifest").last().output
 
     class Meta:
         verbose_name = "Wiki feed usage"
