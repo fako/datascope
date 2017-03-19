@@ -240,6 +240,24 @@ class WikiFeedUsageCommunity(Community):
             },
             "schema": {},
             "errors": {},
+        }),
+        ("edit", {
+            "process": "WikipediaEditProcessor.submit_mass",
+            "input": "@transclusions",
+            "contribute": None,
+            "output": "@transclusions",
+            "config": {
+                "_args": [],
+                "_kwargs": {
+                    "title": "$.title",
+                    "text": "$.text"
+                },
+                "_resource": "WikipediaEdit",
+                "_username": settings.WIKI_USER,
+                "_password": settings.WIKI_PASSWORD
+            },
+            "schema": {},
+            "errors": {},
         })
     ])
 
@@ -271,7 +289,7 @@ class WikiFeedUsageCommunity(Community):
                 # Basic validation for revision
                 if revision["namespace"] != 2:
                     continue
-                elif "User:" + revision["user"] != page_base:
+                elif "User:" + revision["user"] != page_base and revision["user"] != "Wiki Feed Bot":
                     continue
                 elif page["feed"] is not None:
                     current_feed_time = datetime.strptime(page["feed"]["timestamp"][:-1], "%Y-%m-%dT%H:%M:%S")
@@ -311,12 +329,7 @@ class WikiFeedUsageCommunity(Community):
                     "modules": sorted_modules
                 })
             page.properties.update({
-                "action": "edit",
-                "assert": "user",
-                "format": "json",
-                "utf8": "",
-                "text": content,
-                "nocreate": 1,
+                "text": content
             })
             page.save()
 

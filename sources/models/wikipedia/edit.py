@@ -17,7 +17,7 @@ class WikipediaEdit(WikipediaAPI):
 
     POST_SCHEMA = {
         "args": {
-            "title": "token arguments",
+            "title": "edit arguments",
             "type": "array",
             "items": [
                 {
@@ -29,7 +29,7 @@ class WikipediaEdit(WikipediaAPI):
             "minItems": 1
         },
         "kwargs": {
-            "title": "token keyword arguments",
+            "title": "edit keyword arguments",
             "type": "object",
             "properties": {
                 "title": {
@@ -62,9 +62,9 @@ class WikipediaEdit(WikipediaAPI):
         parameters.pop("continue", None)
         return parameters
 
-    def post(self, *args, **kwargs):
+    def send(self, method, *args, **kwargs):
         args = (self.config.wiki_country,)
-        return super(WikipediaEdit, self).post(*args, **kwargs)
+        return super(WikipediaEdit, self).send(method, *args, **kwargs)
 
     def get(self, *args, **kwargs):
         raise NotImplementedError("GET is not implemented for this resource")
