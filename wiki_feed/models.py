@@ -243,9 +243,9 @@ class WikiFeedUsageCommunity(Community):
         }),
         ("edit", {
             "process": "WikipediaEditProcessor.submit_mass",
-            "input": "@transclusions",
+            "input": "@manifest",
             "contribute": None,
-            "output": "@transclusions",
+            "output": "@manifest",
             "config": {
                 "_args": [],
                 "_kwargs": {
