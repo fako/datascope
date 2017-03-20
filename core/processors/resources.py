@@ -1,7 +1,3 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-# noinspection PyUnresolvedReferences
-from six.moves import zip, range
-
 from time import sleep
 import logging
 
@@ -15,6 +11,7 @@ from core.processors.base import Processor
 from core.utils.configuration import ConfigurationProperty, ConfigurationType, load_config
 from core.utils.helpers import get_any_model
 from core.exceptions import DSResourceException, DSProcessUnfinished, DSProcessError
+
 
 log = logging.getLogger("datascope")
 
