@@ -483,3 +483,12 @@ class BrowserResource(HttpResource):  # TODO: write tests
 
     class Meta:
         abstract = True
+
+
+class URLResource(HttpResource):
+
+    def _create_url(self, *args):
+        return args[0]
+
+    class Meta:
+        abstract = True
