@@ -1,13 +1,14 @@
+from datetime import datetime, timedelta
 from collections import OrderedDict
 
-from core.models.organisms import Community, Individual
+from core.models.organisms import Community, Collective, Individual
 
 
 class DutchParliamentarySeatingTranscriptsCommunity(Community):
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("index", {
-            "process": "HttpResourceProcessor.fetch",
+            "process": "HttpResourceProcessor.fetch_mass",
             "input": None,
             "contribute": "Append:ExtractProcessor.extract_from_resource",
             "output": "Collective",
@@ -60,13 +61,28 @@ class DutchParliamentarySeatingTranscriptsCommunity(Community):
             document.save()
 
     def initial_input(self, *args):
-        return Individual.objects.create(
-            community=self,
-            properties={
-                "start_date": args[0],
-                "end_date": args[1]
-            }
-        )
+        collective = Collective.objects.create(community=self)
+        day_interval = 14
+        date_format = "%Y%m%d"
+        start_date = datetime.strptime(args[0], date_format)
+        next_date = start_date + timedelta(day_interval)
+        end_date = datetime.strptime(args[1], date_format)
+        while True:
+            if next_date > end_date:
+                next_date = end_date
+            Individual.objects.create(
+                community=self,
+                collective=collective,
+                properties={
+                    "start_date": start_date.strftime(date_format),
+                    "end_date": next_date.strftime(date_format)
+                }
+            )
+            if next_date == end_date:
+                break
+            start_date = next_date + timedelta(1)
+            next_date = start_date + timedelta(day_interval)
+        return collective
 
     def set_kernel(self):
         self.kernel = self.current_growth.output
