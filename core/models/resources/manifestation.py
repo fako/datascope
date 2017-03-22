@@ -8,7 +8,6 @@ from celery.result import AsyncResult
 from json_field import JSONField
 
 from core.models.resources.resource import Resource
-from core.tasks import manifest_community
 from core.exceptions import DSProcessUnfinished
 
 
@@ -32,6 +31,7 @@ class Manifestation(Resource):
         return config
 
     def get_data(self, async=False):
+        from core.tasks import get_manifestation_data
         if self.data:
             return self.data
         if self.task:
@@ -40,11 +40,11 @@ class Manifestation(Resource):
                 raise DSProcessUnfinished("Manifest processing is not done")
             self.data = result.result
         if async:
-            self.task = manifest_community.delay(self.id)
+            self.task = get_manifestation_data.delay(self.id)
             self.save()
             raise DSProcessUnfinished("Manifest started processing")
         else:
-            self.data = manifest_community(self.id)
+            self.data = get_manifestation_data(self.id)
         self.completed_at = datetime.now()
         self.save()
         return self.data

@@ -1,16 +1,10 @@
-from datetime import datetime
 import logging
 
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 
-from celery.result import AsyncResult
-from json_field import JSONField
-
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.utils import configuration
-from core.tasks import manifest_community
-from core.exceptions import DSProcessUnfinished
 
 
 log = logging.getLogger("datascope")
