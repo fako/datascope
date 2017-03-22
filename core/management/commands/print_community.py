@@ -1,5 +1,6 @@
 from pprint import pprint
 import logging
+from json import dumps
 
 from core.management.commands._community import CommunityCommand
 from core.utils.configuration import DecodeConfigAction
@@ -14,16 +15,12 @@ class Command(CommunityCommand):
         parser.add_argument('-a', '--args', type=str, nargs="*", default="")
         parser.add_argument('-c', '--config', type=str, action=DecodeConfigAction, nargs="?", default={})
         parser.add_argument('--kernel-content', action="store_true")
-        parser.add_argument('--pretty', action="store_true")
         parser.add_argument('--limit', type=int, default=None)
-        parser.add_argument('--indent', type=int, default=4)
+        parser.add_argument('--indent', type=int, default=None)
 
     def handle_community(self, community, *arguments, **options):
         output = community.kernel.content if options["kernel_content"] else community.manifestation
-        if options["pretty"]:
-            pprint(list(output)[:options["limit"]], indent=options["indent"])
-        else:
-            print(list(output)[:options["limit"]])
+        print(dumps(list(output)[:options["limit"]], indent=options["indent"]))
 
     def handle(self, *args, **options):
         logging.disable(logging.INFO)
