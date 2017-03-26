@@ -46,6 +46,7 @@ class TestHttpResourceProcessor(TestHttpResourceProcessorMixin, TestCase):
         self.prc = HttpResourceProcessor(config=self.config.to_dict(protected=True, private=True))
         self.prc._send = MockTask
         self.prc._send_mass = MockTask
+        self.session = MockRequests
         MockTask.reset_mock()
 
     def test_get_link(self):
@@ -162,6 +163,10 @@ class TestHttpResourceProcessorBase(TestHttpResourceProcessorMixin, TestCase):
 
     method = ""
 
+    def setUp(self):
+        super(TestHttpResourceProcessorBase, self).setUp()
+        self.session = MockRequests
+
     def get_args_list(self, queries):
         if self.method == "get":
             return [[query] for query in queries]
@@ -177,7 +182,6 @@ class TestHttpResourceProcessorBase(TestHttpResourceProcessorMixin, TestCase):
             return [{"query": query} for query in queries]
         else:
             raise Exception("{} does not have a valid method specified.".format(self.__class__.__name__))
-
 
     def test_send_mass(self):
         args_list = self.get_args_list(["test", "test2", "404"])
@@ -244,29 +248,29 @@ class TestHttpResourceProcessorGet(TestHttpResourceProcessorBase):
 
     def test_send(self):
         # Test makes equivalent call of HttpResourceProcessor.fetch.delay("test")
-        scc, err = HttpResourceProcessor._send("test", method=self.method, config=self.config)
+        scc, err = HttpResourceProcessor._send("test", method=self.method, config=self.config, session=self.session)
         self.check_results(scc, 1)
         self.check_results(err, 0)
         # Similar but with a cached result
-        scc, err = HttpResourceProcessor._send("success", method=self.method, config=self.config,)
+        scc, err = HttpResourceProcessor._send("success", method=self.method, config=self.config, session=self.session)
         self.check_results(scc, 1)
         self.check_results(err, 0)
         # And with an error response
-        scc, err = HttpResourceProcessor._send("404", method=self.method, config=self.config)
+        scc, err = HttpResourceProcessor._send("404", method=self.method, config=self.config, session=self.session)
         self.check_results(scc, 0)
         self.check_results(err, 1)
-        scc, err = HttpResourceProcessor._send("500", method=self.method, config=self.config)
+        scc, err = HttpResourceProcessor._send("500", method=self.method, config=self.config, session=self.session)
         self.check_results(scc, 0)
         self.check_results(err, 1)
 
     def test_send_continuation_prohibited(self):
-        scc, err = HttpResourceProcessor._send("next", method=self.method, config=self.config)
+        scc, err = HttpResourceProcessor._send("next", method=self.method, config=self.config, session=self.session)
         self.check_results(scc, 1)
         self.check_results(err, 0)
 
     def test_send_continuation(self):
         self.config.continuation_limit = 10
-        scc, err = HttpResourceProcessor._send("next", method=self.method, config=self.config)
+        scc, err = HttpResourceProcessor._send("next", method=self.method, config=self.config, session=self.session)
         self.check_results(scc, 2)
         self.check_results(err, 0)
 
@@ -284,29 +288,29 @@ class TestHttpResourceProcessorPost(TestHttpResourceProcessorBase):
 
     def test_send(self):
         # Test makes equivalent call of HttpResourceProcessor.fetch.delay("test")
-        scc, err = HttpResourceProcessor._send(query="test", method=self.method, config=self.config)
+        scc, err = HttpResourceProcessor._send(query="test", method=self.method, config=self.config, session=self.session)
         self.check_results(scc, 1)
         self.check_results(err, 0)
         # Similar but with a cached result
-        scc, err = HttpResourceProcessor._send(query="success", method=self.method, config=self.config,)
+        scc, err = HttpResourceProcessor._send(query="success", method=self.method, config=self.config, session=self.session)
         self.check_results(scc, 1)
         self.check_results(err, 0)
         # And with an error response
-        scc, err = HttpResourceProcessor._send(query="404", method=self.method, config=self.config)
+        scc, err = HttpResourceProcessor._send(query="404", method=self.method, config=self.config, session=self.session)
         self.check_results(scc, 0)
         self.check_results(err, 1)
-        scc, err = HttpResourceProcessor._send(query="500", method=self.method, config=self.config)
+        scc, err = HttpResourceProcessor._send(query="500", method=self.method, config=self.config, session=self.session)
         self.check_results(scc, 0)
         self.check_results(err, 1)
 
     def test_send_continuation_prohibited(self):
-        scc, err = HttpResourceProcessor._send(query="next", method=self.method, config=self.config)
+        scc, err = HttpResourceProcessor._send(query="next", method=self.method, config=self.config, session=self.session)
         self.check_results(scc, 1)
         self.check_results(err, 0)
 
     def test_send_continuation(self):
         self.config.continuation_limit = 10
-        scc, err = HttpResourceProcessor._send(query="next", method=self.method, config=self.config)
+        scc, err = HttpResourceProcessor._send(query="next", method=self.method, config=self.config, session=self.session)
         self.check_results(scc, 2)
         self.check_results(err, 0)
 

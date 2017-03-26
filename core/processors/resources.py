@@ -16,6 +16,31 @@ from core.exceptions import DSResourceException, DSProcessUnfinished, DSProcessE
 log = logging.getLogger("datascope")
 
 
+def load_session():
+    """
+    This decorator will turn the value of any keyword arguments named "config" into a ConfigurationType.
+    The decorated function will get the configuration as its first argument.
+
+    :param defaults: (dict) which should be used as default for inserted configuration.
+    :return:
+    """
+
+    def wrap(func):
+        def session_func(config, *args, **kwargs):
+            assert isinstance(config, ConfigurationType), \
+                "load_session expects a fully prepared ConfigurationType for config"
+            session_injection = kwargs.pop("session", None)
+            if not session_injection:
+                raise TypeError("load_session decorator expects a session kwarg.")
+            if not isinstance(session_injection, str):
+                return func(config, session=session_injection, *args, **kwargs)
+            session_provider = Processor.get_processor_class(session_injection)
+            session = session_provider.get_session(config)
+            return func(config, session=session, *args, **kwargs)
+        return session_func
+    return wrap
+
+
 class HttpResourceProcessor(Processor):
     # TODO: make sphinx friendly and doc all methods
     """
@@ -76,14 +101,18 @@ class HttpResourceProcessor(Processor):
         assert isinstance(config, ConfigurationType), "get_link expects a fully prepared ConfigurationType for config"
         Resource = get_any_model(config.resource)
         link = Resource(config=config.to_dict(protected=True))
+
         if session is not None:
             link.session = session
-        if config.token:
-            link.token = config.token
+        assert link.session, "Resources used with HttpResourceProcessor require a session object"
+        token = getattr(link.session, "token", None)
+        if token:
+            link.token = session.token
         # FEATURE: update session to use proxy when configured
         return link
 
-    def get_session(self):
+    @classmethod
+    def get_session(cls, config):
         return requests.Session()
 
     #######################################################
@@ -94,6 +123,7 @@ class HttpResourceProcessor(Processor):
     @staticmethod
     @app.task(name="HttpFetch.send")
     @load_config(defaults=DEFAULT_CONFIGURATION)
+    @load_session()
     def _send(config, *args, **kwargs):
         # Set vars
         session = kwargs.pop("session", None)
@@ -128,6 +158,7 @@ class HttpResourceProcessor(Processor):
     @staticmethod
     @app.task(name="HttpFetch.send_mass")
     @load_config(defaults=DEFAULT_CONFIGURATION)
+    @load_session()
     def _send_mass(config, args_list, kwargs_list, session=None, method=None):
         # FEATURE: chain "batches" of send_mass if configured through batch_size
 
@@ -166,6 +197,7 @@ class HttpResourceProcessor(Processor):
     @staticmethod
     @app.task(name="HttpFetch.send_serie")
     @load_config(defaults=DEFAULT_CONFIGURATION)
+    @load_session()
     def _send_serie(config, args_list, kwargs_list, session=None, method=None):
         success = []
         errors = []
@@ -188,36 +220,32 @@ class HttpResourceProcessor(Processor):
 
     @property
     def fetch(self):
-        session = self.get_session()
         return self._send.s(
             method="get",
             config=self.config.to_dict(private=True, protected=True),
-            session=session
+            session=self.__class__.__name__
         )
 
     @property
     def fetch_mass(self):
-        session = self.get_session()
         return self._send_mass.s(
             method="get",
             config=self.config.to_dict(private=True, protected=True),
-            session=session
+            session=self.__class__.__name__
         )
 
     @property
     def submit(self):
-        session = self.get_session()
         return self._send.s(
             method="post",
             config=self.config.to_dict(private=True, protected=True),
-            session=session
+            session=self.__class__.__name__
         )
 
     @property
     def submit_mass(self):
-        session = self.get_session()
         return self._send_mass.s(
             method="post",
             config=self.config.to_dict(private=True, protected=True),
-            session=session
+            session=self.__class__.__name__
         )
