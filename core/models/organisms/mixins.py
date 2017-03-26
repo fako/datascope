@@ -1,3 +1,6 @@
+from core.processors.base import Processor
+
+
 class ProcessorMixin(object):
 
     def prepare_process(self, process, async=False, extra_config=None):
@@ -12,13 +15,9 @@ class ProcessorMixin(object):
         assert isinstance(extra_config, (dict, type(None))), \
             "Extra config given to prepare_process should be None or a dictionary"
 
-        import core.processors
-        import sources.processors
-
         processor_name, method_name = process.split(".")
-        core_class = getattr(core.processors, processor_name, None)
-        sources_class = getattr(sources.processors, processor_name, None)
-        processor_class = sources_class if sources_class else core_class
+        processor_class = Processor.get_processor_class(processor_name)
+
         if processor_class is None:
             raise AssertionError(
                 "Could not import a processor named {} "

@@ -34,3 +34,11 @@ class Processor(object):
         else:
             args_type = self.DEFAULT_ARGS_TYPE
         return getattr(self, method_name), args_type
+
+    @staticmethod
+    def get_processor_class(processor_name):
+        import core.processors
+        import sources.processors
+        core_class = getattr(core.processors, processor_name, None)
+        sources_class = getattr(sources.processors, processor_name, None)
+        return sources_class if sources_class else core_class
