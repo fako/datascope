@@ -45,6 +45,7 @@ MOCK_CONFIGURATION = {
     "global_global_configuration": "global configuration",
     "global_user_agent": "DataScope (test)",
     "global_token": "",
+    "global_purge_immediately": False,
     # mock configuration for testing HttpResourceMock
     "global_source_language": "en",
     "mock_secret": "oehhh",
