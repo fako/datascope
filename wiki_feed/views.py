@@ -9,6 +9,8 @@ from wiki_feed.models import WikiFeedPublishCommunity
 
 
 def wiki_page_update(request, page):
+    signature = WikiFeedPublishCommunity.get_signature_from_input(*page.split("/"), **request.GET.dict())
+    WikiFeedPublishCommunity.objects.filter(signature=signature).delete()
     response = CommunityView().get_response(WikiFeedPublishCommunity, page, request.GET.dict())
     if response.status_code == status.HTTP_202_ACCEPTED:
         wait_url = reverse("v1:wiki_page_wait", kwargs={"page": page})
@@ -21,6 +23,6 @@ def wiki_page_wait(request, page):
     return render_to_response("wiki_feed/wait.html", {
         "segments_to_service": settings.SEGMENTS_TO_SERVICE,
         "service_query": page,
-        "continue_path": reverse("v1:wiki_page_update", args=(page,)),
+        "continue_path": "https://en.wikipedia.org/wiki/{}".format(page),
         "page_title": page
     })
