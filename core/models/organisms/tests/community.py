@@ -298,8 +298,8 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertFalse(finish_growth.called)
         self.assertEqual(self.instance.state, CommunityState.READY)
 
-    @patch('core.processors.resources.HttpResourceProcessor.get_link', return_value=HttpResourceMock())
-    def test_grow_sync(self, get_link):
+    @patch('core.tasks.http.get_resource_link', return_value=HttpResourceMock())
+    def test_grow_sync(self, get_resource_link):
         self.instance.config.async = False
         self.set_callback_mocks()
         self.assertEqual(self.instance.state, CommunityState.NEW)
