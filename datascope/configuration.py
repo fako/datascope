@@ -16,6 +16,7 @@ DEFAULT_CONFIGURATION = {
     "global_async": True,  # by default offload to celery where possible
     "global_user_agent": "DataScope (v{})".format(settings.DATASCOPE_VERSION),
     "global_token": "",
+    "global_purge_immediately": False,  # by default keep resources around
 
     "http_resource_batch_size": 0,
     "http_resource_continuation_limit": 1,

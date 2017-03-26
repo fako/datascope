@@ -3,6 +3,7 @@ from urllib.parse import urlencode
 import hashlib
 import json
 from copy import copy, deepcopy
+from datetime import datetime
 
 import requests
 import jsonschema
@@ -222,6 +223,8 @@ class HttpResource(Resource):
         raise NotImplementedError()
 
     def validate_request(self, request, validate_input=True):
+        if self.purge_at is not None and self.purge_at <= datetime.now():
+            raise ValidationError("Resource is no longer valid and will get purged")
         # Internal asserts about the request
         assert isinstance(request, dict), \
             "Request should be a dictionary."
@@ -377,7 +380,6 @@ class HttpResource(Resource):
         self.timeout = kwargs.pop("timeout", 30)  # TODO: test this
         super(HttpResource, self).__init__(*args, **kwargs)
 
-
     def clean(self):
         if self.request and not self.uri:
             uri_request = self.request_without_auth()
@@ -387,6 +389,8 @@ class HttpResource(Resource):
             self.data_hash = HttpResource.hash_from_data(uri_request.get("data"))
         if len(self.uri) > 255:  # TODO: test this
             self.uri = self.uri[:255]
+        if not self.id and self.config.purge_immediately:  # TODO: test this
+            self.purge_at = datetime.now()
 
     #######################################################
     # CONVENIENCE

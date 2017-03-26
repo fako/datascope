@@ -75,6 +75,7 @@ def send(config, *args, **kwargs):
         link.request = current_request
         try:
             link = link.send(method, *args, **kwargs)
+            link.clean()
             link.save()
             success.append(link.id)
         except DSResourceException as exc:

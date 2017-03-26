@@ -198,7 +198,8 @@ class WikiFeedPublishCommunity(Community):
                     "title": "$.title"
                 },
                 "_continuation_limit": 1000,
-                "user_agent": USER_AGENT
+                "user_agent": USER_AGENT,
+                "purge_immediately": True
             },
             "schema": {},
             "errors": {},
@@ -221,7 +222,8 @@ class WikiFeedPublishCommunity(Community):
                     "revision": "$.*"
                 },
                 "_continuation_limit": 1000,
-                "user_agent": USER_AGENT
+                "user_agent": USER_AGENT,
+                "purge_immediately": True
             },
             "schema": {},
             "errors": {},
