@@ -179,7 +179,7 @@ class WikiFeedCommunity(Community):
         verbose_name_plural = "Wiki feeds"
 
 
-class WikiFeedUsageCommunity(Community):
+class WikiFeedPublishCommunity(Community):
 
     USER_AGENT = "WikiFeedBot (DataScope v{})".format(settings.DATASCOPE_VERSION)
 
@@ -190,7 +190,7 @@ class WikiFeedUsageCommunity(Community):
             "contribute": "Append:ExtractProcessor.extract_from_resource",
             "output": "Collective#title",
             "config": {
-                "_args": ["$.page"],
+                "_args": ["$.feed_page"],
                 "_kwargs": {},
                 "_resource": "WikipediaTransclusions",
                 "_objective": {
@@ -275,7 +275,14 @@ class WikiFeedUsageCommunity(Community):
     WIKI_FEED_TEMPLATE_REGEX = "\{\{User:Wiki[_\w]Feed[_\w]Bot/feed(?P<params>[|a-z0-9_=.\-]+)\}\}"
 
     def initial_input(self, *args):
-        return Individual.objects.create(community=self, properties={"page": "User:Wiki_Feed_Bot/feed"}, schema={})
+        return Individual.objects.create(
+            community=self,
+            properties={
+                "feed_page": "User:Wiki_Feed_Bot/feed",
+                "target_page": "/".join(args) if len(args) else ""
+            },
+            schema={}
+        )
 
     def finish_revisions(self, out, err):
         pages = self.growth_set.filter(type="transclusions").last()
@@ -317,8 +324,11 @@ class WikiFeedUsageCommunity(Community):
 
     def begin_manifest(self, inp):
         pages = self.growth_set.filter(type="transclusions").last()
+        target_page = pages.input["target_page"]
         for page in pages.output.individual_set.iterator():
             if page["feed"] is None:
+                continue
+            if target_page and target_page != page["title"]:
                 continue
             page.id = None
             page.collective = inp
@@ -345,5 +355,5 @@ class WikiFeedUsageCommunity(Community):
         self.kernel = self.growth_set.filter(type="manifest").last().output
 
     class Meta:
-        verbose_name = "Wiki feed usage"
-        verbose_name_plural = "Wiki feed usages"
+        verbose_name = "Wiki feed publication"
+        verbose_name_plural = "Wiki feed publications"

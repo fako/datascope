@@ -9,7 +9,7 @@ from wiki_feed.models import WikiFeedCommunity
 class Command(GrowCommand):
 
     def add_arguments(self, parser):
-        parser.add_argument('community', type=str, nargs="?", default="WikiFeedUsageCommunity")
+        parser.add_argument('community', type=str, nargs="?", default="WikiFeedPublishCommunity")
         parser.add_argument('-c', '--config', type=str, action=DecodeConfigAction, nargs="?", default={})
         parser.add_argument('-d', '--delete', action="store_true")
 
