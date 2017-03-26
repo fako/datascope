@@ -1,11 +1,14 @@
 import logging
 
+from celery.result import AsyncResult, states as TaskStates
+
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.models.organisms.individual import Individual
 from core.models.resources.manifestation import Manifestation
+from core.tasks import manifest, manifest_serie
 from core.processors.base import Processor
 from core.utils.configuration import ConfigurationProperty
-from core.tasks import manifest, manifest_serie
+from core.exceptions import DSProcessUnfinished, DSProcessError
 
 
 log = logging.getLogger("datascope")
@@ -34,6 +37,15 @@ class ManifestProcessor(Processor):
             kwargs = Individual.output_from_content(individual, self.config.kwargs)
             manifest(config=self.config, *args, **kwargs)
             yield individual
+
+    @staticmethod
+    def async_results(result_id):
+        async_result = AsyncResult(result_id)
+        if not async_result.ready():
+            raise DSProcessUnfinished("Result with id {} is not ready.".format(result_id))
+        if async_result.status != TaskStates.SUCCESS:
+            raise DSProcessError("An error occurred during background processing.")
+        return async_result.result
 
     def results(self, result):
         scc_ids, err_ids = result
