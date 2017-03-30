@@ -1,3 +1,5 @@
+import logging
+
 from celery import current_app as app
 
 from datascope.configuration import DEFAULT_CONFIGURATION
@@ -5,6 +7,9 @@ from core.models.resources.manifestation import Manifestation
 from core.views import CommunityView
 from core.utils.configuration import load_config
 from core.utils.helpers import get_any_model
+
+
+log = logging.getLogger("datascope")
 
 
 @app.task(name="core.get_manifestation_data")
@@ -33,8 +38,12 @@ def manifest(config, *args, **kwargs):
             config=community_model.get_configuration_from_input(*args, **kwargs)
         )
         manifestation.save()
-    manifestation.get_data()
-    success.append(manifestation.id)
+    try:
+        manifestation.get_data()
+        success.append(manifestation.id)
+    except Exception as exc:
+        log.error(exc)
+        errors.append(manifestation.id)
     return [success, errors]
 
 
