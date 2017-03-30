@@ -321,6 +321,7 @@ class WikiFeedPublishCommunity(Community):
                     "modules": modules,
                 }
                 page["service"] = CommunityView.get_full_path(WikiFeedCommunity, source, modules)
+                page["service"] = page["service"].replace("/algo-news", "")
             page.clean()
             page.save()
 
