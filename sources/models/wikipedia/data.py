@@ -1,6 +1,3 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-import six
-
 from core.utils.helpers import override_dict
 from sources.models.wikipedia.base import WikipediaAPI
 
@@ -59,7 +56,7 @@ class WikiDataItems(WikipediaAPI):
 
     def get_item(self, raw_item_data):
         raw_claims = []
-        for raw_claims_list in six.itervalues(raw_item_data["claims"]):
+        for raw_claims_list in raw_item_data.get("claims", {}).values():
             raw_claims += raw_claims_list
         claim_entities = []
         references = set()
@@ -84,9 +81,10 @@ class WikiDataItems(WikipediaAPI):
         item = raw_item_data
         try:
             item["description"] = item["descriptions"]["en"]["value"]
+            del item["descriptions"]
         except KeyError:
             item["description"] = "No English description available"
-        del item["descriptions"]
+
         item["claims"] = claim_entities
         item["references"] = list(references)
         return item
