@@ -21,6 +21,9 @@
                 } else {
                     window.location = "{{ continue_path | escapejs }}" + uri.search();
                 }
+            })
+            .fail(function() {
+                window.location = "{{ continue_path | escapejs }}" + uri.search();
             });
 
         });
