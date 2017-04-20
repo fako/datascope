@@ -277,11 +277,12 @@ class WikiFeedPublishCommunity(Community):
     WIKI_FEED_TEMPLATE_REGEX = "\{\{User:Wiki[_\w]Feed[_\w]Bot/feed(?P<params>[|a-z0-9_=.\-]+)\}\}"
 
     def initial_input(self, *args):
+        normalized_input = [segment.replace("_", " ") for segment in args]
         return Individual.objects.create(
             community=self,
             properties={
                 "feed_page": "User:Wiki_Feed_Bot/feed",
-                "target_page": "/".join(args) if len(args) else ""
+                "target_page": "/".join(normalized_input) if len(args) else ""
             },
             schema={}
         )
