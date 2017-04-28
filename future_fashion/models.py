@@ -120,6 +120,19 @@ class FutureFashionCommunity(Community):
             },
             "schema": {},
             "errors": {},
+        }),
+        ("download", {
+            "process": "HttpResourceProcessor.fetch_mass",
+            "input": "@items",
+            "contribute": None,
+            "output": None,
+            "config": {
+                "_args": ["$.image"],
+                "_kwargs": {},
+                "_resource": "ImageDownload"
+            },
+            "schema": {},
+            "errors": None,
         })
     ])
 
@@ -144,7 +157,7 @@ class FutureFashionCommunity(Community):
         return collective
 
     def set_kernel(self):
-        self.kernel = self.current_growth.output
+        self.kernel = self.growth_set.filter(type="items").last().output
 
     @property
     def manifestation(self):
