@@ -5,7 +5,7 @@ from sources.models import (GoogleImage, WikipediaTranslate, GoogleTranslate, Im
                             WikipediaListPages, WikiDataItems, ImageFeatures, WikipediaTransclusions,
                             WikipediaRevisions, OfficialAnnouncementsNetherlands,
                             OfficialAnnouncementsDocumentNetherlands, WikipediaSearch, WikipediaCategoryMembers,
-                            WikipediaCategories)
+                            WikipediaCategories, KledingListing)
 
 
 admin.site.register(WikipediaTranslate, ResourceAdmin)
@@ -23,3 +23,4 @@ admin.site.register(OfficialAnnouncementsDocumentNetherlands, ResourceAdmin)
 admin.site.register(WikipediaSearch, ResourceAdmin)
 admin.site.register(WikipediaCategoryMembers, ResourceAdmin)
 admin.site.register(WikipediaCategories, ResourceAdmin)
+admin.site.register(KledingListing, ResourceAdmin)
