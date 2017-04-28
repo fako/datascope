@@ -1,0 +1,1 @@
+from .category_similarity import WikipediaCategorySimularityCommunity
