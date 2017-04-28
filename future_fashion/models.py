@@ -120,7 +120,8 @@ class FutureFashionCommunity(Community):
                     "brand": "el.find(class_='brand').get_text() if el.find(class_='brand') else ''",
                 },
                 "_resource": "KledingListing",
-                "_continuation_limit": 10
+                "_continuation_limit": 100,
+                "_interval_duration": 1000
             },
             "schema": {},
             "errors": {},
@@ -133,7 +134,8 @@ class FutureFashionCommunity(Community):
             "config": {
                 "_args": ["$.image"],
                 "_kwargs": {},
-                "_resource": "ImageDownload"
+                "_resource": "ImageDownload",
+                "_interval_duration": 100
             },
             "schema": {},
             "errors": None,
@@ -149,7 +151,7 @@ class FutureFashionCommunity(Community):
 
     def initial_input(self, *args):
         collective = Collective.objects.create(community=self, schema={})
-        for target_listing in TARGET_LISTINGS[:1]:
+        for target_listing in TARGET_LISTINGS:
             Individual.objects.create(
                 community=self,
                 collective=collective,
