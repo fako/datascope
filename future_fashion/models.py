@@ -1,8 +1,11 @@
-from django.core.files.storage import default_storage
-
+import os
+import shutil
 from collections import OrderedDict
 
+from django.core.files.storage import default_storage
+
 from core.models.organisms import Community, Collective, Individual
+from sources.models import ImageDownload
 
 
 TARGET_LISTINGS = [
@@ -93,6 +96,7 @@ TARGET_LISTINGS = [
     "/baby/schoenen/sneakers/"
 ]
 
+
 class FutureFashionCommunity(Community):
 
     COMMUNITY_SPIRIT = OrderedDict([
@@ -155,6 +159,26 @@ class FutureFashionCommunity(Community):
                 }
             )
         return collective
+
+    def finish_download(self, out, err):
+        items_growth = self.get_growth("items")
+        for item in items_growth.output.individual_set.iterator():
+            image_uri = ImageDownload.uri_from_url(item["image"])
+            try:
+                download = ImageDownload.objects.get(uri=image_uri)
+            except ImageDownload.DoesNotExist:
+                continue
+            group_category = item["tags"][0]
+            item_category = item["tags"][2]
+            os.makedirs(os.path.join(
+                default_storage.location,
+                self.signature,
+                group_category, item_category
+            ), exist_ok=True)
+            shutil.copy2(
+                os.path.join(default_storage.location, download.body),
+                os.path.join(default_storage.location, self.signature, group_category, item_category)
+            )
 
     def set_kernel(self):
         self.kernel = self.growth_set.filter(type="items").last().output

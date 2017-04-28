@@ -11,5 +11,5 @@ class Command(GrowCommand):
         parser.add_argument('-c', '--config', type=str, action=DecodeConfigAction, nargs="?", default={})
 
     def handle_community(self, community, **options):
-        community.signature = "tagged kleding"
+        community.signature = "tagged_kleding"
         super(Command, self).handle_community(community, **options)
