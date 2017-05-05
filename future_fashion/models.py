@@ -170,6 +170,8 @@ class FutureFashionCommunity(Community):
                 download = ImageDownload.objects.get(uri=image_uri)
             except ImageDownload.DoesNotExist:
                 continue
+            if not download.success:
+                continue
             group_category = item["tags"][0]
             item_category = item["tags"][2]
             os.makedirs(os.path.join(
