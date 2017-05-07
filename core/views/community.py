@@ -141,7 +141,9 @@ class HtmlCommunityView(View):
         return '{}/{}'.format(community_class.get_name(), template)
 
     @staticmethod
-    def data_for(community_class, response):
+    def data_for(community_class, response=None):
+        if response is None:
+            return None
         if response.status_code == 200:
             return response.data
         elif response.status_code == 300:
@@ -153,7 +155,7 @@ class HtmlCommunityView(View):
         if path is None and community_class.INPUT_THROUGH_PATH:
             return render_to_response(
                 "{}/{}".format(community_class.get_name(), HtmlCommunityView.INDEX),
-                {},
+                self.data_for(community_class),
                 RequestContext(request)
             )
         # Search request

@@ -6,6 +6,7 @@ from wiki_feed.urls import urlpatterns as wiki_feed_patterns
 from visual_translations.urls import urlpatterns as visual_translations_patterns
 from future_fashion.urls import urlpatterns as future_fashion_patterns
 from topic_research.urls import urlpatterns as topic_research_patterns
+from online_discourse.urls import urlpatterns as online_discourse_patterns
 from . import views
 
 urlpatterns = [
@@ -21,3 +22,4 @@ urlpatterns += wiki_feed_patterns
 urlpatterns += visual_translations_patterns
 urlpatterns += future_fashion_patterns
 urlpatterns += topic_research_patterns
+urlpatterns += online_discourse_patterns

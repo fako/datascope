@@ -1,0 +1,12 @@
+{% extends "core/base.html" %}
+
+{% block body %}
+    <div class="container-fluid">
+        {% for result in response.results %}
+            <p>
+                {{ result.terms }}<br/>
+                <a href="{{ result.url }}">{{ result.title }}</a>
+            </p>
+        {% endfor %}
+    </div>
+{% endblock %}

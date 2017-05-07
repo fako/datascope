@@ -11,3 +11,5 @@ class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
 
     class Meta:
         proxy = True
+        verbose_name = "Discourse search community"
+        verbose_name_plural = "Discourse search communities"

@@ -2,8 +2,8 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import core.models.organisms.mixins
 import core.utils.configuration
+import core.models.organisms.mixins
 
 
 class Migration(migrations.Migration):
@@ -18,22 +18,22 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='CrossCombineTermSearchCommunity',
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, verbose_name='ID', serialize=False)),
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('signature', models.CharField(max_length=255, db_index=True)),
                 ('config', core.utils.configuration.ConfigurationField()),
-                ('kernel_id', models.PositiveIntegerField(blank=True, null=True)),
+                ('kernel_id', models.PositiveIntegerField(null=True, blank=True)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('modified_at', models.DateTimeField(auto_now=True)),
-                ('completed_at', models.DateTimeField(blank=True, null=True)),
-                ('purge_at', models.DateTimeField(blank=True, null=True)),
+                ('completed_at', models.DateTimeField(null=True, blank=True)),
+                ('purge_at', models.DateTimeField(null=True, blank=True)),
                 ('views', models.IntegerField(default=0)),
                 ('state', models.CharField(default='New', max_length=255, choices=[('Aborted', 'Aborted'), ('Asynchronous', 'Asynchronous'), ('New', 'New'), ('Ready', 'Ready'), ('Synchronous', 'Synchronous')])),
                 ('current_growth', models.ForeignKey(null=True, to='core.Growth')),
-                ('kernel_type', models.ForeignKey(blank=True, null=True, to='contenttypes.ContentType')),
+                ('kernel_type', models.ForeignKey(null=True, to='contenttypes.ContentType', blank=True)),
             ],
             options={
-                'abstract': False,
-                'get_latest_by': 'created_at',
+                'verbose_name': 'Cross combine search term community',
+                'verbose_name_plural': 'Cross combine search term communities',
             },
             bases=(models.Model, core.models.organisms.mixins.ProcessorMixin),
         ),

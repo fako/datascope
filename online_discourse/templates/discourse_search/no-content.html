@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block body %}
+    <p>{% trans "No results found for this topic. Please try again with another one below:" %}</p>
+    <ul>
+        {% for topic in topics %}
+            <li>{{ topic }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
+{% block footer %}
+    {% include "core/components/search.html" %}
+{% endblock %}

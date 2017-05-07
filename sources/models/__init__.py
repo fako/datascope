@@ -16,6 +16,7 @@ from .wikipedia.categories import WikipediaCategories, WikipediaCategoryMembers
 
 from .google.images import GoogleImage
 from .google.translations import GoogleTranslate
+from .google.text import GoogleText
 
 from .downloads import ImageDownload
 

@@ -15,11 +15,12 @@ class CrossCombineTermSearchCommunity(Community):
             "config": {
                 "_args": ["$.query", "$.quantity"],
                 "_kwargs": {},
-                "_resource": "GoogleSearch",
+                "_resource": "GoogleText",
                 "_objective": {
                     "@": "$.items",
                     "#term": "$.queries.request.0.searchTerms",
-                    "url": "$.link",
+                    "title": "$.title",
+                    "url": "$.link"
                 },
                 "_continuation_limit": 10
             },
@@ -46,3 +47,10 @@ class CrossCombineTermSearchCommunity(Community):
                 }
             )
         return collective
+
+    def set_kernel(self):
+        return self.get_growth("pages").output
+
+    class Meta:
+        verbose_name = "Cross combine search term community"
+        verbose_name_plural = "Cross combine search term communities"

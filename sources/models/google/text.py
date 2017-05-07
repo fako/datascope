@@ -1,17 +1,10 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
-from copy import copy
-
 from core.exceptions import DSInvalidResource
 from sources.models.google.query import GoogleQuery
 
 
-class GoogleImage(GoogleQuery):
+class GoogleText(GoogleQuery):
 
-    URI_TEMPLATE = 'https://www.googleapis.com/customsearch/v1?q="{}"'
-    PARAMETERS = {
-        "searchType": "image"
-    }
+    URI_TEMPLATE = 'https://www.googleapis.com/customsearch/v1?q={}'
     GET_SCHEMA = {
         "args": {
             "type": "array",
@@ -37,7 +30,7 @@ class GoogleImage(GoogleQuery):
         }
 
     def auth_parameters(self):
-        params = super(GoogleImage, self).auth_parameters()
+        params = super(GoogleText, self).auth_parameters()
         params.update({
             "cx": self.config.cx
         })
@@ -45,7 +38,7 @@ class GoogleImage(GoogleQuery):
 
     @property
     def content(self):
-        content_type, data = super(GoogleImage, self).content
+        content_type, data = super(GoogleText, self).content
         try:
             if data is not None:
                 data["queries"]["request"][0]["searchTerms"] = data["queries"]["request"][0]["searchTerms"][1:-1]
@@ -56,7 +49,7 @@ class GoogleImage(GoogleQuery):
     def next_parameters(self):
         if self.request["quantity"] <= 0:
             return {}
-        content_type, data = super(GoogleImage, self).content
+        content_type, data = super(GoogleText, self).content
         missing_quantity = self.request["quantity"] - 10
         try:
             nextData = data["queries"]["nextPage"][0]
@@ -68,6 +61,6 @@ class GoogleImage(GoogleQuery):
         }
 
     def _create_request(self, method, *args, **kwargs):
-        request = super(GoogleImage, self)._create_request(method, *args, **kwargs)
+        request = super(GoogleText, self)._create_request(method, *args, **kwargs)
         request["quantity"] = self.variables(*args)["quantity"]
         return request
