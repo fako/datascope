@@ -49,7 +49,7 @@ class CrossCombineTermSearchCommunity(Community):
         return collective
 
     def set_kernel(self):
-        return self.get_growth("pages").output
+        self.kernel = self.current_growth.output
 
     class Meta:
         verbose_name = "Cross combine search term community"
