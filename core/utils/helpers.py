@@ -3,6 +3,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 import operator
 from datetime import datetime
 from itertools import islice, cycle
+from functools import reduce
 
 
 from django.apps import apps as django_apps
@@ -83,10 +84,20 @@ def iroundrobin(*iterables):
             nexts = cycle(islice(nexts, pending))
 
 
-# def get_json(model_instance):
-#     if self.lazy:
-#         state = getattr(model_instance, Creator._state_key, None)
-#         if state is None or not state.get(self.attname, False):
-#             return model_instance.__dict__[self.attname]
-#     return self.get_db_prep_value(getattr(model_instance, self.attname, None), force=True)
-# setattr(cls, 'get_%s_json' % self.name, get_json)
+def cross_combine(first, second):
+    for primary in first:
+        for secondary in second:
+            yield (primary, secondary)
+
+
+def cross_combine_2(*args):
+
+    if len(args) == 1:
+        return ((primary,) for primary in args[0])
+
+    def dual_combine(first, second):
+        for primary in first:
+            for secondary in second:
+                yield (primary, secondary)
+
+    return reduce(dual_combine, args)
