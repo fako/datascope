@@ -70,6 +70,7 @@ INSTALLED_APPS = (
     'future_fashion',
     'open_data',
     'topic_research',
+    'online_discourse',
 )
 
 DATABASE_TYPES = {
