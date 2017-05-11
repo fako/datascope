@@ -1,0 +1,98 @@
+[INFO  - 2017-05-10T15:50:59.832Z] GhostDriver - Main - running on port 61769
+[INFO  - 2017-05-10T15:51:00.193Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.settings - {"XSSAuditingEnabled":false,"javascriptCanCloseWindows":true,"javascriptCanOpenWindows":true,"javascriptEnabled":true,"loadImages":true,"localToRemoteUrlAccessEnabled":false,"userAgent":"Mozilla/5.0 (Macintosh; Intel Mac OS X) AppleWebKit/538.1 (KHTML, like Gecko) PhantomJS/2.1.1 Safari/538.1","webSecurityEnabled":true}
+[INFO  - 2017-05-10T15:51:00.193Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.customHeaders:  - {}
+[INFO  - 2017-05-10T15:51:00.193Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - Session.negotiatedCapabilities - {"browserName":"phantomjs","version":"2.1.1","driverName":"ghostdriver","driverVersion":"1.2.0","platform":"mac-unknown-64bit","javascriptEnabled":true,"takesScreenshot":true,"handlesAlerts":false,"databaseEnabled":false,"locationContextEnabled":false,"applicationCacheEnabled":false,"browserConnectionEnabled":false,"cssSelectorsEnabled":true,"webStorageEnabled":false,"rotatable":false,"acceptSslCerts":false,"nativeEvents":true,"proxy":{"proxyType":"direct"}}
+[INFO  - 2017-05-10T15:51:00.193Z] SessionManagerReqHand - _postNewSessionCommand - New Session Created: 76c347e0-3598-11e7-832f-03402c5ace75
+[ERROR - 2017-05-10T15:54:34.398Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - msg: ReferenceError: Can't find variable: jQuery
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T15:54:34.398Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - stack:
+  (anonymous function) (https://www.voordewereldvanmorgen.nl/duurzame-projecten/de-bijlmer-bajestuin:1)
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T15:54:36.398Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - msg: ReferenceError: Can't find variable: jQuery
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T15:54:36.398Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - stack:
+  (anonymous function) (https://www.voordewereldvanmorgen.nl/duurzame-projecten/de-bijlmer-bajestuin:1)
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T15:55:07.220Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - msg: TypeError: undefined is not a constructor (evaluating 'AdLanticHPTO.PageResize()')
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T15:55:07.220Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - stack:
+  global code (http://www.dagelijksestandaard.nl/2017/01/laffe-nederlandse-azc-medewerkers-knijpen-oogje-toe-als-homohatende-vluchtelingen-toeslaan/:1)
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T15:55:25.034Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - msg: undefined
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T15:55:25.034Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - stack:
+  (anonymous function) (https://tpc.googlesyndication.com/pagead/js/r20170503/r20110914/abg.js:22)
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T15:55:25.034Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - msg: undefined
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T15:55:25.034Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - stack:
+  (anonymous function) (https://tpc.googlesyndication.com/pagead/js/r20170503/r20110914/abg.js:22)
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T15:55:25.034Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - msg: undefined
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T15:55:25.035Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - stack:
+  (anonymous function) (https://tpc.googlesyndication.com/pagead/js/r20170503/r20110914/abg.js:22)
+
+  phantomjs://platform/console++.js:263 in error
+[INFO  - 2017-05-10T15:55:59.824Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[ERROR - 2017-05-10T15:57:41.846Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - msg: Facebook Pixel Error: Duplicate Pixel ID: 717047191764114
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T15:57:41.847Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - stack:
+  zb (https://connect.facebook.net/en_US/fbevents.js:4)
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T15:58:07.819Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - msg: Facebook Pixel Error: Duplicate Pixel ID: 717047191764114
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T15:58:07.819Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - stack:
+  zb (https://connect.facebook.net/en_US/fbevents.js:4)
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T15:59:57.737Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - msg: ReferenceError: Can't find variable: $
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T15:59:57.737Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - stack:
+  global code (http://destadamersfoort.nl/cookies/?url=/lokaal/amersfoort-wijst-twee-opvanglocaties-aan-als-zeer-kansrijk-55807:1)
+  insertBefore (:0)
+  (anonymous function) (http://www.googletagmanager.com/gtm.js?id=GTM-54N4HV:59)
+  (anonymous function) (http://www.googletagmanager.com/gtm.js?id=GTM-54N4HV:60)
+  (anonymous function) (http://www.googletagmanager.com/gtm.js?id=GTM-54N4HV:60)
+  Xh (http://www.googletagmanager.com/gtm.js?id=GTM-54N4HV:61)
+  wf (http://www.googletagmanager.com/gtm.js?id=GTM-54N4HV:30)
+  (anonymous function) (http://www.googletagmanager.com/gtm.js?id=GTM-54N4HV:90)
+  Ik (http://www.googletagmanager.com/gtm.js?id=GTM-54N4HV:86)
+  Vk (http://www.googletagmanager.com/gtm.js?id=GTM-54N4HV:97)
+  dg (http://www.googletagmanager.com/gtm.js?id=GTM-54N4HV:98)
+  ng (http://www.googletagmanager.com/gtm.js?id=GTM-54N4HV:41)
+  og (http://www.googletagmanager.com/gtm.js?id=GTM-54N4HV:41)
+
+  phantomjs://platform/console++.js:263 in error
+[INFO  - 2017-05-10T16:00:59.815Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[ERROR - 2017-05-10T16:03:00.643Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - msg: Facebook Pixel Error: Duplicate Pixel ID: 717047191764114
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T16:03:00.645Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - stack:
+  zb (https://connect.facebook.net/en_US/fbevents.js:4)
+
+  phantomjs://platform/console++.js:263 in error
+[INFO  - 2017-05-10T16:05:59.810Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
+[ERROR - 2017-05-10T16:06:49.907Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - msg: TypeError: You must pass either a valid element or a valid id.
+
+  phantomjs://platform/console++.js:263 in error
+[ERROR - 2017-05-10T16:06:49.909Z] Session [76c347e0-3598-11e7-832f-03402c5ace75] - page.onError - stack:
+  Player (https://player.vimeo.com/api/player.js:2)
+
+  phantomjs://platform/console++.js:263 in error
+[INFO  - 2017-05-10T16:11:02.500Z] SessionManagerReqHand - _cleanupWindowlessSessions - Asynchronous Sessions clean-up phase starting NOW
