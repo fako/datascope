@@ -1,5 +1,17 @@
-class HttpAuthenticate(object):
+from core.processors import HttpResourceProcessor
+from core.utils.helpers import get_any_model
+
+
+class HttpPrivateResourceProcessor(HttpResourceProcessor):
     """
-    Goes through a HTTP flow for authentication (like OAuth)
+    Establishes a session in order to reach private resources
     """
-    pass
+
+    @classmethod
+    def get_session(cls, config):
+        auth_config = config.auth
+        login_resource = get_any_model(auth_config["resource"])
+        login_credentials = auth_config["credentials"]
+        login = login_resource()
+        login.post(**login_credentials)
+        return login.session

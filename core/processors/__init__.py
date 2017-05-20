@@ -1,4 +1,5 @@
 from .resources import HttpResourceProcessor
+from .authentication import HttpPrivateResourceProcessor
 from .extraction import ExtractProcessor
 from .rank import RankProcessor
 from .compare import ComparisonProcessor
