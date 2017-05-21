@@ -48,9 +48,9 @@ class LocaforaOrderOverviewCommunity(Community):
                     continue
                 price = Decimal(order_line["price"]).quantize(Decimal('.01'))
                 if order_line["title"].lower().startswith("bio"):
-                    product = " ".join(order_line["title"].split(" ")[1:])
+                    product = " ".join(order_line["title"].split(" ")[1:]).strip()
                 else:
-                    product = order_line["title"]
+                    product = order_line["title"].strip()
                 clean_order_lines.append({
                     "customer": customer.properties["first_name"].strip(),
                     "product": product,
@@ -61,7 +61,6 @@ class LocaforaOrderOverviewCommunity(Community):
                 })
             customer.properties["order_lines"] = clean_order_lines
             customer.save()
-
 
     def set_kernel(self):
         self.kernel = self.current_growth.output
