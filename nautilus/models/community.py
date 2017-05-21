@@ -1,4 +1,5 @@
 from collections import OrderedDict
+from decimal import Decimal
 
 from django.conf import settings
 
@@ -21,7 +22,7 @@ class LocaforaOrderOverviewCommunity(Community):
                     "@": "$.data",
                     "first_name": "$.payer_first_name",
                     "last_name": "$.payer_last_name",
-                    "orders": "$.shop.order_shop_products"
+                    "orders": "$.order_shop_products"
                 },
                 "_auth": {
                     "resource": "LocaforaLogin",
@@ -36,20 +37,30 @@ class LocaforaOrderOverviewCommunity(Community):
         }),
     ])
 
-    COMMUNITY_BODY = [
-        # {
-        #     "process": "ManifestProcessor.manifest_from_individuals",
-        #     "config": {
-        #         "community": "WikiFeedCommunity",
-        #         "args": ["$.feed.source"],
-        #         "kwargs": "$.feed.modules"
-        #     }
-        # }
-    ]
+    COMMUNITY_BODY = []
 
     def finish_orders(self, out, err):
         for customer in out.individual_set.all():
-            pass
+            clean_order_lines = []
+            for order_line in customer.properties["orders"].values():
+                quantity = int(float(order_line["quantity"]))
+                if quantity == 0:
+                    continue
+                price = Decimal(order_line["price"]).quantize(Decimal('.01'))
+                if order_line["title"].lower().startswith("bio"):
+                    product = " ".join(order_line["title"].split(" ")[1:])
+                else:
+                    product = order_line["title"]
+                clean_order_lines.append({
+                    "customer": customer.properties["first_name"].strip(),
+                    "product": product,
+                    "price": price,
+                    "quantity": quantity,
+                    "total": price * quantity,
+                    "unit": order_line["unit"]
+                })
+            customer.properties["order_lines"] = clean_order_lines
+            customer.save()
 
 
     def set_kernel(self):
