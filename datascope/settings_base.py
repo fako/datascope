@@ -71,6 +71,7 @@ INSTALLED_APPS = (
     'open_data',
     'topic_research',
     'online_discourse',
+    'nautilus',
 )
 
 DATABASE_TYPES = {
