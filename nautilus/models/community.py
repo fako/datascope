@@ -47,10 +47,9 @@ class LocaforaOrderOverviewCommunity(Community):
                 if quantity == 0:
                     continue
                 price = Decimal(order_line["price"]).quantize(Decimal('.01'))
-                if order_line["title"].lower().startswith("bio"):
-                    product = " ".join(order_line["title"].split(" ")[1:]).strip()
-                else:
-                    product = order_line["title"].strip()
+                product = order_line["title"].lower().strip()
+                if product.startswith("bio"):
+                    product = " ".join(product.split(" ")[1:]).strip()
                 clean_order_lines.append({
                     "customer": customer.properties["first_name"].strip(),
                     "product": product,
