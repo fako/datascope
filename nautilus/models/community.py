@@ -1,5 +1,6 @@
 from collections import OrderedDict
 from decimal import Decimal
+from math import ceil
 
 from django.conf import settings
 
@@ -43,7 +44,7 @@ class LocaforaOrderOverviewCommunity(Community):
         for customer in out.individual_set.all():
             clean_order_lines = []
             for order_line in customer.properties["orders"].values():
-                quantity = int(float(order_line["quantity"]))
+                quantity = int(ceil(float(order_line["quantity"])))
                 if quantity == 0:
                     continue
                 price = Decimal(order_line["price"]).quantize(Decimal('.01'))
