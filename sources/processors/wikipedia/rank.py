@@ -91,3 +91,25 @@ class WikipediaRankProcessor(RankProcessor):
             return None
         unique_editors = set([revision["userid"] for revision in revisions])
         return len(unique_editors) == 1
+
+    @staticmethod
+    def central_europe(page, wikidata):
+        country_property = 'P17'
+        central_europe_country_entities = [  # uses https://en.wikipedia.org/wiki/Central_Europe on 2017-07-14
+            'Q40',  # Austria
+            'Q224',  # Croatia
+            'Q213',  # Czech Republic
+            'Q183',  # Germany
+            'Q28',  # Hungary
+            'Q347'  # Liechtenstein
+            'Q36',  # Poland
+            'Q214',  # Slovakia
+            'Q215',  # Slovenia
+            'Q39',  # Switzerland
+
+        ]
+        return any(
+            (claim["value"] for claim in wikidata.get("claims", [])
+             if claim["property"] == country_property and
+             claim["value"] in central_europe_country_entities)
+        )
