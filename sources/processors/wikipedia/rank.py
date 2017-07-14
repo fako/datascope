@@ -70,7 +70,7 @@ class WikipediaRankProcessor(RankProcessor):
         for cluster in clusters:
             if len(cluster) < 5:
                 continue
-            unique_editors = set([revision["userid"] for revision in cluster])
+            unique_editors = set([revision["user"] for revision in cluster])
             if len(unique_editors) >= 3:
                 return True
 
@@ -89,7 +89,7 @@ class WikipediaRankProcessor(RankProcessor):
         revisions = page.get("revisions", [])
         if not len(revisions):
             return None
-        unique_editors = set([revision["userid"] for revision in revisions])
+        unique_editors = set([revision["user"] for revision in revisions])
         return len(unique_editors) == 1
 
     @staticmethod

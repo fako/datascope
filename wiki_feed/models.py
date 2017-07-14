@@ -31,7 +31,7 @@ class WikiFeedCommunity(Community):
                     "title": "$.title",
                     "timestamp": "$.timestamp",
                     "comment": "$.comment",
-                    "userid": "$.userid"
+                    "user": "$.user"
                 },
                 "_continuation_limit": 1000,
                 "user_agent": USER_AGENT
