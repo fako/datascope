@@ -113,3 +113,30 @@ class WikipediaRankProcessor(RankProcessor):
              if claim["property"] == country_property and
              claim["value"] in central_europe_country_entities)
         )
+
+    @staticmethod
+    def undo_and_rollback(page, wikidata):
+        """
+        Function to detect which pages received the most reverts
+        Currently it only detects undo's and rollbacks. For more info on these actions:
+        * https://en.wikipedia.org/wiki/Help:Reverting#Undo
+        * https://en.wikipedia.org/wiki/Wikipedia:Rollback
+        Detection is based on automated edit summaries: https://en.wikipedia.org/wiki/Help:Automatic_edit_summaries
+
+        :param page: Dictionary with page data
+        :param wikidata: Dictionary with entity data
+        :return: The amount of undo's and rollbacks on a page by humans
+        """
+        revisions = page.get("revisions", [])
+        if not len(revisions):
+            return None
+
+        revert_revisions = [
+            revision for revision in revisions
+            if "bot" not in revision["user"].lower() and
+            (
+                "Undid revision" in revision["comment"] or  # undo action on the history page
+                "Reverted edits by" in revision["comment"]  # rollback action
+            )
+        ]
+        return len(revert_revisions)
