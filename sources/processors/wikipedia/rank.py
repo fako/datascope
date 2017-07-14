@@ -34,3 +34,39 @@ class WikipediaRankProcessor(RankProcessor):
             (claim for claim in wikidata.get("claims", [])
             if claim["property"] == sex_property and claim["value"] == women_item)
         )
+
+    @staticmethod
+    def breaking_news(page, wikidata):
+        # Based on: https://arxiv.org/abs/1303.4702
+
+        # Function guards
+        revisions = page.get("revisions", [])
+        if not len(revisions):
+            return None
+
+        # First we build "clusters" of revisions (aka edits) that happened 60 seconds from each other
+        clusters = []
+        revisions = iter(revisions)
+        cluster_revisions = [next(revisions)]
+        for revision in revisions:
+            last_revision_timestamp = cluster_revisions[-1].get("timestamp")
+            if revision.get("timestamp") - last_revision_timestamp > 60:
+                if len(cluster_revisions) > 1:
+                    clusters.append(cluster_revisions)
+                cluster_revisions = [revision]
+                continue
+            cluster_revisions.append(revision)
+
+        # Now we check the clusters for the breaking news quality defined as:
+        # At least 5 concurrent revisions
+        # At least 3 editors involved
+        # One such cluster is sufficient to mark page as breaking news
+        for cluster in clusters:
+            if len(cluster) < 5:
+                continue
+            unique_editors = set([revision["userid"] for revision in cluster])
+            if len(unique_editors) >= 3:
+                return True
+
+        # No breaking news clusters
+        return
