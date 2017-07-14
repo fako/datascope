@@ -19,6 +19,11 @@ class WikipediaRankProcessor(RankProcessor):
         return len(page.get("categories", []))
 
     @staticmethod
+    def editor_count(page, wikidata):
+        revisions = page.get("revisions", [])
+        return len(set(revision["user"] for revision in revisions))
+
+    @staticmethod
     def number_of_deaths(page, wikidata):
         number_of_deaths_property = "P1120"
         return next(
