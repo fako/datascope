@@ -76,3 +76,18 @@ class WikipediaRankProcessor(RankProcessor):
 
         # No breaking news clusters
         return
+
+    @staticmethod
+    def all_alone(page, wikidata):
+        """
+        Function that makes a binary decision on whether a page was edited by a single editor
+
+        :param page: Dictionary with page data
+        :param wikidata: Dictionary with entity data
+        :return: True if edits were made by a single person and False if they weren't
+        """
+        revisions = page.get("revisions", [])
+        if not len(revisions):
+            return None
+        unique_editors = set([revision["userid"] for revision in revisions])
+        return len(unique_editors) == 1
