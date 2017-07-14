@@ -37,9 +37,15 @@ class WikipediaRankProcessor(RankProcessor):
 
     @staticmethod
     def breaking_news(page, wikidata):
-        # Based on: https://arxiv.org/abs/1303.4702
+        """
+        Function that makes a binary decision on whether a page has breaking news value
+        Based on: https://arxiv.org/abs/1303.4702
 
-        # Function guards
+        :param page: Dictionary with page data
+        :param wikidata: Dictionary with entity data
+        :return: True if a page is breaking news, False if it isn't
+        """
+
         revisions = page.get("revisions", [])
         if not len(revisions):
             return None
