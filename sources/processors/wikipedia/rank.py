@@ -20,8 +20,7 @@ class WikipediaRankProcessor(RankProcessor):
 
     @staticmethod
     def editor_count(page, wikidata):
-        revisions = page.get("revisions", [])
-        return len(set(revision["user"] for revision in revisions))
+        return len(page.get("users", []))
 
     @staticmethod
     def number_of_deaths(page, wikidata):
@@ -91,11 +90,7 @@ class WikipediaRankProcessor(RankProcessor):
         :param wikidata: Dictionary with entity data
         :return: True if edits were made by a single person and False if they weren't
         """
-        revisions = page.get("revisions", [])
-        if not len(revisions):
-            return None
-        unique_editors = set([revision["user"] for revision in revisions])
-        return len(unique_editors) == 1
+        return len(page.get("users", [])) == 1
 
     @staticmethod
     def central_europe(page, wikidata):
