@@ -142,7 +142,7 @@ class WikiFeedCommunity(Community):
                 "pageid": pageid,
                 "revisions": [revision.content for revision in revisions],
                 "users": list(
-                    {revision.properties["userid"] for revision in revisions if revision.properties["userid"]}
+                    {revision.properties["user"] for revision in revisions if revision.properties["user"]}
                 )
             })
             if len(pages) >= 1000:
