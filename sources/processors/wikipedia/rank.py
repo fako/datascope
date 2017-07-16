@@ -133,7 +133,7 @@ class WikipediaRankProcessor(RankProcessor):
 
         revert_revisions = [
             revision for revision in revisions
-            if "bot" not in revision["user"].lower() and
+            if revision["user"] and "bot" not in revision["user"].lower() and
             (
                 "Undid revision" in revision["comment"] or  # undo action on the history page
                 "Reverted edits by" in revision["comment"]  # rollback action
