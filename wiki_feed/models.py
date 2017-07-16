@@ -122,7 +122,11 @@ class WikiFeedCommunity(Community):
         "$revision_count": 1,
         "$category_count": 1,
         "$number_of_deaths": 1,
-        "$women": 1
+        "$women": 1,
+        "$breaking_news": 1,
+        "$central_europe": 1,
+        "$undo_and_rollback": 1,
+        "$all_alone": 1
     }
 
     def initial_input(self, *args):
