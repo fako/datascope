@@ -10,7 +10,7 @@ class WikipediaRecentChanges(WikipediaQuery):
         "rcnamespace": 0,
         "rcshow": "!bot|!minor|!redirect",
         "rclimit": 500,
-        "rcprop": "ids|title|comment|timestamp|tags|userid",
+        "rcprop": "ids|title|comment|timestamp|tags|user",
         "rcdir": "newer"
     })
     GET_SCHEMA = {
