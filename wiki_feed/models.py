@@ -189,7 +189,7 @@ class WikiFeedCommunity(Community):
         except DSResourceException as exc:
             image_categories = exc.resource
         return [
-            image["title"]
+            image["title"].replace(" ", "_")
             for page_id, image in image_categories.get_wikipedia_json().items()
             if int(page_id) < 0
         ]
@@ -212,13 +212,13 @@ class WikiFeedCommunity(Community):
                 if "Category:All free media" == category["title"]
             ])
             if not free_image:
-                non_free_images.add(page_content["title"])
+                non_free_images.add(page_content["title"].replace(" ", "_"))
         return list(non_free_images)
 
     @property
     def manifestation(self):
         pages = list(super(WikiFeedCommunity, self).manifestation)
-        image_titles = ["File:{}".format(page["image"]) for page in pages if page["image"]]
+        image_titles = ["File:{}".format(page["image"]) for page in pages if "image" in page and page["image"]]
         en_images = WikiFeedCommunity.filter_commons_images(image_titles)
         non_free_images = WikiFeedCommunity.filter_free_images(en_images)
         if len(non_free_images):
