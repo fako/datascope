@@ -1,3 +1,5 @@
+import dateutil.parser
+
 from core.processors.rank import RankProcessor
 
 
@@ -49,7 +51,6 @@ class WikipediaRankProcessor(RankProcessor):
         :param wikidata: Dictionary with entity data
         :return: True if a page is breaking news, False if it isn't
         """
-
         revisions = page.get("revisions", [])
         if not len(revisions):
             return None
@@ -60,7 +61,9 @@ class WikipediaRankProcessor(RankProcessor):
         cluster_revisions = [next(revisions)]
         for revision in revisions:
             last_revision_timestamp = cluster_revisions[-1].get("timestamp")
-            if revision.get("timestamp") - last_revision_timestamp > 60:
+            between_revisions = dateutil.parser.parse(revision.get("timestamp")) - \
+                                dateutil.parser.parse(last_revision_timestamp)
+            if between_revisions.seconds >= 60:
                 if len(cluster_revisions) > 1:
                     clusters.append(cluster_revisions)
                 cluster_revisions = [revision]
