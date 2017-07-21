@@ -7,7 +7,7 @@ class WikipediaCategories(WikipediaQuery):
 
     PARAMETERS = override_dict(WikipediaQuery.PARAMETERS, {
         "cllimit": 500,
-        "clshow": "!hidden",  # might get altered secondary get argument
+        "clshow": "",  # gets set at runtime through "wiki_show_categories" config with "!hidden" by default
         "prop": "categories"
     })
 
@@ -19,7 +19,7 @@ class WikipediaCategories(WikipediaQuery):
 
     def parameters(self, **kwargs):
         params = dict(self.PARAMETERS)
-        params["clshow"] = kwargs["show"]
+        params["clshow"] = self.config.wiki_show_categories
         return params
 
 
