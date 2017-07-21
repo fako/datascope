@@ -180,6 +180,8 @@ class WikiFeedCommunity(Community):
 
     @staticmethod
     def filter_commons_images(image_titles):
+        if not len(image_titles):
+            return image_titles
         try:
             config = {"wiki_country": "commons"}
             titles = "|".join(image_titles)
@@ -194,6 +196,8 @@ class WikiFeedCommunity(Community):
 
     @staticmethod
     def filter_free_images(image_titles):
+        if not len(image_titles):
+            return image_titles
         try:
             config = {"wiki_show_categories": "hidden"}
             titles = "|".join(image_titles)
@@ -201,7 +205,6 @@ class WikiFeedCommunity(Community):
         except DSResourceException as exc:
             image_categories = exc.resource
         non_free_images = set()
-        image_categories.save()
         for page_id, page_content in image_categories.get_wikipedia_json().items():
             free_image = any([
                 category
