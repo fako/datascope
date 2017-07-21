@@ -39,7 +39,7 @@ class Manifestation(Resource):
             if not result.ready():
                 raise DSProcessUnfinished("Manifest processing is not done")
             self.data = result.result
-        if async:
+        elif async:
             self.task = get_manifestation_data.delay(self.id)
             self.save()
             raise DSProcessUnfinished("Manifest started processing")
