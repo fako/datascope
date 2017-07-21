@@ -94,6 +94,13 @@ class WikipediaRankProcessor(RankProcessor):
 
     @staticmethod
     def central_europe(page, wikidata):
+        """
+        Function that makes a binary decision on whether a page has a location that lies in Central Europe.
+
+        :param page: Dictionary with page data
+        :param wikidata: Dictionary with entity data
+        :return: True if the page contains a country property that is set to a country in Central Europe
+        """
         country_property = 'P17'
         central_europe_country_entities = [  # uses https://en.wikipedia.org/wiki/Central_Europe on 2017-07-14
             'Q40',  # Austria
@@ -106,7 +113,6 @@ class WikipediaRankProcessor(RankProcessor):
             'Q214',  # Slovakia
             'Q215',  # Slovenia
             'Q39',  # Switzerland
-
         ]
         return any(
             (claim["value"] for claim in wikidata.get("claims", [])
