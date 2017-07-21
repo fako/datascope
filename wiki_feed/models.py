@@ -9,6 +9,8 @@ from django.template.loader import render_to_string
 
 from core.models.organisms import Community, Individual
 from core.views import CommunityView
+from core.exceptions import DSResourceException
+from sources.models.wikipedia import WikipediaCategories
 
 
 class WikiFeedCommunity(Community):
@@ -112,7 +114,9 @@ class WikiFeedCommunity(Community):
     COMMUNITY_BODY = [
         {
             "process": "WikipediaRankProcessor.hooks",
-            "config": {}
+            "config": {
+                "result_size": 20
+            }
         }
     ]
     ASYNC_MANIFEST = True
@@ -174,9 +178,51 @@ class WikiFeedCommunity(Community):
     def set_kernel(self):
         self.kernel = self.current_growth.output
 
+    @staticmethod
+    def filter_commons_images(image_titles):
+        try:
+            config = {"wiki_country": "commons"}
+            titles = "|".join(image_titles)
+            image_categories = WikipediaCategories(config=config).get(titles)
+        except DSResourceException as exc:
+            image_categories = exc.resource
+        return [
+            image["title"]
+            for page_id, image in image_categories.get_wikipedia_json().items()
+            if int(page_id) < 0
+        ]
+
+    @staticmethod
+    def filter_free_images(image_titles):
+        try:
+            config = {"wiki_show_categories": "hidden"}
+            titles = "|".join(image_titles)
+            image_categories = WikipediaCategories(config=config).get(titles)
+        except DSResourceException as exc:
+            image_categories = exc.resource
+        non_free_images = set()
+        image_categories.save()
+        for page_id, page_content in image_categories.get_wikipedia_json().items():
+            free_image = any([
+                category
+                for category in page_content.get("categories", [])
+                if "Category:All free media" == category["title"]
+            ])
+            if not free_image:
+                non_free_images.add(page_content["title"])
+        return list(non_free_images)
+
     @property
     def manifestation(self):
-        return islice(super(WikiFeedCommunity, self).manifestation, 20)
+        pages = list(super(WikiFeedCommunity, self).manifestation)
+        image_titles = ["File:{}".format(page["image"]) for page in pages if page["image"]]
+        en_images = WikiFeedCommunity.filter_commons_images(image_titles)
+        non_free_images = WikiFeedCommunity.filter_free_images(en_images)
+        if len(non_free_images):
+            for page in pages:
+                if "File:{}".format(page["image"]) in non_free_images:
+                    page["image"] = None
+        return pages
 
     class Meta:
         verbose_name = "Wiki feed"
