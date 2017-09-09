@@ -11,7 +11,7 @@ from core.models.organisms import Community, Collective, Individual
 
 class VisualTranslationsBRICCommunity(Community):
 
-    COMMUNITY_NAME = "visual_translations_bric"
+    COMMUNITY_NAME = "visual_translations"
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("translations", {

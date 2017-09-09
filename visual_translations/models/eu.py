@@ -18,7 +18,7 @@ from sources.models.downloads import ImageDownload
 
 class VisualTranslationsEUCommunity(Community):
 
-    COMMUNITY_NAME = "visual_translations_eu"
+    COMMUNITY_NAME = "visual_translations"
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("translations", {
