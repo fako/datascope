@@ -7,14 +7,20 @@ STATIC_IP = "127.0.0.1"
 
 LOGGING["loggers"] = {}
 
+MIGRATION_MODULES = {
+    'auth': None,
+    'contenttypes': None,
+    'default': None,
+    'sessions': None,
 
-class DisableMigrations(object):
-
-    def __contains__(self, item):
-        return True
-
-    def __getitem__(self, item):
-        return "notmigrations"
-
-
-MIGRATION_MODULES = DisableMigrations()
+    'datascope': None,
+    'core': None,
+    'sources': None,
+    'wiki_feed': None,
+    'visual_translations': None,
+    'future_fashion': None,
+    'open_data': None,
+    'topic_research': None,
+    'online_discourse': None,
+    'nautilus': None
+}
