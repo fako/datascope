@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.shortcuts import render_to_response, RequestContext, HttpResponse, Http404
+from django.shortcuts import render_to_response, HttpResponse, Http404
 from django.core.files.storage import default_storage
 
 from visual_translations.models import VisualTranslationsEUCommunity
@@ -36,14 +36,14 @@ def visual_translation_map(request, term):
         "region_topo_json": "visual_translations/geo/europe.topo.json",
         "locales": locales_info,
     }
-    return render_to_response("visual_translations/map.html", context, RequestContext(request))
+    return render_to_response("visual_translations/map.html", context, request)
 
 
 def visual_translations_controller(request):
     context = {
         "words": ["pension", "peace", "women", "immigrants", "cowshed", "leave"]
     }
-    return render_to_response("visual_translations/controller.html", context, RequestContext(request))
+    return render_to_response("visual_translations/controller.html", context, request)
 
 
 def web_sockets_broadcast(request, message):
