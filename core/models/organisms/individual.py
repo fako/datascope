@@ -15,7 +15,7 @@ from core.utils.data import reach
 
 class Individual(Organism):
 
-    collective = models.ForeignKey('Collective', null=True)
+    collective = models.ForeignKey('core.Collective', null=True)
     properties = json_field.JSONField(default={})
 
     identity = models.CharField(max_length=255, blank=True, null=True, db_index=True)
