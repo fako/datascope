@@ -24,7 +24,7 @@ class RedditScrapeCommunity(Community):
                     "author": "el.get('data-author')",
 
                 },
-                "_continuation_limit": 10000,
+                "_continuation_limit": 1000,
                 "_interval_duration": 2000
             },
             "schema": {},

@@ -20,15 +20,16 @@ class RedditList(HttpResource):
 
         content_type, soup = self.content
         next_button = soup.find(class_="next-button")
-        if next_button is None:
+        if next_button is None or not next_button.text:
             return {}
 
         current = URLObject(self.request.get("url"))
+
         position = int(current.query_dict.get("count", 0))
         things = soup.find_all(id=is_reddis_thing)
         last_thing = things[-1]
         return {
-            "after": last_thing["id"],
+            "after": last_thing["id"][6:],  # takes the id minus "_thing"
             "count": position + 25
         }
 
