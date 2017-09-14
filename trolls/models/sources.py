@@ -16,6 +16,10 @@ class RedditList(HttpResource):
         "t": "all"
     }
 
+    HEADERS = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.152 Safari/537.36",
+    }
+
     def next_parameters(self):
 
         content_type, soup = self.content
@@ -34,10 +38,14 @@ class RedditList(HttpResource):
         }
 
 
-class RedditPermalink(HttpResource):  # TODO: rename to permalink
+class RedditPermalink(HttpResource):
 
     URI_TEMPLATE = "https://www.reddit.com{}"  # meant to include permalinks
 
     PARAMETERS = {
         "limit": 500
+    }
+
+    HEADERS = {
+        "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/42.0.2311.152 Safari/537.36",
     }
