@@ -13,7 +13,7 @@ pip install -r src/system/requirements/production.txt
 
 # SETUP: database
 cp replica.my.cnf .my.cnf
-mysql -e "CREATE DATABASE s52573__datascope CHARSET utf8;"
+mysql -e "CREATE DATABASE s52573__datascope CHARSET utf8md4;"
 python src/manage.py syncdb
 
 # SETUP: statics

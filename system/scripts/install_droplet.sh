@@ -18,10 +18,10 @@ apt-get install nginx
 apt-get install uwsgi
 apt-get install uwsgi-plugin-python3
 apt-get install python-pip
-apt-get install python-virtualenv
 apt-get install mysql-server
 apt-get install libmysqlclient-dev
 apt-get install python3-dev
+apt-get install python3-venv
 apt-get install tcl8.5
 apt-get install htop
 # SciPy
@@ -59,7 +59,7 @@ source ds-env/bin/activate
 pip install -r src/system/requirements/production.txt
 
 # SETUP: database
-mysql -p -e "CREATE DATABASE datascope CHARSET utf8;"
+mysql -p -e "CREATE DATABASE datascope CHARSET utf8md4;"
 mysql -p -e "CREATE USER 'django'@'localhost' IDENTIFIED BY 'password';"
 mysql -p -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX ON datascope.* TO 'django'@'localhost'; FLUSH PRIVILEGES;"
 mysql -p -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX ON test_datascope.* TO 'django'@'localhost'; FLUSH PRIVILEGES;"
