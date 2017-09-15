@@ -73,13 +73,14 @@ class RedditScrapeCommunity(Community):
         }),
         ("download", {
             "process": "HttpResourceProcessor.fetch_mass",
-            "input": "@images",
+            "input": "Collective",
             "contribute": None,
             "output": None,
             "config": {
-                "_args": ["$.url"],
+                "_args": ["$.media_preview"],
                 "_kwargs": {},
-                "_resource": "ImageDownload"
+                "_resource": "ImageDownload",
+                "_interval_duration": 2000,
             },
             "schema": {},
             "errors": None,
@@ -99,7 +100,11 @@ class RedditScrapeCommunity(Community):
         )
 
     def set_kernel(self):
-        self.kernel = self.current_growth.output
+        self.kernel = self.get_growth("images").output
+
+    def begin_download(self, inp):
+        subjects = self.get_growth("images").output
+        inp.update([subject for subject in subjects.individual_set.all() if subject.properties.get("media_preview")])
 
     class Meta:
         verbose_name = "Reddit scrape community"
