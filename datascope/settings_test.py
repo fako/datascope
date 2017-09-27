@@ -22,5 +22,6 @@ MIGRATION_MODULES = {
     'open_data': None,
     'topic_research': None,
     'online_discourse': None,
-    'nautilus': None
+    'nautilus': None,
+    'trolls': None
 }
