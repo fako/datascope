@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from core.models.organisms import Community, Individual
 from core.views import CommunityView
 from core.exceptions import DSResourceException
-from sources.models.wikipedia import WikipediaCategories
+from sources.models.wikipedia.categories import WikipediaCategories
 
 
 class WikiFeedCommunity(Community):
