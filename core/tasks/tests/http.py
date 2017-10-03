@@ -164,7 +164,7 @@ class TestSendTaskGet(TestHTTPTasksBase):
         self.check_results(scc, 1)
         self.check_results(err, 0)
         link = HttpResourceMock.objects.get(id=scc[0])
-        self.assertIn("User-Agent", link.head)
+        self.assertIn("user-agent", link.head)
 
 
 class TestSendTaskPost(TestHTTPTasksBase):
@@ -204,7 +204,7 @@ class TestSendTaskPost(TestHTTPTasksBase):
         self.check_results(scc, 1)
         self.check_results(err, 0)
         link = HttpResourceMock.objects.get(id=scc[0])
-        self.assertIn("User-Agent", link.head)
+        self.assertIn("user-agent", link.head)
 
 
 class TestSendSerieTaskGet(TestHTTPTasksBase):
