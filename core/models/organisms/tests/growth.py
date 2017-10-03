@@ -4,10 +4,10 @@ from mock import patch, Mock
 
 from core.models.organisms.growth import Growth, GrowthState
 from core.processors import HttpResourceProcessor
+from core.processors.tests.mixins import TestProcessorMixin
 from core.tests.mocks.celery import (MockTask, MockAsyncResultSuccess, MockAsyncResultPartial,
                                     MockAsyncResultError, MockAsyncResultWaiting)
 from core.tests.mocks.http import HttpResourceMock
-from core.models.organisms.tests.mixins import TestProcessorMixin
 from core.exceptions import DSProcessError, DSProcessUnfinished
 
 

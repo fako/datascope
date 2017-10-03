@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import core.models.organisms.mixins
+import core.processors.mixins
 import core.utils.configuration
 
 
@@ -34,6 +34,6 @@ class Migration(migrations.Migration):
                 'get_latest_by': 'created_at',
                 'abstract': False,
             },
-            bases=(models.Model, core.models.organisms.mixins.ProcessorMixin),
+            bases=(models.Model, core.processors.mixins.ProcessorMixin),
         ),
     ]

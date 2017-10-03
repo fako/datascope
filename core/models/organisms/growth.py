@@ -8,11 +8,11 @@ from django.core.exceptions import ValidationError
 
 from datascope.configuration import PROCESS_CHOICE_LIST, DEFAULT_CONFIGURATION
 from core.processors.base import ArgumentsTypes
+from core.processors.mixins import ProcessorMixin
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
 from core.exceptions import DSProcessError, DSNoContent
 from core.models.organisms import Individual, Collective
-from core.models.organisms.mixins import ProcessorMixin
 
 
 log = logging.getLogger("datascope")

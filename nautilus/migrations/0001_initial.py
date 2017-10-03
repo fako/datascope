@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import core.utils.configuration
-import core.models.organisms.mixins
+import core.processors.mixins
 import json_field.fields
 
 
@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Locafora order overview community',
                 'verbose_name_plural': 'Locafora order overview communities',
             },
-            bases=(models.Model, core.models.organisms.mixins.ProcessorMixin),
+            bases=(models.Model, core.processors.mixins.ProcessorMixin),
         ),
         migrations.CreateModel(
             name='LocaforaOrders',

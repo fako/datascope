@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import core.utils.configuration
-import core.models.organisms.mixins
+import core.processors.mixins
 
 
 class Migration(migrations.Migration):
@@ -35,6 +35,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Cross combine search term community',
                 'verbose_name_plural': 'Cross combine search term communities',
             },
-            bases=(models.Model, core.models.organisms.mixins.ProcessorMixin),
+            bases=(models.Model, core.processors.mixins.ProcessorMixin),
         ),
     ]

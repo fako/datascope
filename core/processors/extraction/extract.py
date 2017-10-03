@@ -6,6 +6,7 @@ from copy import copy
 
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.processors.base import Processor
+from core.processors.mixins import ProcessorMixin
 from core.exceptions import DSNoContent
 from core.utils.configuration import ConfigurationProperty
 from core.utils.data import reach
@@ -14,7 +15,7 @@ from core.utils.data import reach
 log = logging.getLogger("datascope")
 
 
-class ExtractProcessor(Processor):
+class ExtractProcessor(Processor, ProcessorMixin):
 
     config = ConfigurationProperty(
         storage_attribute="_config",
@@ -38,6 +39,9 @@ class ExtractProcessor(Processor):
                 self._at = value
             elif key.startswith("#"):
                 self._context.update({key[1:]: value})
+            elif key.startswith("!"):
+                processor, method, args_type = self.prepare_process(key[1:])
+                self._objective.update({key: method})
             else:
                 self._objective.update({key: value})
         assert self._at, \
@@ -93,5 +97,7 @@ class ExtractProcessor(Processor):
         for el in elements:  # el used in eval!
             result = copy(context)
             for name, objective in six.iteritems(self._objective):
-                result[name] = eval(objective) if objective else objective
+                if not objective:
+                    continue
+                result[name] = eval(objective) if not callable(objective) else objective(soup, el)
             yield result

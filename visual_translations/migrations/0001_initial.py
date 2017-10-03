@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.db import models, migrations
 import core.utils.configuration
-import core.models.organisms.mixins
+import core.processors.mixins
 
 
 class Migration(migrations.Migration):
@@ -34,6 +34,6 @@ class Migration(migrations.Migration):
                 'verbose_name': 'Visual translation',
                 'verbose_name_plural': 'Visual translations',
             },
-            bases=(models.Model, core.models.organisms.mixins.ProcessorMixin),
+            bases=(models.Model, core.processors.mixins.ProcessorMixin),
         ),
     ]
