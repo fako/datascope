@@ -23,6 +23,8 @@ python3 -m venv ds-env
 source ds-env/bin/activate
 cd datascope
 pip install -r system/requirements/websockets.txt
+python -m spacy download en
+python -m spacy download nl
 
 
 echo 'alias act-ds="source ~/Datascope/envs/ds-3/bin/activate && cd ~/Datascope/datascope/' >> ~/.bash_profile

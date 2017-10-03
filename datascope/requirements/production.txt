@@ -5,13 +5,14 @@ URLObject==2.4.0
 celery==4.1.0
 git+https://github.com/fako/django-json-field.git
 djangorestframework==3.6.4
-requests==2.7.0
+requests==2.18.4
 six==1.9.0
 jsonschema==2.4.0
-beautifulsoup4==4.4.1
+beautifulsoup4==4.6.0
 numpy==1.13.1
 pandas==0.20.3
 humanize==0.5.1
+spacy==1.9.0
 
 # Celery plugins
 django-celery-results==1.0.1

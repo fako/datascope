@@ -57,6 +57,8 @@ cd /srv/datascope
 virtualenv -p python3 ds-env
 source ds-env/bin/activate
 pip install -r src/system/requirements/production.txt
+python -m spacy download en
+python -m spacy download nl
 
 # SETUP: database
 mysql -p -e "CREATE DATABASE datascope CHARSET utf8md4;"
