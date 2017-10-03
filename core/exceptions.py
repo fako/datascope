@@ -47,3 +47,7 @@ class DSProcessUnfinished(DSProcessException):
 
 class DSProcessError(DSProcessException):
     pass
+
+
+class DSSystemConfigError(Exception):
+    pass

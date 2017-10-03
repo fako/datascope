@@ -11,6 +11,7 @@ system/coverage/
 system/profile/
 system/files/media/
 system/files/static/
+system/data/
 
 datascope/settings.py
 datascope/bootstrap.py
