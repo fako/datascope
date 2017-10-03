@@ -23,7 +23,7 @@ class TestExtractProcessor(TestCase):
             "#page": "soup.find('title').text",
         }
         self.html_prc = ExtractProcessor(config={"objective": self.html_obj})
-        self.soup = BeautifulSoup(MOCK_HTML, "html.parser")
+        self.soup = BeautifulSoup(MOCK_HTML, "html5lib")
         self.json_obj = {
             "@": "$.records",
             "#unicode": "$.unicode.0",
