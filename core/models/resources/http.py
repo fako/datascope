@@ -350,7 +350,7 @@ class HttpResource(Resource):
         self._update_from_response(response)
 
     def _update_from_response(self, response):
-        self.head = dict(response.headers)
+        self.head = dict(response.headers.lower_items())
         self.status = response.status_code
         # TODO: check what to do with responses that contain invalid character bytes
         # TODO: check why sometimes we get strings and sometimes bytes in response.body
