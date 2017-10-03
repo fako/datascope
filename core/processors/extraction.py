@@ -39,15 +39,13 @@ class ExtractProcessor(Processor, ProcessorMixin):
                 self._at = value
             elif key.startswith("#"):
                 self._context.update({key[1:]: value})
-            elif key.startswith("!"):
-                processor, method, args_type = self.prepare_process(key[1:])
-                self._objective.update({key: method})
             else:
                 self._objective.update({key: value})
-        assert self._at, \
-            "ExtractProcessor did not load elements to start with from its objective {}. " \
-            "Make sure that '@' is specified".format(objective)
-        assert self._objective, "No objectives loaded from objective {}".format(objective)
+        assert self._objective or self._context, "No objectives loaded from objective {}".format(objective)
+        if self._objective:
+            assert self._at, \
+                "ExtractProcessor did not load elements to start with from its objective {}. " \
+                "Make sure that '@' is specified".format(objective)
 
     def pass_resource_through(self, resource):
         mime_type, data = resource.content
@@ -90,7 +88,7 @@ class ExtractProcessor(Processor, ProcessorMixin):
         for name, objective in six.iteritems(self._context):
             context[name] = eval(objective) if objective else objective
 
-        at = elements = eval(self._at)
+        at = elements = eval(self._at) if self._at else None
         if not isinstance(at, list):
             elements = [at]
 
