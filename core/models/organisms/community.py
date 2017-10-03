@@ -57,6 +57,7 @@ class Community(models.Model, ProcessorMixin):
     ASYNC_MANIFEST = False
     INPUT_THROUGH_PATH = True
     PUBLIC_CONFIG = {}
+    SAMPLE_SIZE = 0
 
     objects = CommunityManager()
 
@@ -124,6 +125,8 @@ class Community(models.Model, ProcessorMixin):
         for growth_type, growth_config in six.iteritems(self.COMMUNITY_SPIRIT):
             sch = growth_config["schema"]
             cnf = self.config.to_dict(protected=True)
+            if self.SAMPLE_SIZE:
+                cnf["sample_size"] = self.SAMPLE_SIZE
             cnf.update(growth_config["config"])
             prc = growth_config["process"]
             if growth_config["contribute"]:

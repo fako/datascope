@@ -17,6 +17,7 @@ DEFAULT_CONFIGURATION = {
     "global_user_agent": "DataScope (v{})".format(settings.DATASCOPE_VERSION),
     "global_token": "",
     "global_purge_immediately": False,  # by default keep resources around
+    "global_sample_size": 0,
 
     "http_resource_batch_size": 0,
     "http_resource_continuation_limit": 1,
@@ -47,6 +48,7 @@ MOCK_CONFIGURATION = {
     "global_user_agent": "DataScope (test)",
     "global_token": "",
     "global_purge_immediately": False,
+    "global_sample_size": 0,
     # mock configuration for testing HttpResourceMock
     "global_source_language": "en",
     "mock_secret": "oehhh",

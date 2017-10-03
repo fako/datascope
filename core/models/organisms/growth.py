@@ -91,7 +91,10 @@ class Growth(models.Model, ProcessorMixin):
         if isinstance(self.input, Individual):
             result = method(*args, **kwargs)
         elif isinstance(self.input, Collective):
-            result = method(args, kwargs)
+            if not self.config.sample_size:
+                result = method(args, kwargs)
+            else:
+                result = method(args[:self.config.sample_size], kwargs[:self.config.sample_size])
         else:
             raise AssertionError("Growth.input is of unexpected type {}".format(type(self.input)))
 
