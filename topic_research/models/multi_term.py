@@ -7,11 +7,11 @@ from core.utils.helpers import cross_combine
 class CrossCombineTermSearchCommunity(Community):
 
     COMMUNITY_SPIRIT = OrderedDict([
-        ("pages", {
+        ("search", {
             "process": "HttpResourceProcessor.fetch_mass",
             "input": None,
             "contribute": "Append:ExtractProcessor.extract_from_resource",
-            "output": "Collective",
+            "output": "Collective#url",
             "config": {
                 "_args": ["$.query", "$.quantity"],
                 "_kwargs": {},
@@ -26,10 +26,29 @@ class CrossCombineTermSearchCommunity(Community):
             },
             "schema": {},
             "errors": {},
+        }),
+        ("download", {
+            "process": "HttpResourceProcessor.fetch_mass",
+            "input": "@search",
+            "contribute": "Update:ExtractProcessor.extract_from_resource",
+            "output": "@search",
+            "config": {
+                "_args": ["$.url"],
+                "_kwargs": {},
+                "_resource": "WebTextResource",
+                "_objective": {  # objective uses properties added to the soup by WebTextResource
+                    "#url": "soup.source",
+                    "#paragraph_groups": "soup.paragraph_groups"
+                },
+                "_update_key": "url"
+            },
+            "schema": {},
+            "errors": {},
         })
     ])
 
     COMMUNITY_BODY = []
+    SAMPLE_SIZE = 10
 
     def initial_input(self, *args):
         combinations = cross_combine(args[0], args[1])
@@ -43,7 +62,7 @@ class CrossCombineTermSearchCommunity(Community):
                     "query": " AND ".join(
                         ['"{}"'.format(term) for term in terms]
                     ),
-                    "quantity": 20
+                    "quantity": 10
                 }
             )
         return collective

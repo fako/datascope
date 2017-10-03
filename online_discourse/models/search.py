@@ -1,5 +1,5 @@
 from topic_research.models import CrossCombineTermSearchCommunity
-from online_discourse.configurations.immigrants import SINGULAR_SUBJECTS, PLURAL_SUBJECTS, DESCRIPTIVE_ADJECTIVES
+from online_discourse.configurations.gayrights import SINGULAR_SUBJECTS, PLURAL_SUBJECTS, DESCRIPTIVE_ADJECTIVES
 
 
 class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
