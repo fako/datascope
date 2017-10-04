@@ -6,7 +6,6 @@ from copy import copy
 
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.processors.base import Processor
-from core.processors.mixins import ProcessorMixin
 from core.exceptions import DSNoContent
 from core.utils.configuration import ConfigurationProperty
 from core.utils.data import reach
@@ -15,7 +14,7 @@ from core.utils.data import reach
 log = logging.getLogger("datascope")
 
 
-class ExtractProcessor(Processor, ProcessorMixin):
+class ExtractProcessor(Processor):
 
     config = ConfigurationProperty(
         storage_attribute="_config",

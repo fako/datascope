@@ -14,20 +14,14 @@ class ProcessorMixin(object):
         """
         assert isinstance(extra_config, (dict, type(None))), \
             "Extra config given to prepare_process should be None or a dictionary"
-
-        processor_name, method_name = process.split(".")
-        processor_class = Processor.get_processor_class(processor_name)
-
-        if processor_class is None:
-            raise AssertionError(
-                "Could not import a processor named {} "
-                "from core.processors or sources.processors.".format(processor_name)
-            )
         config = self.config.to_dict(protected=True)
         if extra_config is not None and isinstance(extra_config, dict):
             config.update(extra_config)
-        processor = processor_class(config=config)
+
+        processor_name, method_name = Processor.get_processor_components(process)
+        processor = Processor.create_processor(processor_name, config)
         method, args_type = processor.get_processor_method(method_name)
+
         if async:
             method = getattr(method, "delay")
         if not callable(method):
