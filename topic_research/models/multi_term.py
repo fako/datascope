@@ -38,7 +38,8 @@ class CrossCombineTermSearchCommunity(Community):
                 "_resource": "WebTextResource",
                 "_objective": {  # objective uses properties added to the soup by WebTextResource
                     "#url": "soup.source",
-                    "#paragraph_groups": "soup.paragraph_groups"
+                    "#paragraph_groups": "soup.paragraph_groups",
+                    "#author": "soup.find('meta', attrs={'name':'author'}).get('content') if soup.find('meta', attrs={'name':'author'}) else None"
                 },
                 "_update_key": "url"
             },
