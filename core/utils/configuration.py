@@ -277,7 +277,7 @@ class ConfigurationField(fields.TextField):
                 # uncomment below and comment the raise statement to fix this during fixture load
                 # value = dict(eval(value))
                 raise ValidationError("Enter valid JSON: " + value)
-        return super(ConfigurationField, self).to_python(value)
+        return value
 
     def get_prep_value(self, value):
         if value is None:
