@@ -22,7 +22,7 @@ class Manifestation(Resource):
     community_type = models.ForeignKey(ContentType, related_name="+")
     community_id = models.PositiveIntegerField()
 
-    task = models.CharField(max_length=255, null=True)
+    task = models.CharField(max_length=255, null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
 
     @staticmethod
