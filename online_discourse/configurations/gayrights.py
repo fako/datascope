@@ -17,7 +17,7 @@ PLURAL_SUBJECTS = [
     "straight",
     "gays",
     "lesbians",
-    "lesbos",
+    # "lesbos",
     "families",
     "parents",
     "mothers"
