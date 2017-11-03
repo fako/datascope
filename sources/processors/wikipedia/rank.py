@@ -51,7 +51,10 @@ class WikipediaRankProcessor(RankProcessor):
         :param wikidata: Dictionary with entity data
         :return: True if a page is breaking news, False if it isn't
         """
-        revisions = page.get("revisions", [])
+        revisions = sorted(
+            page.get("revisions", []),
+            key=lambda rev: rev["timestamp"]
+        )
         if not len(revisions):
             return None
 
@@ -71,11 +74,11 @@ class WikipediaRankProcessor(RankProcessor):
             cluster_revisions.append(revision)
 
         # Now we check the clusters for the breaking news quality defined as:
-        # At least 5 concurrent revisions
+        # At least 3 concurrent revisions (paper suggests 5, but that is cross language and we only look at English)
         # At least 3 editors involved
         # One such cluster is sufficient to mark page as breaking news
         for cluster in clusters:
-            if len(cluster) < 5:
+            if len(cluster) < 3:
                 continue
             unique_editors = set([revision["user"] for revision in cluster])
             if len(unique_editors) >= 3:
