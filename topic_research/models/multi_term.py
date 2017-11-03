@@ -48,8 +48,15 @@ class CrossCombineTermSearchCommunity(Community):
         })
     ])
 
-    COMMUNITY_BODY = []
-    SAMPLE_SIZE = 10
+    COMMUNITY_BODY = [
+        {
+            "process": "RankProcessor.score",
+            "config": {
+                "result_size": 60,
+                "score_key": "argument_score"
+            }
+        }
+    ]
 
     def initial_input(self, *args):
         combinations = cross_combine(args[0], args[1])

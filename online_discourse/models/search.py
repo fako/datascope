@@ -16,7 +16,7 @@ class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
         {
             "process": "RankProcessor.score",
             "config": {
-                "result_size": 20,
+                "result_size": 60,
                 "score_key": "argument_score"
             }
         }
