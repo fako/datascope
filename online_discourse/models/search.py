@@ -31,16 +31,16 @@ class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
         nlp = spacy.load('en', create_pipeline=arguing_lexicon_pipeline)
         for individual in out.individual_set.iterator():
             argument_count = 0
-            paragraph_count = 0
+            sents_count = 0
             for paragraph_group in individual.properties.get("paragraph_groups", []):
                 for paragraph in paragraph_group:
                     doc = nlp(paragraph)
-                    paragraph_count += 1
+                    sents_count += len(list(doc.sents))
                     arguments = doc.user_data.get("arguments")
                     argument_spans = list(arguments.get_argument_spans())
                     argument_count += len(argument_spans)
-            if paragraph_count:
-                individual.properties["argument_score"] = argument_count / paragraph_count
+            if sents_count:
+                individual.properties["argument_score"] = argument_count / sents_count
                 individual.clean()
                 individual.save()
 
