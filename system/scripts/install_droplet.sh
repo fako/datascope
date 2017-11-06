@@ -63,8 +63,8 @@ python -m spacy download nl
 # SETUP: database
 mysql -p -e "CREATE DATABASE datascope CHARSET utf8md4;"
 mysql -p -e "CREATE USER 'django'@'localhost' IDENTIFIED BY 'password';"
-mysql -p -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX ON datascope.* TO 'django'@'localhost'; FLUSH PRIVILEGES;"
-mysql -p -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX ON test_datascope.* TO 'django'@'localhost'; FLUSH PRIVILEGES;"
+mysql -p -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES ON datascope.* TO 'django'@'localhost'; FLUSH PRIVILEGES;"
+mysql -p -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES ON test_datascope.* TO 'django'@'localhost'; FLUSH PRIVILEGES;"
 
 # SETUP: services
 cd /srv/ds-server/deploy/
