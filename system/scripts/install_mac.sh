@@ -24,8 +24,8 @@ source ds-env/bin/activate
 cd datascope
 pip install -r system/requirements/websockets.txt
 
-export DJANGO_SETTINGS_MODULE=datascope.settings.development;
-echo 'alias act-ds="source ~/Datascope/envs/ds-3/bin/activate && cd ~/Datascope/datascope/ && export DJANGO_SETTINGS_MODULE=datascope.settings.development"' >> ~/.bash_profile
+
+echo 'alias act-ds="source ~/Datascope/envs/ds-3/bin/activate && cd ~/Datascope/datascope/' >> ~/.bash_profile
 
 mysql -uroot -e "CREATE DATABASE datascope CHARSET utf8;"
 cd ~/Datascope/datascope/

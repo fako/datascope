@@ -88,7 +88,6 @@ mkdir /srv/logs/nginx/
 nginx -s reload
 
 # SETUP: Django
-export DJANGO_SETTINGS_MODULE="datascope.settings.digital-ocean"
 cd /srv/datascope/src
 python manage.py syncdb
 python manage.py collectstatic

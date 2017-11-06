@@ -1,4 +1,4 @@
-from .base import *
+from .settings_base import *
 
 
 MAX_BATCH_SIZE = None  # better for sqlite to let Django determine batch size

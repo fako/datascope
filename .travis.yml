@@ -4,7 +4,7 @@ python:
 # command to install dependencies
 before_install:
   - sudo apt-get install libblas-dev liblapack-dev libatlas-base-dev gfortran
-install: "pip install -r system/requirements/production.txt"
+install: "pip install -r datascope/requirements/production.txt"
 # command to run tests
-script: python manage.py test --settings=datascope.settings.test
+script: python manage.py test --settings=datascope.settings_test
 

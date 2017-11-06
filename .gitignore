@@ -12,8 +12,9 @@ system/profile/
 system/files/media/
 system/files/static/
 
-*/settings/secrets.py
-*/settings/bootstrap.py
+datascope/settings.py
+datascope/bootstrap.py
+datascope/secrets.py
 
 # Internet Archive files
 *.warc.gz
