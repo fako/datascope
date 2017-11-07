@@ -28,7 +28,7 @@ class WikipediaRankProcessor(RankProcessor):
     def number_of_deaths(page, wikidata):
         number_of_deaths_property = "P1120"
         return next(
-            (claim["value"] for claim in wikidata.get("claims", [])
+            (int(claim["value"]["amount"]) for claim in wikidata.get("claims", [])
             if claim["property"] == number_of_deaths_property)
         , 0)
 
@@ -42,7 +42,7 @@ class WikipediaRankProcessor(RankProcessor):
         )
 
     @staticmethod
-   def is_superhero_film(page, wikidata):
+    def is_superhero_film(page, wikidata):
        genre_property = "P136"
        superhero_film_item = "Q1535153"
        return any(
