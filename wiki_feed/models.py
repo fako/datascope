@@ -123,15 +123,16 @@ class WikiFeedCommunity(Community):
     INPUT_THROUGH_PATH = False
 
     PUBLIC_CONFIG = {
-        "$revision_count": 1,
+        "$edit_count": 1,
         "$category_count": 1,
         "$editor_count": 1,
         "$number_of_deaths": 1,
-        "$women": 1,
-        "$breaking_news": 1,
+        "$is_women": 1,
+        "$many_concurrent_editors": 1,
         "$central_europe": 1,
         "$undo_and_rollback": 1,
-        "$all_alone": 1
+        "$single_editor": 1,
+        "$is_superhero_film": 1
     }
 
     def initial_input(self, *args):

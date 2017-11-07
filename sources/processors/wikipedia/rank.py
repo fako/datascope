@@ -13,7 +13,7 @@ class WikipediaRankProcessor(RankProcessor):
         return [individual_argument, wikidata_argument]
 
     @staticmethod
-    def revision_count(page, wikidata):
+    def edit_count(page, wikidata):
         return len(page.get("revisions", []))
 
     @staticmethod
@@ -33,7 +33,7 @@ class WikipediaRankProcessor(RankProcessor):
         , 0)
 
     @staticmethod
-    def women(page, wikidata):
+    def is_women(page, wikidata):
         sex_property = "P21"
         women_item = "Q6581072"
         return any(
@@ -43,15 +43,15 @@ class WikipediaRankProcessor(RankProcessor):
 
     @staticmethod
     def is_superhero_film(page, wikidata):
-       genre_property = "P136"
-       superhero_film_item = "Q1535153"
-       return any(
-           (claim for claim in wikidata.get("claims", [])
-           if claim["property"] == genre_property and claim["value"] == superhero_film_item)
-       )
+        genre_property = "P136"
+        superhero_film_item = "Q1535153"
+        return any(
+            (claim for claim in wikidata.get("claims", [])
+            if claim["property"] == genre_property and claim["value"] == superhero_film_item)
+        )
     
     @staticmethod
-    def breaking_news(page, wikidata):
+    def many_concurrent_editors(page, wikidata):
         """
         Function that makes a binary decision on whether a page has breaking news value
         Based on: https://arxiv.org/abs/1303.4702
@@ -97,7 +97,7 @@ class WikipediaRankProcessor(RankProcessor):
         return
 
     @staticmethod
-    def all_alone(page, wikidata):
+    def single_editor(page, wikidata):
         """
         Function that makes a binary decision on whether a page was edited by a single editor
 

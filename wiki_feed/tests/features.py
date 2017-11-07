@@ -10,17 +10,17 @@ class TestWikiFeedFeatures(TestCase):
         "breaking-news"
     ]
 
-    def test_breaking_news(self):
-        breaking_news_page = Individual.objects.get(identity="Q42440670")
-        is_breaking_news = WikipediaRankProcessor.breaking_news(
-            breaking_news_page.properties,
-            breaking_news_page.properties["wikidata"]
+    def test_many_concurrent_editors(self):
+        many_concurrent_editors_page = Individual.objects.get(identity="Q42440670")
+        is_breaking_news = WikipediaRankProcessor.many_concurrent_editors(
+            many_concurrent_editors_page.properties,
+            many_concurrent_editors_page.properties["wikidata"]
         )
         self.assertTrue(is_breaking_news)
-        many_edits_not_breaking_news_page = Individual.objects.get(identity="Q626900")
-        is_not_breaking_news = WikipediaRankProcessor.breaking_news(
-            many_edits_not_breaking_news_page.properties,
-            many_edits_not_breaking_news_page.properties["wikidata"]
+        many_edits_not_concurrent_page = Individual.objects.get(identity="Q626900")
+        is_not_breaking_news = WikipediaRankProcessor.many_concurrent_editors(
+            many_edits_not_concurrent_page.properties,
+            many_edits_not_concurrent_page.properties["wikidata"]
         )
         self.assertFalse(is_not_breaking_news)
 
