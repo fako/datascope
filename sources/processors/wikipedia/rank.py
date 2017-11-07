@@ -42,6 +42,15 @@ class WikipediaRankProcessor(RankProcessor):
         )
 
     @staticmethod
+   def is_superhero_film(page, wikidata):
+       genre_property = "P136"
+       superhero_film_item = "Q1535153"
+       return any(
+           (claim for claim in wikidata.get("claims", [])
+           if claim["property"] == genre_property and claim["value"] == superhero_film_item)
+       )
+    
+    @staticmethod
     def breaking_news(page, wikidata):
         """
         Function that makes a binary decision on whether a page has breaking news value
