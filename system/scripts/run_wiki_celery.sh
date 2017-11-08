@@ -4,5 +4,6 @@
 
 source /data/project/algo-news/datascope/env/bin/activate
 cd /data/project/algo-news/datascope/src/
+export PATH="/data/project/algo-news/datascope/env/bin:${PATH}"
 export PYTHONIOENCODING=UTF-8
 python manage.py celery worker -n datascope -l info -Q datascope

@@ -11,9 +11,9 @@ deploy: clean
 	sudo service celeryd restart
 
 deploy-wiki-labs: clean
-	webservice2 uwsgi-plain restart
 	jstop celery
-	jstart -N celery -l release=trusty -mem 2048m celery.sh
+	webservice2 uwsgi-plain restart
+	jstart -N celery -l release=trusty -mem 2048m commands/celery.sh
 
 health-wiki-labs:
 	qstat
@@ -32,4 +32,4 @@ test:
 	./manage.py test --settings=datascope.settings_test $(filter)
 
 grow-feed-wiki-labs:
-	jsub -l release=trusty -mem 2048m grow.sh
+	jsub -l release=trusty -mem 2048m commands/grow.sh

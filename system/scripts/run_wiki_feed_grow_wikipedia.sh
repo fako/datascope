@@ -3,6 +3,7 @@
 # NB: Use job -v run_wiki_feed_grow to see status of the task
 
 source /data/project/algo-news/datascope/env/bin/activate
-cd /data/project/algo-news/src/
+cd /data/project/algo-news/datascope/src/
+export PATH="/data/project/algo-news/datascope/env/bin:${PATH}"
 python manage.py grow_wiki_feed --delete
 python manage.py publish_wiki_feed --delete
