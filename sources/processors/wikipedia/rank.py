@@ -33,7 +33,7 @@ class WikipediaRankProcessor(RankProcessor):
         , 0)
 
     @staticmethod
-    def is_women(page, wikidata):
+    def is_woman(page, wikidata):
         sex_property = "P21"
         women_item = "Q6581072"
         return any(

@@ -127,7 +127,7 @@ class WikiFeedCommunity(Community):
         "$category_count": 1,
         "$editor_count": 1,
         "$number_of_deaths": 1,
-        "$is_women": 1,
+        "$is_woman": 1,
         "$many_concurrent_editors": 1,
         "$central_europe": 1,
         "$undo_and_rollback": 1,
