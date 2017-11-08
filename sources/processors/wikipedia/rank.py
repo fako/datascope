@@ -42,6 +42,14 @@ class WikipediaRankProcessor(RankProcessor):
         )
 
     @staticmethod
+    def box_office(page, wikidata):
+        box_office_property = "P2142"
+        return next(
+            (int(claim["value"]["amount"]) for claim in wikidata.get("claims", [])
+             if claim["property"] == box_office_property)
+            , 0)
+
+    @staticmethod
     def is_superhero_film(page, wikidata):
         genre_property = "P136"
         superhero_film_item = "Q1535153"

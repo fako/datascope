@@ -132,7 +132,8 @@ class WikiFeedCommunity(Community):
         "$central_europe": 1,
         "$undo_and_rollback": 1,
         "$single_editor": 1,
-        "$is_superhero_film": 1
+        "$is_superhero_film": 1,
+        "$box_office": 1
     }
 
     def initial_input(self, *args):
