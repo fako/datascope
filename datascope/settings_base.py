@@ -58,6 +58,7 @@ INSTALLED_APPS = (
     # 3rd party
     'djcelery',
     'rest_framework',
+    'raven.contrib.django.raven_compat',
     # Main app
     'datascope',
     # Framework apps
@@ -279,6 +280,10 @@ REST_FRAMEWORK = {
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
     #'DEFAULT_PAGINATION_CLASS': 'core.views.content.ContentPagination',
     'PAGE_SIZE': 100,
+}
+
+RAVEN_CONFIG = {
+    'dsn': RAVEN_DSN,
 }
 
 # Celery settings

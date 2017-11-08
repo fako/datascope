@@ -27,6 +27,7 @@ pillow==2.9.0
 IndicoIo==0.15.4
 
 # Debug and test
+raven==6.3.0
 ipdb==0.8
 ipython==3.1.0
 mock==1.0.1
