@@ -6,3 +6,7 @@ DATABASES["default"]["USER"] = 'django'
 DATABASES["default"]["PASSWORD"] = MYSQL_PASSWORD
 
 STATIC_IP = "37.139.10.19"
+
+RAVEN_CONFIG = {
+    'dsn': RAVEN_DSN,
+}

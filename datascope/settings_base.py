@@ -282,10 +282,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100,
 }
 
-RAVEN_CONFIG = {
-    'dsn': RAVEN_DSN,
-}
-
 # Celery settings
 import djcelery
 djcelery.setup_loader()

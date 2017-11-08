@@ -13,4 +13,8 @@ CELERY_DEFAULT_QUEUE = 'datascope'
 BROKER_URL = 'redis://tools-redis:6379/0'
 MAX_BATCH_SIZE = 100
 
+RAVEN_CONFIG = {
+    'dsn': RAVEN_DSN,
+}
+
 # TODO: add STATIC_IP
