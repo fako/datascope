@@ -1,25 +1,26 @@
 MUST
-- Filter through Wikidata by claims
-- Backlink topic research
-- Synonym and antonym API
-- Become a bot
-- Fix security issues on Wikipedia tools
+- Open the manifestation config and clean before setting it to the community, allow $ where possible
+- Create new CommunityNumericCharacteristics data structure
+- Allow ranking to take place through RankProcessor.numeric_characteristics (CommunityNumericCharacteristics)
+    (instead of RankProcessor.hooks). Pass CommunityNumericCharacteristics cache key to config
+    and ignore individuals parameter)
+- $ parameter parser (variables)
+- Contribute generators with low mem usage
+- Way to resolve spirits in a multi-inherit community
 
 GREAT
-+ Base class for wiki generators
-- Base class for category similarity
-- Way to resolve spirits in a multi-inherit community
+- Filter through Wikidata by claims
+- Backlink topic research
 - Parse hooks as javascript modules
-- Contribute generators with low mem usage
 
 SHOULD
 - Collective pagination
-- $ parameter parser (variables)
 - Create new style people-suggestions
 - Create new style city-celebrities
 - Update readme
 
 NICE
+- Synonym and antonym API
 - | parameter parser (processors)
 - Squash migrations
 
