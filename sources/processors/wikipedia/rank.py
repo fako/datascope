@@ -41,6 +41,31 @@ def get_quantity(property, wikidata):
         if claim["property"] == property)
     , 0.0)
 
+def users_watch(users, page_data):
+    users = set(users)
+    page_users = page_data.get("users", [])
+    return len([
+        user for user in page_users
+        if user in users
+    ])
+
+
+def categories_watch(categories, page_data):
+    categories = set(categories)
+    page_categories = [category["title"] for category in page_data.get("categories", [])]
+    return len([
+        category for category in page_categories
+        if category in categories
+    ])
+
+
+def claim_watch(property, item, wikidata):
+    return any(
+        (claim for claim in wikidata.get("claims", [])
+        if claim["property"] == property and claim["value"] == item)
+    )
+
+
 class WikipediaRankProcessor(RankProcessor):
     def get_hook_arguments(self, individual):
         individual_argument = super(WikipediaRankProcessor, self).get_hook_arguments(individual)[0]
