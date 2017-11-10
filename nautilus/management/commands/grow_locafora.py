@@ -30,4 +30,4 @@ class Command(GrowCommand):
             print("No orders to process")
             return
         result.sort_values("product", inplace=True)
-        result.to_csv('out.csv')
+        result.to_csv('alfabetische-lijst.csv')
