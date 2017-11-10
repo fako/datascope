@@ -197,7 +197,7 @@ class Community(models.Model, ProcessorMixin):
             raise Growth.DoesNotExist("Community.next_growth did not find a next growth.")
         return growth
 
-    def get_growth(self, phase):
+    def get_growth(self, phase):  # TODO: test to unlock
         return self.growth_set.filter(type=phase).last()
 
     def set_kernel(self):

@@ -111,6 +111,9 @@ class TestCommunityMock(CommunityTestMixin):
         except Growth.DoesNotExist:
             pass
 
+    def test_get_growth(self):
+        self.skipTest("not tested")
+
     @patch("core.models.CommunityMock.set_kernel")
     def test_erroneous_community(self, set_kernel):
         empty_output = Collective.objects.get(id=2)

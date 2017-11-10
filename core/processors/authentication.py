@@ -8,7 +8,7 @@ class HttpPrivateResourceProcessor(HttpResourceProcessor):
     """
 
     @classmethod
-    def get_session(cls, config):
+    def get_session(cls, config):  # TODO: test to unlock
         auth_config = config.auth
         login_resource = get_any_model(auth_config["resource"])
         login_credentials = auth_config["credentials"]

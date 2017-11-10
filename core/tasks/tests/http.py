@@ -118,6 +118,9 @@ class TestSendMassTaskBase(TestHTTPTasksBase):
             session=MockRequests
         )
 
+    def test_send_inserted_session_provider(self):
+        self.skipTest("not tested")
+
 
 class TestSendMassTaskGet(TestSendMassTaskBase):
     method = "get"
@@ -166,6 +169,9 @@ class TestSendTaskGet(TestHTTPTasksBase):
         link = HttpResourceMock.objects.get(id=scc[0])
         self.assertIn("user-agent", link.head)
 
+    def test_send_inserted_session_provider(self):
+        self.skipTest("not tested")
+
 
 class TestSendTaskPost(TestHTTPTasksBase):
 
@@ -206,16 +212,28 @@ class TestSendTaskPost(TestHTTPTasksBase):
         link = HttpResourceMock.objects.get(id=scc[0])
         self.assertIn("user-agent", link.head)
 
+    def test_send_inserted_session_provider(self):
+        self.skipTest("not tested")
+
 
 class TestSendSerieTaskGet(TestHTTPTasksBase):
 
     def test_case(self):
+        # TODO: very similar to TestSendMassTaskGet, refactor?
+        self.skipTest("not tested")
+
+
+    def test_send_inserted_session_provider(self):
         self.skipTest("not tested")
 
 
 class TestSendSerieTaskPost(TestHTTPTasksBase):
 
     def test_case(self):
+        # TODO: very similar to TestSendMassTaskPost, refactor?
+        self.skipTest("not tested")
+
+    def test_send_inserted_session_provider(self):
         self.skipTest("not tested")
 
 
@@ -236,5 +254,8 @@ class TestGetResourceLink(TestHTTPTasksBase):
 
 class TestLoadSession(TestCase):
 
-    def test_case(self):
+    def test_load_session(self):
+        self.skipTest("not tested")
+
+    def test_preload_session(self):
         self.skipTest("not tested")
