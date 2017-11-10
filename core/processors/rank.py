@@ -50,7 +50,7 @@ class RankProcessor(Processor):
                     module_weight = float(config_dict["$"+hook_name])
                 except (ValueError, TypeError):
                     continue
-                if not module_value:
+                if module_value is None:
                     continue
                 rank_info[hook_name] = {
                     "rank": module_value * module_weight,
@@ -61,7 +61,7 @@ class RankProcessor(Processor):
             hook_rankings = [ranking for ranking in six.itervalues(rank_info) if ranking["rank"]]
             if hook_rankings:
                 rank_info["rank"] = reduce(
-                    lambda reduced, hook_rank_info: reduced * hook_rank_info["rank"],
+                    lambda reduced, hook_rank_info: reduced + hook_rank_info["rank"],
                     hook_rankings,
                     1
                 )
