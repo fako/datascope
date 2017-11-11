@@ -38,6 +38,10 @@ class WikipediaRankProcessor(RankProcessor):
         return [individual_argument, wikidata_argument]
 
     @staticmethod
+    def investigative_journalism(page, wikidata):
+        return claim_watch("P31","Q366",wikidata)
+
+    @staticmethod
     def edit_count(page, wikidata):
         return len(page.get("revisions", []))
 
