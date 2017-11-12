@@ -1,18 +1,32 @@
 {% extends "core/base.html" %}
 {% load i18n %}
 
+{% block theme-css %}{% endblock %}
+
 {% block body %}
 
-    <div>
+    <div class="container">
         {% for page in response.results %}
-            <h4>{{ page.title }}</h4>
-            <p>
-                Revisions: {{ page.revisions | length }}<br/>
-                Categories: {{ page.categories | length }}<br/>
-                Rank: {{ page.ds_rank.rank }}<br/>
-                Wikipedia: <a href="https://en.wikipedia.org/wiki/{{ page.title }}">{{ page.title }}</a><br/>
-                Wikidata: <a href="https://www.wikidata.org/wiki/{{ page.wikidata.wikidata }}">{{ page.wikidata.wikidata }}</a>
-            </p>
+            <div class="row">
+                <h4>
+                    <a href="https://en.wikipedia.org/wiki/{{ page.title }}">{{ page.title }}</a>
+                    (<a href="https://www.wikidata.org/wiki/{{ page.wikidata.wikidata }}">{{ page.wikidata.wikidata }}</a>)
+                </h4>
+            </div>
+            <div class="row">
+                <div class="col-md-10">{{ page.wikidata.description }}</div>
+                <div class="col-md-2"><img src=""/></div>
+            </div>
+            <div class="row">
+                <ul>
+                {% for module, rank_info in page.ds_rank.items %}
+                    {% if module != "rank" %}
+                    <li>Rank by "{{ module }}" module = {{ rank_info.value }} * {{ rank_info.weight }} = {{ rank_info.rank }}</li>
+                    {% endif %}
+                {% endfor %}
+                </ul>
+            </div>
+            <hr/>
         {% endfor %}
     </div>
 
