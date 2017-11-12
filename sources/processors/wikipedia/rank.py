@@ -41,6 +41,13 @@ def get_quantity(property, wikidata):
         if claim["property"] == property)
     , 0.0)
 
+''' Returns a time based on a property which is expected to have a time value'''
+def get_time(property, wikidata):
+    return next(
+        (dateutil.parser.parse(claim["value"]["time"]) for claim in wikidata.get("claims", [])
+         if claim["property"] == property)
+    , 0.0)
+
 class WikipediaRankProcessor(RankProcessor):
     def get_hook_arguments(self, individual):
         individual_argument = super(WikipediaRankProcessor, self).get_hook_arguments(individual)[0]
@@ -112,10 +119,23 @@ class WikipediaRankProcessor(RankProcessor):
         is_stadium = claim_watch("P31",        #instance of
                                  "Q1154710",   #football stadium
                                  wikidata=wikidata)
-        max_capacity = get_quantity("P1083",  #maximum capacity
+        max_capacity = get_quantity("P1083",   #maximum capacity
                                     wikidata=wikidata)
         return is_stadium * max_capacity
-    
+
+    @staticmethod
+    def whats_on_tv(page, wikidata):
+        is_on_tv = claim_exists("P3301",       #broadcast by
+                                 wikidata=wikidata)
+        event_date = get_time("P585",          #point in time
+                              wikidata=wikidata)
+        day_diff = (event_date - datetime.date.today()).days
+        
+        if day_diff < 0:
+            return 0
+        else:
+            return 100 * is_on_tv / (0.2 + day_diff)
+
     @staticmethod
     def many_concurrent_editors(page, wikidata):
         """
