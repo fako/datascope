@@ -45,6 +45,19 @@ class WikipediaRankProcessor(RankProcessor):
         return [individual_argument, wikidata_argument]
 
     @staticmethod
+    def politician_scandals(page, wikidata):
+        is_scandal = claim_watch("P31", "Q192909", wikidata) > 0
+        # What I *really* want to query is scandals that IMPLICATE politicians
+        involves_politician = claim_watch("P425", "Q7163", wikidata) > 0
+        return (1 if is_scandal or involves_politician else 0) * edit_count(page, wikidata)
+
+    @staticmethod
+    def political_organising(page, wikidata):
+        civil_society_campaign = claim_watch("P31", "Q5124698", wikidata) > 0 # has 0 entries
+        political_campaign = claim_watch("P31", "Q847301", wikidata) > 0
+        return (1 if is_civil_society_campaign or is_political_campaign else 0) * edit_count(page, wikidata)
+
+    @staticmethod
     def investigative_journalism(page, wikidata):
         return claim_watch("P31","Q366",wikidata)
 
