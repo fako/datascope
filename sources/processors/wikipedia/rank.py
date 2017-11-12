@@ -53,6 +53,10 @@ class WikipediaRankProcessor(RankProcessor):
         return len(page.get("revisions", []))
 
     @staticmethod
+    def most_viewed_books(page, wikidata):
+        return claim_watch("P31", "Q571", wikidata=wikidata) * page.get("pageviews", 0)
+    
+    @staticmethod
     def category_count(page, wikidata):
         return len(page.get("categories", []))
 
