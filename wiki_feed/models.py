@@ -134,7 +134,8 @@ class WikiFeedCommunity(Community):
         "$single_editor": 1,
         "$is_superhero_film": 1,
         "$box_office": 1,
-        "$superhero_blockbusters": 1
+        "$superhero_blockbusters": 1,
+        "$investigative_journalism": 1
     }
 
     def initial_input(self, *args):
