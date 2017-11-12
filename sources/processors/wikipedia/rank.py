@@ -55,7 +55,7 @@ class WikipediaRankProcessor(RankProcessor):
     @staticmethod
     def most_viewed_books(page, wikidata):
         return claim_watch("P31", "Q571", wikidata=wikidata) * page.get("pageviews", 0)
-    
+
     @staticmethod
     def category_count(page, wikidata):
         return len(page.get("categories", []))
@@ -67,10 +67,7 @@ class WikipediaRankProcessor(RankProcessor):
     @staticmethod
     def number_of_deaths(page, wikidata):
         number_of_deaths_property = "P1120"
-        return next(
-            (int(claim["value"]["amount"]) for claim in wikidata.get("claims", [])
-            if claim["property"] == number_of_deaths_property)
-        , 0)
+        return int(get_quantity(number_of_deaths_property, wikidata))
 
     @staticmethod
     def is_woman(page, wikidata):
@@ -84,10 +81,7 @@ class WikipediaRankProcessor(RankProcessor):
     @staticmethod
     def box_office(page, wikidata):
         box_office_property = "P2142"
-        return next(
-            (float(claim["value"]["amount"]) for claim in wikidata.get("claims", [])
-             if claim["property"] == box_office_property)
-            , 0)
+        return get_quantity(box_office_property, wikidata)
 
     @staticmethod
     def superhero_blockbusters(page, wikidata):
