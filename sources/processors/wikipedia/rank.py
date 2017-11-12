@@ -49,6 +49,7 @@ def get_time(property, wikidata):
          if claim["property"] == property)
     , 0.0)
 
+
 class WikipediaRankProcessor(RankProcessor):
     def get_hook_arguments(self, individual):
         individual_argument = super(WikipediaRankProcessor, self).get_hook_arguments(individual)[0]
@@ -56,6 +57,20 @@ class WikipediaRankProcessor(RankProcessor):
         if wikidata_argument is None or isinstance(wikidata_argument, str):
             wikidata_argument = {}
         return [individual_argument, wikidata_argument]
+
+    @staticmethod
+    def politician_scandals(page, wikidata):
+        is_scandal = claim_watch("P31", "Q192909", wikidata) > 0
+        # What I *really* want to query is scandals that IMPLICATE politicians
+        involves_politician = claim_watch("P425", "Q7163", wikidata) > 0
+        return (1 if is_scandal or involves_politician else 0) * WikipediaRankProcessor.edit_count(page, wikidata)
+
+    @staticmethod
+    def political_organising(page, wikidata):
+        is_civil_society_campaign = claim_watch("P31", "Q5124698", wikidata) > 0 # has 0 entries
+        is_political_campaign = claim_watch("P31", "Q847301", wikidata) > 0
+        return (1 if is_civil_society_campaign or is_political_campaign else 0) * WikipediaRankProcessor.edit_count(
+            page, wikidata)
 
     @staticmethod
     def investigative_journalism(page, wikidata):
@@ -68,7 +83,7 @@ class WikipediaRankProcessor(RankProcessor):
     @staticmethod
     def most_viewed_books(page, wikidata):
         return claim_watch("P31", "Q571", wikidata=wikidata) * page.get("pageviews", 0)
-    
+
     @staticmethod
     def category_count(page, wikidata):
         return len(page.get("categories", []))
@@ -80,10 +95,7 @@ class WikipediaRankProcessor(RankProcessor):
     @staticmethod
     def number_of_deaths(page, wikidata):
         number_of_deaths_property = "P1120"
-        return next(
-            (int(claim["value"]["amount"]) for claim in wikidata.get("claims", [])
-            if claim["property"] == number_of_deaths_property)
-        , 0)
+        return int(get_quantity(number_of_deaths_property, wikidata))
 
     @staticmethod
     def is_woman(page, wikidata):
@@ -95,22 +107,35 @@ class WikipediaRankProcessor(RankProcessor):
         )
 
     @staticmethod
+    def london_traffic_accidents(page, wikidata):
+      is_traffic_accident = claim_watch("P31", "Q9687", wikidata=wikidata)
+      is_in_greater_london = claim_watch("P131", "Q23306", wikidata=wikidata)
+      num_deaths = get_quantity("P1120", wikidata)
+      return (is_traffic_accident * is_in_greater_london) * (1 + num_deaths)
+
+
+    @staticmethod
+    def chicago_homicides(page, wikidata):
+      is_homicide = claim_watch("P31", "Q149086", wikidata=wikidata)
+      is_in_chicago = claim_watch("P131", "Q1297", wikidata=wikidata)
+      num_deaths = get_quantity("P1120", wikidata)
+      return (is_homicide * is_in_chicago) * (1 + num_deaths)
+
+
+    @staticmethod
     def box_office(page, wikidata):
         box_office_property = "P2142"
-        return next(
-            (float(claim["value"]["amount"]) for claim in wikidata.get("claims", [])
-             if claim["property"] == box_office_property)
-            , 0)
+        return get_quantity(box_office_property, wikidata)
 
     @staticmethod
     def superhero_blockbusters(page, wikidata):
         is_superhero_film = claim_watch(
-            "P136",              #genre
-            "Q1535153",          #superhero film
+            "P136",              # genre
+            "Q1535153",          # superhero film
             wikidata=wikidata
         )
         box_office = get_quantity(
-            "P2142",            #box office               
+            "P2142",             # box office
             wikidata=wikidata
         )
         return is_superhero_film * box_office
