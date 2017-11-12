@@ -140,7 +140,8 @@ class WikiFeedCommunity(Community):
         "$london_traffic_accidents": 1,
         "$chicago_homicides": 1,
         "$politician_scandals": 1,
-        "$political_organising": 1
+        "$political_organising": 1,
+        "$football_stadia_by_size": 1
     }
 
     def initial_input(self, *args):
