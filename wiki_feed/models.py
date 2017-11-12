@@ -138,7 +138,9 @@ class WikiFeedCommunity(Community):
         "$investigative_journalism": 1,
         "$most_viewed_books": 1,
         "$london_traffic_accidents": 1,
-        "$chicago_homicides": 1
+        "$chicago_homicides": 1,
+        "$politician_scandals": 1,
+        "$political_organising": 1
     }
 
     def initial_input(self, *args):
