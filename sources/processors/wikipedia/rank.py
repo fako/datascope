@@ -27,6 +27,13 @@ def claim_watch(property, item, wikidata):
         if claim["property"] == property and claim["value"] == item)
     )
 
+''' Returns articles where a given claim exists (regardless of its value) '''
+def claim_exists(property, wikidata):
+    return any(
+        (claim for claim in wikidata.get("claims", [])
+         if claim["property"] == property)
+    )
+
 ''' Returns articles ranked by a quantity from wikidata e.g. property(box office)'''
 def get_quantity(property, wikidata):
     return next(
@@ -34,9 +41,7 @@ def get_quantity(property, wikidata):
         if claim["property"] == property)
     , 0.0)
 
-
 class WikipediaRankProcessor(RankProcessor):
-
     def get_hook_arguments(self, individual):
         individual_argument = super(WikipediaRankProcessor, self).get_hook_arguments(individual)[0]
         wikidata_argument = individual_argument.get("wikidata", {})
@@ -101,6 +106,15 @@ class WikipediaRankProcessor(RankProcessor):
             wikidata=wikidata
         )
         return is_superhero_film * box_office
+    
+    @staticmethod
+    def football_stadia_by_size(page, wikidata):
+        is_stadium = claim_watch("P31",        #instance of
+                                 "Q1154710",   #football stadium
+                                 wikidata=wikidata)
+        max_capacity = get_quantity("P1083",  #maximum capacity
+                                    wikidata=wikidata)
+        return is_stadium * max_capacity
     
     @staticmethod
     def many_concurrent_editors(page, wikidata):
