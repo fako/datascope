@@ -136,7 +136,9 @@ class WikiFeedCommunity(Community):
         "$box_office": 1,
         "$superhero_blockbusters": 1,
         "$investigative_journalism": 1,
-        "$most_viewed_books": 1
+        "$most_viewed_books": 1,
+        "$london_traffic_accidents": 1,
+        "$chicago_homicides": 1
     }
 
     def initial_input(self, *args):

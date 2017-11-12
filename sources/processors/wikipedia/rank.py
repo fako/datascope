@@ -79,6 +79,22 @@ class WikipediaRankProcessor(RankProcessor):
         )
 
     @staticmethod
+    def london_traffic_accidents(page, wikidata):
+      is_traffic_accident = claim_watch("P31", "Q9687", wikidata=wikidata)
+      is_in_greater_london = claim_watch("P131", "Q23306", wikidata=wikidata)
+      num_deaths = get_quantity("P1120", wikidata)
+      return (is_traffic_accident * is_in_greater_london) * (1 + num_deaths)
+
+
+    @staticmethod
+    def chicago_homicides(page, wikidata):
+      is_homicide = claim_watch("P31", "Q149086", wikidata=wikidata)
+      is_in_chicago = claim_watch("P131", "Q1297", wikidata=wikidata)
+      num_deaths = get_quantity("P1120", wikidata)
+      return (is_homicide * is_in_chicago) * (1 + num_deaths)
+
+
+    @staticmethod
     def box_office(page, wikidata):
         box_office_property = "P2142"
         return get_quantity(box_office_property, wikidata)
