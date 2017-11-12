@@ -2,7 +2,7 @@ import dateutil.parser
 
 from core.processors.rank import RankProcessor
 
-
+''' For tracking edits from particular IP ranges or Usernames'''
 def users_watch(users, page_data):
     users = set(users)
     page_users = page_data.get("users", [])
@@ -11,7 +11,7 @@ def users_watch(users, page_data):
         if user in users
     ])
 
-
+''' Returns articles in a given list of categories'''
 def categories_watch(categories, page_data):
     categories = set(categories)
     page_categories = [category["title"] for category in page_data.get("categories", [])]
@@ -20,14 +20,14 @@ def categories_watch(categories, page_data):
         if category in categories
     ])
 
-
+''' Returns articles with a given claim e.g. if property(genre) is item(superhero film)'''
 def claim_watch(property, item, wikidata):
     return any(
         (claim for claim in wikidata.get("claims", [])
         if claim["property"] == property and claim["value"] == item)
     )
 
-
+''' Returns articles ranked by a quantity from wikidata e.g. property(box office)'''
 def get_quantity(property, wikidata):
     return next(
         (float(claim["value"]["amount"]) for claim in wikidata.get("claims", [])
@@ -87,7 +87,16 @@ class WikipediaRankProcessor(RankProcessor):
 
     @staticmethod
     def superhero_blockbusters(page, wikidata):
-        return claim_watch("P136", "Q1535153", wikidata=wikidata) * get_quantity("P2142", wikidata=wikidata)
+        is_superhero_film = claim_watch(
+            "P136",              #genre
+            "Q1535153",          #superhero film
+            wikidata=wikidata
+        )
+        box_office = get_quantity(
+            "P2142",            #box office               
+            wikidata=wikidata
+        )
+        return is_superhero_film * box_office
     
     @staticmethod
     def many_concurrent_editors(page, wikidata):
