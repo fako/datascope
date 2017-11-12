@@ -66,6 +66,13 @@ def claim_watch(property, item, wikidata):
     )
 
 
+def get_quantity(property, wikidata):
+    return next(
+        (float(claim["value"]["amount"]) for claim in wikidata.get("claims", [])
+        if claim["property"] == property)
+    , 0.0)
+
+
 class WikipediaRankProcessor(RankProcessor):
     def get_hook_arguments(self, individual):
         individual_argument = super(WikipediaRankProcessor, self).get_hook_arguments(individual)[0]
@@ -145,12 +152,12 @@ class WikipediaRankProcessor(RankProcessor):
     @staticmethod
     def superhero_blockbusters(page, wikidata):
         is_superhero_film = claim_watch(
-            "P136",              #genre
-            "Q1535153",          #superhero film
+            "P136",              # genre
+            "Q1535153",          # superhero film
             wikidata=wikidata
         )
         box_office = get_quantity(
-            "P2142",            #box office               
+            "P2142",             # box office
             wikidata=wikidata
         )
         return is_superhero_film * box_office
@@ -163,7 +170,7 @@ class WikipediaRankProcessor(RankProcessor):
         max_capacity = get_quantity("P1083",  #maximum capacity
                                     wikidata=wikidata)
         return is_stadium * max_capacity
-    
+
     @staticmethod
     def many_concurrent_editors(page, wikidata):
         """
