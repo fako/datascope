@@ -3,8 +3,15 @@ import datetime
 
 from core.processors.rank import RankProcessor
 
-''' For tracking edits from particular IP ranges or Usernames'''
+
 def users_watch(users, page_data):
+    """
+    For tracking edits from particular IP ranges or Usernames
+
+    :param users: list of usernames or ips to watch out for
+    :param page_data: page data passed into characteristic function
+    :return: count of watched users/ips found in page data
+    """
     users = set(users)
     page_users = page_data.get("users", [])
     return len([
@@ -12,8 +19,15 @@ def users_watch(users, page_data):
         if user in users
     ])
 
-''' Returns articles in a given list of categories'''
+
 def categories_watch(categories, page_data):
+    """
+    For tracking given list of categories
+
+    :param categories: list of category titles to watch out for
+    :param page_data: page data passed into characteristic function
+    :return: count of watched categories found in page data
+    """
     categories = set(categories)
     page_categories = [category["title"] for category in page_data.get("categories", [])]
     return len([
@@ -21,29 +35,58 @@ def categories_watch(categories, page_data):
         if category in categories
     ])
 
-''' Returns articles with a given claim e.g. if property(genre) is item(superhero film)'''
+
 def claim_watch(property, item, wikidata):
+    """
+    For tracking wikidata claims of articles
+    
+    :param property: the WikiData property code to watch
+    :param item: the WikiData item code the property should match
+    :param wikidata: wikidata data passed into characteristic function
+    :return: Boolean indicating if claim (property = item) is inside wikidata of article
+    """
     return any(
         (claim for claim in wikidata.get("claims", [])
         if claim["property"] == property and claim["value"] == item)
     )
 
-''' Returns articles where a given claim exists (regardless of its value) '''
+
 def claim_exists(property, wikidata):
+    """
+    For tracking if a particular property is set
+
+    :param property: the WikiData property code to watch
+    :param wikidata: wikidata data passed into characteristic function
+    :return: Boolean indicating if propery occurs
+    """
     return any(
         (claim for claim in wikidata.get("claims", [])
          if claim["property"] == property)
     )
 
-''' Returns articles ranked by a quantity from wikidata e.g. property(box office)'''
+
 def get_quantity(property, wikidata):
+    """
+    For tracking quantities in wikidata
+
+    :param property: the WikiData property code to watch (should have a quantity as data)
+    :param wikidata: wikidata data passed into characteristic function
+    :return: Float that is the value of the quantity of the specified property 
+    """
     return next(
         (float(claim["value"]["amount"]) for claim in wikidata.get("claims", [])
         if claim["property"] == property)
     , 0.0)
 
-''' Returns a time based on a property which is expected to have a time value'''
+
 def get_time(property, wikidata):
+    """
+    For tracking time in wikidata
+
+    :param property: the WikiData property code to watch (should have time as data)
+    :param wikidata: wikidata data passed into characteristic function
+    :return: Timestamp that is the value of the time of the specified property
+    """
     return next(
         (dateutil.parser.parse(claim["value"]["time"]) for claim in wikidata.get("claims", [])
          if claim["property"] == property)
@@ -113,7 +156,6 @@ class WikipediaRankProcessor(RankProcessor):
       num_deaths = get_quantity("P1120", wikidata)
       return (is_traffic_accident * is_in_greater_london) * (1 + num_deaths)
 
-
     @staticmethod
     def chicago_homicides(page, wikidata):
       is_homicide = claim_watch("P31", "Q149086", wikidata=wikidata)
@@ -121,11 +163,14 @@ class WikipediaRankProcessor(RankProcessor):
       num_deaths = get_quantity("P1120", wikidata)
       return (is_homicide * is_in_chicago) * (1 + num_deaths)
 
-
     @staticmethod
     def box_office(page, wikidata):
         box_office_property = "P2142"
         return get_quantity(box_office_property, wikidata)
+
+    @staticmethod
+    def is_superhero_film(page, wikidata):
+        return claim_watch("P136", "Q1535153", wikidata=wikidata)
 
     @staticmethod
     def superhero_blockbusters(page, wikidata):
@@ -142,25 +187,25 @@ class WikipediaRankProcessor(RankProcessor):
     
     @staticmethod
     def football_stadia_by_size(page, wikidata):
-        is_stadium = claim_watch("P31",        #instance of
-                                 "Q1154710",   #football stadium
+        is_stadium = claim_watch("P31",        # instance of
+                                 "Q1154710",   # football stadium
                                  wikidata=wikidata)
-        max_capacity = get_quantity("P1083",   #maximum capacity
+        max_capacity = get_quantity("P1083",   # maximum capacity
                                     wikidata=wikidata)
         return is_stadium * max_capacity
 
     @staticmethod
     def whats_on_tv(page, wikidata):
-        is_on_tv = claim_exists("P3301",       #broadcast by
+        is_on_tv = claim_exists("P3301",       # broadcast by
                                  wikidata=wikidata)
-        event_date = get_time("P585",          #point in time
+        event_date = get_time("P585",          # point in time
                               wikidata=wikidata)
         day_diff = (event_date - datetime.date.today()).days
         
-        if day_diff < 0:
+        if day_diff <= 0:
             return 0
         else:
-            return 100 * is_on_tv / (0.2 + day_diff)
+            return is_on_tv / (0.2 + day_diff)
 
     @staticmethod
     def many_concurrent_editors(page, wikidata):
