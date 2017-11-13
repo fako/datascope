@@ -65,7 +65,7 @@ class TestRankProcessor(TestCase):
             self.assertEqual(result["rank"], result["weight"] * result["value"])
             for value in result.values():
                 self.assertIsInstance(value, float)
-        self.assertEqual(rank, reduce(lambda reduced, rank_info: reduced * rank_info["rank"], details.values(), 1))
+        self.assertEqual(rank, reduce(lambda reduced, rank_info: reduced + rank_info["rank"], details.values(), 0))
 
     def assert_ranking(self, ranking, size, modules):
         ranking = list(ranking)
@@ -98,7 +98,7 @@ class TestRankProcessor(TestCase):
             "result_size": 2,
             "batch_size": 3,
             "$rank_by_value": 1,
-            "$is_double": 2
+            "$is_double": 5
         })
         ranking = instance.hooks(self.test_content)
         self.assertTrue(issubclass(ranking.__class__, Iterator))
@@ -115,7 +115,18 @@ class TestRankProcessor(TestCase):
         })
         ranking = instance.hooks(self.test_content)
         names = list(map(itemgetter('name'), ranking))
-        self.assertEqual(names, ['highest', 'double-1', 'double-2'], "Order of ranked dictionaries is not correct.")
+        self.assertEqual(names, ['highest', 'highest-of-triple', 'double-1'], "Order of ranked dictionaries is not correct.")
+
+    def test_negative_weights(self):
+        instance = MockRankProcessor({
+            "result_size": 3,
+            "batch_size": 4,
+            "$rank_by_value": 1,
+            "$is_highest": -10
+        })
+        ranking = instance.hooks(self.test_content)
+        names = list(map(itemgetter('name'), ranking))
+        self.assertEqual(names, ['double-1', 'double-2', 'under-double'], "Order of ranked dictionaries is not correct.")
 
     def test_boolean_ranking(self):
         instance = MockRankProcessor({
@@ -221,7 +232,7 @@ class TestRankProcessor(TestCase):
             "result_size": 2,
             "batch_size": 3,
             "$rank_by_value": 1,
-            "$ban_highest": 1
+            "$ban_highest": 10
         })
         ranking = list(instance.hooks(self.test_content))
         names = list(map(itemgetter('name'), ranking))
@@ -233,7 +244,7 @@ class TestRankProcessor(TestCase):
             "batch_size": 3,
             "$alter_individual": 1,
             "$rank_by_value": 1,
-            "$ban_highest": 1
+            "$ban_highest": 10
         })
         ranking = list(instance.hooks(self.test_content))
         names = list(map(itemgetter('name'), ranking))
