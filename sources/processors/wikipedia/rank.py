@@ -1,4 +1,5 @@
 import dateutil.parser
+import datetime
 
 from core.processors.rank import RankProcessor
 
@@ -41,35 +42,11 @@ def get_quantity(property, wikidata):
         if claim["property"] == property)
     , 0.0)
 
-def users_watch(users, page_data):
-    users = set(users)
-    page_users = page_data.get("users", [])
-    return len([
-        user for user in page_users
-        if user in users
-    ])
-
-
-def categories_watch(categories, page_data):
-    categories = set(categories)
-    page_categories = [category["title"] for category in page_data.get("categories", [])]
-    return len([
-        category for category in page_categories
-        if category in categories
-    ])
-
-
-def claim_watch(property, item, wikidata):
-    return any(
-        (claim for claim in wikidata.get("claims", [])
-        if claim["property"] == property and claim["value"] == item)
-    )
-
-
-def get_quantity(property, wikidata):
+''' Returns a time based on a property which is expected to have a time value'''
+def get_time(property, wikidata):
     return next(
-        (float(claim["value"]["amount"]) for claim in wikidata.get("claims", [])
-        if claim["property"] == property)
+        (dateutil.parser.parse(claim["value"]["time"]) for claim in wikidata.get("claims", [])
+         if claim["property"] == property)
     , 0.0)
 
 
@@ -168,9 +145,22 @@ class WikipediaRankProcessor(RankProcessor):
         is_stadium = claim_watch("P31",        #instance of
                                  "Q1154710",   #football stadium
                                  wikidata=wikidata)
-        max_capacity = get_quantity("P1083",  #maximum capacity
+        max_capacity = get_quantity("P1083",   #maximum capacity
                                     wikidata=wikidata)
         return is_stadium * max_capacity
+
+    @staticmethod
+    def whats_on_tv(page, wikidata):
+        is_on_tv = claim_exists("P3301",       #broadcast by
+                                 wikidata=wikidata)
+        event_date = get_time("P585",          #point in time
+                              wikidata=wikidata)
+        day_diff = (event_date - datetime.date.today()).days
+        
+        if day_diff < 0:
+            return 0
+        else:
+            return 100 * is_on_tv / (0.2 + day_diff)
 
     @staticmethod
     def many_concurrent_editors(page, wikidata):
