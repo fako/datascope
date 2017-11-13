@@ -19,11 +19,12 @@
             </div>
             <div class="row">
                 <ul>
-                {% for module, rank_info in page.ds_rank.items %}
-                    {% if module != "rank" %}
-                    <li>Rank by "{{ module }}" module = {{ rank_info.value }} * {{ rank_info.weight }} = {{ rank_info.rank }}</li>
-                    {% endif %}
-                {% endfor %}
+                    {% for module, rank_info in page.ds_rank.items %}
+                        {% if module != "rank" %}
+                            <li>Score by "{{ module }}" module = {{ rank_info.value }} * {{ rank_info.weight }} = {{ rank_info.rank }}</li>
+                        {% endif %}
+                    {% endfor %}
+                    <li>Total score: {{ page.ds_rank.rank }}</li>
                 </ul>
             </div>
             <hr/>

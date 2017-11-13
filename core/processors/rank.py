@@ -63,7 +63,7 @@ class RankProcessor(Processor):
                 rank_info["rank"] = reduce(
                     lambda reduced, hook_rank_info: reduced + hook_rank_info["rank"],
                     hook_rankings,
-                    1
+                    0
                 )
             # Set info on individual and write batch to results when appropriate
             individual['ds_rank'] = rank_info
