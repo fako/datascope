@@ -241,7 +241,10 @@ class WikiFeedCommunity(Community):
 
     @property
     def manifestation(self):
-        pages = list(super(WikiFeedCommunity, self).manifestation)
+        pages = [
+            page for page in super(WikiFeedCommunity, self).manifestation
+            if page.get("ds_rank", {}).get("rank", 0) > 0
+        ]
         image_titles = ["File:{}".format(page["image"]) for page in pages if "image" in page and page["image"]]
         en_images = WikiFeedCommunity.filter_commons_images(image_titles)
         non_free_images = WikiFeedCommunity.filter_free_images(en_images)
