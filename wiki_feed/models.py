@@ -1,4 +1,5 @@
 import re
+import hashlib
 
 from collections import OrderedDict
 from itertools import groupby, islice
@@ -227,16 +228,28 @@ class WikiFeedCommunity(Community):
                 non_free_images.add(page_content["title"].replace(" ", "_"))
         return list(non_free_images)
 
+    @staticmethod
+    def get_commons_image_url(image_file_name):
+        hasher = hashlib.md5()
+        hasher.update(image_file_name.encode('utf-8'))
+        image_hash = hasher.hexdigest()
+        return "https://upload.wikimedia.org/wikipedia/commons/{}/{}/{}".format(
+            image_hash[0],
+            image_hash[:2],
+            image_file_name
+        )
+
     @property
     def manifestation(self):
         pages = list(super(WikiFeedCommunity, self).manifestation)
         image_titles = ["File:{}".format(page["image"]) for page in pages if "image" in page and page["image"]]
         en_images = WikiFeedCommunity.filter_commons_images(image_titles)
         non_free_images = WikiFeedCommunity.filter_free_images(en_images)
-        if len(non_free_images):
-            for page in pages:
-                if "File:{}".format(page["image"]) in non_free_images:
-                    page["image"] = None
+        for page in pages:
+            if "File:{}".format(page["image"]) in non_free_images:
+                page["image"] = None
+            if page["image"]:
+                page["commons_image"] = WikiFeedCommunity.get_commons_image_url(page["image"])
         return pages
 
     class Meta:
