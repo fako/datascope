@@ -15,6 +15,7 @@ MAX_BATCH_SIZE = 100
 
 RAVEN_CONFIG = {
     'dsn': RAVEN_DSN,
+    'release': DATASCOPE_VERSION,
 }
 
 # TODO: add STATIC_IP
