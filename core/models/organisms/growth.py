@@ -70,7 +70,7 @@ class Growth(models.Model, ProcessorMixin):
     state = models.CharField(max_length=255, choices=GROWTH_STATE_CHOICES, default=GrowthState.NEW, db_index=True)
     is_finished = models.BooleanField(default=False, db_index=True)
 
-    def begin(self):
+    def begin(self):  # TODO: test sample size to unlock
         """
         Starts the Celery task that provides growth of the data pool and is stored under self.process.
 

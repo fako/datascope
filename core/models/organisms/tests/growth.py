@@ -114,6 +114,9 @@ class TestGrowth(TestProcessorMixin):
         self.assertEqual(self.collective_input.state, GrowthState.CONTRIBUTE)
         self.assertFalse(self.collective_input.is_finished)
 
+    def test_begin_with_sample_size(self):
+        self.skipTest("not tested")
+
     def test_begin_with_processing_state(self):
         try:
             self.processing.begin()

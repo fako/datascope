@@ -25,6 +25,6 @@ class CommunityManager(Manager):
             created = True
         return community, created
 
-    def delete_manifestations_by_signature(self, signature):
+    def delete_manifestations_by_signature(self, signature):  # TODO: test to unlock
         for community in self.get_queryset().filter(signature=signature):
             community.manifestation_set.all().delete()
