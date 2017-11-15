@@ -10,10 +10,10 @@ from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelatio
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.models.organisms.states import CommunityState, COMMUNITY_STATE_CHOICES
 from core.models.organisms import Growth, Collective, Individual, Organism
-from core.models.organisms.mixins import ProcessorMixin
 from core.models.organisms.managers.community import CommunityManager
 from core.models.resources.manifestation import Manifestation
 from core.models.user import DataScopeUser
+from core.processors.mixins import ProcessorMixin
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
 from core.exceptions import DSProcessUnfinished, DSProcessError
@@ -39,7 +39,7 @@ class Community(models.Model, ProcessorMixin):
     individual_set = GenericRelation(Individual, content_type_field="community_type", object_id_field="community_id")
     manifestation_set = GenericRelation(Manifestation, content_type_field="community_type", object_id_field="community_id")
 
-    current_growth = models.ForeignKey('Growth', null=True)
+    current_growth = models.ForeignKey('core.Growth', null=True)
     kernel = GenericForeignKey(ct_field="kernel_type", fk_field="kernel_id")
     kernel_type = models.ForeignKey(ContentType, null=True, blank=True)
     kernel_id = models.PositiveIntegerField(null=True, blank=True)
@@ -57,6 +57,7 @@ class Community(models.Model, ProcessorMixin):
     ASYNC_MANIFEST = False
     INPUT_THROUGH_PATH = True
     PUBLIC_CONFIG = {}
+    SAMPLE_SIZE = 0
 
     objects = CommunityManager()
 
@@ -103,6 +104,12 @@ class Community(models.Model, ProcessorMixin):
                     fatal_error = fatal_error or not should_continue
         return not fatal_error
 
+    def call_manifestation_callbacks(self, manifestation_part):
+        callback_name = "before_{}_manifestation".format(manifestation_part.get("name", ""))
+        callback = getattr(self, callback_name, None)
+        if callback is not None and callable(callback):
+            callback(manifestation_part)
+
     def create_organism(self, organism_type, schema, identifier=None):
         model = get_any_model(organism_type)
         org = model(community=self, schema=schema)
@@ -118,6 +125,8 @@ class Community(models.Model, ProcessorMixin):
         for growth_type, growth_config in six.iteritems(self.COMMUNITY_SPIRIT):
             sch = growth_config["schema"]
             cnf = self.config.to_dict(protected=True)
+            if self.SAMPLE_SIZE:
+                cnf["sample_size"] = self.SAMPLE_SIZE
             cnf.update(growth_config["config"])
             prc = growth_config["process"]
             if growth_config["contribute"]:
@@ -187,6 +196,9 @@ class Community(models.Model, ProcessorMixin):
         if growth is None:
             raise Growth.DoesNotExist("Community.next_growth did not find a next growth.")
         return growth
+
+    def get_growth(self, phase):  # TODO: test to unlock
+        return self.growth_set.filter(type=phase).last()
 
     def set_kernel(self):
         """
@@ -274,6 +286,7 @@ class Community(models.Model, ProcessorMixin):
         """
         content = self.kernel.content
         for part in self.COMMUNITY_BODY:
+            self.call_manifestation_callbacks(part)
             processor, method, args_type = self.prepare_process(part["process"], extra_config=part.get("config"))
             content = method(content)
             assert isinstance(content, Iterator), \

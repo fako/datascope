@@ -26,6 +26,26 @@ class Processor(object):
         assert isinstance(config, dict), "Processor expects to always get a configuration."
         self.config = config
 
+    @staticmethod
+    def get_processor_components(processor_definition):
+        try:
+            processor_name, method_name = processor_definition.split(".")
+            return processor_name, method_name
+        except ValueError:
+            raise AssertionError(
+                "Processor definition should be a dotted string "
+                "in the form of 'class.method' got '{}' instead".format(processor_definition)
+            )
+
+    @staticmethod
+    def create_processor(processor_name, config):
+        processor_class = Processor.get_processor_class(processor_name)
+        if processor_class is None:
+            raise AssertionError(
+                "Could not import a processor named {} from any processors module.".format(processor_name)
+            )
+        return processor_class(config=config)
+
     def get_processor_method(self, method_name):
         if method_name in self.ARGS_NORMAL_METHODS:
             args_type = ArgumentsTypes.NORMAL

@@ -139,7 +139,7 @@ class HttpResource(Resource):
             if content_type == "application/json":
                 return content_type, json.loads(self.body)
             elif content_type == "text/html":
-                return content_type, BeautifulSoup(self.body, "html.parser")
+                return content_type, BeautifulSoup(self.body, "html5lib")
             else:
                 return content_type, None
         return None, None
@@ -350,11 +350,12 @@ class HttpResource(Resource):
         self._update_from_response(response)
 
     def _update_from_response(self, response):
-        self.head = dict(response.headers)
+        self.head = dict(response.headers.lower_items())
         self.status = response.status_code
         # TODO: check what to do with responses that contain invalid character bytes
         # TODO: check why sometimes we get strings and sometimes bytes in response.body
-        self.body = response.content if isinstance(response.content, str) else response.content.decode("utf-8")
+        self.body = response.content if isinstance(response.content, str) else \
+            response.content.decode("utf-8", "replace")
 
     def _handle_errors(self):
         """
@@ -452,7 +453,7 @@ class BrowserResource(HttpResource):  # TODO: write tests
         self.head = dict()
         self.status = 1
         self.body = response.page_source
-        self.soup = BeautifulSoup(self.body, "html.parser")
+        self.soup = BeautifulSoup(self.body, "html5lib")
 
     @property
     def success(self):
@@ -483,7 +484,7 @@ class BrowserResource(HttpResource):  # TODO: write tests
 
     def __init__(self, *args, **kwargs):
         super(HttpResource, self).__init__(*args, **kwargs)
-        self.soup = BeautifulSoup(self.body if self.body else "", "html.parser")
+        self.soup = BeautifulSoup(self.body if self.body else "", "html5lib")
 
     class Meta:
         abstract = True

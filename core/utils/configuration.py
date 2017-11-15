@@ -255,14 +255,15 @@ class ConfigurationField(fields.TextField):
         self._private = private
 
     def contribute_to_class(self, cls, name, virtual_only=False):
-        super(ConfigurationField, self).contribute_to_class(cls, name)
+
         configuration_property = ConfigurationProperty(
-            storage_attribute="_" + name,
+            storage_attribute=name,
             defaults=getattr(cls, 'CONFIG_DEFAULTS', self._defaults),
             namespace=getattr(cls, 'CONFIG_NAMESPACE', self._namespace),
             private=getattr(cls, 'CONFIG_PRIVATE', self._private)
         )
-        setattr(cls, self.name, configuration_property)
+        setattr(cls, name, configuration_property)
+        super(ConfigurationField, self).contribute_to_class(cls, name)
 
     def from_db_value(self, value, expression, connection, context):
         return json.loads(value)
@@ -276,14 +277,14 @@ class ConfigurationField(fields.TextField):
                 # uncomment below and comment the raise statement to fix this during fixture load
                 # value = dict(eval(value))
                 raise ValidationError("Enter valid JSON: " + value)
-        return super(ConfigurationField, self).to_python(value)
+        return value
 
     def get_prep_value(self, value):
         if value is None:
-            return super(ConfigurationField, self).get_prep_value({})
+            return "{}"
         if not isinstance(value, dict):
             value = value.to_dict(private=True, protected=True)
-        return super(ConfigurationField, self).get_prep_value(json.dumps(value))
+        return json.dumps(value)
 
     def value_from_object(self, obj):
         value = super(ConfigurationField, self).value_from_object(obj)

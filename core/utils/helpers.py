@@ -3,13 +3,14 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 import operator
 from datetime import datetime
 from itertools import islice, cycle
+from functools import reduce
 
 
 from django.apps import apps as django_apps
 from django.conf import settings
 
 
-def get_any_model(name):
+def get_any_model(name):  # TODO: test to unlock
     try:
         app_label, model = next(
             (model._meta.app_label, model.__name__)
@@ -20,24 +21,24 @@ def get_any_model(name):
     return django_apps.get_model(app_label, name)
 
 
-def parse_datetime_string(time_str):
+def parse_datetime_string(time_str):  # TODO: test to unlock
     try:
         return datetime.strptime(time_str, settings.DATASCOPE_DATETIME_FORMAT)
     except (ValueError, TypeError):
         return None
 
 
-def format_datetime(datetime):
+def format_datetime(datetime):  # TODO: test to unlock
     return datetime.strftime(settings.DATASCOPE_DATETIME_FORMAT)
 
 
-def override_dict(parent, child):
+def override_dict(parent, child):  # TODO: test to unlock
     assert isinstance(parent, dict), "The parent is not a dictionary."
     assert isinstance(child, dict), "The child is not a dictionary"
     return dict(parent.copy(), **child)
 
 
-def merge_iter(*iterables, **kwargs):
+def merge_iter(*iterables, **kwargs):  # TODO: test to unlock
     """
     Given a set of reversed sorted iterables, yield the next value in merged order
     Takes an optional `key` callable to compare values by.
@@ -60,7 +61,7 @@ def merge_iter(*iterables, **kwargs):
                 raise
 
 
-def ibatch(iterable, batch_size):
+def ibatch(iterable, batch_size):  # TODO: test to unlock
     it = iter(iterable)
     while True:
         batch = list(islice(it, batch_size))
@@ -69,7 +70,7 @@ def ibatch(iterable, batch_size):
         yield batch
 
 
-def iroundrobin(*iterables):
+def iroundrobin(*iterables):  # TODO: test to unlock
     "iroundrobin('ABC', 'D', 'EF') --> A D E B F C"
     # Recipe credited to George Sakkis
     pending = len(iterables)
@@ -83,10 +84,20 @@ def iroundrobin(*iterables):
             nexts = cycle(islice(nexts, pending))
 
 
-# def get_json(model_instance):
-#     if self.lazy:
-#         state = getattr(model_instance, Creator._state_key, None)
-#         if state is None or not state.get(self.attname, False):
-#             return model_instance.__dict__[self.attname]
-#     return self.get_db_prep_value(getattr(model_instance, self.attname, None), force=True)
-# setattr(cls, 'get_%s_json' % self.name, get_json)
+def cross_combine(first, second):  # TODO: test to unlock
+    for primary in first:
+        for secondary in second:
+            yield (primary, secondary)
+
+
+def cross_combine_2(*args):  # NB: beta
+
+    if len(args) == 1:
+        return ((primary,) for primary in args[0])
+
+    def dual_combine(first, second):
+        for primary in first:
+            for secondary in second:
+                yield (primary, secondary)
+
+    return reduce(dual_combine, args)

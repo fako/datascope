@@ -141,7 +141,7 @@ class ImageGrid(object):
                 except IndexError:
                     raise ImageRejected("Portrait image does not fit remaining column")
 
-    def fill(self, images):
+    def fill(self, images):  # TODO: test panorama to unlock
         for image in images:
             try:
                 self.images.append(self.size_image(image))

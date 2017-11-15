@@ -21,6 +21,23 @@ class RankProcessor(Processor):
         namespace="rank_processor"
     )
 
+    def score(self, individuals):
+        sort_key = lambda el: el.get(self.config.score_key, 0)
+        results = []
+        batch = []
+
+        def flush_batch(batch, result_size):
+            sorted_batch = sorted(batch, key=sort_key, reverse=True)[:result_size]
+            results.append(sorted_batch)
+
+        for idx, individual in enumerate(individuals):
+            if not idx % self.config.batch_size and len(batch):
+                flush_batch(batch, self.config.result_size)
+                batch = []
+            batch.append(individual)
+
+        return islice(merge_iter(*results, key=sort_key, reversed=True), self.config.result_size)
+
     def get_hook_arguments(self, individual):
         return (deepcopy(individual),)
 

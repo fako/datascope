@@ -15,7 +15,7 @@ from core.utils.data import reach
 
 class Individual(Organism):
 
-    collective = models.ForeignKey('Collective', null=True)
+    collective = models.ForeignKey('core.Collective', null=True)
     properties = json_field.JSONField(default={})
 
     identity = models.CharField(max_length=255, blank=True, null=True, db_index=True)
@@ -34,7 +34,7 @@ class Individual(Organism):
         return reverse("v1:individual-content", args=[self.id])  # TODO: make version aware
 
     @staticmethod
-    def validate(data, schema):
+    def validate(data, schema):  # TODO: test to unlock
         """
         Validates the data against given schema and checks validity of ds_id and ds_spirit.
 
@@ -59,7 +59,7 @@ class Individual(Organism):
             djang_exception.schema = exc.schema
             raise djang_exception
 
-    def update(self, data, validate=True):
+    def update(self, data, validate=True):  # TODO: test to unlock
         """
         Update the properties and spirit with new data.
 
@@ -97,7 +97,7 @@ class Individual(Organism):
         return self.output_from_content(self.properties, *args)
 
     @staticmethod
-    def output_from_content(content, *args):
+    def output_from_content(content, *args):  # TODO: test to unlock
         if len(args) > 1:
             return map(Individual.output_from_content, repeat(content), args)
         frm = args[0]

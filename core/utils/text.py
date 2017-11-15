@@ -1,9 +1,13 @@
 import os
 import re
+import logging
 
 from spacy.tokens import Span
 
 from core.exceptions import DSSystemConfigError
+
+
+log = logging.getLogger("datascope")
 
 
 class ArgumentTexts(object):
@@ -27,12 +31,20 @@ class ArgumentTexts(object):
                 end_token_index = token.i
                 break
         else:
-            raise Exception("Could not create a span from match: " + match.group())
+            log.warn("Could not create Span for match {}:{} indexed as {}:{} in following document:\n\n{}".format(
+                start_char_index, end_char_index,
+                start_token_index, end_token_index,
+                self.doc.text
+            ))
+            return
         return Span(self.doc, start_token_index, end_token_index, self.doc.vocab.strings[label])
 
     def get_argument_spans(self):
         for argument_label, argument_match in self.parser.get_arguing_matches(self.doc):
-            yield self.create_span_from_match(argument_match, argument_label)
+            span = self.create_span_from_match(argument_match, argument_label)
+            if not span:
+                continue
+            yield span
 
 
 class ArguingLexiconParser(object):

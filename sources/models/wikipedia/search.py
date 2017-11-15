@@ -14,8 +14,10 @@ class WikipediaSearch(WikipediaQuery, WikipediaImagesMixin):
 
     URI_TEMPLATE = 'http://{}.wikipedia.org/w/api.php?{}={}'
     PARAMETERS = override_dict(WikipediaQuery.PARAMETERS, {
-        "prop": "info|pageprops|extracts",
+        "prop": "info|pageprops|extracts|categories",
         "exintro": 1,
+        "clshow": "!hidden",
+        "cllimit": 500
     })
     GET_SCHEMA = {
         "args": {
@@ -27,7 +29,7 @@ class WikipediaSearch(WikipediaQuery, WikipediaImagesMixin):
         "kwargs": None
     }
 
-    def parameters(self):
+    def parameters(self, **kwargs):
         parameters = copy(self.PARAMETERS)
         parameters["exintro"] = int(not self.config.wiki_full_extracts)
         return parameters
@@ -45,3 +47,7 @@ class WikipediaSearch(WikipediaQuery, WikipediaImagesMixin):
                         raise DSHttpWarning300("The search is ambiguous.", resource=self)
                 except KeyError:
                     pass
+
+    class Meta:
+        verbose_name = "Wikipedia search"
+        verbose_name_plural = "Wikipedia searches"

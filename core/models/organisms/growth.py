@@ -8,11 +8,11 @@ from django.core.exceptions import ValidationError
 
 from datascope.configuration import PROCESS_CHOICE_LIST, DEFAULT_CONFIGURATION
 from core.processors.base import ArgumentsTypes
+from core.processors.mixins import ProcessorMixin
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
 from core.exceptions import DSProcessError, DSNoContent
 from core.models.organisms import Individual, Collective
-from core.models.organisms.mixins import ProcessorMixin
 
 
 log = logging.getLogger("datascope")
@@ -70,7 +70,7 @@ class Growth(models.Model, ProcessorMixin):
     state = models.CharField(max_length=255, choices=GROWTH_STATE_CHOICES, default=GrowthState.NEW, db_index=True)
     is_finished = models.BooleanField(default=False, db_index=True)
 
-    def begin(self):
+    def begin(self):  # TODO: test sample size to unlock
         """
         Starts the Celery task that provides growth of the data pool and is stored under self.process.
 
@@ -91,7 +91,10 @@ class Growth(models.Model, ProcessorMixin):
         if isinstance(self.input, Individual):
             result = method(*args, **kwargs)
         elif isinstance(self.input, Collective):
-            result = method(args, kwargs)
+            if not self.config.sample_size:
+                result = method(args, kwargs)
+            else:
+                result = method(args[:self.config.sample_size], kwargs[:self.config.sample_size])
         else:
             raise AssertionError("Growth.input is of unexpected type {}".format(type(self.input)))
 
@@ -185,8 +188,7 @@ class Growth(models.Model, ProcessorMixin):
                 individual.clean()
                 individual.save()
 
-    def update_by_key(self, contributions, update_key):
-        assert isinstance(self.output, Collective), "update_by_key expects a Collective as output"
+    def _update_collection_by_key(self, contributions, update_key):
         for contribution in contributions:
             identifier = self.output.identifier
             assert identifier == update_key, \
@@ -196,6 +198,22 @@ class Growth(models.Model, ProcessorMixin):
                 individual.update(contribution)
                 individual.clean()
                 individual.save()
+
+    def _update_individual_by_key(self, contributions, update_key):
+        for contribution in contributions:
+            assert update_key in self.output.properties, \
+                "Output does not contain update key '{}'".format(update_key)
+            self.output.update(contribution)
+            self.output.clean()
+            self.output.save()
+
+    def update_by_key(self, contributions, update_key):
+        if isinstance(self.output, Collective):
+            self._update_collection_by_key(contributions, update_key)
+        elif isinstance(self.output, Individual):
+            self._update_individual_by_key(contributions, update_key)
+        else:
+            raise AssertionError("update_by_key expects a Collective or Individual as output")
 
     def save(self, *args, **kwargs):
         self.is_finished = self.state in [GrowthState.COMPLETE, GrowthState.PARTIAL]

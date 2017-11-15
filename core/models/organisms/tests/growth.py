@@ -4,10 +4,10 @@ from mock import patch, Mock
 
 from core.models.organisms.growth import Growth, GrowthState
 from core.processors import HttpResourceProcessor
+from core.processors.tests.mixins import TestProcessorMixin
 from core.tests.mocks.celery import (MockTask, MockAsyncResultSuccess, MockAsyncResultPartial,
                                     MockAsyncResultError, MockAsyncResultWaiting)
 from core.tests.mocks.http import HttpResourceMock
-from core.models.organisms.tests.mixins import TestProcessorMixin
 from core.exceptions import DSProcessError, DSProcessUnfinished
 
 
@@ -113,6 +113,9 @@ class TestGrowth(TestProcessorMixin):
         self.assertEqual(self.collective_input.result_id, None)
         self.assertEqual(self.collective_input.state, GrowthState.CONTRIBUTE)
         self.assertFalse(self.collective_input.is_finished)
+
+    def test_begin_with_sample_size(self):
+        self.skipTest("not tested")
 
     def test_begin_with_processing_state(self):
         try:

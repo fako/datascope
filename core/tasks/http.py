@@ -13,7 +13,7 @@ from core.exceptions import DSResourceException
 log = logging.getLogger("datascope")
 
 
-def load_session():
+def load_session():  # TODO: test to unlock
     """
     This decorator will try to fetch a session object based on the "session" keyword argument.
     If the argument is a string it is assumed to be the name of a processor that implements the get_session method.
@@ -94,7 +94,7 @@ def send(config, *args, **kwargs):
 @app.task(name="core.send_serie")
 @load_config(defaults=DEFAULT_CONFIGURATION)
 @load_session()
-def send_serie(config, args_list, kwargs_list, session=None, method=None):
+def send_serie(config, args_list, kwargs_list, session=None, method=None):  # TODO: test to unlock
     success = []
     errors = []
     for args, kwargs in zip(args_list, kwargs_list):

@@ -2,7 +2,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 
 from itertools import islice
 
-from django.shortcuts import render_to_response, RequestContext
+from django.shortcuts import render_to_response
 from django.core.urlresolvers import reverse
 
 from core.views.community import HtmlCommunityView
@@ -24,6 +24,6 @@ class FutureFashionHtmlView(HtmlCommunityView):
                         'results': results
                     }
                 },
-                RequestContext(request)
+                request
             )
         return super(FutureFashionHtmlView, self).get(request, community_class, path=path, *args, **kwargs)

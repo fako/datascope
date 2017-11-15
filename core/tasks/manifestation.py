@@ -42,7 +42,7 @@ def manifest(config, *args, **kwargs):
         manifestation.get_data()
         success.append(manifestation.id)
     except Exception as exc:
-        log.error(exc)
+        log.error("{}".format(exc))
         errors.append(manifestation.id)
     return [success, errors]
 

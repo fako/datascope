@@ -100,6 +100,9 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertIsInstance(growth3.output, Individual)
         self.skipTest("test that input of a Collective might set an identifier")
 
+    def test_specified_sample_size(self):
+        self.skipTest("not tested")
+
     def test_next_growth(self):
         result = self.incomplete.next_growth()
         self.assertEqual(result.id, 2)
@@ -110,6 +113,9 @@ class TestCommunityMock(CommunityTestMixin):
             self.fail("Community.next_growth did not raise when all growth is finished")
         except Growth.DoesNotExist:
             pass
+
+    def test_get_growth(self):
+        self.skipTest("not tested")
 
     @patch("core.models.CommunityMock.set_kernel")
     def test_erroneous_community(self, set_kernel):

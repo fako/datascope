@@ -40,10 +40,11 @@ class ExtractProcessor(Processor):
                 self._context.update({key[1:]: value})
             else:
                 self._objective.update({key: value})
-        assert self._at, \
-            "ExtractProcessor did not load elements to start with from its objective {}. " \
-            "Make sure that '@' is specified".format(objective)
-        assert self._objective, "No objectives loaded from objective {}".format(objective)
+        assert self._objective or self._context, "No objectives loaded from objective {}".format(objective)
+        if self._objective:
+            assert self._at, \
+                "ExtractProcessor did not load elements to start with from its objective {}. " \
+                "Make sure that '@' is specified".format(objective)
 
     def pass_resource_through(self, resource):
         mime_type, data = resource.content
@@ -86,12 +87,14 @@ class ExtractProcessor(Processor):
         for name, objective in six.iteritems(self._context):
             context[name] = eval(objective) if objective else objective
 
-        at = elements = eval(self._at)
+        at = elements = eval(self._at) if self._at else None
         if not isinstance(at, list):
             elements = [at]
 
         for el in elements:  # el used in eval!
             result = copy(context)
             for name, objective in six.iteritems(self._objective):
-                result[name] = eval(objective) if objective else objective
+                if not objective:
+                    continue
+                result[name] = eval(objective) if not callable(objective) else objective(soup, el)
             yield result

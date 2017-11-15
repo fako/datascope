@@ -1,7 +1,7 @@
 from copy import copy
 
 from django.core.exceptions import ValidationError
-from django.shortcuts import render_to_response, RequestContext, Http404
+from django.shortcuts import render_to_response, Http404
 from django.views.generic import View
 from django.core.urlresolvers import reverse
 
@@ -141,7 +141,9 @@ class HtmlCommunityView(View):
         return '{}/{}'.format(community_class.get_name(), template)
 
     @staticmethod
-    def data_for(community_class, response):
+    def data_for(community_class, response=None):
+        if response is None:
+            return None
         if response.status_code == 200:
             return response.data
         elif response.status_code == 300:
@@ -153,8 +155,8 @@ class HtmlCommunityView(View):
         if path is None and community_class.INPUT_THROUGH_PATH:
             return render_to_response(
                 "{}/{}".format(community_class.get_name(), HtmlCommunityView.INDEX),
-                {},
-                RequestContext(request)
+                HtmlCommunityView.data_for(community_class),
+                request
             )
         # Search request
         api_response = CommunityView().get_response(community_class, path, request.GET.dict())
@@ -165,5 +167,5 @@ class HtmlCommunityView(View):
         return render_to_response(
             self.html_template_for(community_class, api_response),
             template_context,
-            RequestContext(request)
+            request
         )

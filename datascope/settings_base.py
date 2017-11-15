@@ -56,7 +56,7 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     # 3rd party
-    'djcelery',
+    'django_celery_results',
     'rest_framework',
     'raven.contrib.django.raven_compat',
     # Main app
@@ -69,6 +69,10 @@ INSTALLED_APPS = (
     'visual_translations',
     'future_fashion',
     'open_data',
+    'topic_research',
+    'online_discourse',
+    'nautilus',
+    'trolls'
 )
 
 DATABASE_TYPES = {
@@ -283,10 +287,8 @@ REST_FRAMEWORK = {
 }
 
 # Celery settings
-import djcelery
-djcelery.setup_loader()
-BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = "djcelery.backends.database.DatabaseBackend"
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = "django-db"
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 CELERY_ACCEPT_CONTENT = ['application/json']
