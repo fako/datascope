@@ -31,7 +31,7 @@ class TestCommunityView(TestCase):
 
     def test_get_full_path(self):
         full_path = CommunityView.get_full_path(CommunityMock, "test/path", {"test": "test"})
-        self.assertEqual(full_path, "/data/v1/mock/service/test/path/?test=test")
+        self.assertEqual(full_path, "/data/v1/mock/service/test/path?test=test")
 
     @patch("core.models.organisms.community.Community.grow", side_effect=ValidationError("Invalid"))
     def test_get_response_invalid(self, grow_patch):
