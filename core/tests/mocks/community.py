@@ -92,7 +92,7 @@ class CommunityMock(Community):
         },
     ]
 
-    def initial_input(self):
+    def initial_input(self, *args):
         return Individual.objects.create(
             properties={"test": "test"},
             schema={},

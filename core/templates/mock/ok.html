@@ -1,0 +1,19 @@
+{% extends "core/base.html" %}
+{% load bootstrap_tags i18n static %}
+
+{% block body %}
+    <div class="container-fluid">
+        {% for individual in response.results %}
+            <div class="row">
+                <div class="col-md-4"><p>{{ individual.number }}</p></div>
+                <div class="col-md-4"><p>{{ individual.value }}</p></div>
+                <div class="col-md-4"><p>{{ individual.context }}</p></div>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block footer %}
+    <p>{% trans "Search for something fake." %}</p>
+    {% include "core/components/search.html" %}
+{% endblock %}

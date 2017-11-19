@@ -1,0 +1,10 @@
+{% extends "core/base.html" %}
+{% load i18n %}
+
+{% block body %}
+    <p>{% trans "No results found, please try again." %}</p>
+{% endblock %}
+
+{% block footer %}
+    {% include "core/components/search.html" %}
+{% endblock %}

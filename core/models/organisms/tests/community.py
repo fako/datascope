@@ -334,3 +334,4 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertEqual(self.instance.get_name(), 'mock')
         self.instance.__class__.COMMUNITY_NAME = 'community_real'
         self.assertEqual(self.instance.get_name(), 'community_real')
+        del self.instance.__class__.COMMUNITY_NAME

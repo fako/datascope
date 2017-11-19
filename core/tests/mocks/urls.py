@@ -6,7 +6,7 @@ from .community import CommunityMock
 
 urlpatterns = [
     url(
-        r'^mock/service/(?P<path>.+)/$',
+        r'^mock/service/(?P<path>.+)?/?$',
         CommunityView.as_view(),
         kwargs={"community_class": CommunityMock},
         name=CommunityMock.get_name() + "_service"
