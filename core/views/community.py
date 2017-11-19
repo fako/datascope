@@ -159,8 +159,13 @@ class HtmlCommunityView(View):
             return TemplateResponse(
                 request,
                 "{}/{}".format(community_class.get_name(), HtmlCommunityView.INDEX),
-                context=HtmlCommunityView.data_for(community_class)
+                context={
+                    'self_reverse': community_class.get_name() + '_html',
+                    'response': self.data_for(community_class)
+                }
             )
+        elif path is None:
+            path = ""
         # Search request
         api_response = CommunityView().get_response(community_class, path, request.GET.dict())
         template_context = {
