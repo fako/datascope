@@ -44,6 +44,18 @@ for an installation in the Digital Ocean or Wikipedia cloud respectively.
 Then edit the ```datascope/bootstrap.py```, ```datascope/settings.py``` and ```datascope/secrets.py``` 
 to correct the setup of the machine/cloud.
 
+After this you need to setup the database correctly. Run the following commands. 
+You may need to specify the user and password flags in the MySQL command.
+
+```bash
+mysql -e "CREATE DATABASE datascope CHARSET utf8md4;"
+./manage.py migrate
+```
+
+
+Next steps
+----------
+
 Depending on which project you're working on you may want to run additional installation steps. 
 These steps are outlined in the readme's of these projects. Below are the links to all current projects:
 
