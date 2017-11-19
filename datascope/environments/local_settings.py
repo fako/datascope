@@ -24,3 +24,13 @@ MIDDLEWARE_CLASSES += (
 
 STATIC_IP = "127.0.0.1"
 ALLOWED_HOSTS = ["*"]
+
+ADMINS = (
+    ('Administrator', 'administrator@example.com'),
+)
+
+MANAGERS = (
+    ('Manager', 'manager@example.com'),
+)
+
+SERVER_EMAIL = 'server@example.com'

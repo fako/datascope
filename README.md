@@ -1,7 +1,7 @@
 Data Scope
 ==========
 
-Data Scope is a mashup framework meant to facilitate the execution of complex search queries. 
+Data Scope is a data mashup framework meant to facilitate the execution of complex search queries. 
 Think about search queries like: “which websites name at least three experts from field X?”, 
 “which websites support stance X?”, “what are iconical images for X in culture A, B & C?” and 
 “which people are known for similar reasons that person X is known for?”. 
@@ -10,17 +10,48 @@ combine the information into new information.
 Due to its nature Data Scope is very suitable for software that tries to break out of filter bubbels.
 
 
-Development
-===========
+Prerequisites
+-------------
 
-Currently Data Scope is under active development and recently underwent some big changes to be future proof. 
-I want to improve on test coverage and documentation. Any frontends are available in the ds-webapps repo. 
+This is the environment that you should have on your machine before installing Data Scope.
+
+* Python 3
+* MySQL
+
+Optionally you may also want to install
+
+* Redis (for background processing)
+* PhantomJS (for web scraping)
+* Conda (for environment management)
+
+Installation
+------------
+
+After cloning this repo to the machine you want to install Data Scope on. 
+Activate the environment where you want to install Data Scope into. 
+Then go into the repo directory and run the following for a local install.
+
+```bash
+cp datascope/environments/local_bootstrap.py datascope/bootstrap.py
+cp datascope/environments/local_settings.py datascope/settings.py
+cp datascope/environments/secrets_example.py datascope/secrets.py
+pip install -r datascope/environments/local_requirements.txt
+```
+
+Alternatively you can change ```local``` in these commands to ```digital-ocean``` or ```wikipedia``` 
+for an installation in the Digital Ocean or Wikipedia cloud respectively.
+
+Then edit the ```datascope/bootstrap.py```, ```datascope/settings.py``` and ```datascope/secrets.py``` 
+to correct the setup of the machine/cloud.
+
+Depending on which project you're working on you may want to run additional installation steps. 
+These steps are outlined in the readme's of these projects. Below are the links to all current projects:
+
+* [Wiki Feed](wiki_feed/README.md)
+* [Union Scope](visual_translations/README.md)
+* [Robo Roaster](trolls/README.md)
 
 Roadmap
 =======
 
-A people-suggestions algorithm is in the making that answers: 
-“which people are known for similar reasons that person X is known for?”. Another algorithm that is coming up is 
-city-celebrities that answers: "which well known people are associated with location X". 
-Apart from that the focus will be more towards machine learning to be able to create ever more complex mashups, 
-that answer interesting questions.
+The roadmap can be followed by keeping an eye on the project boards of this repo on GitHub.
