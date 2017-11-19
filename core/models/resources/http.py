@@ -41,9 +41,9 @@ class HttpResource(Resource):
     request = json_field.JSONField(default=None)
 
     # Storing data
-    head = json_field.JSONField(default=None)
-    body = models.TextField(default=None)
-    status = models.PositiveIntegerField(default=None)
+    head = json_field.JSONField(default="{}")
+    body = models.TextField(default=None, null=True, blank=True)
+    status = models.PositiveIntegerField(default=0)
 
     # Class constants that determine behavior
     URI_TEMPLATE = ""
