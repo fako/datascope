@@ -1,6 +1,5 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
 from django.conf.urls import url
+from django.conf import settings
 
 from wiki_feed.urls import urlpatterns as wiki_feed_patterns
 from visual_translations.urls import urlpatterns as visual_translations_patterns
@@ -23,3 +22,7 @@ urlpatterns += visual_translations_patterns
 urlpatterns += future_fashion_patterns
 urlpatterns += topic_research_patterns
 urlpatterns += online_discourse_patterns
+
+if settings.USE_MOCKS:
+    from .tests.mocks.urls import urlpatterns as mock_patterns
+    urlpatterns += mock_patterns

@@ -11,6 +11,7 @@ URL_TO_PROJECT = '/'
 USE_WEBSOCKETS = False
 SECRET_KEY = 'default'
 DATABASE_TYPE = 'mysql'
+USE_MOCKS = False
 
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -35,6 +36,7 @@ except ImportError:
 #######################################################
 
 DEBUG = False
+DEBUG_TOOLBAR = False
 REQUESTS_PROXIES = None
 REQUESTS_VERIFY = True
 REQUESTS_PROXIES_ENABLED = {
