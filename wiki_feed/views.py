@@ -1,4 +1,5 @@
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import redirect
+from django.template.response import SimpleTemplateResponse
 from django.core.urlresolvers import reverse
 from django.conf import settings
 
@@ -25,7 +26,7 @@ def wiki_page_update(request, page):
 
 
 def wiki_page_wait(request, page):
-    return render_to_response("wiki_feed/wait.html", {
+    return SimpleTemplateResponse("wiki_feed/wait.html", {
         "segments_to_service": settings.SEGMENTS_TO_SERVICE,
         "service_query": page,
         "continue_path": "https://en.wikipedia.org/wiki/{}".format(page),

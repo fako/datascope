@@ -1,7 +1,8 @@
 from copy import copy
 
 from django.core.exceptions import ValidationError
-from django.shortcuts import render_to_response, Http404
+from django.shortcuts import Http404
+from django.template.response import TemplateResponse
 from django.views.generic import View
 from django.core.urlresolvers import reverse
 
@@ -92,7 +93,7 @@ class CommunityView(APIView):
             return self._get_response_from_manifestation(manifestation, response_data)
 
         except ValidationError as exc:
-            response_data["error"] = exc
+            response_data["error"] = exc.message
             return Response(response_data, HTTP_400_BAD_REQUEST)
 
         except DSProcessUnfinished:
@@ -148,15 +149,17 @@ class HtmlCommunityView(View):
             return response.data
         elif response.status_code == 300:
             return response.data
+        elif response.status_code == 400:
+            return response.data
         return None
 
     def get(self, request, community_class, path=None, *args, **kwargs):
         # Index request
         if path is None and community_class.INPUT_THROUGH_PATH:
-            return render_to_response(
+            return TemplateResponse(
+                request,
                 "{}/{}".format(community_class.get_name(), HtmlCommunityView.INDEX),
-                HtmlCommunityView.data_for(community_class),
-                request
+                context=HtmlCommunityView.data_for(community_class)
             )
         # Search request
         api_response = CommunityView().get_response(community_class, path, request.GET.dict())
@@ -164,8 +167,8 @@ class HtmlCommunityView(View):
             'self_reverse': community_class.get_name() + '_html',
             'response': self.data_for(community_class, api_response)
         }
-        return render_to_response(
+        return TemplateResponse(
+            request,
             self.html_template_for(community_class, api_response),
-            template_context,
-            request
+            context=template_context,
         )
