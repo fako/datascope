@@ -80,6 +80,8 @@ class ImageDownload(HttpResource):  # TODO: write tests
         if len(file_name) > 150:
             file_name = file_name[:150]
             file_name += '.' + path[extension_position:] if extension_position else ''
+        if len(file_name) > 155:
+            file_name = file_name[:155]
         image = ImageFile(BytesIO(content))
         image_name = default_storage.save('downloads/' + file_name, image)
         return image_name
