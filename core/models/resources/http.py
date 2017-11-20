@@ -169,14 +169,16 @@ class HttpResource(Resource):
         headers = requests.utils.default_headers()
         headers["User-Agent"] = "{}; {}".format(self.config.user_agent, headers["User-Agent"])
         headers.update(self.headers())
-        return self.validate_request({
+        request = {
             "args": args,
             "kwargs": kwargs,
             "method": method,
             "url": self._create_url(*args),
-            "headers": dict(headers),
-            "data": data,
-        }, validate_input=False)
+            "headers": dict(headers)
+        }
+        data_key = "json" if headers.get("Content-Type") == "application/json" else "data"
+        request[data_key] = data
+        return self.validate_request(request, validate_input=False)
 
     def _create_url(self, *args):
         url_template = copy(self.URI_TEMPLATE)
@@ -325,12 +327,15 @@ class HttpResource(Resource):
             "Trying to make request before having a valid request dictionary."
 
         method = self.request.get("method")
-        data = self.request.get("data") if not method == "get" else None
+        form_data = self.request.get("data") if not method == "get" else None
+        json_data = self.request.get("json") if not method == "get" else None
+
         request = requests.Request(
             method=method,
             url=self.request.get("url"),
             headers=self.request.get("headers"),
-            data=data
+            data=form_data,
+            json=json_data
         )
         preq = self.session.prepare_request(request)
 
