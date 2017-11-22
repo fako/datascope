@@ -21,6 +21,10 @@ class HttpResourceTestMixin(TestCase):
         self.instance = self.get_test_instance()
         self.test_data = {"data": "test"}
 
+    def tearDown(self):
+        if "Content-Type" in self.instance.HEADERS:
+            del self.instance.HEADERS["Content-Type"]
+
     @staticmethod
     def get_test_instance():
         raise NotImplementedError()
@@ -118,6 +122,39 @@ class HttpResourceTestMixin(TestCase):
         self.assertIsNotNone(self.instance.body)
         self.assertIsNotNone(self.instance.status)
 
+    def test_send_request_post_json(self):
+        test_url = "http://localhost:8000/test/"
+        test_data = {"test": "test"}
+        content_header = {
+            "Accept": "application/json",
+            "Content-Length": "16",
+            "Content-Type": "application/json",
+            "Connection": "keep-alive",
+            "Accept-Encoding": "gzip, deflate"
+        }
+        self.instance.request = {
+            "args": tuple(),
+            "kwargs": {},
+            "method": "post",
+            "url": test_url,
+            "headers": content_header,
+            "json": test_data,
+        }
+        self.instance._send()
+        # See if request was made properly
+        args, kwargs = self.instance.session.send.call_args
+        preq = args[0]
+        user_agent_header = preq.headers.pop("User-Agent", None)
+        if user_agent_header is None:
+            self.fail("No default User-Agent present on the request")
+        self.assertEqual(preq.url, test_url)
+        self.assertEqual(preq.headers, content_header)
+        self.assertEqual(preq.body, json.dumps(test_data).encode("utf-8"))
+        # Make sure that response fields are set to something and do not remain None
+        self.assertIsNotNone(self.instance.head)
+        self.assertIsNotNone(self.instance.body)
+        self.assertIsNotNone(self.instance.status)
+
     def test_send_request_wrong(self):
         self.instance.request = None
         try:
@@ -125,6 +162,13 @@ class HttpResourceTestMixin(TestCase):
             self.fail("_send should fail when self.request is not set.")
         except AssertionError:
             pass
+
+    def test_create_request_post(self):
+        request = self.instance._create_request("post", "en", "test", query="test")
+        self.assertEqual(request["data"], {"test": "test"})
+        self.instance.HEADERS["Content-Type"] = "application/json"
+        request = self.instance._create_request("post", "en", "test", query="test")
+        self.assertEqual(request["json"], {"test": "test"})
 
     def test_success(self):
         success_range = range(200, 209)
