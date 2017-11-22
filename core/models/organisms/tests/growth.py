@@ -57,6 +57,11 @@ class TestGrowth(TestProcessorMixin):
             }
             for index in range(0, 3)
         ]
+        cls.expected_update_output_individual = {
+            'context': 'nested value',
+            'extra': 'test 2',
+            'value': 'nested value 2'
+        }
 
     def setUp(self):
         self.new = Growth.objects.get(type="test_new")
@@ -67,6 +72,7 @@ class TestGrowth(TestProcessorMixin):
         self.contributing.append_to_output = Mock()
         self.contributing.inline_by_key = Mock()
         self.contributing.update_by_key = Mock()
+        self.update = Growth.objects.get(type="test_update_individual")
         MockTask.reset_mock()
         MockAsyncResultSuccess.reset_mock()
         MockAsyncResultError.reset_mock()
@@ -318,7 +324,7 @@ class TestGrowth(TestProcessorMixin):
         self.assertEqual(list(self.collective_input.output.content), self.expected_inline_output)
         self.assertEqual(self.collective_input.output.identifier, "value.value")
 
-    def test_update_by_key(self):
+    def test_update_collective_by_key(self):
         qs = HttpResourceMock.objects.filter(id__in=[6, 7, 8])
         contributions = self.collective_input.prepare_contributions(qs)
         self.collective_input.update_by_key(contributions, "value")
@@ -327,6 +333,12 @@ class TestGrowth(TestProcessorMixin):
             self.collective_input.output.identifier,
             "value"  # doesn't update in contrast to inline_by_key
         )
+
+    def test_update_individual_by_key(self):
+        qs = HttpResourceMock.objects.filter(id__in=[6, 7, 8])
+        contributions = self.collective_input.prepare_contributions(qs)
+        self.update.update_by_key(contributions, "value")
+        self.assertEqual(self.update.output.content, self.expected_update_output_individual)
 
     def test_is_finished(self):
         self.new.state = GrowthState.COMPLETE
