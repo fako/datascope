@@ -80,6 +80,9 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertEqual(result.community, self.instance)
 
     def test_setup_growth(self):
+        # We patch the community spirit to test more cases
+        self.instance.COMMUNITY_SPIRIT["phase3"]["input"] = "Collective#value"
+
         self.instance.setup_growth()
         self.assertEqual(self.instance.growth_set.count(), 3)
         growth1, growth2, growth3 = self.instance.growth_set.all()
@@ -87,6 +90,9 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertTrue(growth1.config.test_flag)
         self.assertTrue(growth2.config.test_flag)
         self.assertTrue(growth3.config.test_flag)
+        self.assertEqual(growth1.config.sample_size, 0)
+        self.assertEqual(growth2.config.sample_size, 0)
+        self.assertEqual(growth3.config.sample_size, 0)
         self.assertEqual(growth1.output.id, growth2.input.id)
         self.assertEqual(growth2.input.id, growth2.output.id)
         self.assertEqual(growth1.output.identifier, "value")
@@ -97,8 +103,20 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertIsInstance(growth2.input, Collective)
         self.assertIsInstance(growth2.output, Collective)
         self.assertIsInstance(growth3.input, Collective)
+        self.assertEqual(growth3.input.identifier, "value")
         self.assertIsInstance(growth3.output, Individual)
-        self.skipTest("test that input of a Collective might set an identifier")
+
+        # Undo patch
+        self.instance.COMMUNITY_SPIRIT["phase3"]["input"] = "@phase2"
+
+    def test_setup_growth_set_sample(self):
+        self.instance.SAMPLE_SIZE = 2
+        self.instance.setup_growth()
+        growth1, growth2, growth3 = self.instance.growth_set.all()
+        self.assertEqual(growth1.config.sample_size, 2)
+        self.assertEqual(growth2.config.sample_size, 2)
+        self.assertEqual(growth3.config.sample_size, 2)
+        self.instance.SAMPLE_SIZE = 0
 
     def test_specified_sample_size(self):
         self.skipTest("not tested")
