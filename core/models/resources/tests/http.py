@@ -177,6 +177,16 @@ class HttpResourceTestMixin(TestCase):
         data_hash2 = HttpResource.hash_from_data(self.test_data)
         self.assertNotEqual(data_hash, data_hash2)
 
+    def test_set_error(self):
+        self.instance.set_error(404)
+        self.assertEqual(self.instance.head, {})
+        self.assertIsNone(self.instance.body)
+        self.assertEqual(self.instance.status, 404)
+        self.instance.set_error(0, True)
+        self.assertEqual(self.instance.head, {})
+        self.assertEqual(self.instance.body, "")
+        self.assertEqual(self.instance.status, 0)
+
 
 class ConfigurationFieldTestMixin(TestCase):
 
@@ -282,6 +292,12 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
             "Accept-Encoding": "gzip, deflate"
         })
         self.assertEqual(preq.body, expected_body)
+
+    def test_init(self):
+        mock = HttpResourceMock()
+        self.assertEqual(mock.timeout, 30)
+        mock = HttpResourceMock(timeout=20)
+        self.assertEqual(mock.timeout, 20)
 
     def test_get_new(self):
         # Make a new request and store it.
@@ -540,12 +556,31 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.instance.clean()
         self.assertEqual(self.instance.uri, "localhost:8000/en/?q=test")
         self.assertEqual(self.instance.data_hash, "")
+        self.assertIsNone(self.instance.purge_at)
 
     def test_clean_post(self):
         self.instance.request = self.test_post_request
         self.instance.clean()
         self.assertEqual(self.instance.uri, "localhost:8000/en/?q=test")
         self.assertEqual(self.instance.data_hash, "31ead60c9066eefb8011f3f68aed25d004d60957")
+        self.assertIsNone(self.instance.purge_at)
+
+    def test_clean_long_uri(self):
+        self.instance.request = self.test_get_request
+        self.instance.clean()
+        self.instance.uri += "*" * 255
+        self.instance.clean()
+        self.assertEqual(self.instance.uri, "localhost:8000/en/?q=test" + "*" * 230)
+
+    def test_clean_immediate_purge(self):
+        self.instance.request = self.test_get_request
+        self.instance.config = {"purge_immediately": True}
+        self.instance.id = 1
+        self.instance.clean()
+        self.assertIsNone(self.instance.purge_at)
+        self.instance.id = None
+        self.instance.clean()
+        self.assertIsNotNone(self.instance.purge_at)
 
     def test_meta(self):
         instance = self.model()

@@ -383,7 +383,7 @@ class HttpResource(Resource):
 
     def __init__(self, *args, **kwargs):
         self.session = kwargs.pop("session", requests.Session())
-        self.timeout = kwargs.pop("timeout", 30)  # TODO: test this
+        self.timeout = kwargs.pop("timeout", 30)
         super(HttpResource, self).__init__(*args, **kwargs)
 
     def clean(self):
@@ -393,9 +393,9 @@ class HttpResource(Resource):
         if self.request and not self.data_hash:
             uri_request = self.request_without_auth()
             self.data_hash = HttpResource.hash_from_data(uri_request.get("data"))
-        if len(self.uri) > 255:  # TODO: test this
+        if len(self.uri):
             self.uri = self.uri[:255]
-        if not self.id and self.config.purge_immediately:  # TODO: test this
+        if not self.id and self.config.purge_immediately:
             self.purge_at = datetime.now()
 
     #######################################################
@@ -419,7 +419,7 @@ class HttpResource(Resource):
         hsh.update(hash_data)
         return hsh.hexdigest()
 
-    def set_error(self, status, connection_error=False):  # TODO: test
+    def set_error(self, status, connection_error=False):
         if connection_error:
             self.head = {}
             self.body = ""
