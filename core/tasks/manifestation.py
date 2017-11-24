@@ -27,8 +27,18 @@ def manifest(config, *args, **kwargs):
     errors = []
     community_model = get_any_model(config.community)
     signature = community_model.get_signature_from_input(*args, **kwargs)
-    community_instance = community_model.objects.get_latest_by_signature(signature, **kwargs)
-    community_path = CommunityView.get_full_path(community_model, "/".join(args), kwargs)
+    try:
+        community_instance = community_model.objects.get_latest_by_signature(signature, **kwargs)
+    except community_model.DoesNotExist:
+        # We can't manifest without a community, so no results effectively
+        # But something should not have been calling this task probably
+        log.warn("Community of class {} does not have instance with signature {}".format(
+            community_model.__class__.__name__,
+            signature
+        ))
+        return [success, errors]
+    input_configuration = community_model.get_configuration_from_input(**kwargs)
+    community_path = CommunityView.get_full_path(community_model, "/".join(args), input_configuration)
     try:
         manifestation = Manifestation.objects.get(uri=community_path)
     except Manifestation.DoesNotExist:
