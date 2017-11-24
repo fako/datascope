@@ -18,6 +18,7 @@ from core.models.resources.tests.http import TestHttpResourceMock
 
 from core.tasks.tests.http import (TestSendMassTaskGet, TestSendMassTaskPost, TestSendTaskGet, TestSendTaskPost,
                                    TestSendSerieTaskGet, TestSendSerieTaskPost, TestGetResourceLink, TestLoadSession)
+from core.tasks.tests.manifestation import TestManifestationTasks
 
 from core.views.tests.collective import TestCollectiveView, TestCollectiveContentView
 from core.views.tests.individual import TestIndividualView, TestIndividualContentView

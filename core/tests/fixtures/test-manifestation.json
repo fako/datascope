@@ -1,0 +1,99 @@
+[
+{
+    "fields": {
+        "kernel_type": ["core", "collective"],
+        "views": 1,
+        "kernel_id": 1,
+        "created_at": "2016-06-05T16:17:54.000",
+        "modified_at": "2016-06-05T16:17:54.000",
+        "completed_at": "2016-06-05T16:17:54.000",
+        "state": "Ready",
+        "current_growth": null,
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\", \"include_odd\": true, \"include_even\": false}",
+        "purge_at": null,
+        "signature": "setting1=const&test-ready"
+    },
+    "model": "core.CommunityMock",
+    "pk": 1
+},
+{
+    "fields": {
+        "created_at": "2015-06-04T11:31:27.940",
+        "modified_at": "2015-06-04T11:34:06.960",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}",
+        "community_type": ["core", "communitymock"],
+        "community_id": 7
+    },
+    "model": "core.collective",
+    "pk": 1
+},
+{
+    "fields": {
+        "properties": "{\"context\":\"nested value\",\"value\":\"nested value 0\"}",
+        "collective": 1,
+        "modified_at": "2015-06-02T10:01:47.572",
+        "created_at": "2015-06-02T10:00:20.247",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}",
+        "community_type": ["core", "communitymock"],
+        "community_id": 1
+    },
+    "model": "core.individual",
+    "pk": 1
+},
+{
+    "fields": {
+        "properties": "{\"context\":\"nested value\",\"value\":\"nested value 1\"}",
+        "collective": 1,
+        "modified_at": "2015-06-02T10:01:47.572",
+        "created_at": "2015-06-02T10:00:20.247",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}",
+        "community_type": ["core", "communitymock"],
+        "community_id": 1
+    },
+    "model": "core.individual",
+    "pk": 2
+},
+{
+    "fields": {
+        "properties": "{\"context\":\"nested value\",\"value\":\"nested value 2\"}",
+        "collective": 1,
+        "modified_at": "2015-06-02T10:01:47.572",
+        "created_at": "2015-06-02T10:00:20.247",
+        "schema": "{\"additionalProperties\":false,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"}}}",
+        "community_type": ["core", "communitymock"],
+        "community_id": 1
+    },
+    "model": "core.individual",
+    "pk": 3
+},
+{
+    "fields": {
+        "modified_at": "2015-05-12T18:45:22.105",
+        "created_at": "2015-05-12T18:45:22.105",
+        "uri": "/data/v1/mock/service/test-ready?setting1=const",
+        "config": "{}",
+        "purge_at": null,
+        "retainer_type": null,
+        "retainer_id": null,
+        "community_type": ["core", "communitymock"],
+        "community_id": 1
+    },
+    "model": "core.manifestation",
+    "pk": 1
+},
+{
+    "fields": {
+        "modified_at": "2015-05-12T18:45:22.105",
+        "created_at": "2015-05-12T18:45:22.105",
+        "uri": "/data/v1/mock/service/test-ready?$setting2=override&setting1=const",
+        "config": "{\"include_even\": true}",
+        "purge_at": null,
+        "retainer_type": null,
+        "retainer_id": null,
+        "community_type": ["core", "communitymock"],
+        "community_id": 1
+    },
+    "model": "core.manifestation",
+    "pk": 2
+}
+]
