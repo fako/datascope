@@ -11,6 +11,8 @@ URL_TO_PROJECT = '/'
 USE_WEBSOCKETS = False
 SECRET_KEY = 'default'
 DATABASE_TYPE = 'mysql'
+MYSQL_USER = 'root'
+MYSQL_PASSWORD = ''
 USE_MOCKS = False
 
 from PIL import ImageFile
@@ -89,8 +91,8 @@ DATABASE_TYPES = {
     'mysql': {
         'ENGINE': 'django.db.backends.mysql',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
         'NAME': 'datascope',
-        'USER': 'root',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
+        'USER': MYSQL_USER,                    # Not used with sqlite3.
+        'PASSWORD': MYSQL_PASSWORD,            # Not used with sqlite3.
         'HOST': '',
         'PORT': '',
         'OPTIONS': {
