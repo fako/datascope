@@ -48,7 +48,7 @@ After this you need to setup the database correctly. Run the following commands.
 You may need to specify the user and password flags in the MySQL command.
 
 ```bash
-mysql -e "CREATE DATABASE datascope CHARSET utf8md4;"
+mysql -e "CREATE DATABASE datascope CHARSET utf8mb4;"
 ./manage.py migrate
 ```
 
