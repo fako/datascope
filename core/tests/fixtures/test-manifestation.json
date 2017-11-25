@@ -95,5 +95,50 @@
     },
     "model": "core.manifestation",
     "pk": 2
+},
+{
+    "fields": {
+        "modified_at": "2015-05-12T18:45:22.105",
+        "created_at": "2015-05-12T18:45:22.105",
+        "uri": "/data/v1/mock/service/test-ready?$setting2=again&setting1=const",
+        "config": "{\"include_odd\": false}",
+        "purge_at": null,
+        "retainer_type": null,
+        "retainer_id": null,
+        "community_type": ["core", "communitymock"],
+        "community_id": 1
+    },
+    "model": "core.manifestation",
+    "pk": 3
+},
+{
+    "fields": {
+        "modified_at": "2015-05-12T18:45:22.105",
+        "created_at": "2015-05-12T18:45:22.105",
+        "uri": "/data/v1/mock/service/test-error?$setting2=override&setting1=const",
+        "config": "{\"include_even\": true}",
+        "purge_at": null,
+        "retainer_type": null,
+        "retainer_id": null,
+        "community_type": ["core", "communitymock"],
+        "community_id": 1
+    },
+    "model": "core.manifestation",
+    "pk": 4
+},
+{
+    "fields": {
+        "modified_at": "2015-05-12T18:45:22.105",
+        "created_at": "2015-05-12T18:45:22.105",
+        "uri": "/data/v1/mock/service/test-error?$setting2=again&setting1=const",
+        "config": "{\"include_even\": true}",
+        "purge_at": null,
+        "retainer_type": null,
+        "retainer_id": null,
+        "community_type": ["core", "communitymock"],
+        "community_id": 1
+    },
+    "model": "core.manifestation",
+    "pk": 5
 }
 ]

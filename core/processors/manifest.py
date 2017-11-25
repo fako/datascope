@@ -29,7 +29,6 @@ class ManifestProcessor(Processor):
         super(ManifestProcessor, self).__init__(config)
         assert "_community" in config or "community" in config, \
             "ManifestProcessor expects a community that it should manifest in the configuration."
-        self._community = None
 
     def manifest_from_individuals(self, individuals):
         for individual in individuals:
