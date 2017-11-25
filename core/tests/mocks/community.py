@@ -87,6 +87,7 @@ class CommunityMock(Community):
             "config": {}
         },
         {
+            "name": "filter_individuals",
             "process": "MockFilterProcessor.filter_individuals",
             "config": {}
         },
@@ -110,6 +111,9 @@ class CommunityMock(Community):
 
     def error_phase1_not_found(self, err, out):
         return False  # abort community
+
+    def before_filter_individuals_manifestation(self, part):
+        return
 
     def set_kernel(self):
         self.kernel = self.growth_set.filter(type="phase3").last().output

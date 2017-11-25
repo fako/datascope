@@ -335,6 +335,7 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertEqual(self.instance.state, CommunityState.READY)
 
     def test_manifestation(self):
+        self.complete.before_filter_individuals_manifestation = Mock()
         self.complete.config.include_odd = True
         manifestation = self.complete.manifestation
         self.assertEqual(len(list(manifestation)), 2)
@@ -347,6 +348,8 @@ class TestCommunityMock(CommunityTestMixin):
         self.complete.config.include_even = False
         manifestation = self.complete.manifestation
         self.assertEqual(len(list(manifestation)), 0)
+        self.complete.before_filter_individuals_manifestation.assert_called_with(self.complete.COMMUNITY_BODY[1])
+        self.assertEqual(self.complete.before_filter_individuals_manifestation.call_count, 4)
 
     def test_get_name(self):
         self.assertEqual(self.instance.get_name(), 'mock')
