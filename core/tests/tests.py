@@ -15,6 +15,7 @@ from core.models.organisms.managers.tests.community import TestCommunityManager
 from core.models.organisms.tests.collective import TestCollective
 from core.models.organisms.tests.individual import TestIndividual
 from core.models.resources.tests.http import TestHttpResourceMock
+from core.models.resources.tests.manifestation import TestManifestationResource
 
 from core.tasks.tests.http import (TestSendMassTaskGet, TestSendMassTaskPost, TestSendTaskGet, TestSendTaskPost,
                                    TestSendSerieTaskGet, TestSendSerieTaskPost, TestGetResourceLink, TestLoadSession)

@@ -30,7 +30,7 @@ class Manifestation(Resource):
         config = {key: value for key, value in kwargs.items() if key in allowed_config}
         return config
 
-    def get_data(self, async=False):
+    def get_data(self, async=False):  # TODO: set celery states into the status field
         from core.tasks import get_manifestation_data
         if self.data:
             return self.data
@@ -38,7 +38,12 @@ class Manifestation(Resource):
             result = AsyncResult(self.task)
             if not result.ready():
                 raise DSProcessUnfinished("Manifest processing is not done")
-            self.data = result.result
+            elif result.successful():
+                self.data = result.result
+            elif result.failed():
+                self.data = str(result.result)
+            else:
+                raise AssertionError("get_data is not handling AsyncResult with status: {}".format(result.status))
         elif async:
             self.task = get_manifestation_data.delay(self.id)
             self.save()

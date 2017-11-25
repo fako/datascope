@@ -18,12 +18,17 @@ MockAsyncResultPartial.result = ([1, 2, 3], [4, 5],)
 
 MockAsyncResultSuccess = Mock(spec=AsyncResult)
 MockAsyncResultSuccess.attach_mock(Mock(return_value=True), "ready")
+MockAsyncResultSuccess.attach_mock(Mock(return_value=True), "successful")
+MockAsyncResultSuccess.attach_mock(Mock(return_value=False), "failed")
 MockAsyncResultSuccess.status = CeleryState.SUCCESS
 MockAsyncResultSuccess.result = ([1, 2, 3], [],)
 
 MockAsyncResultError = Mock(spec=AsyncResult)
 MockAsyncResultError.attach_mock(Mock(return_value=True), "ready")
+MockAsyncResultError.attach_mock(Mock(return_value=False), "successful")
+MockAsyncResultError.attach_mock(Mock(return_value=True), "failed")
 MockAsyncResultError.status = CeleryState.FAILURE
+MockAsyncResultError.result = Exception("Oops, something went wrong")
 
 MockAsyncResultWaiting = Mock(spec=AsyncResult)
 MockAsyncResultWaiting.attach_mock(Mock(return_value=False), "ready")

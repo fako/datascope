@@ -1,16 +1,12 @@
-from datetime import datetime
-
-import requests
 from mock import patch
 
 from django.test import TestCase
-from django.utils import six
 from django.db.models import QuerySet
 
 from datascope.configuration import MOCK_CONFIGURATION
 from core.processors.resources import HttpResourceProcessor
 from core.utils.configuration import ConfigurationType
-from core.tests.mocks.requests import MockRequestsWithAgent, MockRequests
+from core.tests.mocks.requests import MockRequests
 from core.tests.mocks.celery import (MockTask, MockAsyncResultSuccess, MockAsyncResultPartial, MockAsyncResultError,
                                      MockAsyncResultWaiting)
 from core.tests.mocks.http import HttpResourceMock
