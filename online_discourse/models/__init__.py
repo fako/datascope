@@ -1,3 +1,3 @@
 from .search import DiscourseSearchCommunity
 from .orders import DiscourseOrder
-from .wizenoze.readability import ReadabilityClassification
+from .wizenoze.readability import ComplexityAnalysis
