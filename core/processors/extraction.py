@@ -1,6 +1,3 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-import six
-
 import logging
 from copy import copy
 
@@ -33,7 +30,7 @@ class ExtractProcessor(Processor):
 
     def load_objective(self, objective):
         assert isinstance(objective, dict), "An objective should be a dict."
-        for key, value in six.iteritems(objective):
+        for key, value in objective.items():
             if key == "@":
                 self._at = value
             elif key.startswith("#"):
@@ -65,26 +62,26 @@ class ExtractProcessor(Processor):
 
     def application_json(self, data):
         context = {}
-        for name, objective in six.iteritems(self._context):
+        for name, objective in self._context.items():
             context[name] = reach(objective, data)
 
         nodes = reach(self._at, data)
         if isinstance(nodes, dict):
-            nodes = six.itervalues(nodes)
+            nodes = nodes.values()
 
         if nodes is None:
             raise DSNoContent("Found no nodes at {}".format(self._at))
 
         for node in nodes:
             result = copy(context)
-            for name, objective in six.iteritems(self._objective):
+            for name, objective in self._objective.items():
                 result[name] = reach(objective, node)
             yield result
 
     def text_html(self, soup):  # soup used in eval!
 
         context = {}
-        for name, objective in six.iteritems(self._context):
+        for name, objective in self._context.items():
             context[name] = eval(objective) if objective else objective
 
         at = elements = eval(self._at) if self._at else None
@@ -93,7 +90,7 @@ class ExtractProcessor(Processor):
 
         for el in elements:  # el used in eval!
             result = copy(context)
-            for name, objective in six.iteritems(self._objective):
+            for name, objective in self._objective.items():
                 if not objective:
                     continue
                 result[name] = eval(objective) if not callable(objective) else objective(soup, el)
