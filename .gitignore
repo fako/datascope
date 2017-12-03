@@ -4,6 +4,7 @@ dump.rdb
 
 *.pyc
 *.db
+*.csv
 db-dump.*.json
 
 system/docs/_build/
