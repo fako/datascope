@@ -1,4 +1,9 @@
+import logging
+
 from core.models.resources.http import URLResource
+
+
+log = logging.getLogger("datascope")
 
 
 class WebTextResource(URLResource):
@@ -13,6 +18,9 @@ class WebTextResource(URLResource):
     @property
     def content(self):
         content_type, soup = super().content
+        if content_type != "text/html":
+            log.warning("Unsupported web text content type: {}".format(content_type))
+            return None, None
         if soup:  # TODO: allow disabling this through config
             soup.paragraph_groups = self.extract_paragraph_groups(soup)
             soup.source = self.request["url"]
