@@ -25,6 +25,9 @@ start-development:
 	/usr/local/bin/mysql.server start
 	redis-server
 
+start-celery:
+	celery -A datascope worker --loglevel=info
+
 stop-development:
 	/usr/local/bin/mysql.server stop
 
