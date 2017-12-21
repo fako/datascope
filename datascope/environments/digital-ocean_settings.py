@@ -10,4 +10,5 @@ STATIC_IP = "37.139.10.19"
 RAVEN_CONFIG = {
     'dsn': RAVEN_DSN,
     'release': DATASCOPE_VERSION,
+    'site': 'data-scope.com'
 }
