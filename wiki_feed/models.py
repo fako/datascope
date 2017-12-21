@@ -8,6 +8,7 @@ from datetime import datetime
 from django.conf import settings
 from django.template.loader import render_to_string
 
+from core.models.organisms.states import CommunityState
 from core.models.organisms import Community, Individual
 from core.views import CommunityView
 from core.exceptions import DSResourceException
@@ -438,6 +439,14 @@ class WikiFeedPublishCommunity(Community):
                 "text": content
             })
             page.save()
+
+    def begin_edit(self, inp):
+        if not inp.individual_set.count():
+            # We are aborting the growth if nothing came out of previous phases
+            # TODO: create safe way to skip a growth and leave finishing (like below) to grow method
+            self.set_kernel()
+            self.state = CommunityState.READY
+            self.save()
 
     def set_kernel(self):
         self.kernel = self.growth_set.filter(type="manifest").last().output
