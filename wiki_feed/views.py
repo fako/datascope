@@ -13,8 +13,6 @@ from wiki_feed.models import WikiFeedPublishCommunity, WikiFeedCommunity
 def wiki_page_update(request, page):
     signature = WikiFeedPublishCommunity.get_signature_from_input(*page.split("/"), **request.GET.dict())
     WikiFeedPublishCommunity.objects.filter(signature=signature).delete()
-    WikipediaTransclusions.objects.all().delete()
-    WikipediaRevisions.objects.all().delete()
     recent_changes_community = WikiFeedCommunity.objects.get(signature="recent_changes")
     recent_changes_community.manifestation_set.all().delete()
     response = CommunityView().get_response(WikiFeedPublishCommunity, page, request.GET.dict())
