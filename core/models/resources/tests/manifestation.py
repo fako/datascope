@@ -27,6 +27,7 @@ class TestManifestationResource(TestCase):
 
     def test_get_data_sync(self):
         data = self.instance.get_data()
+        self.assertEqual(self.instance.status, 0)
         self.assertEqual(data, [
             {"context": "nested value", "number": 1, "value": "nested value 0"},
             {"context": "nested value", "number": 3, "value": "nested value 2"},
@@ -48,6 +49,7 @@ class TestManifestationResource(TestCase):
             self.fail("Expected get_data to raise DSProcessUnfinished when manifesting async")
         except DSProcessUnfinished:
             pass
+        self.assertEqual(self.instance.status, 8)
         task_delay.assert_called_once_with(1)
         async_result_path = "core.models.resources.manifestation.AsyncResult"
         with patch(async_result_path, return_value=MockAsyncResultWaiting) as AsyncResult:
@@ -56,18 +58,22 @@ class TestManifestationResource(TestCase):
                 self.fail("Expected get_data to raise DSProcessUnfinished when task incomplete")
             except DSProcessUnfinished:
                 pass
+            self.assertEqual(self.instance.status, 8)
             AsyncResult.assert_called_once_with("test-task")
         # Test success
         with patch(async_result_path, return_value=MockAsyncResultSuccess) as AsyncResult:
             data = self.instance.get_data()
+            self.assertEqual(self.instance.status, 0)
             self.assertEqual(data, ([1, 2, 3], [],))  # weird data just comes from the mock
             AsyncResult.assert_called_once_with("test-task")
+
         # Resetting
         AsyncResult.reset_mock()
         self.instance.data = None
         # Test error
         with patch(async_result_path, return_value=MockAsyncResultError) as AsyncResult:
             data = self.instance.get_data()
+            self.assertEqual(self.instance.status, 1)
             AsyncResult.assert_called_once_with("test-task")
             self.assertEqual(data, "Oops, something went wrong")
 

@@ -5,6 +5,7 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 
 from celery.result import AsyncResult
+from celery.states import precedence as celery_status_code, PENDING, SUCCESS
 from json_field import JSONField
 
 from core.models.resources.resource import Resource
@@ -30,7 +31,7 @@ class Manifestation(Resource):
         config = {key: value for key, value in kwargs.items() if key in allowed_config}
         return config
 
-    def get_data(self, async=False):  # TODO: set celery states into the status field
+    def get_data(self, async=False):
         from core.tasks import get_manifestation_data
         if self.data:
             return self.data
@@ -44,12 +45,15 @@ class Manifestation(Resource):
                 self.data = str(result.result)
             else:
                 raise AssertionError("get_data is not handling AsyncResult with status: {}".format(result.status))
+            self.status = celery_status_code(result.status)
         elif async:
             self.task = get_manifestation_data.delay(self.id)
+            self.status = celery_status_code(PENDING)
             self.save()
             raise DSProcessUnfinished("Manifest started processing")
         else:
             self.data = get_manifestation_data(self.id)
+            self.status = celery_status_code(SUCCESS)
         self.completed_at = datetime.now()
         self.save()
         return self.data

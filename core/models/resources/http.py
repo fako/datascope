@@ -43,7 +43,6 @@ class HttpResource(Resource):
     # Storing data
     head = json_field.JSONField(default="{}")
     body = models.TextField(default=None, null=True, blank=True)
-    status = models.PositiveIntegerField(default=0)
 
     # Class constants that determine behavior
     URI_TEMPLATE = ""
