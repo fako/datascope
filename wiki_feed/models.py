@@ -422,8 +422,11 @@ class WikiFeedPublishCommunity(Community):
 
     def finish_manifest(self, out, err):
         for page in out.individual_set.iterator():
+            page_data = page.properties.get("data", None)
+            if page_data is None:
+                continue
             content = render_to_string("wiki_feed/header.wml", {"feed_template": page["feed"]["template"]})
-            for page_details in page["data"]:
+            for page_details in page_data:
                 rank_info = page_details["ds_rank"]
                 modules = (info for info in rank_info.items() if info[0] != "rank")
                 sorted_modules = sorted(modules, key=lambda item: float(item[1]["rank"]), reverse=True)
