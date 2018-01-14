@@ -425,6 +425,7 @@ class WikiFeedPublishCommunity(Community):
         for page in out.individual_set.iterator():
             page_data = page.properties.get("data", None)
             if page_data is None:
+                page.delete()
                 continue
             content = render_to_string("wiki_feed/header.wml", {"feed_template": page["feed"]["template"]})
             for page_details in page_data:
