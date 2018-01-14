@@ -1,3 +1,5 @@
+# TODO: fix GH-82 to make the Category similarity work and GH-83 to make it useful
+
 from itertools import islice
 from collections import OrderedDict
 
