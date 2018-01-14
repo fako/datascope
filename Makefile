@@ -35,4 +35,4 @@ test:
 	./manage.py test --settings=datascope.settings_test $(filter)
 
 grow-feed-wiki-labs:
-	jsub -l release=trusty -mem 2048m commands/grow.sh
+	jsub -l release=trusty -mem 3072m commands/grow.sh
