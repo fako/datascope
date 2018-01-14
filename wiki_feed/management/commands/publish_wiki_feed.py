@@ -3,7 +3,7 @@ from datetime import date, datetime, timedelta
 from core.management.commands.grow_community import Command as GrowCommand
 from core.utils.configuration import DecodeConfigAction
 from sources.models import WikipediaTransclusions, WikipediaRevisions
-from wiki_feed.models import WikiFeedCommunity
+from wiki_feed.models import WikiFeedPublishCommunity
 
 
 class Command(GrowCommand):
@@ -15,6 +15,7 @@ class Command(GrowCommand):
 
     @staticmethod
     def clear_database():
+        WikiFeedPublishCommunity.objects.all().delete()
         WikipediaTransclusions.objects.all().delete()
         WikipediaRevisions.objects.all().delete()
 
