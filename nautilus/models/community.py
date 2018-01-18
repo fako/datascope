@@ -6,6 +6,8 @@ from django.conf import settings
 
 from core.models.organisms import Community
 
+from nautilus.locafora import get_product
+
 
 class LocaforaOrderOverviewCommunity(Community):
 
@@ -48,14 +50,11 @@ class LocaforaOrderOverviewCommunity(Community):
                 if quantity == 0:
                     continue
                 price = Decimal(order_line["price"]).quantize(Decimal('.01'))
-                product = order_line["title"].lower().strip()
-                if product.startswith("bio"):
-                    product = " ".join(product.split(" ")[1:]).strip()
                 clean_order_lines.append({
                     "customer": customer.properties["first_name"].strip(),
-                    "product": product,
-                    "price": price,
                     "quantity": quantity,
+                    "product": get_product(order_line["title"]),
+                    "price": price,
                     "total": price * quantity,
                     "unit": order_line["unit"]
                 })

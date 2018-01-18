@@ -29,5 +29,5 @@ class Command(GrowCommand):
         if result.empty:
             print("No orders to process")
             return
-        result.sort_values("product", inplace=True)
-        result.to_csv('alfabetische-lijst.csv')
+        result.sort_values(["product", "customer"], inplace=True)
+        result[["customer", "quantity", "product", "unit"]].to_csv('alfabetische-lijst.csv')
