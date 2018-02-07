@@ -2,6 +2,8 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 # noinspection PyUnresolvedReferences
 from six.moves import range
 
+import os
+
 from PIL import Image
 
 from django.core.files.storage import default_storage
@@ -163,6 +165,19 @@ class ImageGrid(object):
 
     def fill_from_src(self, sources):
         pass
+
+    def fill_from_directory(self, directory):
+        images = []
+        for directory_file in os.scandir(directory):
+            if not directory_file.is_file():
+                continue
+            try:
+                images.append(Image.open(directory_file.path))
+            except IOError:
+                continue
+        if not len(images):
+            raise IOError("Could not read images from directory {}".format(directory))
+        self.fill(images)
 
     def export(self, file_name):
         assert self.images, "Grid is not filled with any images."
