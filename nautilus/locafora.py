@@ -50,7 +50,13 @@ PRODUCT_TRANSLATIONS = {
     "pitloze mix olijven": "olijven, pitloze mix",
     "punt paprika's": "paprika's, punt",
     "rode paprika": "paprika, rode",
-    "zonnezaad brood volkoren - desem - gesneden": "brood, volkoren - desem - gesneden"
+    "zonnezaad brood volkoren - desem - gesneden": "brood, volkoren - desem - gesneden",
+    "bloedsinaasappels, moro": "sinaasappels, bloed, moro",
+    "groene koolrabi van reggy": "koolrabi, groene",
+    "polderhoen kipfilet": "kipfilet, polderhoen",
+    "verse tijm": "tijm, verse",
+    "weekendbroodje: dadel-walnotenbol": "brood, dadel-walnotenbol",
+    "zonnelied brood volkoren - desem - gesneden": "brood volkoren - desem - gesneden"
 }
 
 
