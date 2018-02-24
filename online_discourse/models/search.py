@@ -7,7 +7,7 @@ from online_discourse.configurations.gayrights import SINGULAR_SUBJECTS, PLURAL_
 
 
 def arguing_lexicon_pipeline(nlp):
-    return nlp.tagger, nlp.parser, nlp.entity, ArguingLexiconParser()
+    return nlp.tagger, nlp.parser, nlp.entity, ArguingLexiconParser(lang=nlp.lang)
 
 
 class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):

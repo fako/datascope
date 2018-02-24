@@ -50,25 +50,25 @@ class ArgumentTexts(object):
 
 class ArguingLexiconParser(object):
 
-    MACROS_PATH = "system/data/arguing_lexicon/macros"
-    PATTERNS_PATH = "system/data/arguing_lexicon/patterns"
+    MACROS_PATH = "system/data/arguing_lexicon/{}/macros"
+    PATTERNS_PATH = "system/data/arguing_lexicon/{}/patterns"
 
     MACRO_PATTERN = re.compile("(@[A-Z0-9]+)")
 
     MACROS = {}
     PATTERNS = {}
 
-    def system_check(self):
-        if not os.path.exists(self.MACROS_PATH):
+    def system_check(self, lang):
+        if not os.path.exists(self.MACROS_PATH.format(lang)):
             raise DSSystemConfigError("Trying to load Arguing Lexicon without macros file")
-        if not os.path.exists(self.PATTERNS_PATH):
+        if not os.path.exists(self.PATTERNS_PATH.format(lang)):
             raise DSSystemConfigError("Trying to load Arguing Lexicon without patterns file")
 
-    def load_macros(self):
-        for entry in os.listdir(self.MACROS_PATH):
+    def load_macros(self, lang):
+        for entry in os.listdir(self.MACROS_PATH.format(lang)):
             if not entry.endswith(".tff"):
                 continue
-            with open(self.MACROS_PATH + "/" + entry) as macro_file:
+            with open(self.MACROS_PATH.format(lang) + "/" + entry) as macro_file:
                 for macro_line in macro_file.readlines():
                     # Skip empty lines, class definitions and comments
                     if not macro_line.strip():
@@ -95,11 +95,11 @@ class ArguingLexiconParser(object):
             for preprocessed_pattern in self.compile_pattern(replaced_pattern):
                 yield preprocessed_pattern
 
-    def load_patterns(self):
-        for entry in os.listdir(self.PATTERNS_PATH):
+    def load_patterns(self, lang):
+        for entry in os.listdir(self.PATTERNS_PATH.format(lang)):
             if not entry.endswith(".tff"):
                 continue
-            with open(self.PATTERNS_PATH + "/" + entry) as patterns_file:
+            with open(self.PATTERNS_PATH.format(lang) + "/" + entry) as patterns_file:
                 pattern_class = None
                 for pattern_line in patterns_file.readlines():
                     # Skip empty lines and comments
@@ -124,11 +124,11 @@ class ArguingLexiconParser(object):
                 if match is not None:
                     yield arguing_label, match
 
-    def __init__(self):
+    def __init__(self, lang="en"):
         super().__init__()
-        self.system_check()
-        self.load_macros()
-        self.load_patterns()
+        self.system_check(lang)
+        self.load_macros(lang)
+        self.load_patterns(lang)
 
     def __call__(self, doc):
         doc.user_data["arguments"] = ArgumentTexts(self, doc)
