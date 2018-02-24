@@ -27,16 +27,17 @@ class ArgumentTexts(object):
             if start_token_index is None and start_char_index < token_end:
                 start_token_index = token.i
                 continue
-            elif end_token_index is None and end_char_index < token_end:
-                end_token_index = token.i
+            if end_token_index is None and end_char_index <= token_end:
+                end_token_index = token.i + 1
                 break
         else:
-            log.warn("Could not create Span for match {}:{} indexed as {}:{} in following document:\n\n{}".format(
-                start_char_index, end_char_index,
-                start_token_index, end_token_index,
-                self.doc.text
-            ))
-            return
+            raise Exception(
+                "Could not create Span for match {}:{} indexed as {}:{} in following document:\n\n{}".format(
+                    start_char_index, end_char_index,
+                    start_token_index, end_token_index,
+                    self.doc.text
+                )
+            )
         return Span(self.doc, start_token_index, end_token_index, self.doc.vocab.strings[label])
 
     def get_argument_spans(self):
