@@ -45,30 +45,6 @@ class CrossCombineTermSearchCommunity(Community):
             },
             "schema": {},
             "errors": {},
-        }),
-        ("wizenoze", {
-            "process": "HttpResourceProcessor.submit_mass",
-            "input": "@search",
-            "contribute": "Update:ExtractProcessor.extract_from_resource",
-            "output": "@search",
-            "config": {
-                "_args": [],
-                "_kwargs": {
-                    "url": "$.url",
-                    "languageCode": "en"
-                },
-                "_resource": "ComplexityAnalysis",
-                "_objective": {
-                    "@": "$",
-                    "url": "$.metadata.url",
-                    "audience": "$.classification.audience",
-                    "document": "$.contentMetadata.documentStats",
-                    "audience_probabilities": "$.complexity.audienceProbabilities"
-                },
-                "_update_key": "url"
-            },
-            "schema": {},
-            "errors": {},
         })
     ])
 
