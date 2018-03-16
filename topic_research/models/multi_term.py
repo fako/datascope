@@ -68,7 +68,10 @@ class CrossCombineTermSearchCommunity(Community):
                 properties={
                     "terms": "+".join(terms),
                     "query": " AND ".join(
-                        ['"{}"'.format(term) for term in terms]
+                        [
+                            '"{}"'.format(term) if not term.startswith("~") else term
+                            for term in terms
+                        ]
                     ),
                     "quantity": 10
                 }
