@@ -6,10 +6,6 @@ from topic_research.models import CrossCombineTermSearchCommunity
 from online_discourse.configurations.surveillance_laws import SINGULAR_SUBJECTS, PLURAL_SUBJECTS, DESCRIPTIVE_ADJECTIVES
 
 
-def arguing_lexicon_pipeline(nlp):
-    return nlp.tagger, nlp.parser, nlp.entity, ArguingLexiconParser(lang=nlp.lang)
-
-
 class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
 
     COMMUNITY_BODY = [
@@ -28,16 +24,17 @@ class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
         )
 
     def finish_download(self, out, err):
-        nlp = spacy.load('nl', create_pipeline=arguing_lexicon_pipeline)
+
+        nlp = spacy.load('nl_core_news_sm')
+        nlp.add_pipe(ArguingLexiconParser(lang=nlp.lang))
+
         for individual in out.individual_set.iterator():
             argument_count = 0
             sents_count = 0
             for paragraph_group in individual.properties.get("paragraph_groups", []):
-                for paragraph in paragraph_group:
-                    doc = nlp(paragraph)
+                for doc in nlp.pipe(paragraph_group):
                     sents_count += len(list(doc.sents))
-                    arguments = doc.user_data.get("arguments")
-                    argument_spans = list(arguments.get_argument_spans())
+                    argument_spans = list(doc._.arguments.get_argument_spans())
                     argument_count += len(argument_spans)
             if sents_count:
                 individual.properties["argument_score"] = argument_count / sents_count

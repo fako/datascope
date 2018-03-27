@@ -12,7 +12,11 @@ beautifulsoup4==4.6.0
 numpy==1.13.1
 pandas==0.20.3
 humanize==0.5.1
-spacy==1.9.0
+spacy==2.0.10
+
+# SpaCy language models
+https://github.com/explosion/spacy-models/releases/download/en_core_web_md-2.0.0/en_core_web_md-2.0.0.tar.gz
+https://github.com/explosion/spacy-models/releases/download/nl_core_news_sm-2.0.0/nl_core_news_sm-2.0.0.tar.gz
 
 # Celery plugins
 django-celery-results==1.0.1

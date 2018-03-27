@@ -2,7 +2,7 @@ import os
 import re
 import logging
 
-from spacy.tokens import Span
+from spacy.tokens import Doc, Span
 
 from core.exceptions import DSSystemConfigError
 
@@ -12,9 +12,18 @@ log = logging.getLogger("datascope")
 
 class ArgumentTexts(object):
 
-    def __init__(self, parser, doc):
+    def __init__(self, parser):
         self.parser = parser
+
+    def __call__(self, doc):
         self.doc = doc
+        return self
+
+    def get_label_hash(self, label):
+        # When dealing with languages other than English the label might not exist yet
+        if label not in self.doc.vocab.strings:
+            self.doc.vocab.strings.add(label)
+        return self.doc.vocab.strings[label]
 
     def create_span_from_match(self, match, label):
         token_end = -1
@@ -37,7 +46,7 @@ class ArgumentTexts(object):
                     self.doc.text
                 )
             )
-        return Span(self.doc, start_token_index, end_token_index, self.doc.vocab.strings[label])
+        return Span(self.doc, start_token_index, end_token_index, self.get_label_hash(label))
 
     def get_argument_spans(self):
         for argument_label, argument_match in self.parser.get_arguing_matches(self.doc):
@@ -128,6 +137,8 @@ class ArguingLexiconParser(object):
         self.system_check(lang)
         self.load_macros(lang)
         self.load_patterns(lang)
+        Doc.set_extension('arguments', getter=ArgumentTexts(self))
 
     def __call__(self, doc):
-        doc.user_data["arguments"] = ArgumentTexts(self, doc)
+        # All parsing is lazy
+        return doc
