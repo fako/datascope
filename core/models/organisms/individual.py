@@ -125,5 +125,10 @@ class Individual(Organism):
         return self.properties.values()
 
     def clean(self):
+        # Always influence first!
         if self.collective:
             self.collective.influence(self)
+        # After influence check integrity
+        identity_max_length = Individual._meta.get_field('identity').max_length
+        if self.identity and len(self.identity) > identity_max_length:
+            self.identity = self.identity[:identity_max_length]
