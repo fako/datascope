@@ -21,12 +21,11 @@ class ArgumentTexts(object):
         start_token_index = None
         end_token_index = None
         start_char_index = match.start()
-        end_char_index = match.end()
+        end_char_index = match.end() if self.doc.text[-1].isspace() else match.end() - 1
         for token in self.doc:
             token_end += len(token.text_with_ws)
             if start_token_index is None and start_char_index < token_end:
                 start_token_index = token.i
-                continue
             if end_token_index is None and end_char_index <= token_end:
                 end_token_index = token.i + 1
                 break
