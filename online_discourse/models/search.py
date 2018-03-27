@@ -3,7 +3,7 @@ import spacy
 from core.utils.text import ArguingLexiconParser
 
 from topic_research.models import CrossCombineTermSearchCommunity
-from online_discourse.configurations.gayrights import SINGULAR_SUBJECTS, PLURAL_SUBJECTS, DESCRIPTIVE_ADJECTIVES
+from online_discourse.configurations.surveillance_laws import SINGULAR_SUBJECTS, PLURAL_SUBJECTS, DESCRIPTIVE_ADJECTIVES
 
 
 def arguing_lexicon_pipeline(nlp):
@@ -28,7 +28,7 @@ class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
         )
 
     def finish_download(self, out, err):
-        nlp = spacy.load('en', create_pipeline=arguing_lexicon_pipeline)
+        nlp = spacy.load('nl', create_pipeline=arguing_lexicon_pipeline)
         for individual in out.individual_set.iterator():
             argument_count = 0
             sents_count = 0
