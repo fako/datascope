@@ -22,7 +22,8 @@ class CrossCombineTermSearchCommunity(Community):
                     "title": "$.title",
                     "url": "$.link"
                 },
-                "_continuation_limit": 10
+                "_continuation_limit": 10,
+                "_interval_duration": 1000
             },
             "schema": {},
             "errors": {},
