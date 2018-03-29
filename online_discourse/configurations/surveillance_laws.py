@@ -28,16 +28,10 @@ SINGULAR_SUBJECTS = [
     "aftapwet",
     "wet op de inlichtingen en veiligheidsdiensten",
     "inlichtingenwet",
-
-    *[service + "dienst" for service in services],
     "terrorist",
-    *["terrorisme " + measure for measure in measures],
     "crimineel",
-    *["criminaliteit " + measure for measure in measures],
     "burger",
-    *[adj + "burger" for adj in innocent],
     "persoon",
-    *[adj + "persoon" for adj in innocent],
 
     "onafhankelijke commissie",
     "de staat",
@@ -50,22 +44,28 @@ SINGULAR_SUBJECTS = [
     "cyberwarfare",
     "bevolkingsgroep",
     "minderheid",
-]
+
+] + \
+[service + "dienst" for service in services] + \
+["terrorisme " + measure for measure in measures] + \
+["criminaliteit " + measure for measure in measures] + \
+[adj + "burger" for adj in innocent] + \
+[adj + "persoon" for adj in innocent]
 
 PLURAL_SUBJECTS = [
-    *[service + "dienst" for service in services],
     "terroristen",
-    *["terrorisme " + measure for measure in measures],
     "criminelen",
-    *["criminaliteit " + measure for measure in measures],
     "burgers",
-    *[adj + "burgers" for adj in innocent],
     "personen",
-    *[adj + "personen" for adj in innocent],
     "syrische strijder",
     "bevolkingsgroep",
     "minderheden",
-]
+] + \
+[service + "dienst" for service in services] + \
+["terrorisme " + measure for measure in measures] + \
+["criminaliteit " + measure for measure in measures] + \
+[adj + "burgers" for adj in innocent] + \
+[adj + "personen" for adj in innocent]
 
 DESCRIPTIVE_ADJECTIVES = [
     "inlichtingen",
