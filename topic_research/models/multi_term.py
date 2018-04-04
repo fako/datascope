@@ -51,6 +51,12 @@ class CrossCombineTermSearchCommunity(Community):
 
     COMMUNITY_BODY = [
         {
+            "process": "FilterProcessor.distinct",
+            "config": {
+                "distinct_key": "url"
+            }
+        },
+        {
             "process": "RankProcessor.score",
             "config": {
                 "result_size": 60,
