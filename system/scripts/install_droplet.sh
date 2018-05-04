@@ -91,6 +91,8 @@ nginx -s reload
 
 # Setup firewall
 ufw allow ssh/tcp
+ufw allow 80/tcp
+ufw allow 443/tcp
 ufw logging on
 ufw enable
 
