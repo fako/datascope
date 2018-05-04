@@ -36,6 +36,7 @@ class RankProcessor(Processor):
                 batch = []
             batch.append(individual)
 
+        flush_batch(batch, self.config.result_size)
         return islice(merge_iter(*results, key=sort_key, reversed=True), self.config.result_size)
 
     def get_hook_arguments(self, individual):

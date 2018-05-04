@@ -80,6 +80,9 @@ class TestRankProcessor(TestCase):
             self.assert_rank_details(rank_detail, modules)
         return ranking
 
+    def test_ranking_with_score(self):
+        self.skipTest("not tested")  # TODO: make sure that partial batches work
+
     def test_ranking_with_one_hook(self):
         instance = MockRankProcessor({
             "result_size": 2,
