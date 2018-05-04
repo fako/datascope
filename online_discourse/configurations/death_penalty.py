@@ -3,6 +3,7 @@ SINGULAR_SUBJECTS = [
     "crimineel",
     "veroordeelde",
     "moordenaar",
+    "bankier",
     "serie moordenaar",
     "pedofiel",
     "psychopaat",
@@ -26,6 +27,7 @@ PLURAL_SUBJECTS = [
     "criminelen",
     "veroordeelden",
     "moordenaars",
+    "bankiers"
     "serie moordenaars",
     "pedofielen",
     "psychopaten",

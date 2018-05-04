@@ -3,8 +3,8 @@ import spacy
 from core.utils.text import ArguingLexiconParser
 
 from topic_research.models import CrossCombineTermSearchCommunity
-from online_discourse.configurations.surveillance_laws import SINGULAR_SUBJECTS, PLURAL_SUBJECTS, DESCRIPTIVE_ADJECTIVES
-
+#from online_discourse.configurations.surveillance_laws import SINGULAR_SUBJECTS, PLURAL_SUBJECTS, DESCRIPTIVE_ADJECTIVES
+from online_discourse.configurations.death_penalty import SINGULAR_SUBJECTS, PLURAL_SUBJECTS, DESCRIPTIVE_ADJECTIVES
 
 class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
 
