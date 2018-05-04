@@ -38,7 +38,7 @@ def override_dict(parent, child):  # TODO: test to unlock
     return dict(parent.copy(), **child)
 
 
-def merge_iter(*iterables, **kwargs):  # TODO: test to unlock
+def merge_iter(*iterables, **kwargs):  # TODO: test to unlock, works bad with empty iterables (don't flush RankProcessor.score at end for instance)
     """
     Given a set of reversed sorted iterables, yield the next value in merged order
     Takes an optional `key` callable to compare values by.
