@@ -1,5 +1,3 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
 from copy import copy
 
 from core.exceptions import DSInvalidResource
@@ -11,7 +9,7 @@ class GoogleImage(GoogleQuery):
     URI_TEMPLATE = 'https://www.googleapis.com/customsearch/v1?q="{}"'
     PARAMETERS = {
         "searchType": "image",
-        "cr": None  # set at runtime if present
+        "cr": ""  # set at runtime if present
     }
     GET_SCHEMA = {
         "args": {
@@ -21,9 +19,16 @@ class GoogleImage(GoogleQuery):
                     "type": "string",  # the query string
                 },
                 {
-                    "type": "string",  # example: countryXX
-                    "maxLength": 9,
-                    "minLength": 9
+                    "anyOf": [
+                        {
+                            "type": "string",  # example: countryXX
+                            "maxLength": 9,
+                            "minLength": 9
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ]
                 },
                 {
                     "type": "integer",  # amount of desired images
@@ -45,7 +50,11 @@ class GoogleImage(GoogleQuery):
 
     def parameters(self, **kwargs):
         params = copy(self.PARAMETERS)
-        params["cr"] = kwargs.get("country")
+        country = kwargs.get("country", "")
+        if not country:
+            del params["cr"]
+        else:
+            params["cr"] = country
         return params
 
     def auth_parameters(self):
@@ -71,11 +80,11 @@ class GoogleImage(GoogleQuery):
         content_type, data = super(GoogleImage, self).content
         missing_quantity = self.request["quantity"] - 10
         try:
-            nextData = data["queries"]["nextPage"][0]
+            next_data = data["queries"]["nextPage"][0]
         except KeyError:
             return {}
         return {
-            "start": nextData["startIndex"],
+            "start": next_data["startIndex"],
             "quantity": missing_quantity
         }
 

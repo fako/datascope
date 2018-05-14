@@ -76,7 +76,8 @@ INSTALLED_APPS = (
     'topic_research',
     'online_discourse',
     'nautilus',
-    'trolls'
+    'trolls',
+    'setup_utrecht'
 )
 
 DATABASE_TYPES = {
