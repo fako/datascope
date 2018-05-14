@@ -43,7 +43,14 @@ class WebTextResource(URLResource):
                 processed_paragraphs.add(candidate_hash)
                 continue
 
-            paragraph_group_texts = [paragraph_candidate.get_text()]
+            try:
+                paragraph_group_texts = [paragraph_candidate.get_text()]
+            except AttributeError:
+                # html5lib bug: https://bugs.launchpad.net/beautifulsoup/+bug/1184417
+                # switching to lxml not an option because it causes its own problems with broken (webby) pages
+                # ignoring this p
+                continue
+
             processed_paragraphs.add(candidate_hash)
             for candidate_sibling in candidate_siblings:
                 paragraph_group_texts.append(candidate_sibling.get_text())
