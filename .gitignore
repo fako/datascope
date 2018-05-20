@@ -7,6 +7,7 @@ dump.rdb
 *.db
 *.csv
 db-dump.*.json
+*.sql
 
 system/docs/_build/
 system/coverage/
