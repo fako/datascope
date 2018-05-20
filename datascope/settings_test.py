@@ -24,5 +24,6 @@ MIGRATION_MODULES = {
     'topic_research': None,
     'online_discourse': None,
     'nautilus': None,
-    'trolls': None
+    'trolls': None,
+    'setup_utrecht': None,
 }
