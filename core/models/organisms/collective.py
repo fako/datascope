@@ -130,6 +130,27 @@ class Collective(Organism):  # TODO: rename to family
         json_content = [ind.json_content for ind in self.individual_set.all()]
         return "[{}]".format(",".join(json_content))
 
+    def split(self, train=0.8, validate=0.1, test=0.1, query_set=None, as_content=False):  # TODO: test to unlock
+        assert train + validate + test == 1.0, "Expected sum of train, validate and test to be 1"
+        assert train > 0, "Expected train set to be bigger than 0"
+        assert validate > 0, "Expected validate set to be bigger than 0"
+        query_set = query_set or self.individual_set
+        content_count = query_set.count()
+        # TODO: take into account that random ordering in MySQL is a bad idea
+        # Details: http://www.titov.net/2005/09/21/do-not-use-order-by-rand-or-how-to-get-random-rows-from-table/
+        individuals = query_set.order_by("?").iterator()
+        test_set = []
+        if test:
+            test_size = round(content_count * test)
+            test_set = [next(individuals) for ix in range(0, test_size)]
+        validate_size = round(content_count * validate)
+        validate_set = [next(individuals) for ix in range(0, validate_size)]
+        return (
+            (individual.content if as_content else individual for individual in individuals),
+            [individual.content if as_content else individual for individual in validate_set],
+            [individual.content if as_content else individual for individual in test_set]
+        )
+
     def output(self, *args):
         if len(args) > 1:
             return map(self.output, args)

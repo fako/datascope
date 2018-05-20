@@ -155,6 +155,9 @@ class TestCollective(TransactionTestCase):
             "JSON content did not meet expectation. Is get_json inside json_field.fields patched properly??"
         )
 
+    def test_split_content(self):
+        self.skipTest("not tested")
+
     def test_group_by(self):
         groups = self.instance2.group_by("country")
         for country, individuals in groups.items():
