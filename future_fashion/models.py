@@ -170,7 +170,7 @@ class FutureFashionCommunity(Community):
 
     def sort_downloads_by_tags(self, collective):
         train, validate, test = collective.split(as_content=True)
-        for data_type, data_set in [("train", train), ("validate", validate), ("test", test)]:
+        for data_type, data_set in [("train", train), ("valid", validate), ("test", test)]:
             sorter = ImageDownloadSorter(
                 source_base=default_storage.location,
                 destination_base=os.path.join(default_storage.location, self.signature, data_type),
@@ -194,7 +194,7 @@ class FutureFashionCommunity(Community):
             query_set=collective.individual_set.filter(identity__in=brands),
             as_content=True
         )
-        for data_type, data_set in [("train", train), ("validate", validate), ("test", test)]:
+        for data_type, data_set in [("train", train), ("valid", validate), ("test", test)]:
             sorter = ImageDownloadSorter(
                 source_base=default_storage.location,
                 destination_base=os.path.join(default_storage.location, self.signature, data_type),
