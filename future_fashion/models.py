@@ -1,12 +1,13 @@
 import os
-import shutil
 from collections import OrderedDict
 from itertools import islice
+
+import pandas as pd
 
 from django.core.files.storage import default_storage
 
 from core.models.organisms import Community, Collective, Individual
-from sources.models import ImageDownload
+from sources.models.downloads import ImageDownload, ImageDownloadSorter
 
 
 TARGET_LISTINGS = [
@@ -165,25 +166,42 @@ class FutureFashionCommunity(Community):
 
     def finish_download(self, out, err):
         items_growth = self.get_growth("items")
-        for item in items_growth.output.individual_set.iterator():
-            image_uri = ImageDownload.uri_from_url(item["image"])
-            try:
-                download = ImageDownload.objects.get(uri=image_uri)
-            except ImageDownload.DoesNotExist:
-                continue
-            if not download.success:
-                continue
-            group_category = item["tags"][0]
-            item_category = item["tags"][2]
-            os.makedirs(os.path.join(
-                default_storage.location,
-                self.signature,
-                group_category, item_category
-            ), exist_ok=True)
-            shutil.copy2(
-                os.path.join(default_storage.location, download.body),
-                os.path.join(default_storage.location, self.signature, group_category, item_category)
+        self.sort_downloads_by_tags(items_growth.output)
+
+    def sort_downloads_by_tags(self, collective):
+        train, validate, test = collective.split(as_content=True)
+        for data_type, data_set in [("train", train), ("validate", validate), ("test", test)]:
+            sorter = ImageDownloadSorter(
+                source_base=default_storage.location,
+                destination_base=os.path.join(default_storage.location, self.signature, data_type),
+                url_key="image",
+                destination_lambda=lambda file_: os.path.join(file_["tags"][0], file_["tags"][1])
             )
+            sorter(data_set)
+
+    def sort_downloads_by_brand(self, collective):
+        # Updates the collective to be identified through "brand"
+        if collective.identifier != "brand":
+            collective.identifier = "brand"
+            collective.save()
+            collective.update(collective.individual_set.iterator(), validate=False, reset=False)
+        # Calculate which brands are significant to train on
+        df = pd.DataFrame.from_records(collective.content)
+        brand_counts = df["brand"].value_counts()
+        brands = [brand for brand, count in brand_counts.items() if count >= 300 and brand]
+        # Split data and sort files by type and brand
+        train, validate, test = collective.split(
+            query_set=collective.individual_set.filter(identity__in=brands),
+            as_content=True
+        )
+        for data_type, data_set in [("train", train), ("validate", validate), ("test", test)]:
+            sorter = ImageDownloadSorter(
+                source_base=default_storage.location,
+                destination_base=os.path.join(default_storage.location, self.signature, data_type),
+                url_key="image",
+                destination_lambda=lambda file_: file_["brand"]
+            )
+            sorter(data_set)
 
     def set_kernel(self):
         self.kernel = self.growth_set.filter(type="items").last().output
