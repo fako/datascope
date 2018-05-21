@@ -188,7 +188,7 @@ class FutureFashionCommunity(Community):
         # Calculate which brands are significant to train on
         df = pd.DataFrame.from_records(collective.content)
         brand_counts = df["brand"].value_counts()
-        brands = [brand for brand, count in brand_counts.items() if count >= 300 and brand]
+        brands = [brand for brand, count in brand_counts.items() if count >= 400 and brand]
         # Split data and sort files by type and brand
         train, validate, test = collective.split(
             query_set=collective.individual_set.filter(identity__in=brands),
