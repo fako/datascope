@@ -3,8 +3,8 @@ import spacy
 from core.utils.text import ArguingLexiconParser
 
 from topic_research.models import CrossCombineTermSearchCommunity
-#from online_discourse.configurations.surveillance_laws import SINGULAR_SUBJECTS, PLURAL_SUBJECTS, DESCRIPTIVE_ADJECTIVES
-from online_discourse.configurations.death_penalty import SINGULAR_SUBJECTS, PLURAL_SUBJECTS, DESCRIPTIVE_ADJECTIVES
+from online_discourse.discourse import configurations
+
 
 class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
 
@@ -18,14 +18,24 @@ class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
         }
     ]
 
+    SPACY_PACKAGES = {
+        "en": "en_core_web_md",
+        "nl": "nl_core_news_sm"
+    }
+
+    PUBLIC_CONFIG = {
+        "language": "en"
+    }
+
     def initial_input(self, *args):
+        configuration = getattr(configurations, self.config.topic)
         return super(DiscourseSearchCommunity, self).initial_input(
-            SINGULAR_SUBJECTS + PLURAL_SUBJECTS, DESCRIPTIVE_ADJECTIVES
+            configuration.singular_subjects + configuration.plural_subjects, configuration.descriptive_adjectives
         )
 
     def finish_download(self, out, err):
 
-        nlp = spacy.load('nl_core_news_sm')
+        nlp = spacy.load(self.SPACY_PACKAGES[self.config.language])
         nlp.add_pipe(ArguingLexiconParser(lang=nlp.lang))
 
         for individual in out.individual_set.iterator():

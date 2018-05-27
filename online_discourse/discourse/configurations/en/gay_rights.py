@@ -1,3 +1,6 @@
+from online_discourse.discourse import DiscourseConfiguration
+
+
 SINGULAR_SUBJECTS = [
     "homosexual",
     "gay",
@@ -71,3 +74,10 @@ DESCRIPTIVE_ADJECTIVES = [
     "hand in hand"
 
 ]
+
+gay_rights = DiscourseConfiguration(
+    language="en",
+    singular_subjects=SINGULAR_SUBJECTS,
+    plural_subjects=PLURAL_SUBJECTS,
+    descriptive_adjectives=DESCRIPTIVE_ADJECTIVES
+)

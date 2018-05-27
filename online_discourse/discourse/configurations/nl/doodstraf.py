@@ -1,3 +1,6 @@
+from online_discourse.discourse import DiscourseConfiguration
+
+
 SINGULAR_SUBJECTS = [
     "doodstraf",
     "crimineel",
@@ -83,3 +86,10 @@ DESCRIPTIVE_ADJECTIVES = [
     "rechten van de mens",
     "harde aanpak",
 ]
+
+doodstraf = DiscourseConfiguration(
+    language="nl",
+    singular_subjects=SINGULAR_SUBJECTS,
+    plural_subjects=PLURAL_SUBJECTS,
+    descriptive_adjectives=DESCRIPTIVE_ADJECTIVES
+)

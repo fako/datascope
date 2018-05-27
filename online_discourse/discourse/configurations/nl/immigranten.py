@@ -1,3 +1,6 @@
+from online_discourse.discourse import DiscourseConfiguration
+
+
 SINGULAR_SUBJECTS = [
     # Actualiteiten
     "oorlog slachtoffer",
@@ -255,3 +258,10 @@ DESCRIPTIVE_ADJECTIVES = [
     "achtergrond",
     "afkomst"
 ]
+
+immigranten = DiscourseConfiguration(
+    language="nl",
+    singular_subjects=SINGULAR_SUBJECTS,
+    plural_subjects=PLURAL_SUBJECTS,
+    descriptive_adjectives=DESCRIPTIVE_ADJECTIVES
+)

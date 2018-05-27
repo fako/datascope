@@ -1,3 +1,6 @@
+from online_discourse.discourse import DiscourseConfiguration
+
+
 measures = [
     "bestrijden",
     "tegengaan",
@@ -110,3 +113,10 @@ DESCRIPTIVE_ADJECTIVES = [
     "terroristische",
     "criminele",
 ]
+
+wiv = DiscourseConfiguration(
+    language="nl",
+    singular_subjects=SINGULAR_SUBJECTS,
+    plural_subjects=PLURAL_SUBJECTS,
+    descriptive_adjectives=DESCRIPTIVE_ADJECTIVES
+)
