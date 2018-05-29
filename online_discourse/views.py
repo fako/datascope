@@ -1,5 +1,5 @@
 from django.core.mail import mail_managers
-from rest_framework import generics
+from rest_framework import generics, throttling
 
 from core.views.community import HtmlCommunityView
 from online_discourse.models.orders import DiscourseOrderSerializer
@@ -18,8 +18,13 @@ class SearchDumpCommunityView(HtmlCommunityView):
         return data
 
 
+class AnonDiscourseOrderThrottle(throttling.AnonRateThrottle):
+    rate = "24/day"
+
+
 class CreateDiscourseOrder(generics.CreateAPIView):
     serializer_class = DiscourseOrderSerializer
+    throttle_classes = [AnonDiscourseOrderThrottle]
 
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
