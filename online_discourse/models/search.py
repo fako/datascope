@@ -28,7 +28,7 @@ class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
     }
 
     def initial_input(self, *args):
-        configuration = getattr(configurations, self.config.topic)
+        configuration = getattr(configurations, args[0])
         return super(DiscourseSearchCommunity, self).initial_input(
             configuration.singular_subjects + configuration.plural_subjects, configuration.descriptive_adjectives
         )

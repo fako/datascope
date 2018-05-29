@@ -92,7 +92,7 @@ DESCRIPTIVE_ADJECTIVES = [
     "hard approach",
 ]
 
-doodstraf = DiscourseConfiguration(
+death_penalty = DiscourseConfiguration(
     language="en",
     singular_subjects=SINGULAR_SUBJECTS,
     plural_subjects=PLURAL_SUBJECTS,
