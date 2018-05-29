@@ -2,7 +2,7 @@ from django.conf.urls import url
 
 from core.views.community import CommunityView
 from online_discourse.models import DiscourseSearchCommunity
-from online_discourse.views import SearchDumpCommunityView
+from online_discourse.views import SearchDumpCommunityView, CreateDiscourseOrder
 
 
 urlpatterns = [
@@ -17,5 +17,10 @@ urlpatterns = [
         SearchDumpCommunityView.as_view(),
         kwargs={"community_class": DiscourseSearchCommunity},
         name=DiscourseSearchCommunity.get_name() + "_html"
+    ),
+    url(
+        r'^discourse-search/order/?$',
+        CreateDiscourseOrder.as_view(),
+        name=DiscourseSearchCommunity.get_name() + "_order"
     ),
 ]
