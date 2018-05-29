@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('online_discourse', '0002_discourseorder'),
+        ('online_discourse', '0001_initial'),
     ]
 
     operations = [
