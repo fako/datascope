@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.db.models import QuerySet
 
 from datascope.configuration import MOCK_CONFIGURATION
-from core.processors.manifest import ManifestProcessor
+from core.processors import ManifestProcessor
 from core.utils.configuration import ConfigurationType
 from core.tests.mocks.celery import (MockTask, MockAsyncResultSuccess, MockAsyncResultPartial, MockAsyncResultError,
                                      MockAsyncResultWaiting)
@@ -39,21 +39,21 @@ class TestManifestProcessor(TestCase):
         self.assertIsInstance(kwargs["config"], dict)
         self.assertTrue(kwargs["config"].get("_community"))
 
-    @patch('core.processors.manifest.AsyncResult', return_value=MockAsyncResultSuccess)
+    @patch('core.processors.resources.base.AsyncResult', return_value=MockAsyncResultSuccess)
     def test_async_results_success(self, async_result):
         scc, err = self.prc.async_results("result-id")
         async_result.assert_called_once_with("result-id")
         self.assertEqual(scc, [1, 2, 3])
         self.assertEqual(err, [])
 
-    @patch('core.processors.manifest.AsyncResult', return_value=MockAsyncResultPartial)
+    @patch('core.processors.resources.base.AsyncResult', return_value=MockAsyncResultPartial)
     def test_async_results_partial(self, async_result):
         scc, err = self.prc.async_results("result-id")
         async_result.assert_called_once_with("result-id")
         self.assertEqual(scc, [1, 2, 3])
         self.assertEqual(err, [4, 5])
 
-    @patch('core.processors.manifest.AsyncResult', return_value=MockAsyncResultWaiting)
+    @patch('core.processors.resources.base.AsyncResult', return_value=MockAsyncResultWaiting)
     def test_async_results_waiting(self, async_result):
         try:
             self.prc.async_results("result-id")
@@ -62,7 +62,7 @@ class TestManifestProcessor(TestCase):
             pass
         async_result.assert_called_once_with("result-id")
 
-    @patch('core.processors.manifest.AsyncResult', return_value=MockAsyncResultError)
+    @patch('core.processors.resources.base.AsyncResult', return_value=MockAsyncResultError)
     def test_async_results_error(self, async_result):
         try:
             self.prc.async_results("result-id")
@@ -104,7 +104,7 @@ class TestManifestProcessor(TestCase):
         self.assertEqual(scc.count(), 0)
         self.assertEqual(err.count(), 2)
 
-    @patch("core.processors.manifest.manifest")
+    @patch("core.processors.resources.manifest.manifest")
     def test_manifest_from_individuals(self, manifest):
         self.prc.config = {
             "args": ["$.context"],
