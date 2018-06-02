@@ -130,7 +130,7 @@ class TestGrowth(TestProcessorMixin):
         except AssertionError:
             pass
 
-    @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultPartial)
+    @patch('core.processors.resources.base.AsyncResult', return_value=MockAsyncResultPartial)
     def test_finish_with_errors(self, async_result):
         output, errors = self.processing.finish("result")
         self.assertTrue(async_result.called)
@@ -142,7 +142,7 @@ class TestGrowth(TestProcessorMixin):
         self.assertIsInstance(errors[0], HttpResourceMock)
         self.assertEqual([resource.id for resource in self.processing.resources], [error.id for error in errors])
 
-    @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultSuccess)
+    @patch('core.processors.resources.base.AsyncResult', return_value=MockAsyncResultSuccess)
     def test_finish_without_errors(self, async_result):
         output, errors = self.processing.finish("result")
         self.assertTrue(async_result.called)
@@ -152,7 +152,7 @@ class TestGrowth(TestProcessorMixin):
         self.assertEqual(len(errors), 0)
         self.assertEqual(self.processing.resources.count(), 0)
 
-    @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultError)
+    @patch('core.processors.resources.base.AsyncResult', return_value=MockAsyncResultError)
     def test_finish_error(self, async_result):
         try:
             self.processing.finish("result")
@@ -163,7 +163,7 @@ class TestGrowth(TestProcessorMixin):
         self.assertFalse(self.processing.is_finished)
         self.assertEqual(self.processing.state, GrowthState.ERROR)
 
-    @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultSuccess)
+    @patch('core.processors.resources.base.AsyncResult', return_value=MockAsyncResultSuccess)
     def test_finish_finished_and_partial(self, async_result):
         output, errors = self.finished.finish("result")
         self.assertFalse(async_result.called)
@@ -185,7 +185,7 @@ class TestGrowth(TestProcessorMixin):
         self.assertEqual(self.finished.resources.count(), 1)
         self.assertEqual([resource.id for resource in self.finished.resources], [error.id for error in errors])
 
-    @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultWaiting)
+    @patch('core.processors.resources.base.AsyncResult', return_value=MockAsyncResultWaiting)
     def test_finish_pending(self, async_result):
         try:
             self.processing.finish("result")
@@ -236,7 +236,7 @@ class TestGrowth(TestProcessorMixin):
         contributions = self.contributing.prepare_contributions(qs)
         self.assertEqual(list(contributions), [])
 
-    @patch('core.processors.resources.AsyncResult')
+    @patch('core.processors.resources.base.AsyncResult')
     def test_none_contribution(self, async_result):
         output, errors = self.contributing.finish(([1, 2, 3], [4, 5],))
         self.assertFalse(async_result.called)
@@ -251,7 +251,7 @@ class TestGrowth(TestProcessorMixin):
         self.assertIsInstance(errors[0], HttpResourceMock)
         self.assertEqual([resource.id for resource in self.contributing.resources], [error.id for error in errors])
 
-    @patch('core.processors.resources.AsyncResult')
+    @patch('core.processors.resources.base.AsyncResult')
     def test_append_contribution(self, async_result):
         self.contributing.contribute = "ExtractProcessor.extract_from_resource"
         self.contributing.contribute_type = "Append"
@@ -269,7 +269,7 @@ class TestGrowth(TestProcessorMixin):
         self.assertIsInstance(errors[0], HttpResourceMock)
         self.assertEqual([resource.id for resource in self.contributing.resources], [error.id for error in errors])
 
-    @patch('core.processors.resources.AsyncResult')
+    @patch('core.processors.resources.base.AsyncResult')
     def test_inline_contribution(self, async_result):
         self.contributing.contribute = "ExtractProcessor.extract_from_resource"
         self.contributing.contribute_type = "Inline"
@@ -290,7 +290,7 @@ class TestGrowth(TestProcessorMixin):
         self.assertIsInstance(errors[0], HttpResourceMock)
         self.assertEqual([resource.id for resource in self.contributing.resources], [error.id for error in errors])
 
-    @patch('core.processors.resources.AsyncResult')
+    @patch('core.processors.resources.base.AsyncResult')
     def test_update_contribution(self, async_result):
         self.contributing.contribute = "ExtractProcessor.extract_from_resource"
         self.contributing.contribute_type = "Update"

@@ -69,21 +69,21 @@ class TestHttpResourceProcessor(TestCase):
         self.assertIsInstance(kwargs["config"], dict)
         self.assertTrue(kwargs["config"].get("_resource"))
 
-    @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultSuccess)
+    @patch('core.processors.resources.base.AsyncResult', return_value=MockAsyncResultSuccess)
     def test_async_results_success(self, async_result):
         scc, err = self.prc.async_results("result-id")
         async_result.assert_called_once_with("result-id")
         self.assertEqual(scc, [1, 2, 3])
         self.assertEqual(err, [])
 
-    @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultPartial)
+    @patch('core.processors.resources.base.AsyncResult', return_value=MockAsyncResultPartial)
     def test_async_results_partial(self, async_result):
         scc, err = self.prc.async_results("result-id")
         async_result.assert_called_once_with("result-id")
         self.assertEqual(scc, [1, 2, 3])
         self.assertEqual(err, [4, 5])
 
-    @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultWaiting)
+    @patch('core.processors.resources.base.AsyncResult', return_value=MockAsyncResultWaiting)
     def test_async_results_waiting(self, async_result):
         try:
             self.prc.async_results("result-id")
@@ -92,7 +92,7 @@ class TestHttpResourceProcessor(TestCase):
             pass
         async_result.assert_called_once_with("result-id")
 
-    @patch('core.processors.resources.AsyncResult', return_value=MockAsyncResultError)
+    @patch('core.processors.resources.base.AsyncResult', return_value=MockAsyncResultError)
     def test_async_results_error(self, async_result):
         try:
             self.prc.async_results("result-id")
