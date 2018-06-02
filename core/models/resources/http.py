@@ -151,10 +151,6 @@ class HttpResource(Resource):
         """
         return None
 
-    def retain(self, retainer):
-        self.retainer = retainer
-        self.save()
-
     #######################################################
     # CREATE REQUEST
     #######################################################
