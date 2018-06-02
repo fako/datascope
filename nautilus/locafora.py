@@ -50,13 +50,33 @@ PRODUCT_TRANSLATIONS = {
     "pitloze mix olijven": "olijven, pitloze mix",
     "punt paprika's": "paprika's, punt",
     "rode paprika": "paprika, rode",
-    "zonnezaad brood volkoren - desem - gesneden": "brood, volkoren - desem - gesneden",
+    "zonnezaad brood volkoren - desem - gesneden": "brood, zaden - volkoren - desem - gesneden",
     "bloedsinaasappels, moro": "sinaasappels, bloed, moro",
     "groene koolrabi van reggy": "koolrabi, groene",
     "polderhoen kipfilet": "kipfilet, polderhoen",
     "verse tijm": "tijm, verse",
     "weekendbroodje: dadel-walnotenbol": "brood, dadel-walnotenbol",
-    "zonnelied brood volkoren - desem - gesneden": "brood volkoren - desem - gesneden"
+    "zonnelied brood volkoren - desem - gesneden": "brood, volkoren - desem - gesneden",
+    "aardappel frieslanders - 1 kg - nieuwe oogst van familie geraets": "aardappel, frielanders",
+    "gedroogde knoflook": "knoflook, gedroogde",
+    "goede nacht thee uit de kruidentuin": "thee, goede nacht",
+    "groene asperges": "asperges, groene",
+    "witte asperges - 2. klas": "asperges, witte, 2e klas",
+    "witte asperges 1. klas": "asperges, witte, 1e klas",
+    "zomer aardbeien": "aardbeien",
+    "volle yomio - zuiver zuivel": "yomio, volle",
+    "slagroom van zuivelboerderij fam. de lange uit de weerribben": "slagroom",
+    "regenboog peen": "peen, regenboog",
+    "handsinaasappels rechtstreeks uit de boomgaard van dani en isa uit spanje": "sinaasappels, hand",
+    "kromme komkommers": "komkommer, kromme",
+    "kropsla van de eerste": "sla, krop",
+    "portobello paddenstoel": "paddenstoelen, portobello",
+    "eryngii koningsoesterzwam": "paddenstoelen, eryngii koningsoesterzwam",
+    "verse doperwten": "doperwten, verse",
+    "verse kapucijners": "kapucijners, verse",
+    "verse peultjes": "peultjes, verse",
+    "butternut pompoen": "pompoen, butternut"
+
 }
 
 
