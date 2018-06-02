@@ -1,6 +1,5 @@
 import subprocess
 import string
-from copy import deepcopy
 import jsonschema
 from jsonschema.exceptions import ValidationError as SchemaValidationError
 
@@ -21,9 +20,9 @@ class ShellResource(Resource):
     stderr = models.TextField(default=None, null=True, blank=True)
 
     # Class constants that determine behavior
-    CMD_TEMPLATE = ["python", "manage.py", "shell"]
+    CMD_TEMPLATE = ["python", "manage.py", "shell", "CMD_FLAGS"]
     FLAGS = {
-        "settings": "--settings"
+        "settings": "--settings="
     }
 
     SCHEMA = {
@@ -43,14 +42,18 @@ class ShellResource(Resource):
 
         pass
 
+    @property
+    def content(self):
+        return "application/json", self.transform(self.stdout)
+
+    def variables(self, *args):
+        raise NotImplementedError("Variables are not specified on this resource")
+
     def validate_command(self, command):
         pass
 
-    def transform(self):
-        pass
-
-    def line_to_dict(self, line):
-        pass
+    def transform(self, stdout):
+        return stdout
 
     def _create_command(self, *args, **kwargs):
         self._validate_input(*args, **kwargs)
@@ -58,18 +61,28 @@ class ShellResource(Resource):
         # First we format the command template
         formatter = string.Formatter()
         arguments = iter(args)
-        command = []
+        cmd = []
         for part in self.CMD_TEMPLATE:
             fields = formatter.parse(part)
             for literal_text, field_name, format_spec, conversion in fields:
                 if field_name is not None:
                     part = part.format(next(arguments))
-            command.append(part)
+            cmd.append(part)
 
         # Then we set the flags
-        flags_index = command.index("CMD_FLAGS")
+        flags_index = cmd.index("CMD_FLAGS")
+        flags = ""
+        for key, value in kwargs.items():
+            if key in self.FLAGS:
+                flags += " " + self.FLAGS[key] + value
+        flags = flags.lstrip()
+        cmd[flags_index] = flags
 
-        return command
+        return {
+            "args": args,
+            "kwargs": kwargs,
+            "cmd": cmd
+        }
 
     def _validate_input(self, *args, **kwargs):
         args_schema = self.SCHEMA.get("arguments")
