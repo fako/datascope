@@ -154,3 +154,30 @@ class FileBalancer(object):
                 train_imbalance
             )
         return train_imbalance
+
+
+class SemanticDirectoryScan(object):
+
+    def __init__(self, file_pattern, ignore_directories=None):
+        self.file_pattern = file_pattern
+        self.ignore_directories = ignore_directories or []
+
+    def __call__(self, directory_path):
+        if not directory_path.endswith("/"):
+            directory_path += "/"
+        glob_pattern = "{}**/{}".format(directory_path, self.file_pattern)
+        for file_path in glob(glob_pattern, recursive=True):
+            relative_path = file_path.replace(directory_path, "")
+            head, tail = os.path.split(relative_path)
+            if not tail:
+                # This is a directory not a file. Ignore
+                continue
+            tags = [part for part in head.split(os.sep) if part not in self.ignore_directories]
+            name, extension = os.path.splitext(tail)
+            yield {
+                "path": os.path.abspath(file_path),
+                "file": tail,
+                "name": name,
+                "extension": extension[1:],
+                "tags": tags
+            }
