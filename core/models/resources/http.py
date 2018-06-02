@@ -507,3 +507,25 @@ class URLResource(HttpResource):
 
     class Meta:
         abstract = True
+
+
+class MicroServiceResource(HttpResource):
+
+    CONFIG_NAMESPACE = "micro_service"
+
+    MICRO_SERVICE = "mock_service"
+    MICRO_SERVICE_PROTOCOL = "http"
+    MICRO_SERVICE_PATH = "/service/"
+
+    URI_TEMPLATE = "{}://{}{}"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.connection = self.config.connections[self.MICRO_SERVICE]
+
+    def send(self, method, *args, **kwargs):
+        args = (self.connection["protocol"], self.connection["host"], self.connection["path"]) + args
+        super().send(method, *args, **kwargs)
+
+    class Meta:
+        abstract = True
