@@ -105,19 +105,24 @@ class ShellResource(Resource):
             cmd.append(part)
 
         # Then we set the flags
-        flags_index = cmd.index("CMD_FLAGS")
         flags = ""
-        for key, value in kwargs.items():
-            if key in self.FLAGS:
-                flags += " " + self.FLAGS[key] + value
-        flags = flags.lstrip()
-        cmd[flags_index] = flags
+        try:
+            flags_index = cmd.index("CMD_FLAGS")
+        except ValueError:
+            flags_index = None
+        if flags_index is not None:
+            for key, value in kwargs.items():
+                if key in self.FLAGS:
+                    flags += " " + self.FLAGS[key] + value
+            flags = flags.lstrip()
+            cmd[flags_index] = flags
 
         # Returning command
         command = {
             "args": args,
             "kwargs": kwargs,
-            "cmd": cmd
+            "cmd": cmd,
+            "flags": flags
         }
         return self.validate_command(command, validate_input=False)
 
@@ -190,7 +195,10 @@ class ShellResource(Resource):
 
     @staticmethod
     def uri_from_cmd(cmd):
-        return cmd
+        main = cmd.pop(0)
+        cmd.sort()
+        cmd.insert(0, main)
+        return " ".join(cmd)
 
     class Meta:
         abstract = True
