@@ -1,14 +1,17 @@
 import subprocess
 import string
 import jsonschema
+from copy import copy
 from datetime import datetime
 from jsonschema.exceptions import ValidationError as SchemaValidationError
 
+from django.conf import settings
 from django.db import models
 from django.core.exceptions import ValidationError
 import json_field
 
 from core.models.resources.resource import Resource
+from core.exceptions import DSShellError
 
 
 class ShellResource(Resource):
@@ -26,6 +29,7 @@ class ShellResource(Resource):
     FLAGS = {
         "settings": "--settings="
     }
+    DIRECTORY_SETTING = None
 
     SCHEMA = {
         "arguments": {},
@@ -72,7 +76,7 @@ class ShellResource(Resource):
         """
         Returns True if exit code is within success range
         """
-        return self.status == 0
+        return self.status == 0 and self.stdout
 
     @property
     def content(self):
@@ -172,10 +176,26 @@ class ShellResource(Resource):
     # Currently it wraps subprocess
 
     def _run(self):
-        pass
+        cmd = self.command.get("cmd")
+        cwd = None
+        if self.DIRECTORY_SETTING:
+            cwd = getattr(settings, self.DIRECTORY_SETTING)
+        results = subprocess.run(
+            cmd,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            cwd=cwd
+        )
+        self.status = results.returncode
+        self.stdout = results.stdout
+        self.stderr = results.stderr
 
     def _handle_errors(self):
-        pass
+        if not self.success:
+            class_name = self.__class__.__name__
+            message = "{} > {} \n\n {}".format(class_name, self.status, self.stderr)
+            raise DSShellError(message, resource=self)
 
     #######################################################
     # DJANGO MODEL
@@ -195,6 +215,7 @@ class ShellResource(Resource):
 
     @staticmethod
     def uri_from_cmd(cmd):
+        cmd = copy(cmd)
         main = cmd.pop(0)
         cmd.sort()
         cmd.insert(0, main)

@@ -33,6 +33,10 @@ class DSInvalidResource(DSResourceException):
     pass
 
 
+class DSShellError(DSResourceException):
+    pass
+
+
 class DSNoContent(Exception):
     pass
 
