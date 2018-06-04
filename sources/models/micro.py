@@ -1,24 +1,25 @@
+import base64
+from io import BytesIO
+from PIL import Image
+
 from core.models.resources import MicroServiceResource
 
 
 class ImageRecognitionService(MicroServiceResource):
 
     MICRO_SERVICE = "image_recognition"
+    FILE_DATA_KEYS = ["image"]
 
     @property
     def content(self):
         mime_type, data = super().content
-        data["confidence"] = data["probabilities"][data["prediction"]]
-        vars = self.variables()
-        return mime_type, {
-            "path": vars["path"],
-            "results": data
-        }
+        if not self.success:
+            return mime_type, data
 
-    def variables(self, *args):
-        args = args or self.request.get("args")
-        return {
-            "path": args[0]
+        data["confidence"] = data["probabilities"][data["prediction"]]
+        return mime_type, {
+            "path": self.request["kwargs"].get("image"),
+            "results": data
         }
 
     class Meta:

@@ -535,7 +535,7 @@ class MicroServiceResource(HttpResource):
 
     def send(self, method, *args, **kwargs):
         args = (self.connection["protocol"], self.connection["host"], self.connection["path"]) + args
-        super().send(method, *args, **kwargs)
+        return super().send(method, *args, **kwargs)
 
     class Meta:
         abstract = True
