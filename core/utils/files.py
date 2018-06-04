@@ -175,7 +175,7 @@ class SemanticDirectoryScan(object):
             tags = [part for part in head.split(os.sep) if part not in self.ignore_directories]
             name, extension = os.path.splitext(tail)
             yield {
-                "path": os.path.abspath(file_path),
+                "path": file_path,
                 "file": tail,
                 "name": name,
                 "extension": extension[1:],

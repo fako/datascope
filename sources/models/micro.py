@@ -1,7 +1,3 @@
-import base64
-from io import BytesIO
-from PIL import Image
-
 from core.models.resources import MicroServiceResource
 
 
@@ -17,10 +13,10 @@ class ImageRecognitionService(MicroServiceResource):
             return mime_type, data
 
         data["confidence"] = data["probabilities"][data["prediction"]]
-        return mime_type, {
+        return mime_type, [{
             "path": self.request["kwargs"].get("image"),
             "results": data
-        }
+        }]
 
     class Meta:
         abstract = True
