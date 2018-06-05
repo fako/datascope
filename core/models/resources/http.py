@@ -265,6 +265,8 @@ class HttpResource(Resource):
                 )
 
     def _format_data(self, data):
+        if data is None:
+            return None, None
         files = {}
         for file_key in self.FILE_DATA_KEYS:
             file_path = data.pop(file_key)
