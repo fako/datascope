@@ -1,4 +1,8 @@
+import os
+import shutil
 from collections import OrderedDict
+
+from django.core.files.storage import default_storage
 
 from core.models.organisms import Community
 from core.utils.files import SemanticDirectoryScan
@@ -43,6 +47,15 @@ class InventoryCommunity(Community):
             content.append(file_data)
         collective.update(content)
         return collective
+
+    def finish_brands(self, out, err):
+        items = list(out.content)
+        items.sort(key=lambda item: item["confidence"], reverse=True)
+        for item in items[:20]:
+            dest = os.path.join(default_storage.location, "inventory", "branded", item["brand"])
+            if not os.path.exists(dest):
+                os.makedirs(dest)
+            shutil.copy2(item["path"], os.path.join(dest, item["file"]))
 
     def set_kernel(self):
         self.kernel = self.get_growth("brands").output
