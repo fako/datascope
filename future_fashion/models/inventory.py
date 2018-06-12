@@ -1,6 +1,11 @@
 import os
 import shutil
+import itertools
 from collections import OrderedDict
+from operator import itemgetter
+
+import pandas as pd
+from colorz import colorz
 
 from django.core.files.storage import default_storage
 
@@ -33,16 +38,21 @@ class InventoryCommunity(Community):
         })
     ])
 
+    def get_main_colors_from_file(self, file_path):
+        return list(map(itemgetter(0), colorz(file_path)))  #, min_v=0, max_v=255)))
+
     def initial_input(self, *args):
         collective = self.create_organism("Collective", schema={}, identifier="path")
         scanner = SemanticDirectoryScan(file_pattern="*f.jpg")
         content = []
         for file_data in scanner("system/files/media/Pilot"):
+            colors = self.get_main_colors_from_file(file_data["path"])
             store, year, id_, view = file_data["name"].split("_")
             file_data.update({
                 "store": store,
                 "year": int(year),
-                "id": int(id_)
+                "id": int(id_),
+                "colors": colors
             })
             content.append(file_data)
         collective.update(content)
@@ -59,6 +69,18 @@ class InventoryCommunity(Community):
 
     def set_kernel(self):
         self.kernel = self.get_growth("brands").output
+
+    def get_vector_from_colors(self, colors):
+        return list(itertools.chain(*colors))
+
+    def get_colors_frame(self):
+        records = [self.get_vector_from_colors(ind["colors"]) for ind in self.kernel.content]
+        num_colors = int(len(records[0])/3)
+        labels = []
+        for ix in range(num_colors):
+            ix = str(ix)
+            labels += ["r"+ix, "g"+ix, "b"+ix]
+        return pd.DataFrame.from_records(records, columns=labels)
 
     class Meta:
         verbose_name = "Inventory community"
