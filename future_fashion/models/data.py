@@ -8,6 +8,7 @@ from django.core.files.storage import default_storage
 
 from core.models.organisms import Community, Collective, Individual
 from sources.models.downloads import ImageDownload, ImageDownloadSorter
+from future_fashion.colors import get_main_colors_from_file
 
 
 TARGET_LISTINGS = [
@@ -145,6 +146,7 @@ class FutureFashionCommunity(Community):
     ])
 
     COMMUNITY_BODY = []
+    COMMUNITY_NAME = "fashion_data"
 
     ASYNC_MANIFEST = False
     INPUT_THROUGH_PATH = False
@@ -167,6 +169,7 @@ class FutureFashionCommunity(Community):
     def finish_download(self, out, err):
         items_growth = self.get_growth("items")
         self.sort_downloads_by_tags(items_growth.output)
+        self.update_main_colors(items_growth.output)
 
     def sort_downloads_by_tags(self, collective):
         train, validate, test = collective.split(as_content=True)
@@ -202,6 +205,31 @@ class FutureFashionCommunity(Community):
                 destination_lambda=lambda file_: file_["brand"]
             )
             sorter(data_set)
+
+    def update_main_colors(self, collective):
+        for individual in collective.individual_set.iterator():
+            if len(individual.properties.get("colors", [])):
+                continue
+            url = individual["image"]
+            uri = ImageDownload.uri_from_url(url)
+            try:
+                download = ImageDownload.objects.get(uri=uri)
+            except ImageDownload.DoesNotExist:
+                continue
+            if not download.success:
+                continue
+            try:
+                file_path = os.path.join(default_storage.location, download.body)
+                colors = get_main_colors_from_file(file_path)
+                individual.properties["missing_file"] = False
+            except FileNotFoundError:
+                individual.properties["missing_file"] = True
+                colors = []
+            except ValueError:
+                individual.properties["invalid_file"] = True
+                colors = []
+            individual.properties["colors"] = colors
+            individual.save()
 
     def set_kernel(self):
         self.kernel = self.growth_set.filter(type="items").last().output
