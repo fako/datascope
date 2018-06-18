@@ -14,7 +14,7 @@ def get_vector_from_colors(colors):
 
 
 def get_colors_frame(individuals):
-    records = [get_vector_from_colors(ind["colors"]) for ind in individuals]
+    records = [get_vector_from_colors(ind["colors"]) for ind in individuals if len(ind["colors"])]
     num_colors = int(len(records[0])/3)
     labels = []
     for ix in range(num_colors):
