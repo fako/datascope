@@ -75,7 +75,12 @@ PRODUCT_TRANSLATIONS = {
     "verse doperwten": "doperwten, verse",
     "verse kapucijners": "kapucijners, verse",
     "verse peultjes": "peultjes, verse",
-    "butternut pompoen": "pompoen, butternut"
+    "butternut pompoen": "pompoen, butternut",
+    "2e klasse rode paprika": "paprika, rode, 2e klas",
+    "cocktail trostomaatjes": "tomaatjes, tros, cocktail",
+    "gele paprika klasse 2": "paprika, gele, 2e klas",
+    "rode druivensap - 100% sap": "sap, rode druiven",
+    "verse kurkuma": "kurkuma, verse"
 
 }
 
