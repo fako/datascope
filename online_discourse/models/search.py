@@ -1,6 +1,5 @@
 import spacy
-
-from core.utils.text import ArguingLexiconParser
+from spacy_arguing_lexicon import ArguingLexiconParser
 
 from topic_research.models import CrossCombineTermSearchCommunity
 from online_discourse.discourse import configurations

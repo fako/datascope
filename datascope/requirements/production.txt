@@ -13,6 +13,7 @@ numpy==1.13.1
 pandas==0.20.3
 humanize==0.5.1
 spacy==2.0.10
+spacy-arguing-lexicon==0.0.2
 
 # SpaCy language models
 https://github.com/explosion/spacy-models/releases/download/en_core_web_md-2.0.0/en_core_web_md-2.0.0.tar.gz
