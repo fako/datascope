@@ -1,6 +1,7 @@
 import os
 import shutil
 import logging
+import json
 
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
@@ -74,6 +75,34 @@ class Command(CommunityCommand):
         if not os.path.exists(dest):
             os.makedirs(dest, exist_ok=True)
         shutil.copy2(image, os.path.join(dest, basename))
+        color_data = {
+            "input": {
+                "colors": [
+                    "#{0:02x}{1:02x}{2:02x}".format(color[0], color[1], color[2])
+                    for color in main_colors
+                ],
+                "links": [
+                    "http://www.color-hex.com/color/{0:02x}{1:02x}{2:02x}".format(color[0], color[1], color[2])
+                    for color in main_colors
+                ]
+            },
+            "output": [
+                {
+                    "similarity": round(similarity, ndigits=3),
+                    "colors": [
+                        "#{0:02x}{1:02x}{2:02x}".format(color[0], color[1], color[2])
+                        for color in match["colors"]
+                    ],
+                    "links": [
+                        "http://www.color-hex.com/color/{0:02x}{1:02x}{2:02x}".format(color[0], color[1], color[2])
+                        for color in match["colors"]
+                    ]
+                }
+                for similarity, match in matches
+            ]
+        }
+        with open(os.path.join(dest, "colors.js"), "w") as jf:
+            json.dump(color_data, jf, indent=4)
         if community.get_name() == "fashion_data":
             self.handle_data_matches(matches, dest)
         else:
