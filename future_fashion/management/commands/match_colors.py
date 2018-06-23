@@ -28,12 +28,17 @@ class Command(CommunityCommand):
         parser.add_argument('-i', '--image', type=str)
 
     def handle_inventory_matches(self, matches, destination):
-        for ix, match in enumerate(matches):
+        for ix, match_info in enumerate(matches):
+            similarity, match = match_info
             name, ext = os.path.splitext(match["path"])
-            shutil.copy2(match["path"], os.path.join(destination, str(ix) + ext))
+            shutil.copy2(
+                match["path"],
+                os.path.join(destination, str(ix) + "-" + str(round(similarity, ndigits=3)) + ext)
+            )
 
     def handle_data_matches(self, matches, destination):
-        for ix, match in enumerate(matches):
+        for ix, match_info in enumerate(matches):
+            similarity, match = match_info
             uri = ImageDownload.uri_from_url(match["image"])
             try:
                 download = ImageDownload.objects.get(uri=uri)
@@ -44,7 +49,7 @@ class Command(CommunityCommand):
             name, ext = os.path.splitext(download.body)
             shutil.copy2(
                 os.path.join(default_storage.location, download.body),
-                os.path.join(destination, str(ix) + ext)
+                os.path.join(destination, str(ix) + "-" + str(round(similarity, ndigits=3)) + ext)
             )
 
     def handle_community(self, community, *args, **options):
@@ -60,7 +65,7 @@ class Command(CommunityCommand):
         similarity = cosine_similarity(colors_frame, np.array(vector).reshape(1, -1)).flatten()
         # Find indices for ten most similar objects and sort by most similar
         indices = np.argsort(similarity)[-10:]
-        matches = [content[ix] for ix in indices]
+        matches = [(similarity[ix], content[ix],) for ix in indices]
         matches.reverse()
         # Create directory for input and copy matches there
         basename = os.path.basename(image)
