@@ -82,7 +82,7 @@ Depending on the theory it might be convenient to choose a different representat
 Theories of color & beauty
 --------------------------
 
-####Eye matching
+#### Eye matching
 
 The simplest theory is that colors matching your eyes bring out your eyes more.
 Especially tops like shirts and scarfs should match the color of your eyes to bring out "the jewelry that you can not change about yourself" 
@@ -91,7 +91,7 @@ The entire idea is maybe best captured with this image:
 
 ![eye color matching](https://styleconsulting.nl/media/3197/img-set.jpeg?anchor=center&mode=crop&width=850&height=405&format=jpg&quality=100&bgcolor=fff&rnd=131511878000000000)
 
-####Color matching and contrasting
+#### Color matching and contrasting
 
 If you divide the color circle in 12 different colors (or 10 or 20 because HSV is 360 colors?). You get an image like
 
@@ -107,7 +107,7 @@ You can also choose the analog colors of the contrast color to slightly dim down
 More complex color matching patterns are matching 3 different colors (which should be equally divided among the circle) or 4 different colors (consisting of 2 pairs of colors analog to each other)
 Especially the forth seems hard to achieve with computer code.  
 
-####Technically simple (but racist?) theory
+#### Technically simple (but racist?) theory
 
 In the table below you see recommandations from [Mon Style](https://monstyle.nl/welke-kleuren-bij-welke-huidskleur/).
 They define 6 types. More than half of them are Western, with two distinct types of blondes.
@@ -126,7 +126,7 @@ In code we would have to define a division between warm and cold colors in hue. 
 A dark or light color should have a treshold in value.
 Particular colors as well as the greyscale would have to be determined from hue and equal rgb values.
 
-####Season type
+#### Season type
 
 
 Apparently the combination between skin, hair and eye color is an indication for your "season type".
