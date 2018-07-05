@@ -5,7 +5,6 @@ from colorsys import rgb_to_hsv
 
 import pandas as pd
 import numpy as np
-from scipy.cluster.vq import kmeans2
 from sklearn.cluster import KMeans
 from colorz import DEFAULT_NUM_COLORS, DEFAULT_MINV,DEFAULT_MAXV, THUMB_SIZE
 from colorz import get_colors, clamp, order_by_hue
@@ -24,7 +23,10 @@ def extract_dominant_colors(fd, num=DEFAULT_NUM_COLORS, min_v=DEFAULT_MINV, max_
     Like the colorz function from the colorz package, but orders by color dominance
     and never returns bold colors
     """
-    img = Image.open(fd)
+    if not isinstance(fd, Image.Image):
+        img = Image.open(fd)
+    else:
+        img = fd
     img.thumbnail(THUMB_SIZE)
 
     obs = get_colors(img)
