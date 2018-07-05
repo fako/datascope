@@ -160,3 +160,24 @@ class Command(CommunityCommand):
             self.handle_data_matches(matches, dest)
         else:
             self.handle_inventory_matches(matches, dest)
+
+
+"""
+Example request for the Face Detection API from Google
+{
+  "requests": [
+    {
+      "image": {
+        "source": {
+          "imageUri": "https://yt3.ggpht.com/a-/AJLlDp0_TonmCC9rTR2-Mmg_TsM3k2pY8FOcww3v_w=s900-mo-c-c0xffffffff-rj-k-no"
+        }
+      },
+      "features": [
+        {
+          "type": "FACE_DETECTION"
+        }
+      ]
+    }
+  ]
+}
+"""
