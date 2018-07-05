@@ -6,7 +6,7 @@ from django.core.files.storage import default_storage
 
 from core.models.organisms import Community
 from core.utils.files import SemanticDirectoryScan
-from future_fashion.colors import get_main_colors_from_file
+from future_fashion.colors import extract_dominant_colors, create_colors_data
 
 
 class InventoryCommunity(Community):
@@ -39,13 +39,16 @@ class InventoryCommunity(Community):
         scanner = SemanticDirectoryScan(file_pattern="*f.jpg")
         content = []
         for file_data in scanner("system/files/media/Pilot"):
-            colors = get_main_colors_from_file(file_data["path"])
+            color_data = {}
+            for num_colors in [2, 3, 6]:
+                colors, balance = extract_dominant_colors(file_data["path"], num=num_colors)
+                color_data.update(create_colors_data(colors, balance))
             store, year, id_, view = file_data["name"].split("_")
             file_data.update({
                 "store": store,
                 "year": int(year),
                 "id": int(id_),
-                "colors": colors
+                "colors": color_data
             })
             content.append(file_data)
         collective.update(content)

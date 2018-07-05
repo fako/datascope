@@ -3,12 +3,13 @@ from collections import OrderedDict
 from itertools import islice
 
 import pandas as pd
+from tqdm import tqdm
 
 from django.core.files.storage import default_storage
 
 from core.models.organisms import Community, Collective, Individual
 from sources.models.downloads import ImageDownload, ImageDownloadSorter
-from future_fashion.colors import get_main_colors_from_file
+from future_fashion.colors import get_colors_individual, extract_dominant_colors, create_colors_data
 
 
 TARGET_LISTINGS = [
@@ -207,9 +208,14 @@ class FutureFashionCommunity(Community):
             sorter(data_set)
 
     def update_main_colors(self, collective):
-        for individual in collective.individual_set.iterator():
-            if len(individual.properties.get("colors", [])):
+        query = collective.individual_set
+        individuals = tqdm(query.iterator(), total=query.count())
+        for individual in individuals:
+            # See if there is a color dict and skip if there is
+            colors = get_colors_individual(individual)
+            if colors is not None:
                 continue
+            # Try to get the file from url and skip if there is no file
             url = individual["image"]
             uri = ImageDownload.uri_from_url(url)
             try:
@@ -218,16 +224,19 @@ class FutureFashionCommunity(Community):
                 continue
             if not download.success:
                 continue
+            colors = {}
             try:
                 file_path = os.path.join(default_storage.location, download.body)
-                colors = get_main_colors_from_file(file_path)
+                for num_colors in [2, 3, 6]:
+                    rgb, balance = extract_dominant_colors(file_path, num=num_colors)
+                    colors.update(create_colors_data(rgb, balance))
                 individual.properties["missing_file"] = False
             except FileNotFoundError:
                 individual.properties["missing_file"] = True
-                colors = []
+                colors = {}
             except ValueError:
                 individual.properties["invalid_file"] = True
-                colors = []
+                colors = {}
             individual.properties["colors"] = colors
             individual.save()
 

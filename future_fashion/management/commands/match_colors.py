@@ -5,13 +5,15 @@ import json
 
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
+from colorz import order_by_hue
 
 from django.core.files.storage import default_storage
 
 from core.management.commands import CommunityCommand
 from core.utils.configuration import DecodeConfigAction
 from sources.models import ImageDownload
-from future_fashion.colors import get_main_colors_from_file, get_vector_from_colors, get_colors_frame
+from future_fashion.colors import (extract_dominant_colors, get_vector_from_colors, get_colors_frame,
+                                   get_colors_individual)
 
 
 log = logging.getLogger("datascope")
@@ -27,6 +29,7 @@ class Command(CommunityCommand):
         parser.add_argument('-a', '--args', type=str, nargs="*", default="")
         parser.add_argument('-c', '--config', type=str, action=DecodeConfigAction, nargs="?", default={})
         parser.add_argument('-i', '--image', type=str)
+        parser.add_argument('-n', '--number-colors', type=int, default=3)
 
     def handle_inventory_matches(self, matches, destination):
         for ix, match_info in enumerate(matches):
@@ -54,14 +57,18 @@ class Command(CommunityCommand):
             )
 
     def handle_community(self, community, *args, **options):
+        # TODO: match by dominant color, not by hue vectors
         # Get colors from input file
+        num_colors = options["number_colors"]
         image = options["image"]
-        main_colors = get_main_colors_from_file(image)
+        main_colors, balance = extract_dominant_colors(image, num=num_colors)
+        main_colors = order_by_hue(main_colors)
         vector = get_vector_from_colors(main_colors)
+
         # Get colors from community data and calculate similarities
         # This loads all data into memory
         content = list(community.kernel.content)
-        colors_frame = get_colors_frame(content)
+        colors_frame = get_colors_frame(content, num_colors=num_colors, by_hue=True)
         log.info("Color frame shape: {}".format(colors_frame.shape))
         similarity = cosine_similarity(colors_frame, np.array(vector).reshape(1, -1)).flatten()
         # Find indices for ten most similar objects and sort by most similar
@@ -91,11 +98,11 @@ class Command(CommunityCommand):
                     "similarity": round(similarity, ndigits=3),
                     "colors": [
                         "#{0:02x}{1:02x}{2:02x}".format(color[0], color[1], color[2])
-                        for color in match["colors"]
+                        for color in get_colors_individual(match, num_colors=num_colors, space="rgb")
                     ],
                     "links": [
                         "http://www.color-hex.com/color/{0:02x}{1:02x}{2:02x}".format(color[0], color[1], color[2])
-                        for color in match["colors"]
+                        for color in get_colors_individual(match, num_colors=num_colors, space="rgb")
                     ]
                 }
                 for similarity, match in matches
