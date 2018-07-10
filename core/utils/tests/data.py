@@ -1,3 +1,6 @@
+import pandas as pd
+from pandas.testing import assert_frame_equal
+
 from django.test import TestCase
 
 from core.utils.data import reach, NumericFeaturesFrame
@@ -54,15 +57,42 @@ class TestNumericFeaturesFrame(TestCase):
 
     def setUp(self):
         super().setUp()
-        print(list(Collective.objects.all()))
-        self.test_data = Collective.objects.get(id=2)
+        self.test_fixture = Collective.objects.get(id=2)
+        self.test_records = [
+            {
+                "is_dutch": 1.0,
+                "is_english": 0.0,
+                "value_number": 1.0
+            },
+            {
+                "is_dutch": 1.0,
+                "is_english": 0.0,
+                "value_number": 2.0
+            },
+            {
+                "is_dutch": 1.0,
+                "is_english": 0.0,
+                "value_number": 1.0
+            },
+            {
+                "is_dutch": 0.0,
+                "is_english": 1.0,
+                "value_number": 1.0
+            },
+            {
+                "is_dutch": 0.0,
+                "is_english": 1.0,
+                "value_number": 2.0
+            }
+        ]
+        self.test_frame = pd.DataFrame.from_records(self.test_records, index=[4,5,6,7,8])
 
     @staticmethod
     def get_identifier(test):
         return test.id
 
     def get_iterator(self):
-        return self.test_data.individual_set.iterator()
+        return self.test_fixture.individual_set.iterator()
 
     @staticmethod
     def is_dutch(test):
@@ -77,12 +107,20 @@ class TestNumericFeaturesFrame(TestCase):
         return test.properties["value"]
 
     def test_init(self):
+        features = [
+            TestNumericFeaturesFrame.is_dutch,
+            TestNumericFeaturesFrame.is_english,
+            TestNumericFeaturesFrame.value_number
+        ]
         frame = NumericFeaturesFrame(
             TestNumericFeaturesFrame.get_identifier,
-            self.get_iterator(),
-            [
-                TestNumericFeaturesFrame.is_dutch,
-                TestNumericFeaturesFrame.is_english,
-                TestNumericFeaturesFrame.value_number
-            ]
+            self.get_iterator,
+            features
         )
+        sorted_feature_names = ["is_dutch", "is_english", "value_number"]
+        self.assertEquals(
+            sorted(frame.features.keys()),
+            sorted_feature_names
+        )
+        self.assertTrue(callable(frame.content))
+        assert_frame_equal(frame.data, self.test_frame, check_like=True)

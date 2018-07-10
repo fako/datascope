@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 
 class NumericFeaturesFrame(object):
@@ -13,14 +14,19 @@ class NumericFeaturesFrame(object):
 
     def __init__(self, identifier, content, features):
         """
-        Sets self.identifier for later use
-        Calls reset with content and features
+        Initiates a DataFrame and fills the frame using the content and features arguments.
         
         :param identifier: callable that takes content and returns the identifier
         :param content: callable that returns lazy content iterator (e.g. lazy QuerySet iterator)
         :param features: iterator with named callables that represent features
         """
-        pass
+        self.get_identifier = identifier
+        # Initialize attributes used by this class
+        self.data = None
+        self.content = None
+        self.features = None
+        # Fill actual data frame with content
+        self.reset(content=content, features=features)
 
     def load_content(self, callable=None, feature_names=None):
         """
@@ -36,7 +42,20 @@ class NumericFeaturesFrame(object):
         :param content: iterator with Individuals or content 
         :return: 
         """
-        pass
+        contents = callable() if callable else self.content()
+        columns = feature_names if feature_names else self.features.keys()
+        for content in contents:
+            identifier = self.get_identifier(content)
+            series = pd.Series(data={
+                column: float(self.features[column](content))
+                for column in columns
+            })
+            try:
+                row = self.data.loc[identifier]
+                row.add(series)
+            except KeyError:
+                row = series
+            self.data.loc[identifier] = row
 
     def load_features(self, callables):
         """
@@ -47,10 +66,22 @@ class NumericFeaturesFrame(object):
         :param callables: iterator with callables that return features 
         :return: 
         """
-        pass
+        features = {
+            callable.__name__: callable
+            for callable in callables
+        }
+        self.features.update(features)
+        feature_names = features.keys()
+        for column in feature_names:
+            self.data[column] = 0
+        self.load_content(feature_names=feature_names)
 
     def reset(self, content=None, features=None):
         """
+        Creates a DataFrame from scratch using content and features given.
+        Or resets rows with only new content.
+        Or resets columns with only new features.
+
         Creates empty DataFrame in self.data
         Sets self.content to content if content is not None
         Sets self.features to features if features is not None
@@ -60,7 +91,14 @@ class NumericFeaturesFrame(object):
         :param features: iterator with named callables that represent features
         :return: 
         """
-        pass
+        self.data = pd.DataFrame(dtype=np.float)
+        if content is not None:
+            self.content = content
+        if features is not None:
+            self.features = {}
+            self.load_features(features)
+        else:
+            self.load_content(content)
 
     def rank_by_params(self, params, limit=20):
         """
