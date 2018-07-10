@@ -46,13 +46,21 @@ class NumericFeaturesFrame(object):
         columns = feature_names if feature_names else self.features.keys()
         for content in contents:
             identifier = self.get_identifier(content)
-            series = pd.Series(data={
-                column: float(self.features[column](content))
-                for column in columns
-            })
+            data = {}
+            for column in columns:
+                try:
+                    value = self.features[column](content)
+                except Exception as exc:
+                    raise Exception("{} feature: {}".format(column, exc))
+                try:
+                    numeric = float(value)
+                except ValueError:
+                    raise ValueError("{} feature did not return float but {}".format(column, type(value)))
+                data[column] = numeric
+            series = pd.Series(data=data)
             try:
-                row = self.data.loc[identifier]
-                row.add(series)
+                row = self.data.loc[identifier].copy()
+                row.update(series)
             except KeyError:
                 row = series
             self.data.loc[identifier] = row

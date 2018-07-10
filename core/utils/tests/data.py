@@ -4,7 +4,7 @@ from pandas.testing import assert_frame_equal
 from django.test import TestCase
 
 from core.utils.data import reach, NumericFeaturesFrame
-from core.models import Collective
+from core.models import Collective, Individual
 
 
 class TestPythonReach(TestCase):
@@ -85,7 +85,21 @@ class TestNumericFeaturesFrame(TestCase):
                 "value_number": 2.0
             }
         ]
-        self.test_frame = pd.DataFrame.from_records(self.test_records, index=[4,5,6,7,8])
+        self.test_frame = pd.DataFrame.from_records(self.test_records, index=[4, 5, 6, 7, 8])
+        self.test_records_extra = [
+            {
+                "is_dutch": 0.0,
+                "is_english": 0.0,
+                "value_number": 1.0
+            },
+            {
+                "is_dutch": 0.0,
+                "is_english": 0.0,
+                "value_number": 2.0
+            }
+        ]
+        self.test_frame_extra = pd.DataFrame.from_records(self.test_records + self.test_records_extra,
+                                                          index=[4, 5, 6, 7, 8, 9, 10])
 
     @staticmethod
     def get_identifier(test):
@@ -93,6 +107,30 @@ class TestNumericFeaturesFrame(TestCase):
 
     def get_iterator(self):
         return self.test_fixture.individual_set.iterator()
+
+    def get_extra_iterator(self):
+        return iter([
+            Individual.objects.create(
+                properties={
+                    'country': 'FR',
+                    'language': 'fr',
+                    'value': '1',
+                    'word': 'pension'
+                },
+                community=self.test_fixture.community,
+                collective=self.test_fixture
+            ),
+            Individual.objects.create(
+                properties={
+                    'country': 'FR',
+                    'language': 'fr',
+                    'value': '2',
+                    'word': 'pension'
+                },
+                community=self.test_fixture.community,
+                collective=self.test_fixture
+            )
+        ])
 
     @staticmethod
     def is_dutch(test):
@@ -105,6 +143,14 @@ class TestNumericFeaturesFrame(TestCase):
     @staticmethod
     def value_number(test):
         return test.properties["value"]
+
+    @staticmethod
+    def invalid_arguments():
+        return 0.0
+
+    @staticmethod
+    def invalid_return(test):
+        return "invalid"
 
     def test_init(self):
         features = [
@@ -124,3 +170,67 @@ class TestNumericFeaturesFrame(TestCase):
         )
         self.assertTrue(callable(frame.content))
         assert_frame_equal(frame.data, self.test_frame, check_like=True)
+
+    def test_init_invalid_features(self):
+        features = [
+            TestNumericFeaturesFrame.invalid_arguments
+        ]
+        try:
+            NumericFeaturesFrame(
+                TestNumericFeaturesFrame.get_identifier,
+                self.get_iterator,
+                features
+            )
+            self.fail("NumericFeaturesFrame did not raise with invalid feature")
+        except Exception as exc:
+            self.assertEqual(
+                str(exc),
+                "invalid_arguments feature: invalid_arguments() takes 0 positional arguments but 1 was given"
+            )
+        features = [
+            TestNumericFeaturesFrame.invalid_return
+        ]
+        try:
+            NumericFeaturesFrame(
+                TestNumericFeaturesFrame.get_identifier,
+                self.get_iterator,
+                features
+            )
+            self.fail("NumericFeaturesFrame did not raise with invalid feature return value")
+        except ValueError as exc:
+            self.assertEqual(
+                str(exc),
+                "invalid_return feature did not return float but <class 'str'>"
+            )
+
+    def test_adding_features(self):
+        features = [
+            TestNumericFeaturesFrame.is_dutch
+        ]
+        frame = NumericFeaturesFrame(
+            TestNumericFeaturesFrame.get_identifier,
+            self.get_iterator,
+            features
+        )
+        frame.load_features([
+            TestNumericFeaturesFrame.value_number,
+            TestNumericFeaturesFrame.is_english
+        ])
+        assert_frame_equal(frame.data, self.test_frame, check_like=True)
+
+    def test_adding_content(self):
+        features = [
+            TestNumericFeaturesFrame.is_dutch,
+            TestNumericFeaturesFrame.is_english,
+            TestNumericFeaturesFrame.value_number
+        ]
+        frame = NumericFeaturesFrame(
+            TestNumericFeaturesFrame.get_identifier,
+            self.get_iterator,
+            features
+        )
+        frame.load_content(self.get_extra_iterator)
+        assert_frame_equal(frame.data, self.test_frame_extra, check_like=True)
+
+    def test_resetting_frame(self):
+        pass
