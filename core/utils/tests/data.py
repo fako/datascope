@@ -1,5 +1,7 @@
-from unittest import TestCase
-from core.utils.data import reach
+from django.test import TestCase
+
+from core.utils.data import reach, NumericFeaturesFrame
+from core.models import Collective
 
 
 class TestPythonReach(TestCase):
@@ -44,3 +46,43 @@ class TestPythonReach(TestCase):
             self.fail("Reach did not throw a TypeError after getting invalid input")
         except TypeError:
             pass
+
+
+class TestNumericFeaturesFrame(TestCase):
+
+    fixtures = ["test-organisms"]
+
+    def setUp(self):
+        super().setUp()
+        print(list(Collective.objects.all()))
+        self.test_data = Collective.objects.get(id=2)
+
+    @staticmethod
+    def get_identifier(test):
+        return test.id
+
+    def get_iterator(self):
+        return self.test_data.individual_set.iterator()
+
+    @staticmethod
+    def is_dutch(test):
+        return int(test.properties["language"] == "nl")
+
+    @staticmethod
+    def is_english(test):
+        return int(test.properties["language"] == "en")
+
+    @staticmethod
+    def value_number(test):
+        return test.properties["value"]
+
+    def test_init(self):
+        frame = NumericFeaturesFrame(
+            TestNumericFeaturesFrame.get_identifier,
+            self.get_iterator(),
+            [
+                TestNumericFeaturesFrame.is_dutch,
+                TestNumericFeaturesFrame.is_english,
+                TestNumericFeaturesFrame.value_number
+            ]
+        )
