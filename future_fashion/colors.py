@@ -71,16 +71,17 @@ def create_colors_data(rgb_colors, balance):
 
 def get_colors_frame(content, num_colors=3, by_hue=False):
     records = []
-    for ind in content:
+    for ix, ind in enumerate(content):
         colors = get_colors_individual(ind, num_colors=num_colors, space="rgb")
         if not colors:
             continue
         if by_hue:
             colors = order_by_hue(colors)
-        records.append(get_vector_from_colors(colors))
+        vector = get_vector_from_colors(colors)
+        records.append([ix] + vector)
     num_colors = int(len(records[0])/3)
-    labels = []
-    for ix in range(num_colors):
-        ix = str(ix)
-        labels += ["r"+ix, "g"+ix, "b"+ix]
-    return pd.DataFrame.from_records(records, columns=labels).dropna(axis=0)
+    labels = ["ix"]
+    for num in range(num_colors):
+        num = str(num)
+        labels += ["r"+num, "g"+num, "b"+num]
+    return pd.DataFrame.from_records(records, index="ix", columns=labels).dropna(axis=0)
