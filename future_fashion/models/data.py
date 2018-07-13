@@ -179,7 +179,7 @@ class FutureFashionCommunity(Community):
                 source_base=default_storage.location,
                 destination_base=os.path.join(default_storage.location, self.signature, data_type),
                 url_key="image",
-                destination_lambda=lambda file_: os.path.join(file_["tags"][0], file_["tags"][1])
+                destination_lambda=lambda file_: os.path.join(file_["tags"][0], file_["tags"][2])
             )
             sorter(data_set)
 
