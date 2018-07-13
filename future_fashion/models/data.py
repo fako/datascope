@@ -249,7 +249,7 @@ class FutureFashionCommunity(Community):
         individuals = tqdm(query.iterator(), total=query.count())
         for individual in individuals:
             # See if there is a color dict and skip if there is
-            colors = get_colors_individual(individual)
+            colors = get_colors_individual(individual.properties)
             if colors is not None:
                 continue
             # Try to get the file from url and skip if there is no file
