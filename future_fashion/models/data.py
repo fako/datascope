@@ -207,6 +207,43 @@ class FutureFashionCommunity(Community):
             )
             sorter(data_set)
 
+    def set_meta_by_tags(self, collective):
+        tops = ["truien-vesten", "blouses-tunieken", "tops-shirts", "overhemden"]
+        bottoms = ["broeken-jeans", "rokken"]
+        accessoires = ["accessoires", "schoenen", "tassen", "sieraden"]
+        query = collective.individual_set
+        individuals = tqdm(query.iterator(), total=query.count())
+        for individual in individuals:
+            tags = individual.properties.get("tags", [])
+            if not tags or not len(tags) == 3:
+                continue
+            individual.properties["target_group"] = tags[0]
+            if tags[1] in accessoires:
+                individual.properties["type"] = "accessories"
+            elif tags[1] == "kleding" and tags[2] in tops:
+                individual.properties["type"] = "top"
+            elif tags[1] == "kleding" and tags[2] in bottoms:
+                individual.properties["type"] = "bottom"
+            else:
+                individual.properties["type"] = "unknown"
+            individual.save()
+
+    def sort_downloads_by_type(self, collective):
+        query = collective.individual_set \
+            .filter(properties__contains='target_group": "dames')
+        train, validate, test = collective.split(
+            query_set=query,
+            as_content=True
+        )
+        for data_type, data_set in [("train", train), ("valid", validate), ("test", test)]:
+            sorter = ImageDownloadSorter(
+                source_base=default_storage.location,
+                destination_base=os.path.join(default_storage.location, self.signature, data_type),
+                url_key="image",
+                destination_lambda=lambda file_: file_["type"]
+            )
+            sorter(data_set)
+
     def update_main_colors(self, collective):
         query = collective.individual_set
         individuals = tqdm(query.iterator(), total=query.count())
