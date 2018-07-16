@@ -78,7 +78,7 @@ class Command(CommunityCommand):
             color_columns = colors_frame.columns[num:num+3]
             color_similarity = cosine_similarity(colors_frame.loc[:,color_columns], np.array(color_vector).reshape(1, -1)).flatten()
             indices = np.argsort(color_similarity)
-            cut_ix = next((ix for ix, _ in enumerate(indices[::-1]) if color_similarity[ix] < 0.95), None)
+            cut_ix = next((num for num, ix in enumerate(indices[::-1]) if color_similarity[ix] < 0.95), None)
             if cut_ix is None:
                 log.info("Terminating match at color: {}".format(num))
                 break
