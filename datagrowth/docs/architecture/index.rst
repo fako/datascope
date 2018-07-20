@@ -8,5 +8,39 @@ Architecture
     :hidden:
 
     resources
+    storage
 
 
+Data flows through Data Growth in two phases called the growth phase and the scope phase.
+During the growth phase a data set gets created.
+During the scope phase it's possible to view data from the set in different ways.
+Both phases are configured separately.
+This allows data from the growth phase to be useful for many different scopes.
+
+
+.. rubric:: Growth phase
+
+The growth phase gathers data through the Resources and Processors.
+Usually there is some initial input which indicates what data needs to be fetched.
+A "growth" is complete once all data for an input is gathered and preprocessed.
+After completion of a growth phase additional growth phases may occur.
+Data from the completed growth phase may then be the starting point for the next growth phase.
+
+Once a growth is completed the data is stored inside Organisms. There are three types of Organisms:
+
+* Individuals are single data entries consisting of key/value pairs
+
+* Families are groups of Individuals that share the same keys
+
+* Communities are groups of Families and loose Individuals that together make up a coherent data set
+
+In practice you'll declare which data your Community should contain and then you'll "grow" this community.
+During growth all data gets gathered and preprocessed into standard entities, which makes it easy to work with it.
+
+
+.. rubric:: Scope phase
+
+After growth the amount of data inside a Community is often too big to process or view at once.
+During the scope phase it is possible to select parts of the data.
+This selection could be useful output for somebody.
+Or it could just be the input for a training process or other type of data usage.
