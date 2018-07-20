@@ -234,5 +234,53 @@ class TestNumericFeaturesFrame(TestCase):
         frame.load_content(self.get_extra_iterator)
         assert_frame_equal(frame.data, self.test_frame_extra, check_like=True)
 
-    def test_resetting_frame(self):
-        pass
+    def test_resetting_features_and_content(self):
+        features = [
+            TestNumericFeaturesFrame.is_dutch
+        ]
+        frame = NumericFeaturesFrame(
+            TestNumericFeaturesFrame.get_identifier,
+            self.get_iterator,
+            features
+        )
+        frame.reset(
+            features=[
+                TestNumericFeaturesFrame.value_number,
+                TestNumericFeaturesFrame.is_english
+            ],
+            content=self.get_extra_iterator
+        )
+        self.test_frame_extra = self.test_frame_extra.drop([4, 5, 6, 7, 8], axis=0)
+        self.test_frame_extra = self.test_frame_extra.drop(labels="is_dutch", axis=1)
+        assert_frame_equal(frame.data, self.test_frame_extra, check_like=True)
+
+    def test_resetting_features(self):
+        features = [
+            TestNumericFeaturesFrame.is_dutch
+        ]
+        frame = NumericFeaturesFrame(
+            TestNumericFeaturesFrame.get_identifier,
+            self.get_iterator,
+            features
+        )
+        frame.reset(features=[
+            TestNumericFeaturesFrame.value_number,
+            TestNumericFeaturesFrame.is_english
+        ])
+        self.test_frame = self.test_frame.drop(labels="is_dutch", axis=1)
+        assert_frame_equal(frame.data, self.test_frame, check_like=True)
+
+    def test_resetting_content(self):
+        features = [
+            TestNumericFeaturesFrame.is_dutch,
+            TestNumericFeaturesFrame.is_english,
+            TestNumericFeaturesFrame.value_number
+        ]
+        frame = NumericFeaturesFrame(
+            TestNumericFeaturesFrame.get_identifier,
+            self.get_iterator,
+            features
+        )
+        frame.reset(content=self.get_extra_iterator)
+        self.test_frame_extra = self.test_frame_extra.drop([4, 5, 6, 7, 8], axis=0)
+        assert_frame_equal(frame.data, self.test_frame_extra, check_like=True)
