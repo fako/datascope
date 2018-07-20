@@ -4,7 +4,8 @@ import numpy as np
 
 class NumericFeaturesFrame(object):
     """
-    Communities that benefit from structured content can use this class to put their content in a DataFrame
+    Communities that benefit from structured content can use this class to put their content in a DataFrame.
+    The content gets transformed to floats for different purposes.
     Initializing should happen during "app ready" phase at Django startup
     The community should store the object in a cache
     When new partial content presents itself this can be passed into load_content
@@ -30,16 +31,13 @@ class NumericFeaturesFrame(object):
 
     def load_content(self, callable=None, feature_names=None):
         """
-        Uses self.content if callable is set to None
-        Uses self.features.keys() if feature_names is None
+        Will call the callable to get the content.
+        Then it will add the content to the DataFrame by calling all feature callables and add the return values.
+        Specify feature_names to limit which feature callables will be used.
+        Features not in this list will remain unchanged.
         
-        Calls callable which returns an iterator with content
-        Passes each content to self.identifier to get content identity
-        Get or creates row in self.data where identifier fills the index 
-        and self.features callables decide on values for columns
-        Only fill columns defined by feature_names
-        
-        :param content: iterator with Individuals or content 
+        :param content: iterator with Individuals or content
+        :param feature_names: a list of feature names to load the content for
         :return: 
         """
         contents = callable() if callable else self.content()
@@ -67,9 +65,9 @@ class NumericFeaturesFrame(object):
 
     def load_features(self, callables):
         """
-        Takes the __name__ property from each callable and fills a dict self.features where values are callables
-        It adds __name__ as a column to self.data
-        Calls load_content with feature_names set to names of callables
+        Will add all features in callables to the numeric frames as empty columns.
+        As label it will use the name of the callable.
+        Then it passes all content to load_content, but only loads content for the new features
         
         :param callables: iterator with callables that return features 
         :return: 
@@ -86,14 +84,9 @@ class NumericFeaturesFrame(object):
 
     def reset(self, content=None, features=None):
         """
-        Creates a DataFrame from scratch using content and features given.
+        Either creates a DataFrame from scratch using content and features given.
         Or resets rows with only new content.
         Or resets columns with only new features.
-
-        Creates empty DataFrame in self.data
-        Sets self.content to content if content is not None
-        Sets self.features to features if features is not None
-        Calls load_features if features is set, otherwise calls load_content
         
         :param content: callable that returns lazy content iterator (e.g. lazy QuerySet iterator)
         :param features: iterator with named callables that represent features
