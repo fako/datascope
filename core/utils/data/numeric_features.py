@@ -117,10 +117,26 @@ class NumericFeaturesFrame(object):
 
     def clean_params(self, params):
         """
-        Checks if keys in params exist in self.features and if values are of correct type
-        Should strip $ from start of keys
+        Checks if keys in params exist in self.features and if values are of correct type.
+        Strip $ from start of keys.
         
         :param params: dict of GET parameters
         :return: tuple with accepted and rejected items
         """
-        pass
+        cleaned = {}
+        for key, value in params.items():
+            # First check valid values
+            if isinstance(value, float):
+                pass
+            elif isinstance(value, int) or isinstance(value, str) and value.isnumeric():
+                value = float(value)
+            else:
+                continue
+            # Then check collisions and feature register
+            stripped = key.strip("$")
+            if stripped not in self.features:
+                continue
+            if stripped in cleaned:
+                raise ValueError("Collision of keys while cleaning params for {} and {}".format(stripped, key))
+            cleaned[stripped] = value
+        return cleaned

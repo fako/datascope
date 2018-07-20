@@ -284,3 +284,38 @@ class TestNumericFeaturesFrame(TestCase):
         frame.reset(content=self.get_extra_iterator)
         self.test_frame_extra = self.test_frame_extra.drop([4, 5, 6, 7, 8], axis=0)
         assert_frame_equal(frame.data, self.test_frame_extra, check_like=True)
+
+    def test_clean_params(self):
+        features = [
+            TestNumericFeaturesFrame.is_dutch,
+            TestNumericFeaturesFrame.is_english,
+            TestNumericFeaturesFrame.value_number
+        ]
+        frame = NumericFeaturesFrame(
+            TestNumericFeaturesFrame.get_identifier,
+            self.get_iterator,
+            features
+        )
+
+        test_params = {
+            "is_dutch": "1",  # get converted to float
+            "is_french": 1.0,  # gets skipped
+            "$is_french": 1.0,  # gets skipped (without errors)
+            "value_number": None,  # gets skipped a a non-numeric
+            "is_english": "test",  # gets skipped as a non-numeric
+            "$value_number": 2.0
+        }
+        for function in [str, int, float]:
+            test_params["is_dutch"] = function(test_params["is_dutch"])
+            cleaned_params = frame.clean_params(test_params)
+            self.assertEquals(cleaned_params, {"is_dutch": 1.0, "value_number": 2.0})
+
+        test_error_params = {
+            "is_dutch": "1",
+            "$is_dutch": 1.0,
+        }
+        try:
+            frame.clean_params(test_error_params)
+            self.fail("Clean params should have raised for invalid params")
+        except ValueError:
+            pass
