@@ -113,7 +113,11 @@ class NumericFeaturesFrame(object):
         :param params: dict of GET parameters 
         :return: sorted list of index values
         """
-        pass
+        input_data = {key: 0.0 for key in self.features.keys()}
+        input_data.update(self.clean_params(params))
+        input_vector = pd.Series(data=input_data)
+        ranking = self.data.dot(input_vector).sort_values(ascending=False)
+        return list(ranking.index)
 
     def clean_params(self, params):
         """

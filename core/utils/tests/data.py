@@ -319,3 +319,19 @@ class TestNumericFeaturesFrame(TestCase):
             self.fail("Clean params should have raised for invalid params")
         except ValueError:
             pass
+
+    def test_rank_by_params(self):
+        features = [
+            TestNumericFeaturesFrame.is_dutch,
+            TestNumericFeaturesFrame.is_english,
+            TestNumericFeaturesFrame.value_number
+        ]
+        frame = NumericFeaturesFrame(
+            TestNumericFeaturesFrame.get_identifier,
+            self.get_iterator,
+            features
+        )
+        ranking = frame.rank_by_params({"is_dutch": 1, "value_number": 1})
+        self.assertEquals(ranking, [5, 8, 6, 4, 7])
+        ranking = frame.rank_by_params({"is_dutch": 0.5, "value_number": -1, "is_english": 2, "is_french": 100})
+        self.assertEquals(ranking, [7, 8, 6, 4, 5])
