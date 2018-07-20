@@ -103,8 +103,11 @@ class Command(CommunityCommand):
         title = options["title"]
         palette = {key: list(map(int, value.split(","))) for key, value in options["palette"].items()}
         base_dest = os.path.join(default_storage.location, community.get_name(), "palette", title)
-        women_individuals = community.kernel.individual_set.filter(properties__contains='target_group": "dames')
         is_data = community.get_name() == "fashion_data"
+        if is_data:
+            women_individuals = community.kernel.individual_set.filter(properties__contains='target_group": "dames')
+        else:
+            women_individuals = community.kernel.individual_set
 
         # Get color matches per clothing type
         for clothing_type in palette.keys():
