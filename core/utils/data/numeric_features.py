@@ -108,6 +108,8 @@ class NumericFeaturesFrame(object):
             self.features = {}
             self.load_features(features)
         else:
+            for column in self.features.keys():
+                self.data[column] = 0
             self.load_content(content)
 
     def rank_by_params(self, params, limit=20):
