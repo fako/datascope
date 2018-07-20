@@ -31,6 +31,26 @@ class InventoryCommunity(Community):
             },
             "schema": {},
             "errors": {},
+        }),
+        ("types", {
+            "process": "HttpResourceProcessor.submit_mass",
+            "input": "@brands",
+            "contribute": "Update:ExtractProcessor.extract_from_resource",
+            "output": "&input",
+            "config": {
+                "_args": [],
+                "_kwargs": {"image": "$.path"},
+                "_resource": "ClothingTypeRecognitionService",
+                "_objective": {
+                    "@": "$",
+                    "path": "$.path",
+                    "type": "$.results.prediction",
+                    "confidence": "$.results.confidence"
+                },
+                "_update_key": "path"
+            },
+            "schema": {},
+            "errors": {},
         })
     ])
 
@@ -64,7 +84,7 @@ class InventoryCommunity(Community):
             shutil.copy2(item["path"], os.path.join(dest, item["file"]))
 
     def set_kernel(self):
-        self.kernel = self.get_growth("brands").output
+        self.kernel = self.get_growth("types").output
 
     class Meta:
         verbose_name = "Inventory community"

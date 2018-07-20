@@ -50,6 +50,11 @@ DEFAULT_CONFIGURATION = {
             "protocol": "http",
             "host": "localhost:2000",
             "path": "/predict/"
+        },
+        "clothing_type_recognition": {
+            "protocol": "http",
+            "host": "localhost:2001",
+            "path": "/predict/"
         }
     }
 
