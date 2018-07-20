@@ -9,7 +9,8 @@ dump.rdb
 db-dump.*.json
 *.sql
 
-system/docs/_build/
+datagrowth/docs/_build/
+
 system/coverage/
 system/profile/
 system/files/media/

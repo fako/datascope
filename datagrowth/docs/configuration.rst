@@ -1,4 +1,4 @@
-.. Data Scope configuration documentation
+.. Data Growth configuration documentation
 
 Configuration
 =============
