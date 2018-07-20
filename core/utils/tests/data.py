@@ -111,6 +111,7 @@ class TestNumericFeaturesFrame(TestCase):
     def get_extra_iterator(self):
         return iter([
             Individual.objects.create(
+                id=9,
                 properties={
                     'country': 'FR',
                     'language': 'fr',
@@ -121,6 +122,7 @@ class TestNumericFeaturesFrame(TestCase):
                 collective=self.test_fixture
             ),
             Individual.objects.create(
+                id=10,
                 properties={
                     'country': 'FR',
                     'language': 'fr',
