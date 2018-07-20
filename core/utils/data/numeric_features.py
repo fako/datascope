@@ -99,6 +99,8 @@ class NumericFeaturesFrame(object):
         :param features: iterator with named callables that represent features
         :return: 
         """
+        assert content is not None or features is not None, \
+            "Either content or features should be given to reset the numeric frame"
         self.data = pd.DataFrame(dtype=np.float)
         if content is not None:
             self.content = content
