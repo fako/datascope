@@ -245,7 +245,7 @@ class FutureFashionCommunity(Community):
             sorter(data_set)
 
     def update_main_colors(self, collective):
-        query = collective.individual_set
+        query = collective.individual_set.filter(properties__contains='missing_file": false')
         individuals = tqdm(query.iterator(), total=query.count())
         for individual in individuals:
             # See if there is a color dict and skip if there is
