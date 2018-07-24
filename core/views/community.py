@@ -1,3 +1,4 @@
+import warnings
 from copy import copy
 
 from django.core.exceptions import ValidationError
@@ -57,6 +58,7 @@ class CommunityView(APIView):
 
     @classmethod
     def get_full_path(cls, community_class, query_path, configuration=None, created_at=None):
+        warnings.warn("CommunityView.get_full_path is deprecated in favor of get_uri", DeprecationWarning)
         configuration = configuration or {}
         service_view_name = "v1:{}_service".format(community_class.get_name())
         service_view_url = reverse(service_view_name, kwargs={"path": query_path})
@@ -67,9 +69,16 @@ class CommunityView(APIView):
 
     @classmethod
     def get_uri(cls, community_class, query_path, configuration=None, created_at=None):
-        full_path = CommunityView.get_full_path(community_class, query_path, created_at=created_at)
-        standard_config = "#" + str(get_standardized_configuration(configuration)) if configuration else ""
-        return full_path + standard_config
+        simple_configuration = {
+            key: value for key, value in configuration.items() if isinstance(value, (int, float, str, bool))
+        }
+        service_view_name = "v1:{}_service".format(community_class.get_name())
+        service_view_url = reverse(service_view_name, kwargs={"path": query_path})
+        if created_at:
+            configuration["t"] = format_datetime(created_at)
+        query = "?" + get_standardized_configuration(simple_configuration, as_hash=False) if configuration else ""
+        anchor = "#" + get_standardized_configuration(configuration) if configuration else ""
+        return service_view_url + query + anchor
 
     def get_response(self, community_class, query_path, configuration, created_at_info=(None, None)):
         assert isinstance(configuration, dict), \

@@ -8,6 +8,7 @@ import json
 import logging
 import argparse
 from copy import copy
+import hashlib
 
 from django.db.models import fields
 from django.forms import fields as form_fields
@@ -336,7 +337,10 @@ class DecodeConfigAction(argparse.Action):
 
 
 def get_standardized_configuration(configuration, as_hash=True):
-    sorted_by_keys = tuple(sorted(configuration.items(), key=lambda item: item[0]))
-    if as_hash:
-        return hash(sorted_by_keys)  # TODO: use best hash algorithm
-    return "&".join("{}={}".format(key, value) for key, value in sorted_by_keys)
+    sorted_by_keys = sorted(configuration.items(), key=lambda item: item[0])
+    standardized = "&".join("{}={}".format(key, value) for key, value in sorted_by_keys)
+    if not as_hash:
+        return standardized
+    hasher = hashlib.sha256()
+    hasher.update(bytes(standardized, encoding="utf-8"))
+    return hasher.hexdigest()

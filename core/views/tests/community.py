@@ -30,13 +30,13 @@ class TestCommunityView(TestCase):
     def check_manifestations(self, count):
         self.assertEqual(Manifestation.objects.count(), count)
 
-    def test_get_full_path(self):
-        full_path = CommunityView.get_full_path(CommunityMock, "test/path", {"test": "test"})
-        self.assertEqual(full_path, "/data/v1/mock/service/test/path?test=test")
-        self.skipTest("Add test for created_at argument")
-
     def test_get_uri(self):
-        self.skipTest("not tested")
+        full_path = CommunityView.get_uri(CommunityMock, "test/path", {"test": "test"})
+        self.assertEqual(
+            full_path,
+            "/data/v1/mock/service/test/path?test=test#0dcbfb0b84aff2403ed170e77c8e80b5c2aac17586a55f03b500446a4291b105"
+        )
+        self.skipTest("add test for created_at argument")
 
     @patch("core.models.organisms.community.Community.grow", side_effect=ValidationError("Invalid"))
     def test_get_response_invalid(self, grow_patch):

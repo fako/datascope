@@ -79,9 +79,10 @@ class TestManifestationResource(TestCase):
 
     def test_content(self):
         content_type, data = self.instance.content
+        expected_manifestation_hash = "6eab071abbb42b649255ae8131f580986c750a5cf444166d3c1db00446ddc32a"
         self.assertEqual(content_type, "application/json")
         self.assertEqual(data, {
-            "service": "/data/v1/mock/service/test-ready?setting1=const",
+            "service": "/data/v1/mock/service/test-ready?setting1=const#" + expected_manifestation_hash,
             "data": [
                 {"context": "nested value", "number": 1, "value": "nested value 0"},
                 {"context": "nested value", "number": 3, "value": "nested value 2"},
