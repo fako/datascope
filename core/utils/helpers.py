@@ -25,7 +25,7 @@ def parse_datetime_string(time_str):  # TODO: test to unlock
     try:
         return datetime.strptime(time_str, settings.DATASCOPE_DATETIME_FORMAT)
     except (ValueError, TypeError):
-        return None
+        return datetime(month=1, day=1, year=1970)
 
 
 def format_datetime(datetime):  # TODO: test to unlock

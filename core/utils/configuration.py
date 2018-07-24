@@ -333,3 +333,10 @@ class DecodeConfigAction(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         values = dict(parse_qsl(values))
         setattr(namespace, self.dest, values)
+
+
+def get_standardized_configuration(configuration, as_hash=True):
+    sorted_by_keys = tuple(sorted(configuration.items(), key=lambda item: item[0]))
+    if as_hash:
+        return hash(sorted_by_keys)  # TODO: use best hash algorithm
+    return "&".join("{}={}".format(key, value) for key, value in sorted_by_keys)

@@ -1,4 +1,5 @@
-from core.utils.tests.configuration import TestConfigurationType, TestConfigurationProperty, TestLoadConfigDecorator
+from core.utils.tests.configuration import (TestConfigurationType, TestConfigurationProperty, TestLoadConfigDecorator,
+                                            TestGetStandardizedConfiguration)
 from core.utils.tests.data import TestPythonReach, TestNumericFeaturesFrame
 from core.utils.tests.image import TestImageGrid
 from core.utils.tests.helpers import TestUtilHelpers

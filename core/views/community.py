@@ -14,7 +14,8 @@ from rest_framework.status import (HTTP_200_OK, HTTP_202_ACCEPTED, HTTP_204_NO_C
 from core.models.organisms.states import CommunityState
 from core.models.resources.manifestation import Manifestation
 from core.exceptions import DSProcessUnfinished, DSProcessError
-from core.utils.helpers import parse_datetime_string
+from core.utils.helpers import parse_datetime_string, format_datetime
+from core.utils.configuration import get_standardized_configuration
 
 
 class CommunityView(APIView):
@@ -30,7 +31,9 @@ class CommunityView(APIView):
         "error": None
     }
 
-    def _get_response_from_manifestation(self, manifestation, response_data):
+    @classmethod
+    def _get_response_from_manifestation(cls, manifestation):
+        response_data = copy(cls.RESPONSE_DATA)
         manifestation_data = manifestation.get_data(async=manifestation.community.ASYNC_MANIFEST)
         if not manifestation_data:
             return Response(None, HTTP_204_NO_CONTENT)
@@ -38,82 +41,120 @@ class CommunityView(APIView):
         response_data[results_key] = manifestation_data
         return Response(response_data, HTTP_200_OK)
 
-    @staticmethod
-    def get_full_path(community_class, query_path, query_parameters):
-        service_view = "v1:{}_service".format(community_class.get_name())
-        # Order of the given parameters matters for database lookups,
-        # of previously calculated results for these parameters
-        parameters_sorted_by_keys = sorted(query_parameters.items(), key=lambda item: item[0])
-        return "{}?{}".format(
-            reverse(service_view, kwargs={"path": query_path}),
-            "&".join("{}={}".format(key, value) for key, value in parameters_sorted_by_keys)
-        )
+    @classmethod
+    def _get_response_from_error(cls, error_message, status_code):
+        response_data = copy(cls.RESPONSE_DATA)
+        response_data["error"] = error_message
+        return Response(response_data, status_code)
 
-    def get_response(self, community_class, query_path, query_parameters):
+    @classmethod
+    def pop_created_at_info(cls, request_parameters):
+        try:
+            get_parameter = request_parameters.pop("t")
+        except KeyError:
+            return None, None
+        return get_parameter, parse_datetime_string(get_parameter)
 
-        assert isinstance(query_parameters, dict), \
-            "query_parameters for get_response should be a dictionary without urlencoded values"
-        response_data = copy(self.RESPONSE_DATA)
-        full_path = self.get_full_path(community_class, query_path, query_parameters)
+    @classmethod
+    def get_full_path(cls, community_class, query_path, configuration=None, created_at=None):
+        configuration = configuration or {}
+        service_view_name = "v1:{}_service".format(community_class.get_name())
+        service_view_url = reverse(service_view_name, kwargs={"path": query_path})
+        if created_at:
+            configuration["t"] = format_datetime(created_at)
+        config_query = "?" + get_standardized_configuration(configuration, as_hash=False) if configuration else ""
+        return service_view_url + config_query
+
+    @classmethod
+    def get_uri(cls, community_class, query_path, configuration=None, created_at=None):
+        full_path = CommunityView.get_full_path(community_class, query_path, created_at=created_at)
+        standard_config = "#" + str(get_standardized_configuration(configuration)) if configuration else ""
+        return full_path + standard_config
+
+    def get_response(self, community_class, query_path, configuration, created_at_info=(None, None)):
+        assert isinstance(configuration, dict), \
+            "configuration for get_response should be a dictionary without urlencoded values"
+
+        created_at_parameter, created_at = created_at_info
+        uri = CommunityView.get_uri(community_class, query_path, configuration, created_at)
 
         try:
-            manifestation = Manifestation.objects.get(uri=full_path)
+            manifestation = Manifestation.objects.get(uri=uri)
             community = manifestation.community
         except Manifestation.DoesNotExist:
             manifestation = None
-            signature = community_class.get_signature_from_input(
+            signature = community_class.get_signature_from_input(  # TODO: make signature ignore non-growth config
                 *query_path.split('/'),
-                **query_parameters
+                **configuration
             )
-            created_at = parse_datetime_string(query_parameters.get("t", None))
-            if "t" not in query_parameters:
+            if created_at is None:
                 community, created = community_class.objects.get_latest_or_create_by_signature(
                     signature,
-                    **query_parameters
+                    **configuration  # TODO: make this ignore non-growth config
                 )
-            elif created_at is not None:
-                community = community_class.objects.get(
-                    signature=signature,
-                    created_at=created_at
-                )
-                community.config = community_class.get_configuration_from_input(**query_parameters)
             else:
-                raise Http404("Can not find community with t={}".format(query_parameters.get("t")))
+                try:
+                    community = community_class.objects.get(signature=signature, created_at=created_at)
+                    community.config = community_class.get_configuration_from_input(**configuration)  # TODO: again ignore non-growth
+                except community_class.DoesNotExist:
+                    raise Http404("Can not find community with t={}".format(created_at_parameter))
 
         try:
 
             if manifestation is not None:
-                return self._get_response_from_manifestation(manifestation, response_data)
+                return self._get_response_from_manifestation(manifestation)
             if community.state == CommunityState.SYNC:
                 raise DSProcessUnfinished()
 
             community.grow(*query_path.split('/'))
-            config = Manifestation.generate_config(community.PUBLIC_CONFIG, **query_parameters)
-            manifestation = Manifestation.objects.create(uri=full_path, community=community, config=config)
-            return self._get_response_from_manifestation(manifestation, response_data)
+            config = Manifestation.generate_config(community.PUBLIC_CONFIG, **configuration)  # TODO: filter scope only
+            manifestation = Manifestation.objects.create(uri=uri, community=community, config=config)
+            return self._get_response_from_manifestation(manifestation)
 
         except ValidationError as exc:
-            response_data["error"] = exc.message
-            return Response(response_data, HTTP_400_BAD_REQUEST)
+            return self._get_response_from_error(exc.message, HTTP_400_BAD_REQUEST)
 
         except DSProcessUnfinished:
             # FEATURE: set status
+            response_data = copy(self.RESPONSE_DATA)
             return Response(response_data, HTTP_202_ACCEPTED)
 
-        except DSProcessError:
-            # FEATURE: set errors
-            return Response(response_data, HTTP_500_INTERNAL_SERVER_ERROR)
+        except DSProcessError as exc:
+            # TODO: log exception
+            return self._get_response_from_error(str(exc), HTTP_500_INTERNAL_SERVER_ERROR)
 
     def get(self, request, community_class, path="", *args, **kwargs):
+        request_parameters = request.GET.dict()
         return self.get_response(
             community_class,
             query_path=path,
-            query_parameters=request.GET.dict()
+            configuration=request_parameters,
+            created_at_info=self.pop_created_at_info(request_parameters)
         )
 
-    # FEATURE: allow actions who's function lives on a Community through POST
-    # def post(self, request, action, community_class, *args, **kwargs):
-    #     pass
+    def post(self, request, community_class, path="", *args, **kwargs):
+
+        # Check action
+        action = request.data.get("action")
+        if action != "manifest" and action != "scope":
+            # FEATURE: allow actions who's function lives on a Community through POST
+            error = "{} is an unknown action".format(action)
+            return self._get_response_from_error(error, HTTP_400_BAD_REQUEST)
+        # Check configurations
+        get_configuration = request.GET.dict()
+        post_configuration = request.data.get("config")
+        for get_parameter in get_configuration:
+            if get_parameter in post_configuration:
+                error = "{} should be specified in either GET and POST not both"
+                return self._get_response_from_error(error, HTTP_400_BAD_REQUEST)
+        configuration = dict(**get_configuration, **post_configuration)
+
+        return self.get_response(
+            community_class,
+            query_path=path,
+            configuration=configuration,
+            created_at_info=self.pop_created_at_info(configuration)
+        )
 
 
 class HtmlCommunityView(View):
@@ -167,7 +208,14 @@ class HtmlCommunityView(View):
         elif path is None:
             path = ""
         # Search request
-        api_response = CommunityView().get_response(community_class, path, request.GET.dict())
+        configuration = request.GET.dict()
+        api_view = CommunityView()
+        api_response = api_view.get_response(
+            community_class,
+            path,
+            configuration,
+            api_view.pop_created_at_info(configuration)
+        )
         template_context = {
             'self_reverse': community_class.get_name() + '_html',
             'response': self.data_for(community_class, api_response)

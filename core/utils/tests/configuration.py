@@ -170,7 +170,6 @@ class TestConfigurationProperty(TestCase):
         self.assertNotEqual(self.holder1.property, self.holder2.property)  # instances should not share configurations
 
 
-
 class TestLoadConfigDecorator(TestCase):
 
     def setUp(self):
@@ -222,3 +221,9 @@ class TestLoadConfigDecorator(TestCase):
             self.fail("load_config did not throw an exception when no config kwarg was set.")
         except TypeError:
             pass
+
+
+class TestGetStandardizedConfiguration(TestCase):
+
+    def test_standardized_configuration(self):
+        self.skipTest("not tested")
