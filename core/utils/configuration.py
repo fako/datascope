@@ -254,7 +254,7 @@ class ConfigurationField(fields.TextField):
         self._namespace = namespace
         self._private = private
 
-    def contribute_to_class(self, cls, name, virtual_only=False):
+    def contribute_to_class(self, cls, name, private_only=False, **kwargs):
 
         configuration_property = ConfigurationProperty(
             storage_attribute=name,
