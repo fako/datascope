@@ -5,11 +5,6 @@ from core.models.organisms import Community, Individual
 
 class CommunityMock(Community):
 
-    PUBLIC_CONFIG = {
-        "setting1": "const",
-        "$setting2": "variable"
-    }
-
     COMMUNITY_SPIRIT = OrderedDict([
         ("phase1", {
             "process": "HttpResourceProcessor.fetch",
@@ -22,6 +17,8 @@ class CommunityMock(Community):
                     "value": "$",
                     "#context": "$.dict.test"
                 },
+                "setting0": "private",
+                "$setting1": "const"
             },
             "input": None,
             "contribute": "Append:ExtractProcessor.extract_from_resource",
@@ -50,7 +47,7 @@ class CommunityMock(Community):
                     "@": "$.dict.list",
                     "value": "$",
                     "#context": "$.dict.test"
-                },
+                }
             },
             "input": "@phase1",
             "contribute": "Append:ExtractProcessor.extract_from_resource",
@@ -89,7 +86,9 @@ class CommunityMock(Community):
         {
             "name": "filter_individuals",
             "process": "MockFilterProcessor.filter_individuals",
-            "config": {}
+            "config": {
+                "$setting2": "variable"
+            }
         },
     ]
 

@@ -37,15 +37,17 @@ def manifest(config, *args, **kwargs):
             signature
         ))
         return [success, errors]
-    input_configuration = community_model.get_configuration_from_input(**kwargs)
-    uri = CommunityView.get_uri(community_model, "/".join(args), input_configuration)
+    growth_configuration = community_model.filter_growth_configuration(**kwargs)
+    scope_configuration = community_model.filter_scope_configuration(**kwargs)
+    configuration = dict(**growth_configuration, **scope_configuration)
+    uri = CommunityView.get_uri(community_model, "/".join(args), configuration)
     try:
         manifestation = Manifestation.objects.get(uri=uri)
     except Manifestation.DoesNotExist:
         manifestation = Manifestation(
             uri=uri,
             community=community_instance,
-            config=community_model.get_configuration_from_input(*args, **kwargs)
+            config=community_model.filter_scope_configuration(*args, **kwargs)
         )
         manifestation.save()
     try:

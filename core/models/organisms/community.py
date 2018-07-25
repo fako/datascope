@@ -1,4 +1,4 @@
-import six
+import warnings
 
 from itertools import groupby
 from collections import OrderedDict, Iterator
@@ -56,25 +56,52 @@ class Community(models.Model, ProcessorMixin):
     COMMUNITY_BODY = []
     ASYNC_MANIFEST = False
     INPUT_THROUGH_PATH = True
-    PUBLIC_CONFIG = {}
+    PUBLIC_CONFIG = None  # obsolete
     SAMPLE_SIZE = 0
 
     objects = CommunityManager()
 
     @classmethod
     def get_signature_from_input(cls, *args, **kwargs):
-        signature = list(args) + [
-            "{}={}".format(key, value)
-            for key, value in six.iteritems(kwargs)
-            if key in cls.PUBLIC_CONFIG and not key.startswith("$")
-        ]
+        growth_configuration = cls.filter_growth_configuration(**kwargs)
+        signature = list(args) + ["{}={}".format(key, value) for key, value in growth_configuration.items()]
         signature = list(filter(bool, signature))
         signature.sort()
         return "&".join(signature)
 
     @classmethod
+    def filter_growth_configuration(cls, *args, **kwargs):
+        # Calculate which keys are whitelisted
+        scope_keys = set()
+        for name, phase in cls.COMMUNITY_SPIRIT.items():
+            scope_keys.update({key[1:] for key in phase.get("config", {}).keys() if key.startswith("$")})
+        # Also allow obsolete PUBLIC_CONFIG variables
+        public_config_keys = {
+            key for key, value in kwargs.items() if key in cls.PUBLIC_CONFIG and not key.startswith("$")
+        } if isinstance(cls.PUBLIC_CONFIG, dict) else set()
+        scope_keys.update(public_config_keys)
+        # Actual filtering of input
+        return {key: value for key, value in kwargs.items() if key.strip("$") in scope_keys}
+
+    @classmethod
+    def filter_scope_configuration(cls, *args, **kwargs):
+        # Calculate which keys are whitelisted
+        scope_keys = set()
+        for part in cls.COMMUNITY_BODY:
+            scope_keys.update({key[1:] for key in part.get("config", {}).keys() if key.startswith("$")})
+        # Also allow obsolete PUBLIC_CONFIG variables
+        public_config_keys = {
+            key[1:] for key, value in kwargs.items() if key in cls.PUBLIC_CONFIG and key.startswith("$")
+        } if isinstance(cls.PUBLIC_CONFIG, dict) else set()
+        scope_keys.update(public_config_keys)
+        # Actual filtering of input
+        return {key: value for key, value in kwargs.items() if key.strip("$") in scope_keys}
+
+    @classmethod
     def get_configuration_from_input(cls, *args, **kwargs):
-        return {key: value for key, value in six.iteritems(kwargs) if key in cls.PUBLIC_CONFIG}
+        warnings.warn("Community.get_configuration_from_input is deprecated in favor of "
+                      "Community.filter_growth_configuration or Community.filter_scope_configuration")
+        return cls.filter_growth_configuration(*args, **kwargs)
 
     def call_finish_callback(self, phase, out, errors):
         callback_name = "finish_" + phase
@@ -122,7 +149,7 @@ class Community(models.Model, ProcessorMixin):
         """
         Will create all Growth objects based on the community_spirit
         """
-        for growth_type, growth_config in six.iteritems(self.COMMUNITY_SPIRIT):
+        for growth_type, growth_config in self.COMMUNITY_SPIRIT.items():
             sch = growth_config["schema"]
             cnf = self.config.to_dict(protected=True)
             if self.SAMPLE_SIZE:

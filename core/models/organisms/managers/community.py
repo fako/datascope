@@ -7,13 +7,13 @@ class CommunityManager(Manager):
 
     def get_latest_by_signature(self, signature, **kwargs):
         community = self.get_queryset().filter(signature=signature).latest("created_at")
-        community.config = self.model.get_configuration_from_input(**kwargs)
+        community.config = self.model.filter_growth_configuration(**kwargs)
         return community
 
     def create_by_signature(self, signature, **kwargs):
         return self.get_queryset().create(
             signature=signature,
-            config=self.model.get_configuration_from_input(**kwargs)
+            config=self.model.filter_growth_configuration(**kwargs)
         )
 
     def get_latest_or_create_by_signature(self, signature, **kwargs):

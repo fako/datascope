@@ -92,19 +92,19 @@ class CommunityView(APIView):
             community = manifestation.community
         except Manifestation.DoesNotExist:
             manifestation = None
-            signature = community_class.get_signature_from_input(  # TODO: make signature ignore non-growth config
+            signature = community_class.get_signature_from_input(
                 *query_path.split('/'),
                 **configuration
             )
             if created_at is None:
                 community, created = community_class.objects.get_latest_or_create_by_signature(
                     signature,
-                    **configuration  # TODO: make this ignore non-growth config
+                    **configuration
                 )
             else:
                 try:
                     community = community_class.objects.get(signature=signature, created_at=created_at)
-                    community.config = community_class.get_configuration_from_input(**configuration)  # TODO: again ignore non-growth
+                    community.config = community_class.filter_growth_configuration(**configuration)
                 except community_class.DoesNotExist:
                     raise Http404("Can not find community with t={}".format(created_at_parameter))
 
@@ -116,7 +116,7 @@ class CommunityView(APIView):
                 raise DSProcessUnfinished()
 
             community.grow(*query_path.split('/'))
-            config = Manifestation.generate_config(community.PUBLIC_CONFIG, **configuration)  # TODO: filter scope only
+            config = community.filter_scope_configuration(**configuration)
             manifestation = Manifestation.objects.create(uri=uri, community=community, config=config)
             return self._get_response_from_manifestation(manifestation)
 
