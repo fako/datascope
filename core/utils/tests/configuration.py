@@ -14,7 +14,8 @@ class TestConfigurationType(TestCase):
         self.config.set_configuration({
             "test": "public",
             "_test2": "protected",
-            "_test3": "private"
+            "_test3": "private",
+            "$test4": "variable"  # variable config is not recommended
         })
 
     def test_init(self):
@@ -35,9 +36,10 @@ class TestConfigurationType(TestCase):
         self.assertEqual(self.config.test3, "private")
         self.assertEqual(self.config._test2, "protected")
         self.assertEqual(self.config._test3, "private")
+        self.assertEqual(self.config.test4, "variable")
         # Not found error
         try:
-            self.test = self.config.test4
+            self.test = self.config.test5
             self.fail("ConfigurationType should raise an exception when configuration is not available")
         except ConfigurationNotFoundError:
             pass
@@ -64,10 +66,11 @@ class TestConfigurationType(TestCase):
         self.assertEqual(self.config.test, "public 2")
         self.assertEqual(self.config.test2, "protected")
         self.assertEqual(self.config.test3, "private")
-        self.config.set_configuration({"_test2": "protected 2", "_test3": "private 2"})
+        self.config.set_configuration({"_test2": "protected 2", "_test3": "private 2", "$test4": "variable 2"})
         self.assertEqual(self.config.test, "public 2")
         self.assertEqual(self.config.test2, "protected 2")
         self.assertEqual(self.config.test3, "private 2")
+        self.assertEqual(self.config.test4, "variable 2")
         # Test private configuration detection
         self.config._private.append("_private_also")
         self.config.set_configuration({"private_also": "private"})
@@ -83,16 +86,20 @@ class TestConfigurationType(TestCase):
         # Check properties
         self.assertIn("_test3", private)
         self.assertIn("test", private)
+        self.assertIn("$test4", private)
         self.assertNotIn("_test2", private)
         self.assertIn("_test2", protected)
         self.assertIn("test", protected)
+        self.assertIn("$test4", protected)
         self.assertNotIn("_test3", protected)
         self.assertIn("test", public)
+        self.assertIn("$test4", public)
         self.assertNotIn("_test2", public)
         self.assertNotIn("_test3", public)
         self.assertIn("test", everything)
         self.assertIn("_test2", everything)
         self.assertIn("_test3", everything)
+        self.assertIn("$test4", everything)
         # Make sure that all private keys are there
         # But the defaults key should not be passed down
         self.assertEqual(len(self.config._private) - 1 + len(public), len(private))
@@ -106,6 +113,7 @@ class TestConfigurationType(TestCase):
         self.assertEqual(type_instance.test, "public")
         self.assertEqual(type_instance.test2, "protected")
         self.assertEqual(type_instance.test3, "private")
+        self.assertEqual(type_instance.test4, "variable")
         self.assertEqual(type_instance.global_configuration, "global configuration")
         self.assertEqual(type_instance.namespace_configuration, "namespace configuration")
         self.assertEqual(type_instance._private, self.config._private)
@@ -120,6 +128,18 @@ class TestConfigurationType(TestCase):
             self.fail("from_dict does not fail if _namespace is missing from configuration.")
         except AssertionError:
             pass
+
+    def test_contains(self):
+        self.skipTest("not tested")
+
+    def test_supplement(self):
+        self.skipTest("not tested")
+
+    def test_items(self):
+        self.skipTest("not tested")
+
+    def test_clean_key(self):
+        self.skipTest("not tested")
 
 
 class ConfigurationPropertyHolder(object):

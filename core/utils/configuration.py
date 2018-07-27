@@ -77,7 +77,7 @@ class ConfigurationType(object):
         if not new:
             return
         assert isinstance(new, dict), "Configurations can only be set with a dictionary not a {}".format(type(new))
-        for key, value in six.iteritems(new):
+        for key, value in new.items():
             # FEATURE: guard here against improper override of internal attributes
             shielded_key = key if key.startswith('_') else '_' + key
             if shielded_key in self._private:
@@ -103,7 +103,7 @@ class ConfigurationType(object):
         :return: (mixed) the configuration variable
         """
         shielded_key = '_' + config
-        variable_key = '$' + config  # TODO: test this config option
+        variable_key = '$' + config
         namespace_attr = self._namespace + '_' + config
         global_attr = self._global_prefix + '_' + config
 
@@ -133,16 +133,7 @@ class ConfigurationType(object):
         :param private: (boolean) flag to include private configurations
         :return: (dict) current configuration other than default
         """
-        dictionary = dict()
-        for key, value in six.iteritems(self.__dict__):
-            if key == '_defaults':
-                continue
-            if key.startswith('_'):
-                if (private and key in self._private) or (protected and key not in self._private):
-                    dictionary[key] = value
-            else:
-                dictionary[key] = value
-        return dictionary
+        return dict(self.items(protected=protected, private=private))
 
     @classmethod
     def from_dict(cls, config, defaults):
@@ -162,8 +153,41 @@ class ConfigurationType(object):
         instance.set_configuration(config)
         return instance
 
+    def supplement(self, other):
+        supplement = {}
+        for key, value in other.items():
+            if key not in self:
+                supplement[key] = value
+        if supplement:
+            self.set_configuration(supplement)
+
+    def items(self, protected=False, private=False):
+        for key, value in six.iteritems(self.__dict__):
+            if key == '_defaults':
+                continue
+            if key.startswith('_'):
+                if (private and key in self._private) or (protected and key not in self._private):
+                    yield key, value
+            else:
+                yield key, value
+
+    @staticmethod
+    def clean_key(key):
+        if key.startswith("$") or key.startswith("_"):
+            return key[1:]
+        return key
+
     def __getattr__(self, item):
+        item = self.clean_key(item)
         return self._get_configuration(item)
+
+    def __contains__(self, item):
+        item = self.clean_key(item)
+        try:
+            getattr(self, item)
+        except ConfigurationNotFoundError:
+            return False
+        return True
 
     def __str__(self):
         return str(self.to_dict(protected=True))
