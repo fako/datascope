@@ -161,7 +161,7 @@ class TestCommunityView(TestCase):
         data = {
             "action": "scope",
             "config": {
-                "settings2": 3
+                "include_even": 0
             }
         }
         client = Client()
@@ -179,11 +179,6 @@ class TestCommunityView(TestCase):
                     "context": "nested value",
                     "value": "nested value 0",
                     "number": 1
-                },
-                {
-                    "context": "nested value",
-                    "value": "nested value 1",
-                    "number": 2
                 },
                 {
                     "context": "nested value",
