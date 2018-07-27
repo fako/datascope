@@ -314,7 +314,7 @@ class Community(models.Model, ProcessorMixin):
         content = self.kernel.content
         for part in self.COMMUNITY_BODY:
             self.call_manifestation_callbacks(part)
-            processor, method, args_type = self.prepare_process(part["process"], extra_config=part.get("config"))
+            processor, method, args_type = self.prepare_process(part["process"], class_config=part.get("config"))
             content = method(content)
             assert isinstance(content, Iterator), \
                 "To prevent high memory usage processors should return iterators when manifestating"

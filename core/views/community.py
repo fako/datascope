@@ -49,12 +49,21 @@ class CommunityView(APIView):
         return Response(response_data, status_code)
 
     @classmethod
-    def pop_created_at_info(cls, request_parameters):
+    def get_configuration_from_request(cls, request):
+        get_configuration = request.GET.dict()
+        post_configuration = request.data.get("config", {}) if hasattr(request, 'data') else {}
+        for get_parameter in get_configuration:
+            if get_parameter in post_configuration:
+                raise ValidationError( "{} should be specified in either GET and POST not both".format(get_parameter))
+        configuration = dict(**get_configuration, **post_configuration)
+        for key, value in configuration.items():
+            if isinstance(value, str) and value.isnumeric() and not key == "t":
+                configuration[key] = float(value)
         try:
-            get_parameter = request_parameters.pop("t")
+            created_at_parameter = configuration.pop("t")
         except KeyError:
-            return None, None
-        return get_parameter, parse_datetime_string(get_parameter)
+            return configuration, (None, None,)
+        return configuration, (created_at_parameter, parse_datetime_string(created_at_parameter),)
 
     @classmethod
     def get_full_path(cls, community_class, query_path, configuration=None, created_at=None):
@@ -133,36 +142,28 @@ class CommunityView(APIView):
             return self._get_response_from_error(str(exc), HTTP_500_INTERNAL_SERVER_ERROR)
 
     def get(self, request, community_class, path="", *args, **kwargs):
-        request_parameters = request.GET.dict()
+        configuration, created_at_info = self.get_configuration_from_request(request)
         return self.get_response(
             community_class,
             query_path=path,
-            configuration=request_parameters,
-            created_at_info=self.pop_created_at_info(request_parameters)
+            configuration=configuration,
+            created_at_info=created_at_info
         )
 
     def post(self, request, community_class, path="", *args, **kwargs):
-
-        # Check action
         action = request.data.get("action")
         if action != "manifest" and action != "scope":
             # FEATURE: allow actions who's function lives on a Community through POST
             error = "{} is an unknown action".format(action)
             return self._get_response_from_error(error, HTTP_400_BAD_REQUEST)
-        # Check configurations
-        get_configuration = request.GET.dict()
-        post_configuration = request.data.get("config")
-        for get_parameter in get_configuration:
-            if get_parameter in post_configuration:
-                error = "{} should be specified in either GET and POST not both"
-                return self._get_response_from_error(error, HTTP_400_BAD_REQUEST)
-        configuration = dict(**get_configuration, **post_configuration)
+
+        configuration, created_at_info = self.get_configuration_from_request(request)
 
         return self.get_response(
             community_class,
             query_path=path,
             configuration=configuration,
-            created_at_info=self.pop_created_at_info(configuration)
+            created_at_info=created_at_info
         )
 
 
@@ -217,13 +218,14 @@ class HtmlCommunityView(View):
         elif path is None:
             path = ""
         # Search request
-        configuration = request.GET.dict()
+
         api_view = CommunityView()
+        configuration, created_at_info = api_view.get_configuration_from_request(request)
         api_response = api_view.get_response(
             community_class,
             path,
             configuration,
-            api_view.pop_created_at_info(configuration)
+            created_at_info
         )
         template_context = {
             'self_reverse': community_class.get_name() + '_html',

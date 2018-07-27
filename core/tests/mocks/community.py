@@ -87,7 +87,8 @@ class CommunityMock(Community):
             "name": "filter_individuals",
             "process": "MockFilterProcessor.filter_individuals",
             "config": {
-                "$setting2": "variable"
+                "$setting2": "variable",
+                "$include_even": False
             }
         },
     ]

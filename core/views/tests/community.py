@@ -38,6 +38,9 @@ class TestCommunityView(TestCase):
         )
         self.skipTest("add test for created_at argument")
 
+    def test_get_configuration_from_request(self):
+        self.skipTest("not tested")
+
     @patch("core.models.organisms.community.Community.grow", side_effect=ValidationError("Invalid"))
     def test_get_response_invalid(self, grow_patch):
         response = self.view.get_response(CommunityMock, "test", {"setting1": "const"})
@@ -94,6 +97,29 @@ class TestCommunityView(TestCase):
                     "context": "nested value",
                     "value": "nested value 1",
                     "number": 2
+                },
+                {
+                    "context": "nested value",
+                    "value": "nested value 2",
+                    "number": 3
+                }
+            ]
+        })
+
+    def test_get_filter(self):
+        client = Client()
+        response = client.get("/data/v1/mock/service/test-ready/?setting1=const&include_even=0")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {
+            "error": None,
+            "status": {},
+            "result": {},
+            "actions": [],
+            "results": [
+                {
+                    "context": "nested value",
+                    "value": "nested value 0",
+                    "number": 1
                 },
                 {
                     "context": "nested value",
