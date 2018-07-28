@@ -1,6 +1,8 @@
 import pandas as pd
 import numpy as np
 
+from core.exceptions import DSFileLoadError
+
 
 class NumericFeaturesFrame(object):
     """
@@ -13,7 +15,7 @@ class NumericFeaturesFrame(object):
     When all content or all features update this should get passed to reset with relevant parameters set
     """
 
-    def __init__(self, identifier, content, features):
+    def __init__(self, identifier, features, content=None, file_path=None):
         """
         Initiates a DataFrame and fills the frame using the content and features arguments.
         
@@ -27,9 +29,29 @@ class NumericFeaturesFrame(object):
         self.content = None
         self.features = None
         # Fill actual data frame with content
-        self.reset(content=content, features=features)
+        self.reset(features=features, content=content if not file_path else None, )
+        if file_path:
+            self.from_disk(file_path)
 
-    def load_content(self, callable=None, feature_names=None):
+    def from_disk(self, file_path):
+        data = pd.read_pickle(file_path)
+        columns_length = len(data.columns)
+        features_length = len(self.features.keys())
+        if columns_length != features_length:
+            raise DSFileLoadError(
+                "DataFrame loaded from disk columns count {} did not match features count {}".format(
+                    columns_length, features_length
+                )
+            )
+        for feature in self.features.keys():
+            if feature not in data.columns:
+                raise DSFileLoadError("{} feature not found in loaded DataFrame".format(feature))
+        self.data = data
+
+    def to_disk(self, file_path):
+        self.data.to_pickle(file_path)
+
+    def load_content(self, content_callable=None, feature_names=None):
         """
         Will call the callable to get the content.
         Then it will add the content to the DataFrame by calling all feature callables and add the return values.
@@ -40,8 +62,10 @@ class NumericFeaturesFrame(object):
         :param feature_names: a list of feature names to load the content for
         :return: 
         """
-        contents = callable() if callable else self.content()
+        contents = content_callable() if content_callable else self.content()
         columns = feature_names if feature_names else self.features.keys()
+        assert len(columns), "Can't load_content if feature_names is an empty list or self.features is missing"
+
         for content in contents:
             identifier = self.get_identifier(content)
             data = {}
@@ -49,7 +73,7 @@ class NumericFeaturesFrame(object):
                 try:
                     value = self.features[column](content)
                 except Exception as exc:
-                    raise Exception("{} feature: {}".format(column, exc))
+                    raise Exception("{} feature: {}: {}".format(column, exc.__class__.__name__, exc))
                 try:
                     numeric = float(value)
                 except ValueError:
@@ -73,16 +97,17 @@ class NumericFeaturesFrame(object):
         :return: 
         """
         features = {
-            callable.__name__: callable
-            for callable in callables
+            feature_callable.__name__: feature_callable
+            for feature_callable in callables
         }
         self.features.update(features)
         feature_names = features.keys()
         for column in feature_names:
-            self.data[column] = 0
-        self.load_content(feature_names=feature_names)
+            self.data[column] = 0.0
+        if self.content is not None:
+            self.load_content(feature_names=feature_names)
 
-    def reset(self, content=None, features=None):
+    def reset(self, features=None, content=None):
         """
         Either creates a DataFrame from scratch using content and features given.
         Or resets rows with only new content.
@@ -100,9 +125,9 @@ class NumericFeaturesFrame(object):
         if features is not None:
             self.features = {}
             self.load_features(features)
-        else:
+        elif self.features is not None and content is not None:
             for column in self.features.keys():
-                self.data[column] = 0
+                self.data[column] = 0.0
             self.load_content(content)
 
     def rank_by_params(self, params, limit=20):

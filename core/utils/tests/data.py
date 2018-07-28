@@ -1,3 +1,6 @@
+from mock import patch, Mock
+
+import numpy as np
 import pandas as pd
 from pandas.testing import assert_frame_equal
 
@@ -5,6 +8,7 @@ from django.test import TestCase
 
 from core.utils.data import reach, NumericFeaturesFrame
 from core.models import Collective, Individual
+from core.exceptions import DSFileLoadError
 
 
 class TestPythonReach(TestCase):
@@ -100,6 +104,16 @@ class TestNumericFeaturesFrame(TestCase):
         ]
         self.test_frame_extra = pd.DataFrame.from_records(self.test_records + self.test_records_extra,
                                                           index=[4, 5, 6, 7, 8, 9, 10])
+        self.features = [
+            TestNumericFeaturesFrame.is_dutch,
+            TestNumericFeaturesFrame.is_english,
+            TestNumericFeaturesFrame.value_number
+        ]
+        self.frame = NumericFeaturesFrame(
+            TestNumericFeaturesFrame.get_identifier,
+            self.features,
+            self.get_iterator
+        )
 
     @staticmethod
     def get_identifier(test):
@@ -155,23 +169,13 @@ class TestNumericFeaturesFrame(TestCase):
         return "invalid"
 
     def test_init(self):
-        features = [
-            TestNumericFeaturesFrame.is_dutch,
-            TestNumericFeaturesFrame.is_english,
-            TestNumericFeaturesFrame.value_number
-        ]
-        frame = NumericFeaturesFrame(
-            TestNumericFeaturesFrame.get_identifier,
-            self.get_iterator,
-            features
-        )
         sorted_feature_names = ["is_dutch", "is_english", "value_number"]
         self.assertEquals(
-            sorted(frame.features.keys()),
+            sorted(self.frame.features.keys()),
             sorted_feature_names
         )
-        self.assertTrue(callable(frame.content))
-        assert_frame_equal(frame.data, self.test_frame, check_like=True)
+        self.assertTrue(callable(self.frame.content))
+        assert_frame_equal(self.frame.data, self.test_frame, check_like=True)
 
     def test_init_invalid_features(self):
         features = [
@@ -180,14 +184,14 @@ class TestNumericFeaturesFrame(TestCase):
         try:
             NumericFeaturesFrame(
                 TestNumericFeaturesFrame.get_identifier,
-                self.get_iterator,
-                features
+                features,
+                self.get_iterator
             )
             self.fail("NumericFeaturesFrame did not raise with invalid feature")
         except Exception as exc:
             self.assertEqual(
                 str(exc),
-                "invalid_arguments feature: invalid_arguments() takes 0 positional arguments but 1 was given"
+                "invalid_arguments feature: TypeError: invalid_arguments() takes 0 positional arguments but 1 was given"
             )
         features = [
             TestNumericFeaturesFrame.invalid_return
@@ -195,8 +199,8 @@ class TestNumericFeaturesFrame(TestCase):
         try:
             NumericFeaturesFrame(
                 TestNumericFeaturesFrame.get_identifier,
-                self.get_iterator,
-                features
+                features,
+                self.get_iterator
             )
             self.fail("NumericFeaturesFrame did not raise with invalid feature return value")
         except ValueError as exc:
@@ -205,34 +209,81 @@ class TestNumericFeaturesFrame(TestCase):
                 "invalid_return feature did not return float but <class 'str'>"
             )
 
+    def test_init_file(self):
+        with patch("core.utils.data.numeric_features.NumericFeaturesFrame.from_disk", return_value=self.test_frame) as \
+                from_disk_patch:
+            frame = NumericFeaturesFrame(
+                self.get_identifier,
+                self.features,
+                file_path="test/path/to/frame.pkl"
+            )
+            sorted_feature_names = ["is_dutch", "is_english", "value_number"]
+            self.assertEquals(
+                sorted(frame.features.keys()),
+                sorted_feature_names
+            )
+            from_disk_patch.assert_called_once_with("test/path/to/frame.pkl")
+
+    def test_to_disk(self):
+        self.frame.data.to_pickle = Mock()
+        self.frame.to_disk("test/path/to/frame.pkl")
+        self.frame.data.to_pickle.assert_called_once_with('test/path/to/frame.pkl')
+
+    def test_from_disk(self):
+        with patch("core.utils.data.numeric_features.pd.read_pickle", return_value=self.test_frame) as pandas_patch:
+            self.frame.from_disk("test/path/to/frame.pkl")
+            pandas_patch.assert_called_once_with("test/path/to/frame.pkl")
+            assert_frame_equal(self.frame.data, self.test_frame, check_like=True)
+
+    def test_init_file_invalid(self):
+        self.test_frame["extra"] = self.test_frame["is_dutch"]
+        with patch("core.utils.data.numeric_features.pd.read_pickle", return_value=self.test_frame) as pandas_patch:
+            try:
+                self.frame.from_disk("test/path/to/frame.pkl")
+                self.fail("NumericFeatureFrame.from_disk did not raise an assertion when loading too much data")
+            except DSFileLoadError as exc:
+                pass
+            pandas_patch.assert_called_once_with("test/path/to/frame.pkl")
+        self.test_frame.drop("is_dutch", axis=1)
+        with patch("core.utils.data.numeric_features.pd.read_pickle", return_value=self.test_frame) as pandas_patch:
+            try:
+                self.frame.from_disk("test/path/to/frame.pkl")
+                self.fail("NumericFeatureFrame.from_disk did not raise an assertion when loading wrong data")
+            except DSFileLoadError:
+                pass
+            pandas_patch.assert_called_once_with("test/path/to/frame.pkl")
+        self.test_frame.drop("extra", axis=1)
+        with patch("core.utils.data.numeric_features.pd.read_pickle", return_value=self.test_frame) as pandas_patch:
+            try:
+                self.frame.from_disk("test/path/to/frame.pkl")
+                self.fail("NumericFeatureFrame.from_disk did not raise an assertion when loading too little data")
+            except DSFileLoadError:
+                pass
+            pandas_patch.assert_called_once_with("test/path/to/frame.pkl")
+
     def test_adding_features(self):
         features = [
             TestNumericFeaturesFrame.is_dutch
         ]
         frame = NumericFeaturesFrame(
             TestNumericFeaturesFrame.get_identifier,
-            self.get_iterator,
-            features
+            features,
+            self.get_iterator
         )
         frame.load_features([
             TestNumericFeaturesFrame.value_number,
             TestNumericFeaturesFrame.is_english
         ])
         assert_frame_equal(frame.data, self.test_frame, check_like=True)
+        sorted_feature_names = ["is_dutch", "is_english", "value_number"]
+        self.assertEquals(
+            sorted(self.frame.features.keys()),
+            sorted_feature_names
+        )
 
     def test_adding_content(self):
-        features = [
-            TestNumericFeaturesFrame.is_dutch,
-            TestNumericFeaturesFrame.is_english,
-            TestNumericFeaturesFrame.value_number
-        ]
-        frame = NumericFeaturesFrame(
-            TestNumericFeaturesFrame.get_identifier,
-            self.get_iterator,
-            features
-        )
-        frame.load_content(self.get_extra_iterator)
-        assert_frame_equal(frame.data, self.test_frame_extra, check_like=True)
+        self.frame.load_content(self.get_extra_iterator)
+        assert_frame_equal(self.frame.data, self.test_frame_extra, check_like=True)
 
     def test_resetting_features_and_content(self):
         features = [
@@ -240,8 +291,8 @@ class TestNumericFeaturesFrame(TestCase):
         ]
         frame = NumericFeaturesFrame(
             TestNumericFeaturesFrame.get_identifier,
-            self.get_iterator,
-            features
+            features,
+            self.get_iterator
         )
         frame.reset(
             features=[
@@ -253,6 +304,11 @@ class TestNumericFeaturesFrame(TestCase):
         self.test_frame_extra = self.test_frame_extra.drop([4, 5, 6, 7, 8], axis=0)
         self.test_frame_extra = self.test_frame_extra.drop(labels="is_dutch", axis=1)
         assert_frame_equal(frame.data, self.test_frame_extra, check_like=True)
+        sorted_feature_names = ["is_english", "value_number"]
+        self.assertEquals(
+            sorted(frame.features.keys()),
+            sorted_feature_names
+        )
 
     def test_resetting_features(self):
         features = [
@@ -260,8 +316,8 @@ class TestNumericFeaturesFrame(TestCase):
         ]
         frame = NumericFeaturesFrame(
             TestNumericFeaturesFrame.get_identifier,
-            self.get_iterator,
-            features
+            features,
+            self.get_iterator
         )
         frame.reset(features=[
             TestNumericFeaturesFrame.value_number,
@@ -269,34 +325,44 @@ class TestNumericFeaturesFrame(TestCase):
         ])
         self.test_frame = self.test_frame.drop(labels="is_dutch", axis=1)
         assert_frame_equal(frame.data, self.test_frame, check_like=True)
+        sorted_feature_names = ["is_english", "value_number"]
+        self.assertEquals(
+            sorted(frame.features.keys()),
+            sorted_feature_names
+        )
+
+    def test_resetting_features_no_content(self):
+        features = [
+            TestNumericFeaturesFrame.is_dutch
+        ]
+        frame = NumericFeaturesFrame(
+            TestNumericFeaturesFrame.get_identifier,
+            features
+        )
+        frame.reset(features=[
+            TestNumericFeaturesFrame.value_number,
+            TestNumericFeaturesFrame.is_english
+        ])
+        self.test_frame = self.test_frame.drop(labels="is_dutch", axis=1)
+        assert_frame_equal(frame.data, self.test_frame[0:0], check_like=True)
+        sorted_feature_names = ["is_english", "value_number"]
+        self.assertEquals(
+            sorted(frame.features.keys()),
+            sorted_feature_names
+        )
 
     def test_resetting_content(self):
-        features = [
-            TestNumericFeaturesFrame.is_dutch,
-            TestNumericFeaturesFrame.is_english,
-            TestNumericFeaturesFrame.value_number
-        ]
-        frame = NumericFeaturesFrame(
-            TestNumericFeaturesFrame.get_identifier,
-            self.get_iterator,
-            features
-        )
-        frame.reset(content=self.get_extra_iterator)
+        self.frame.reset(content=self.get_extra_iterator)
         self.test_frame_extra = self.test_frame_extra.drop([4, 5, 6, 7, 8], axis=0)
-        assert_frame_equal(frame.data, self.test_frame_extra, check_like=True)
+        assert_frame_equal(self.frame.data, self.test_frame_extra, check_like=True)
+
+    def test_resetting_content_no_features(self):
+        self.frame.features = None
+        self.frame.reset(content=self.get_extra_iterator)
+        self.assertEqual(self.frame.content.__name__, self.get_extra_iterator.__name__)  # TODO: better equality test
+        assert_frame_equal(self.frame.data, pd.DataFrame(dtype=np.float), check_like=True)
 
     def test_clean_params(self):
-        features = [
-            TestNumericFeaturesFrame.is_dutch,
-            TestNumericFeaturesFrame.is_english,
-            TestNumericFeaturesFrame.value_number
-        ]
-        frame = NumericFeaturesFrame(
-            TestNumericFeaturesFrame.get_identifier,
-            self.get_iterator,
-            features
-        )
-
         test_params = {
             "is_dutch": "1",  # get converted to float
             "is_french": 1.0,  # gets skipped
@@ -307,7 +373,7 @@ class TestNumericFeaturesFrame(TestCase):
         }
         for function in [str, int, float]:
             test_params["is_dutch"] = function(test_params["is_dutch"])
-            cleaned_params = frame.clean_params(test_params)
+            cleaned_params = self.frame.clean_params(test_params)
             self.assertEquals(cleaned_params, {"is_dutch": 1.0, "value_number": 2.0})
 
         test_error_params = {
@@ -315,23 +381,13 @@ class TestNumericFeaturesFrame(TestCase):
             "$is_dutch": 1.0,
         }
         try:
-            frame.clean_params(test_error_params)
+            self.frame.clean_params(test_error_params)
             self.fail("Clean params should have raised for invalid params")
         except ValueError:
             pass
 
     def test_rank_by_params(self):
-        features = [
-            TestNumericFeaturesFrame.is_dutch,
-            TestNumericFeaturesFrame.is_english,
-            TestNumericFeaturesFrame.value_number
-        ]
-        frame = NumericFeaturesFrame(
-            TestNumericFeaturesFrame.get_identifier,
-            self.get_iterator,
-            features
-        )
-        ranking = frame.rank_by_params({"is_dutch": 1, "value_number": 1})
+        ranking = self.frame.rank_by_params({"is_dutch": 1, "value_number": 1})
         self.assertEquals(ranking, [5, 8, 6, 4, 7])
-        ranking = frame.rank_by_params({"is_dutch": 0.5, "value_number": -1, "is_english": 2, "is_french": 100})
+        ranking = self.frame.rank_by_params({"is_dutch": 0.5, "value_number": -1, "is_english": 2, "is_french": 100})
         self.assertEquals(ranking, [7, 8, 6, 4, 5])

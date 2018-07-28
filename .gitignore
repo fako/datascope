@@ -8,6 +8,7 @@ dump.rdb
 *.csv
 db-dump.*.json
 *.sql
+*.pkl
 
 datagrowth/docs/_build/
 

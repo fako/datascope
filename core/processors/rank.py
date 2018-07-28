@@ -1,3 +1,6 @@
+##################################################################
+# START LEGACY
+##################################################################
 from __future__ import unicode_literals, absolute_import, print_function, division
 # noinspection PyUnresolvedReferences
 from six.moves import reduce
@@ -6,20 +9,10 @@ import six
 from itertools import islice
 from copy import deepcopy
 
-from datascope.configuration import DEFAULT_CONFIGURATION
-from core.processors.base import Processor
-from core.utils.configuration import ConfigurationProperty
 from core.utils.helpers import merge_iter
 
 
-class RankProcessor(Processor):
-
-    config = ConfigurationProperty(
-        storage_attribute="_config",
-        defaults=DEFAULT_CONFIGURATION,
-        private=[],
-        namespace="rank_processor"
-    )
+class LegacyRankProcessorMixin(object):
 
     def score(self, individuals):
         sort_key = lambda el: el.get(self.config.score_key, 0)
@@ -93,3 +86,42 @@ class RankProcessor(Processor):
 
         flush_batch(batch, self.config.result_size)
         return islice(merge_iter(*results, key=sort_key, reversed=True), self.config.result_size)
+##################################################################
+# END LEGACY
+##################################################################
+
+
+from datascope.configuration import DEFAULT_CONFIGURATION
+from core.processors.base import Processor
+from core.utils.data import NumericFeaturesFrame
+from core.utils.configuration import ConfigurationProperty
+
+
+class RankProcessor(Processor, LegacyRankProcessorMixin):
+
+    config = ConfigurationProperty(
+        storage_attribute="_config",
+        defaults=DEFAULT_CONFIGURATION,
+        private=[],
+        namespace="rank_processor"
+    )
+
+    def __init__(self, config):
+        super().__init__(config)
+        if "identifier_key" in self.config and "load_feature_frame" in self.config:
+            self.feature_frame = NumericFeaturesFrame(
+                identifier=lambda ind: ind[self.config.identifier_key],
+                features=self.get_features()
+            )
+        else:
+            self.feature_frame = None
+
+    @classmethod
+    def get_features(cls):
+        mother = set(dir(RankProcessor))
+        own = set(dir(cls))
+        return [getattr(cls, attr) for attr in (own - mother) if callable(getattr(cls, attr))]
+
+    def ranking(self, descending=True, limit=20):
+        assert self.feature_frame, \
+            "RankProcessor needs a identifier_key and load_feature_frame configuration to perform RankProcessor.ranking"

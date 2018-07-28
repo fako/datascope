@@ -51,3 +51,7 @@ class DSProcessError(DSProcessException):
 
 class DSSystemConfigError(Exception):
     pass
+
+
+class DSFileLoadError(Exception):
+    pass
