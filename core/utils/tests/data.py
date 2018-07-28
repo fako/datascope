@@ -168,6 +168,11 @@ class TestNumericFeaturesFrame(TestCase):
     def invalid_return(test):
         return "invalid"
 
+    @staticmethod
+    def set_language_to_fr(test):
+        test["language"] = "fr"
+        return 0.0
+
     def test_init(self):
         sorted_feature_names = ["is_dutch", "is_english", "value_number"]
         self.assertEquals(
@@ -209,6 +214,19 @@ class TestNumericFeaturesFrame(TestCase):
                 "invalid_return feature did not return float but <class 'str'>"
             )
 
+    def test_init_immutable_content(self):
+        content = list(self.get_iterator())
+        features = [
+            TestNumericFeaturesFrame.set_language_to_fr
+        ]
+        NumericFeaturesFrame(
+            self.get_identifier,
+            features,
+            lambda: content
+        )
+        for entry in content:
+            self.assertNotEqual(entry.properties["language"], "fr")
+
     def test_init_file(self):
         with patch("core.utils.data.numeric_features.NumericFeaturesFrame.from_disk", return_value=self.test_frame) as \
                 from_disk_patch:
@@ -235,7 +253,7 @@ class TestNumericFeaturesFrame(TestCase):
             pandas_patch.assert_called_once_with("test/path/to/frame.pkl")
             assert_frame_equal(self.frame.data, self.test_frame, check_like=True)
 
-    def test_init_file_invalid(self):
+    def test_from_disk_invalid(self):
         self.test_frame["extra"] = self.test_frame["is_dutch"]
         with patch("core.utils.data.numeric_features.pd.read_pickle", return_value=self.test_frame) as pandas_patch:
             try:

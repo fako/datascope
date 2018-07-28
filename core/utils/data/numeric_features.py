@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 import pandas as pd
 import numpy as np
 
@@ -69,9 +71,10 @@ class NumericFeaturesFrame(object):
         for content in contents:
             identifier = self.get_identifier(content)
             data = {}
+            feature_input = deepcopy(content) if not hasattr(content, "properties") else deepcopy(content.properties)
             for column in columns:
                 try:
-                    value = self.features[column](content)
+                    value = self.features[column](feature_input)
                 except Exception as exc:
                     raise Exception("{} feature: {}: {}".format(column, exc.__class__.__name__, exc))
                 try:
