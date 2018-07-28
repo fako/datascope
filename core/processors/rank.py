@@ -6,6 +6,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 from six.moves import reduce
 import six
 
+from collections import OrderedDict
 from itertools import islice
 from copy import deepcopy
 
@@ -126,3 +127,31 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
     def ranking(self, descending=True, limit=20):
         assert self.feature_frame, \
             "RankProcessor needs a identifier_key and feature_frame_path configuration to perform RankProcessor.ranking"
+
+    def by_feature(self, individuals):
+        assert "ranking_feature" in self.config, "RankProcessor.by_feature needs a ranking_feature from config"
+        assert self.feature_frame, \
+            "RankProcessor needs a identifier_key and feature_frame_path configuration " \
+            "to perform RankProcessor.by_feature"
+        ranking_feature = self.config.ranking_feature
+        assert ranking_feature in self.feature_frame.features, \
+            "The feature '{}' is not loaded in the feature frame".format(ranking_feature)
+        ranked_feature = self.feature_frame.data[ranking_feature].sort_values(ascending=False)[:self.config.result_size]
+        results = OrderedDict([(ix, None,) for ix in ranked_feature.index])
+        for individual in individuals:
+            ix = individual[self.config.identifier_key]
+            if ix not in results:
+                continue
+            individual["ds_rank"] = {
+                "rank": ranked_feature.loc[ix]
+            }
+            individual["ds_rank"][ranking_feature] = {
+                "rank": ranked_feature.loc[ix],
+                "value": ranked_feature.loc[ix],
+                "weight": 1.0
+            }
+            results[ix] = individual
+        return (value for value in results.values() if value is not None)
+
+    def by_params(self, individuals):
+        pass

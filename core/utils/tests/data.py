@@ -150,15 +150,15 @@ class TestNumericFeaturesFrame(TestCase):
 
     @staticmethod
     def is_dutch(test):
-        return int(test.properties["language"] == "nl")
+        return float(test["language"] == "nl")
 
     @staticmethod
     def is_english(test):
-        return int(test.properties["language"] == "en")
+        return int(test["language"] == "en")  # NB: features should return floats, but ints are allowed
 
     @staticmethod
     def value_number(test):
-        return test.properties["value"]
+        return test["value"]
 
     @staticmethod
     def invalid_arguments():

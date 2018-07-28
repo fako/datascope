@@ -37,24 +37,31 @@ class MockFilterProcessor(MockProcessor):
 
 class MockRankProcessor(RankProcessor):
 
-    def rank_by_value(self, individual):
+    @staticmethod
+    def rank_by_value(individual):
         return individual["value"]
 
-    def is_double(self, individual):
+    @staticmethod
+    def is_double(individual):
         return 1 if "double" in individual["name"] else 0
 
-    def is_highest(self, individual):
+    @staticmethod
+    def is_highest(individual):
         return 1 if "highest" in individual["name"] else 0
 
-    def ban_highest(self, individual):
+    @staticmethod
+    def ban_highest(individual):
         return 0.5 if "highest" in individual["name"] else 1
 
-    def wrong_return_value(self, individual):
+    @staticmethod
+    def wrong_return_value(individual):
         return "wrong"
 
-    def alter_individual(self, individual):
+    @staticmethod
+    def alter_individual(individual):
         individual["name"] += "-highest"
         return 0
 
-    def i_think_none_of_it(self, individual):
+    @staticmethod
+    def i_think_none_of_it(individual):
         return None

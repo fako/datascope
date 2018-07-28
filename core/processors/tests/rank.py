@@ -1,3 +1,4 @@
+import os
 from functools import reduce
 from collections import Iterator
 from operator import itemgetter
@@ -5,50 +6,50 @@ from mock import patch
 
 from django.test import TestCase
 
+from core.utils.data import NumericFeaturesFrame
 from core.tests.mocks.processor import MockRankProcessor
 
 
 class TestRankProcessorBase(TestCase):
 
-    def setUp(self):
-        self.test_content = [
-            {
-                "name": "lowest",
-                "value": 0
-            },
-            {
-                "name": "lowest-2",
-                "value": 0
-            },
-            {
-                "name": "highest",
-                "value": 10
-            },
-            {
-                "name": "lowest-included",
-                "value": 6
-            },
-            {
-                "name": "not-included",
-                "value": 1
-            },
-            {
-                "name": "double-1",
-                "value": 8
-            },
-            {
-                "name": "under-double",
-                "value": 7
-            },
-            {
-                "name": "double-2",
-                "value": 8
-            },
-            {
-                "name": "highest-of-triple",
-                "value": 9
-            }
-        ]
+    test_content = [
+        {
+            "name": "lowest",
+            "value": 0
+        },
+        {
+            "name": "lowest-2",
+            "value": 0
+        },
+        {
+            "name": "highest",
+            "value": 10
+        },
+        {
+            "name": "lowest-included",
+            "value": 6
+        },
+        {
+            "name": "not-included",
+            "value": 1
+        },
+        {
+            "name": "double-1",
+            "value": 8
+        },
+        {
+            "name": "under-double",
+            "value": 7
+        },
+        {
+            "name": "double-2",
+            "value": 8
+        },
+        {
+            "name": "highest-of-triple",
+            "value": 9
+        }
+    ]
 
     def assert_rank_details(self, details, modules):
         rank_detail_keys = sorted(details.keys())
@@ -78,7 +79,43 @@ class TestRankProcessorBase(TestCase):
 
 
 class TestRankProcessor(TestRankProcessorBase):
-    pass
+
+    identifier_key = "name"
+    frame_path = "test_rank_processor.pkl"
+    blacklist_features = ["wrong_return_value", "i_think_none_of_it"]
+
+    @classmethod
+    def setUpClass(cls):
+        for forbidden_feature in cls.blacklist_features:
+            setattr(cls, forbidden_feature, getattr(MockRankProcessor, forbidden_feature))
+            setattr(MockRankProcessor, forbidden_feature, None)
+        frame = NumericFeaturesFrame(
+            lambda content: content[cls.identifier_key],
+            MockRankProcessor.get_features(),
+            lambda: cls.test_content
+        )
+        frame.to_disk(cls.frame_path)
+
+    @classmethod
+    def tearDownClass(cls):
+        os.remove(cls.frame_path)
+        for forbidden_feature in cls.blacklist_features:
+            setattr(MockRankProcessor, forbidden_feature, getattr(cls, forbidden_feature))
+
+    def test_by_feature(self):
+        instance = MockRankProcessor({
+            "identifier_key": self.identifier_key,
+            "feature_frame_path": self.frame_path,
+            "ranking_feature": "rank_by_value",
+            "result_size": 2,
+
+        })
+        ranking = instance.by_feature(self.test_content)
+        self.assertTrue(issubclass(ranking.__class__, Iterator))
+        ranking = self.assert_ranking(ranking, 2, ['rank_by_value'])
+        # Check order of results
+        names = list(map(itemgetter('name'), ranking))
+        self.assertEqual(names, ['highest', 'highest-of-triple'], "Order of ranked dictionaries is not correct.")
 
 
 class TestRankProcessorLegacy(TestRankProcessorBase):
