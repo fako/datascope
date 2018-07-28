@@ -1,10 +1,6 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-# noinspection PyUnresolvedReferences
-from six.moves import reduce
-
-from collections import Iterator, OrderedDict
+from functools import reduce
+from collections import Iterator
 from operator import itemgetter
-
 from mock import patch
 
 from django.test import TestCase
@@ -12,7 +8,7 @@ from django.test import TestCase
 from core.tests.mocks.processor import MockRankProcessor
 
 
-class TestRankProcessor(TestCase):
+class TestRankProcessorBase(TestCase):
 
     def setUp(self):
         self.test_content = [
@@ -79,6 +75,13 @@ class TestRankProcessor(TestCase):
         for rank_detail in rank_details:
             self.assert_rank_details(rank_detail, modules)
         return ranking
+
+
+class TestRankProcessor(TestRankProcessorBase):
+    pass
+
+
+class TestRankProcessorLegacy(TestRankProcessorBase):
 
     def test_ranking_with_score(self):
         self.skipTest("not tested")  # TODO: make sure that partial batches work

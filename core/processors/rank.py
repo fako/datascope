@@ -108,10 +108,11 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
 
     def __init__(self, config):
         super().__init__(config)
-        if "identifier_key" in self.config and "load_feature_frame" in self.config:
+        if "identifier_key" in self.config and "feature_frame_path" in self.config:
             self.feature_frame = NumericFeaturesFrame(
                 identifier=lambda ind: ind[self.config.identifier_key],
-                features=self.get_features()
+                features=self.get_features(),
+                file_path=self.config.feature_frame_path
             )
         else:
             self.feature_frame = None
@@ -124,4 +125,4 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
 
     def ranking(self, descending=True, limit=20):
         assert self.feature_frame, \
-            "RankProcessor needs a identifier_key and load_feature_frame configuration to perform RankProcessor.ranking"
+            "RankProcessor needs a identifier_key and feature_frame_path configuration to perform RankProcessor.ranking"
