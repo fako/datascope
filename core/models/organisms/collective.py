@@ -1,5 +1,6 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 import six
+import warnings
 
 from collections import Iterator, Iterable
 
@@ -194,17 +195,18 @@ class Collective(Organism):  # TODO: rename to family
         :param keys:
         :return:
         """
+        warnings.warn("Collective.build_index is depecrated in favor of Postgres BSON fields", DeprecationWarning)
         assert isinstance(keys, list) and len(keys), \
             "Expected a list with at least one element for argument keys."
 
         individuals = []
         for ind in self.individual_set.all():
-            self.set_index_for_individual(ind, keys)
+            self._set_index_for_individual(ind, keys)
             individuals.append(ind)
         self.update(individuals)
         self.save()
 
-    def set_index_for_individual(self, individual, index_keys):
+    def _set_index_for_individual(self, individual, index_keys):
         index = tuple([(key, individual[key]) for key in index_keys])
         if index not in self.indexes:
             index_code = len(self.indexes)
@@ -223,11 +225,12 @@ class Collective(Organism):  # TODO: rename to family
             individual.identity = reach("$." + self.identifier, individual.properties)
         if self.indexes:
             index_keys = self._get_index_keys()
-            individual = self.set_index_for_individual(individual, index_keys)
+            individual = self._set_index_for_individual(individual, index_keys)
 
         return individual
 
     def select(self, **kwargs):
+        warnings.warn("Collective.select is deprecated in favor of Postgres BSON fields", DeprecationWarning)
         select = set()
         for item in six.iteritems(kwargs):
             for index in self.indexes.keys():

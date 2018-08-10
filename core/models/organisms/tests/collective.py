@@ -165,7 +165,7 @@ class TestCollective(TransactionTestCase):
                 self.assertEqual(individual.properties["country"], country)
 
     def test_set_index_for_individual(self):
-        individual = self.instance2.set_index_for_individual(self.individual, ["language"])
+        individual = self.instance2._set_index_for_individual(self.individual, ["language"])
         self.assertEqual(
             self.instance2.indexes,
             {
