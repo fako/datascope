@@ -1,10 +1,7 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
 from django.test import TestCase
 
-from datascope.configuration import MOCK_CONFIGURATION
-from core.utils.configuration import (ConfigurationType, ConfigurationNotFoundError, ConfigurationProperty,
-                                        load_config)
+from datagrowth.configuration import (ConfigurationType, ConfigurationNotFoundError, ConfigurationProperty, load_config,
+                                      MOCK_CONFIGURATION)
 
 
 class TestConfigurationType(TestCase):
