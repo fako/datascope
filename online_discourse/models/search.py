@@ -1,24 +1,73 @@
 import os
+from collections import OrderedDict
 
 import spacy
 from spacy_arguing_lexicon import ArguingLexiconParser
 
+from core.models.organisms import Community, Collective, Individual
 from core.models.organisms.states import CommunityState
-from topic_research.models import CrossCombineTermSearchCommunity
+from core.utils.helpers import cross_combine
 from online_discourse.discourse import configurations
 
 
-class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
+class DiscourseSearchCommunity(Community):
+
+    COMMUNITY_SPIRIT = OrderedDict([
+        ("search", {
+            "process": "HttpResourceProcessor.fetch_mass",
+            "input": None,
+            "contribute": "Append:ExtractProcessor.extract_from_resource",
+            "output": "Collective#url",
+            "config": {
+                "_args": ["$.query", "$.quantity"],
+                "_kwargs": {},
+                "_resource": "GoogleText",
+                "_objective": {
+                    "@": "$.items",
+                    "#term": "$.queries.request.0.searchTerms",
+                    "title": "$.title",
+                    "url": "$.link"
+                },
+                "_continuation_limit": 10,
+                "_interval_duration": 1000
+            },
+            "schema": {},
+            "errors": {},
+        }),
+        ("download", {
+            "process": "HttpResourceProcessor.fetch_mass",
+            "input": "@search",
+            "contribute": "Update:ExtractProcessor.extract_from_resource",
+            "output": "@search",
+            "config": {
+                "_args": ["$.url"],
+                "_kwargs": {},
+                "_resource": "WebTextResource",
+                "_objective": {  # objective uses properties added to the soup by WebTextResource
+                    "#url": "soup.source",
+                    "#paragraph_groups": "soup.paragraph_groups",
+                    "#author": "soup.find('meta', attrs={'name':'author'}).get('content') if soup.find('meta', attrs={'name':'author'}) else None"
+                },
+                "_update_key": "url",
+                "$language": "en"
+            },
+            "schema": {},
+            "errors": {},
+        })
+    ])
 
     COMMUNITY_BODY = [
         {
-            "name": "rank",
-            "process": "OnlineDiscourseRankProcessor.score",
+            "process": "FilterProcessor.distinct",
+            "config": {
+                "distinct_key": "url"
+            }
+        },
+        {
+            "process": "RankProcessor.score",
             "config": {
                 "result_size": 60,
-                "ranking_feature": "argument_score",
-                "identifier_key": "url",
-                "feature_frame_path": None
+                "score_key": "argument_score"
             }
         }
     ]
@@ -28,15 +77,34 @@ class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
         "nl": "nl_core_news_sm"
     }
 
-    PUBLIC_CONFIG = {
-        "language": "en"
-    }
-
     def initial_input(self, *args):
         configuration = getattr(configurations, args[0])
-        return super(DiscourseSearchCommunity, self).initial_input(
-            configuration.singular_subjects + configuration.plural_subjects, configuration.descriptive_adjectives
+        combinations = cross_combine(
+            configuration.singular_subjects + configuration.plural_subjects,
+            configuration.descriptive_adjectives
         )
+        collective = Collective.objects.create(community=self, schema={})
+        for terms in combinations:
+            Individual.objects.create(
+                community=self,
+                collective=collective,
+                properties={
+                    "terms": "+".join(terms),
+                    "query": " AND ".join(
+                        [
+                            '"{}"'.format(term) if not term.startswith("~") else term
+                            for term in terms
+                        ]
+                    ),
+                    "quantity": 10
+                }
+            )
+        return collective
+
+    def begin_download(self, inp):
+        for individual in inp.individual_set.all():
+            if individual.properties.get("url", "").endswith("pdf"):
+                individual.delete()
 
     def finish_download(self, out, err):
 
@@ -55,6 +123,9 @@ class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
                 individual.properties["argument_score"] = argument_count / sents_count
                 individual.clean()
                 individual.save()
+
+    def set_kernel(self):
+        self.kernel = self.current_growth.output
 
     def get_feature_frame_file(self):
         return os.path.join(self._meta.app_label, "data", "feature_frames", self.signature + ".pkl")
@@ -76,6 +147,5 @@ class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
         rank_processor.feature_frame.to_disk(self.get_feature_frame_file())
 
     class Meta:
-        proxy = True
         verbose_name = "Discourse search community"
         verbose_name_plural = "Discourse search communities"
