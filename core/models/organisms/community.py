@@ -72,16 +72,16 @@ class Community(models.Model, ProcessorMixin):
     @classmethod
     def filter_growth_configuration(cls, *args, **kwargs):
         # Calculate which keys are whitelisted
-        scope_keys = set()
+        growth_keys = set()
         for name, phase in cls.COMMUNITY_SPIRIT.items():
-            scope_keys.update({key[1:] for key in phase.get("config", {}).keys() if key.startswith("$")})
+            growth_keys.update({key[1:] for key in phase.get("config", {}).keys() if key.startswith("$")})
         # Also allow obsolete PUBLIC_CONFIG variables
         public_config_keys = {
             key for key, value in kwargs.items() if key in cls.PUBLIC_CONFIG and not key.startswith("$")
         } if isinstance(cls.PUBLIC_CONFIG, dict) else set()
-        scope_keys.update(public_config_keys)
+        growth_keys.update(public_config_keys)
         # Actual filtering of input
-        return {key: value for key, value in kwargs.items() if key.strip("$") in scope_keys}
+        return {key: value for key, value in kwargs.items() if key.strip("$") in growth_keys}
 
     @classmethod
     def filter_scope_configuration(cls, *args, **kwargs):
