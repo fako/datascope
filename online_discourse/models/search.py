@@ -64,10 +64,13 @@ class DiscourseSearchCommunity(Community):
             }
         },
         {
-            "process": "RankProcessor.score",
+            "name": "rank",
+            "process": "OnlineDiscourseRankProcessor.by_feature",
             "config": {
                 "result_size": 60,
-                "score_key": "argument_score"
+                "ranking_feature": "argument_score",
+                "identifier_key": "url",
+                "feature_frame_path": None
             }
         }
     ]
