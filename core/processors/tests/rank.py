@@ -82,7 +82,7 @@ class TestRankProcessor(TestRankProcessorBase):
 
     identifier_key = "name"
     frame_path = "test_rank_processor.pkl"
-    blacklist_features = ["wrong_return_value", "i_think_none_of_it"]
+    blacklist_features = ["wrong_return_value", "i_think_none_of_it", "alter_individual"]
 
     @classmethod
     def setUpClass(cls):
@@ -107,8 +107,7 @@ class TestRankProcessor(TestRankProcessorBase):
             "identifier_key": self.identifier_key,
             "feature_frame_path": self.frame_path,
             "ranking_feature": "rank_by_value",
-            "result_size": 2,
-
+            "result_size": 2
         })
         ranking = instance.by_feature(self.test_content)
         self.assertTrue(issubclass(ranking.__class__, Iterator))

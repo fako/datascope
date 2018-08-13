@@ -1,4 +1,5 @@
-from copy import deepcopy
+import json
+import hashlib
 
 import pandas as pd
 import numpy as np
@@ -64,31 +65,52 @@ class NumericFeaturesFrame(object):
         :param feature_names: a list of feature names to load the content for
         :return: 
         """
-        contents = content_callable() if content_callable else self.content()
         columns = feature_names if feature_names else self.features.keys()
         assert len(columns), "Can't load_content if feature_names is an empty list or self.features is missing"
 
+        new = pd.DataFrame()
+        update = pd.DataFrame()
+        for column in columns:
+            series = self.get_feature_series(column, self.features[column], content_callable=content_callable)
+            intersection = self.data[column].index.intersection(series.index)
+            if len(intersection) == self.data.shape[0]:
+                self.data[column] = series
+            else:
+                missing = series.index.difference(self.data[column].index)
+                new[series.name] = series.loc[list(missing.get_values())]
+                update[series.name] = series.loc[list(intersection.get_values())]
+        self.data = self.data.append(new)
+        self.data.update(update)
+
+    @staticmethod
+    def get_content_hash(content):
+        content_json = json.dumps(content) if not hasattr(content, "properties") else \
+            json.dumps(content.properties)
+        hasher = hashlib.sha1()
+        hasher.update(bytes(content_json, encoding="utf-8"))
+        return hasher.digest()
+
+    def get_feature_value(self, feature_name, feature_callable, content, content_hash):
+        try:
+            value = feature_callable(content)
+        except Exception as exc:
+            raise Exception("{} feature: {}: {}".format(feature_name, exc.__class__.__name__, exc))
+        try:
+            numeric = float(value)
+        except ValueError:
+            raise ValueError("{} feature did not return float but {}".format(feature_name, type(value)))
+        if self.get_content_hash(content) != content_hash:
+            raise ValueError("{} feature modified content". format(feature_name))
+        return numeric
+
+    def get_feature_series(self, feature_name, feature_callable, content_callable=None):
+        contents = content_callable() if content_callable else self.content()
+        series = pd.Series(name=feature_name)
         for content in contents:
+            content_hash = self.get_content_hash(content)
             identifier = self.get_identifier(content)
-            data = {}
-            feature_input = deepcopy(content) if not hasattr(content, "properties") else deepcopy(content.properties)
-            for column in columns:
-                try:
-                    value = self.features[column](feature_input)
-                except Exception as exc:
-                    raise Exception("{} feature: {}: {}".format(column, exc.__class__.__name__, exc))
-                try:
-                    numeric = float(value)
-                except ValueError:
-                    raise ValueError("{} feature did not return float but {}".format(column, type(value)))
-                data[column] = numeric
-            series = pd.Series(data=data)
-            try:
-                row = self.data.loc[identifier].copy()
-                row.update(series)
-            except KeyError:
-                row = series
-            self.data.loc[identifier] = row
+            series.at[identifier] = self.get_feature_value(feature_name, feature_callable, content, content_hash)
+        return series
 
     def load_features(self, callables):
         """
@@ -106,7 +128,7 @@ class NumericFeaturesFrame(object):
         self.features.update(features)
         feature_names = features.keys()
         for column in feature_names:
-            self.data[column] = 0.0
+            self.data[column] = pd.Series()
         if self.content is not None:
             self.load_content(feature_names=feature_names)
 
@@ -130,7 +152,7 @@ class NumericFeaturesFrame(object):
             self.load_features(features)
         elif self.features is not None and content is not None:
             for column in self.features.keys():
-                self.data[column] = 0.0
+                self.data[column] = pd.Series()
             self.load_content(content)
 
     def rank_by_params(self, params, limit=20):

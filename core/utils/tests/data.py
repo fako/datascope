@@ -114,16 +114,7 @@ class TestNumericFeaturesFrame(TestCase):
             self.features,
             self.get_iterator
         )
-
-    @staticmethod
-    def get_identifier(test):
-        return test.id
-
-    def get_iterator(self):
-        return self.test_fixture.individual_set.iterator()
-
-    def get_extra_iterator(self):
-        return iter([
+        self.extra_individuals = [
             Individual.objects.create(
                 id=9,
                 properties={
@@ -146,7 +137,23 @@ class TestNumericFeaturesFrame(TestCase):
                 community=self.test_fixture.community,
                 collective=self.test_fixture
             )
-        ])
+        ]
+
+    @staticmethod
+    def get_identifier(test):
+        return test.id
+
+    def get_iterator(self):
+        """
+        Returns content that is already in fixtures
+        """
+        return self.test_fixture.individual_set.filter(id__lt=9).iterator()
+
+    def get_extra_iterator(self):
+        """
+        Returns content that is created in setUp
+        """
+        return iter(self.extra_individuals)
 
     @staticmethod
     def is_dutch(test):
@@ -219,13 +226,15 @@ class TestNumericFeaturesFrame(TestCase):
         features = [
             TestNumericFeaturesFrame.set_language_to_fr
         ]
-        NumericFeaturesFrame(
-            self.get_identifier,
-            features,
-            lambda: content
-        )
-        for entry in content:
-            self.assertNotEqual(entry.properties["language"], "fr")
+        try:
+            NumericFeaturesFrame(
+                self.get_identifier,
+                features,
+                lambda: content
+            )
+            self.fail("NumericFeaturesFrame did not raise when features modified content")
+        except ValueError:
+            pass
 
     def test_init_file(self):
         with patch("core.utils.data.numeric_features.NumericFeaturesFrame.from_disk", return_value=self.test_frame) as \
@@ -301,6 +310,20 @@ class TestNumericFeaturesFrame(TestCase):
 
     def test_adding_content(self):
         self.frame.load_content(self.get_extra_iterator)
+        assert_frame_equal(self.frame.data, self.test_frame_extra, check_like=True)
+
+    def test_adding_content_mixed(self):
+        old = list(self.get_iterator())[-2:]
+
+        def update(ind):
+            ind.properties["value"] = int(ind.properties["value"]) * 5
+            return ind
+
+        updated = list(map(update, old))
+        self.frame.load_content(
+            lambda: iter(list(self.get_extra_iterator()) + updated)
+        )
+        self.test_frame_extra["value_number"].loc[[7, 8]] *= 5
         assert_frame_equal(self.frame.data, self.test_frame_extra, check_like=True)
 
     def test_resetting_features_and_content(self):
