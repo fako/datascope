@@ -61,10 +61,10 @@ class CommunityView(APIView):
                 configuration[key] = float(value)
         try:
             created_at_parameter = configuration.pop("t")
+            warnings.warn("The t parameter to retrieve older communities is deprecated. Use the versions view instead.",
+                          DeprecationWarning)
         except KeyError:
             return configuration, (None, None,)
-        warnings.warn("The t parameter to retrieve older communities is deprecated. Use the versions view instead.",
-                      DeprecationWarning)
         return configuration, (created_at_parameter, parse_datetime_string(created_at_parameter),)
 
     @classmethod
