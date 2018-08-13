@@ -1,6 +1,9 @@
+import os
+
 import spacy
 from spacy_arguing_lexicon import ArguingLexiconParser
 
+from core.models.organisms.states import CommunityState
 from topic_research.models import CrossCombineTermSearchCommunity
 from online_discourse.discourse import configurations
 
@@ -9,10 +12,13 @@ class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
 
     COMMUNITY_BODY = [
         {
-            "process": "RankProcessor.score",
+            "name": "rank",
+            "process": "OnlineDiscourseRankProcessor.score",
             "config": {
                 "result_size": 60,
-                "score_key": "argument_score"
+                "ranking_feature": "argument_score",
+                "identifier_key": "url",
+                "feature_frame_path": None
             }
         }
     ]
@@ -49,6 +55,25 @@ class DiscourseSearchCommunity(CrossCombineTermSearchCommunity):
                 individual.properties["argument_score"] = argument_count / sents_count
                 individual.clean()
                 individual.save()
+
+    def get_feature_frame_file(self):
+        return os.path.join(self._meta.app_label, "data", "feature_frames", self.signature + ".pkl")
+
+    def before_rank_manifestation(self, manifestation_part):
+        manifestation_part["config"]["feature_frame_path"] = self.get_feature_frame_file()
+
+    def store_feature_frame(self):
+        assert self.state == CommunityState.READY, "Can't store a frame for a Community that is not ready"
+        path, file_name = os.path.split(self.get_feature_frame_file())
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        part = next((part for part in self.COMMUNITY_BODY if part.get("name") == "rank"), None)
+        if part is None:
+            raise TypeError("No RankProcessor part found in COMMUNITY_BODY")
+        rank_processor, method, args_type = self.prepare_process(part["process"], class_config=part.get("config"))
+        rank_processor.feature_frame.load_content(lambda: self.kernel.content)
+        rank_processor.feature_frame.to_disk(self.get_feature_frame_file())
 
     class Meta:
         proxy = True
