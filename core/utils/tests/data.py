@@ -432,3 +432,12 @@ class TestNumericFeaturesFrame(TestCase):
         self.assertEquals(ranking, [5, 8, 6, 4, 7])
         ranking = self.frame.rank_by_params({"is_dutch": 0.5, "value_number": -1, "is_english": 2, "is_french": 100})
         self.assertEquals(ranking, [7, 8, 6, 4, 5])
+
+    def test_get_content_hash(self):
+        self.skipTest("not tested")
+
+    def test_get_feature_value(self):
+        self.skipTest("not tested")
+
+    def test_get_feature_series(self):
+        self.skipTest("not tested")
