@@ -1,5 +1,4 @@
 import os
-import warnings
 from collections import OrderedDict
 
 import spacy
@@ -118,17 +117,31 @@ class DiscourseSearchCommunity(Community):
         nlp.add_pipe(ArguingLexiconParser(lang=nlp.lang))
 
         for individual in out.individual_set.iterator():
+
             argument_count = 0
             sents_count = 0
-            for paragraph_group in individual.properties.get("paragraph_groups", []):
+            paragraph_groups = individual.properties.get("paragraph_groups", [])
+            if not paragraph_groups:
+                continue
+            text = ""
+            for paragraph_group in paragraph_groups:
                 for doc in nlp.pipe(paragraph_group):
                     sents_count += len(list(doc.sents))
                     argument_spans = list(doc._.arguments.get_argument_spans())
                     argument_count += len(argument_spans)
+                text += " ".join(paragraph_group) + " "
+            if not text.trim():
+                continue
             if sents_count:
                 individual.properties["argument_score"] = argument_count / sents_count
-                individual.clean()
-                individual.save()
+            vectorizer = CountVectorizer()
+            text_vector = vectorizer.fit_transform([text])[0].toarray().tolist()[0]
+            individual.properties["word_count"] = {
+                word: count
+                for word, count in zip(vectorizer.get_feature_names(), text_vector) if count >= 3
+            }
+            individual.clean()
+            individual.save()
 
     def set_kernel(self):
         self.kernel = self.current_growth.output
