@@ -158,7 +158,7 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
                 "rank": ranked_feature.loc[ix]
             }
             individual["ds_rank"][ranking_feature] = {
-                "rank": ranked_feature.index.get_loc(ix),
+                "rank": ranked_feature.loc[ix],  # rank is value multiplied by weight
                 "value": ranked_feature.loc[ix],
                 "weight": 1.0
             }
