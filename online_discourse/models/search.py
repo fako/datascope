@@ -1,8 +1,10 @@
 import os
+import warnings
 from collections import OrderedDict
 
 import spacy
 from spacy_arguing_lexicon import ArguingLexiconParser
+from sklearn.feature_extraction.text import CountVectorizer
 
 from core.models.organisms import Community, Collective, Individual
 from core.models.organisms.states import CommunityState
@@ -70,7 +72,8 @@ class DiscourseSearchCommunity(Community):
                 "result_size": 60,
                 "ranking_feature": "argument_score",
                 "identifier_key": "url",
-                "feature_frame_path": None
+                "feature_frame_path": None,
+                "$keywords": []
             }
         }
     ]

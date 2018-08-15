@@ -107,6 +107,8 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
         namespace="rank_processor"
     )
 
+    contextual_features = []
+
     def __init__(self, config):
         super().__init__(config)
         if "identifier_key" in self.config and "feature_frame_path" in self.config:
@@ -122,11 +124,11 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
     def get_features(cls):
         mother = set(dir(RankProcessor))
         own = set(dir(cls))
-        return [getattr(cls, attr) for attr in (own - mother) if callable(getattr(cls, attr))]
-
-    def ranking(self, descending=True, limit=20):
-        assert self.feature_frame, \
-            "RankProcessor needs a identifier_key and feature_frame_path configuration to perform RankProcessor.ranking"
+        return [
+            getattr(cls, attr) for attr in (own - mother)
+            if callable(getattr(cls, attr)) and
+            attr not in cls.contextual_features
+        ]
 
     def by_feature(self, individuals):
         assert "ranking_feature" in self.config, "RankProcessor.by_feature needs a ranking_feature from config"
@@ -134,9 +136,19 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
             "RankProcessor needs a identifier_key and feature_frame_path configuration " \
             "to perform RankProcessor.by_feature"
         ranking_feature = self.config.ranking_feature
-        assert ranking_feature in self.feature_frame.features, \
-            "The feature '{}' is not loaded in the feature frame".format(ranking_feature)
-        ranked_feature = self.feature_frame.data[ranking_feature].sort_values(ascending=False)[:self.config.result_size]
+        assert ranking_feature in self.feature_frame.features or ranking_feature in self.contextual_features, \
+            "The non-contextual feature '{}' is not loaded in the feature frame".format(ranking_feature)
+        if ranking_feature not in self.contextual_features:
+            ranked_feature = self.feature_frame.data[ranking_feature]
+        else:
+            # TODO: optimize memory use
+            individuals = list(individuals)
+            ranked_feature = self.feature_frame.get_feature_series(
+                ranking_feature, getattr(self, ranking_feature),
+                content_callable=lambda: individuals, context=self.config.to_dict()
+            )
+        ranked_feature = ranked_feature.sort_values(ascending=False)[:self.config.result_size]
+
         results = OrderedDict([(ix, None,) for ix in ranked_feature.index])
         for individual in individuals:
             ix = individual[self.config.identifier_key]
@@ -146,7 +158,7 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
                 "rank": ranked_feature.loc[ix]
             }
             individual["ds_rank"][ranking_feature] = {
-                "rank": ranked_feature.loc[ix],
+                "rank": ranked_feature.index.get_loc(ix),
                 "value": ranked_feature.loc[ix],
                 "weight": 1.0
             }

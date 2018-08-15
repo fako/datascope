@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 
 from core.exceptions import DSFileLoadError
+from json_field.fields import JSONEncoder
 
 
 class NumericFeaturesFrame(object):
@@ -84,15 +85,18 @@ class NumericFeaturesFrame(object):
 
     @staticmethod
     def get_content_hash(content):
-        content_json = json.dumps(content) if not hasattr(content, "properties") else \
-            json.dumps(content.properties)
+        content_json = json.dumps(content, cls=JSONEncoder) if not hasattr(content, "properties") else \
+            content.json_content
         hasher = hashlib.sha1()
         hasher.update(bytes(content_json, encoding="utf-8"))
         return hasher.digest()
 
-    def get_feature_value(self, feature_name, feature_callable, content, content_hash):
+    def get_feature_value(self, feature_name, feature_callable, content, content_hash, context=None):
         try:
-            value = feature_callable(content)
+            if context is None:
+                value = feature_callable(content)
+            else:
+                value = feature_callable(content, context)
         except Exception as exc:
             raise Exception("{} feature: {}: {}".format(feature_name, exc.__class__.__name__, exc))
         try:
@@ -103,13 +107,14 @@ class NumericFeaturesFrame(object):
             raise ValueError("{} feature modified content". format(feature_name))
         return numeric
 
-    def get_feature_series(self, feature_name, feature_callable, content_callable=None):
+    def get_feature_series(self, feature_name, feature_callable, content_callable=None, context=None):
         contents = content_callable() if content_callable else self.content()
         series = pd.Series(name=feature_name)
         for content in contents:
             content_hash = self.get_content_hash(content)
             identifier = self.get_identifier(content)
-            series.at[identifier] = self.get_feature_value(feature_name, feature_callable, content, content_hash)
+            series.at[identifier] = self.get_feature_value(feature_name, feature_callable, content, content_hash,
+                                                           context)
         return series
 
     def load_features(self, callables):
