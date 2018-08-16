@@ -11,10 +11,6 @@ class Generate(DataProcess, Input):
     pass
 
 
-class Payload(DataProcess, Input):
-    pass
-
-
 class Filesystem(Generate):
     pass
 

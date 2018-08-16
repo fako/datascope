@@ -15,7 +15,3 @@ class Update(DataProcess, Output):
 
 class Inline(DataProcess, Output):
     pass
-
-
-class Payload(object, Output):
-    pass
