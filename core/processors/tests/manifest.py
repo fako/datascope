@@ -25,7 +25,7 @@ class TestManifestProcessor(TestCase):
             private=[],
             defaults=MOCK_CONFIGURATION
         )
-        self.config.set_configuration({
+        self.config.update({
             "_community": "CommunityMock",
         })
         self.prc = ManifestProcessor(config=self.config.to_dict(protected=True, private=True))

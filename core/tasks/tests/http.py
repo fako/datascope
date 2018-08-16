@@ -25,7 +25,7 @@ class TestHTTPTasksBase(TestCase):
             private=["_resource", "_continuation_limit"],
             defaults=MOCK_CONFIGURATION
         )
-        self.config.set_configuration({
+        self.config.update({
             "resource": "HttpResourceMock",
         })
         self.session = MockRequests
@@ -240,7 +240,7 @@ class TestSendSerieTaskPost(TestHTTPTasksBase):
 class TestGetResourceLink(TestHTTPTasksBase):
 
     def test_get_link(self):
-        self.config.set_configuration({"test": "test"})
+        self.config.update({"test": "test"})
         session = requests.Session()
         session.cookies = {"test": "test"}
         link = get_resource_link(config=self.config, session=session)

@@ -46,11 +46,16 @@ class ConfigurationType(object):
                 self._private.append(prv)
 
     def set_configuration(self, new):
-        """
-        Will update any keys given through new with corresponding attributes on self.
+        warnings.warn("ConfigurationType.set_configuration is deprecated "
+                      "in favor of the more Pythonic ConfigurationType.update", DeprecationWarning)
+        self.update(new)
 
-        NB: Be careful with using _private, _namespace, _defaults and _global_prefix as configurations.
-            They will override attributes that the ConfigurationType needs internally.
+    def update(self, new):
+        """
+        Will update any configurations given through new.
+        This method sets attributes on itself named after the configurations.
+        Therefore be careful with using _private, _namespace, _defaults and _global_prefix as configurations.
+        They will override attributes that the ConfigurationType needs internally.
 
         :param new: (dictionary) to update attributes on self with
         :return: None
@@ -215,8 +220,8 @@ class ConfigurationProperty(object):
                 private=self._private
             )
         if isinstance(new, ConfigurationType):
-            obj.__dict__[self._storage_attribute].set_configuration(
+            obj.__dict__[self._storage_attribute].update(
                 new.to_dict(private=True, protected=True)
             )
         else:
-            obj.__dict__[self._storage_attribute].set_configuration(new)
+            obj.__dict__[self._storage_attribute].update(new)
