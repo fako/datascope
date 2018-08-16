@@ -3,5 +3,5 @@
 Configuration
 =============
 
-.. automodule:: core.utils.configuration
-    :members:
+.. automodule:: datagrowth.configuration.types
+    :members: ConfigurationProperty, ConfigurationType

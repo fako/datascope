@@ -1,3 +1,13 @@
+"""
+Datagrowth configurations can be serialized to JSON dicts for storage and transfer.
+They can also be passed on to other configuration instances in a parent/child like relationship.
+Datagrowth configurations are namespaced.
+Upon initialization defaults can be specified globally and per namespace.
+Initialization typically happens when application loads.
+Configurations may get overridden at runtime, which typically happens during requests.
+"""
+
+import warnings
 from copy import copy
 
 
@@ -7,12 +17,12 @@ class ConfigurationNotFoundError(AttributeError):
 
 class ConfigurationType(object):
     """
-    Instances of this type are configurations that can be serialized to JSON dicts for storage and transfer.
-    They can also pass on their configuration to other instances in a parent/child like relationship.
-    Upon initialization (which typically happens when application loads) defaults can be specified,
-    which then may get overridden at runtime (typically during requests).
+    This type is the interface to configurations. Configurations are accessible as attributes.
+    So a configuration named `my_config` will be accessible with `config.my_config`.
+
+    You can check if a configuration exists by using the `in` operator.
     """
-    # FEATURE: protect against unexpected user input configurations
+    # TODO: protect against unexpected user input configurations
 
     _private_defaults = ["_private", "_defaults", "_namespace"]
     _global_prefix = "global"
@@ -109,11 +119,10 @@ class ConfigurationType(object):
     def to_dict(self, protected=False, private=False):
         """
         Will return the current configuration in dict form.
-
-        By default it will return all attributes except those that start with an underscore.
-        You can include protected and private configurations through arguments
-
-        NB: It never returns the defaults attribute, because that attribute is the same for all instances.
+        By default it will return all attributes except those that are considered protected or private.
+        Any configuration whose name starts with an _ is considered protected.
+        Configurations are considered private when they start with _
+        and are listed as private during initialisation of the configuration property.
 
         :param protected: (boolean) flag to include protected configurations
         :param private: (boolean) flag to include private configurations
@@ -123,6 +132,13 @@ class ConfigurationType(object):
 
     @classmethod
     def from_dict(cls, config, defaults):
+        """
+        To be written
+
+        :param config:
+        :param defaults:
+        :return:
+        """
         assert isinstance(config, dict), \
             "Config should be a dict which values are the configurations."
         assert "_namespace" in config, \
@@ -136,18 +152,31 @@ class ConfigurationType(object):
             namespace=config["_namespace"],
             private=config["_private"]
         )
-        instance.set_configuration(config)
+        instance.update(config)
         return instance
 
     def supplement(self, other):
+        """
+        To be written
+
+        :param other:
+        :return:
+        """
         supplement = {}
         for key, value in other.items():
             if key not in self:
                 supplement[key] = value
         if supplement:
-            self.set_configuration(supplement)
+            self.update(supplement)
 
     def items(self, protected=False, private=False):
+        """
+        To be written
+
+        :param protected:
+        :param private:
+        :return:
+        """
         for key, value in self.__dict__.items():
             if key == '_defaults':
                 continue
@@ -159,6 +188,12 @@ class ConfigurationType(object):
 
     @staticmethod
     def clean_key(key):
+        """
+        To be written
+
+        :param key:
+        :return:
+        """
         if key.startswith("$") or key.startswith("_"):
             return key[1:]
         return key
@@ -181,18 +216,33 @@ class ConfigurationType(object):
 
 class ConfigurationProperty(object):
     """
-    This class creates a property that manages a ConfigurationType instance on the owner class.
+    Initialize this class to place a configuration property upon another class.
+    The property will be of the ConfigurationType described below. Upon initialization you can specify defaults.
+    The defaults get returned when configurations are not explicitly set.
+    There are two types of defaults:
+
+        - Any configuration with a prefixes of `global` will be a default for all configuration properties
+        - Any configuration with a prefix equal to namespace will be a default for configuration properties that share the namespace
+
+    If you for example add `my_scoped_config`. Then configuration properties with the namespace set to `my` will
+    return the `my_scoped_config` value if `scoped_config` is not set.
+
+    :param storage_attribute: (string) name of the attribute used to store configurations on the owner class
+    :param defaults: (dict) should hold default configurations as items
+    :param namespace: (string) prefix to search default configurations with
+    :param private: (list) keys that are considered as private for this property
+    :return: ConfigurationType
     """
 
     def __init__(self, storage_attribute, defaults, namespace, private):
         """
         Runs some checks to create a ConfigurationType successfully upon first access of the property.
 
-        :param storage_attribute: (string) name of the attribute used to store configuration on owner of this property
-        :param defaults: (dict) that should hold default configurations as items
+        :param storage_attribute: (string) name of the attribute used to store configurations on the owner class
+        :param defaults: (dict) should hold default configurations as items
         :param namespace: (string) prefix to search default configurations with
-        :param private: (list) keys that are considered as private
-        :return: None
+        :param private: (list) keys that are considered as private for this property
+        :return: ConfigurationType
         """
         assert storage_attribute, \
             "Specify a storage_attribute to store the configuration in."
