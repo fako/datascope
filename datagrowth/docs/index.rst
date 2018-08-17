@@ -23,7 +23,7 @@ Contents
    :maxdepth: 2
 
    architecture/index
-   configuration
+   configuration/index
 
 Indices and tables
 ------------------
