@@ -8,7 +8,7 @@ Configuration
     :hidden:
 
     fields
-    serialization
+    serializers
 
 .. automodule:: datagrowth.configuration.types
     :members: ConfigurationProperty, ConfigurationType

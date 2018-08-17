@@ -7,9 +7,6 @@ Architecture
     :maxdepth: 2
     :hidden:
 
-    resources
-    storage
-
 
 Data flows through Data Growth in two phases called the growth phase and the scope phase.
 During the growth phase a data set gets created.
