@@ -115,7 +115,7 @@ class NumericFeaturesFrame(object):
             identifier = self.get_identifier(content)
             series.at[identifier] = self.get_feature_value(feature_name, feature_callable, content, content_hash,
                                                            context)
-        return series
+        return (series - series.min()) / (series.max() - series.min())
 
     def load_features(self, callables):
         """
