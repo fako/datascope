@@ -12,7 +12,6 @@ from core.models.organisms.states import CommunityState, COMMUNITY_STATE_CHOICES
 from core.models.organisms import Growth, Collective, Individual, Organism
 from core.models.organisms.managers.community import CommunityManager
 from core.models.resources.manifestation import Manifestation
-from core.models.user import DataScopeUser
 from core.processors.mixins import ProcessorMixin
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
@@ -26,8 +25,6 @@ class Community(models.Model, ProcessorMixin):
     """
 
     """
-    #user = models.ForeignKey(DataScopeUser, null=True)
-    #predecessor = models.ForeignKey('Community', null=True)
 
     signature = models.CharField(max_length=255, db_index=True)
     config = ConfigurationField(
