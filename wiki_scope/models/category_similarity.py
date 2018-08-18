@@ -6,7 +6,7 @@ from collections import OrderedDict
 from core.models.organisms import Community, Collective, Individual
 
 
-class WikipediaCategorySimularityCommunity(Community):
+class WikipediaCategorySimilarityCommunity(Community):
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("search", {
@@ -162,7 +162,7 @@ class WikipediaCategorySimularityCommunity(Community):
 
     @property
     def manifestation(self):
-        return islice(super(WikipediaCategorySimularityCommunity, self).manifestation, 1, 21)
+        return islice(super(WikipediaCategorySimilarityCommunity, self).manifestation, 1, 21)
 
     class Meta:
         verbose_name = "Wikipedia category similarity"

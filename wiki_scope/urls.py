@@ -3,20 +3,20 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 from django.conf.urls import url
 
 from core.views.community import CommunityView, HtmlCommunityView
-from topic_research.models import WikipediaCategorySimularityCommunity
+from wiki_scope.models import WikipediaCategorySimilarityCommunity
 
 
 urlpatterns = [
     url(
         r'^category-similarity/service/(?P<path>.+)/$',
         CommunityView.as_view(),
-        kwargs={"community_class": WikipediaCategorySimularityCommunity},
-        name=WikipediaCategorySimularityCommunity.get_name() + "_service"
+        kwargs={"community_class": WikipediaCategorySimilarityCommunity},
+        name=WikipediaCategorySimilarityCommunity.get_name() + "_service"
     ),
     url(
         r'^category-similarity/html/(?P<path>.+)/$',
         HtmlCommunityView.as_view(),
-        kwargs={"community_class": WikipediaCategorySimularityCommunity},
-        name=WikipediaCategorySimularityCommunity.get_name() + "_html"
+        kwargs={"community_class": WikipediaCategorySimilarityCommunity},
+        name=WikipediaCategorySimilarityCommunity.get_name() + "_html"
     ),
 ]
