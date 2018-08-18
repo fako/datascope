@@ -24,7 +24,7 @@ class TestHttpResourceProcessor(TestCase):
             private=["_resource", "_continuation_limit"],
             defaults=MOCK_CONFIGURATION
         )
-        self.config.set_configuration({
+        self.config.update({
             "resource": "HttpResourceMock",
         })
         self.prc = HttpResourceProcessor(config=self.config.to_dict(protected=True, private=True))

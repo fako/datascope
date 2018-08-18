@@ -1,17 +1,14 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
 from django.test import TestCase
 
-from datascope.configuration import MOCK_CONFIGURATION
-from core.utils.configuration import (ConfigurationType, ConfigurationNotFoundError, ConfigurationProperty,
-                                        load_config)
+from datagrowth.configuration import (ConfigurationType, ConfigurationNotFoundError, ConfigurationProperty, load_config,
+                                      MOCK_CONFIGURATION)
 
 
 class TestConfigurationType(TestCase):
 
     def setUp(self):
         self.config = ConfigurationType(namespace="name", private=["_test3"], defaults=MOCK_CONFIGURATION)
-        self.config.set_configuration({
+        self.config.update({
             "test": "public",
             "_test2": "protected",
             "_test3": "private",
@@ -60,20 +57,20 @@ class TestConfigurationType(TestCase):
         except ConfigurationNotFoundError:
             pass
 
-    def test_update_using_set_configuration(self):
+    def test_update_using_update(self):
         # Test (partial) updating
-        self.config.set_configuration({"test": "public 2"})
+        self.config.update({"test": "public 2"})
         self.assertEqual(self.config.test, "public 2")
         self.assertEqual(self.config.test2, "protected")
         self.assertEqual(self.config.test3, "private")
-        self.config.set_configuration({"_test2": "protected 2", "_test3": "private 2", "$test4": "variable 2"})
+        self.config.update({"_test2": "protected 2", "_test3": "private 2", "$test4": "variable 2"})
         self.assertEqual(self.config.test, "public 2")
         self.assertEqual(self.config.test2, "protected 2")
         self.assertEqual(self.config.test3, "private 2")
         self.assertEqual(self.config.test4, "variable 2")
         # Test private configuration detection
         self.config._private.append("_private_also")
-        self.config.set_configuration({"private_also": "private"})
+        self.config.update({"private_also": "private"})
         self.assertEqual(self.config.private_also, "private")
         self.assertEqual(self.config._private_also, "private")
 
@@ -194,7 +191,7 @@ class TestLoadConfigDecorator(TestCase):
 
     def setUp(self):
         self.config = ConfigurationType(namespace="name", private=["_test3"], defaults=MOCK_CONFIGURATION)
-        self.config.set_configuration({
+        self.config.update({
             "test": "public",
             "_test2": "protected",
             "_test3": "private"

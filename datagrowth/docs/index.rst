@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Data Growth's documentation
-======================================
+===========================
 
 Data Growth is the bridge between data and algorithms.
 The demand for data is increasing, because many algorithms and computer models need more of it than ever before.
@@ -22,8 +22,9 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   architecture/index
-   configuration
+   resources/index
+   configuration/index
+
 
 Indices and tables
 ------------------

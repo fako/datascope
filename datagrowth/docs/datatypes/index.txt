@@ -1,7 +1,7 @@
-.. Data Growth storage documentation
+.. Data Growth datatypes documentation
 
-Storage
-=======
+Datatypes
+=========
 
 .. automodule:: core.models.organisms.organism
     :members:
@@ -10,7 +10,4 @@ Storage
     :members:
 
 .. automodule:: core.models.organisms.collective
-    :members:
-
-.. automodule:: core.models.organisms.community
     :members:
