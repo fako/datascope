@@ -7,8 +7,11 @@ dump.rdb
 *.db
 *.csv
 db-dump.*.json
+*.sql
+*.pkl
 
-system/docs/_build/
+datagrowth/docs/_build/
+
 system/coverage/
 system/profile/
 system/files/media/

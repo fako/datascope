@@ -76,7 +76,7 @@ class HttpResource(Resource):
             self.request = self._create_request(method, *args, **kwargs)
             self.uri = HttpResource.uri_from_url(self.request.get("url"))
             self.data_hash = HttpResource.hash_from_data(
-                self.request.get("data")
+                self.request.get(HttpResource.get_data_key(self.request))
             )
         else:
             self.validate_request(self.request)
@@ -175,7 +175,7 @@ class HttpResource(Resource):
             "url": self._create_url(*args),
             "headers": dict(headers)
         }
-        data_key = "json" if headers.get("Content-Type") == "application/json" else "data"
+        data_key = self.get_data_key(request, headers)
         request[data_key] = data
         return self.validate_request(request, validate_input=False)
 
@@ -417,6 +417,16 @@ class HttpResource(Resource):
         hash_data = json.dumps(data).encode("utf-8")
         hsh.update(hash_data)
         return hsh.hexdigest()
+
+    @staticmethod
+    def get_data_key(request, headers=None):
+        if "data" in request:
+            return "data"
+        elif "json" in request:
+            return "json"
+        elif headers:
+            return "json" if headers.get("Content-Type") == "application/json" else "data"
+        raise AssertionError("Could not determine data_key for request {} or headers {}".format(request, headers))
 
     def set_error(self, status, connection_error=False):
         if connection_error:

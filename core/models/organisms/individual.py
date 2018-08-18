@@ -104,7 +104,7 @@ class Individual(Organism):
         if not frm:
             return frm
         if isinstance(frm, str):
-            return reach(frm, content)
+            return reach(frm, content) if frm.startswith("$") else frm
         elif isinstance(frm, list):
             if len(frm) > 1:
                 return Individual.output_from_content(content, *frm)
@@ -125,5 +125,10 @@ class Individual(Organism):
         return self.properties.values()
 
     def clean(self):
+        # Always influence first!
         if self.collective:
             self.collective.influence(self)
+        # After influence check integrity
+        identity_max_length = Individual._meta.get_field('identity').max_length
+        if self.identity and len(self.identity) > identity_max_length:
+            self.identity = self.identity[:identity_max_length]

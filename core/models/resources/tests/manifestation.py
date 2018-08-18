@@ -15,16 +15,6 @@ class TestManifestationResource(TestCase):
     def setUp(self):
         self.instance = Manifestation.objects.get(id=1)
 
-    def test_generate_config(self):
-        config = Manifestation.generate_config(CommunityMock.PUBLIC_CONFIG, **{
-            "setting1": "",
-            "$setting2": "",
-            "invalid": ""
-        })
-        self.assertIn("setting1", config)
-        self.assertIn("$setting2", config)
-        self.assertNotIn("invalid", config)
-
     def test_get_data_sync(self):
         data = self.instance.get_data()
         self.assertEqual(self.instance.status, 0)
@@ -79,9 +69,10 @@ class TestManifestationResource(TestCase):
 
     def test_content(self):
         content_type, data = self.instance.content
+        expected_manifestation_hash = "6eab071abbb42b649255ae8131f580986c750a5cf444166d3c1db00446ddc32a"
         self.assertEqual(content_type, "application/json")
         self.assertEqual(data, {
-            "service": "/data/v1/mock/service/test-ready?setting1=const",
+            "service": "/data/v1/mock/service/test-ready?setting1=const#" + expected_manifestation_hash,
             "data": [
                 {"context": "nested value", "number": 1, "value": "nested value 0"},
                 {"context": "nested value", "number": 3, "value": "nested value 2"},

@@ -74,9 +74,11 @@ INSTALLED_APPS = (
     'future_fashion',
     'open_data',
     'topic_research',
+    'wiki_scope',
     'online_discourse',
     'nautilus',
-    'trolls'
+    'trolls',
+    'setup_utrecht'
 )
 
 DATABASE_TYPES = {

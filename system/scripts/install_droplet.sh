@@ -45,20 +45,19 @@ update-rc.d redis_6379 defaults
 cd /
 mkdir /srv
 cd /srv
-git clone https://github.com/fako/datascope.git datascope/src
 git clone https://github.com/fako/ds-server.git
-mv /root/bootstrap.py datascope/src/datascope/settings/
-mv /root/secrets.py datascope/src/datascope/settings/
-mkdir /srv/logs
+mkdir /srv/secrets
+mv /root/secrets.py secrets/
+mkdir -p /srv/logs/uwsgi
+mkdir -p /srv/logs/nginx
+mkdir -p /srv/logs/celery
+mkdir /srv/www
+mkdir /srv/uwsgi
+# It's recommended to run provision-server from ds-server instead of 2 commands below
+mkdir -p /srv/artefacts/datascope
+mkdir /home/fako/datascope
+# Finish setup by setting
 chown www-data:www-data -R /srv
-
-# SETUP: virtual environment
-cd /srv/datascope
-virtualenv -p python3 ds-env
-source ds-env/bin/activate
-pip install -r src/system/requirements/production.txt
-python -m spacy download en
-python -m spacy download nl
 
 # SETUP: database
 mysql -p -e "CREATE DATABASE datascope CHARSET utf8mb4;"
@@ -67,34 +66,27 @@ mysql -p -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, R
 mysql -p -e "GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, DROP, INDEX, REFERENCES ON test_datascope.* TO 'django'@'localhost'; FLUSH PRIVILEGES;"
 
 # SETUP: services
-cd /srv/ds-server/deploy/
+cd /srv/ds-server/server/
+usermod -s /bin/bash www-data
 # Celery
-groupadd celery
-useradd -N -M --system -s /bin/bash -G celery celery
 cp celery/celeryd.cnf.sh /etc/default/celeryd
 cp celery/celeryd.cnf.sh /etc/default/S99celeryd
 cp celery/celeryd.sh /etc/init.d/celeryd
 chmod a+x /etc/init.d/celeryd
 update-rc.d celeryd defaults 99
 sudo service celeryd start
-# UWSGI
-cp uwsgi/datascope-3.ini /etc/uwsgi/apps-available/datascope.ini
-ln -s /etc/uwsgi/apps-available/datascope.ini /etc/uwsgi/apps-enabled/datascope.ini
-sudo service uwsgi start
 # Nginx
 cp nginx/nginx.conf /etc/nginx/nginx.conf
 cp nginx/data-scope.conf /etc/nginx/sites-available/data-scope.conf
 ln -s /etc/nginx/sites-available/data-scope.conf /etc/nginx/sites-enabled/data-scope.conf
 rm /etc/nginx/sites-enabled/default
-mkdir /srv/logs/nginx/
 nginx -s reload
 
 # Setup firewall
 ufw allow ssh/tcp
+ufw allow 80/tcp
+ufw allow 443/tcp
 ufw logging on
 ufw enable
 
-# SETUP: Django
-cd /srv/datascope/src
-python manage.py syncdb
-python manage.py collectstatic
+# TODO: deploy

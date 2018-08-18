@@ -1,4 +1,5 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
+import warnings
+
 from django.utils.encoding import python_2_unicode_compatible
 
 from django.db import models
@@ -10,6 +11,10 @@ import json_field
 class OrganismIterator(object):
 
     def __init__(self, content):
+        warnings.warn(
+            "OrganismInterator is deprecated. There are no plans for replacement at this time",
+            DeprecationWarning
+        )
         self._content = content
         self._index = 0
         self._candidate = None

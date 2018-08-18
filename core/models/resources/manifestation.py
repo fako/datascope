@@ -1,3 +1,4 @@
+import warnings
 from datetime import datetime
 import logging
 
@@ -28,6 +29,8 @@ class Manifestation(Resource):
 
     @staticmethod
     def generate_config(allowed_config, **kwargs):
+        warnings.warn("Manifestation.generate_config deprecated in favor for "
+                      "Community.filter_growth_configuration and Community.filter_scope_configuration")
         config = {key: value for key, value in kwargs.items() if key in allowed_config}
         return config
 

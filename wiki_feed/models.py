@@ -403,7 +403,7 @@ class WikiFeedPublishCommunity(Community):
                     "source": source,
                     "modules": modules,
                 }
-                page["service"] = CommunityView.get_full_path(WikiFeedCommunity, source, modules)
+                page["service"] = CommunityView.get_uri(WikiFeedCommunity, source, modules)
                 page["service"] = page["service"].replace("/algo-news", "")
             page.clean()
             page.save()

@@ -1,6 +1,7 @@
 import os
 import shutil
 from collections import OrderedDict
+from itertools import islice
 
 from django.core.files.storage import default_storage
 
@@ -144,7 +145,7 @@ class FutureFashionCommunity(Community):
 
     COMMUNITY_BODY = []
 
-    ASYNC_MANIFEST = True
+    ASYNC_MANIFEST = False
     INPUT_THROUGH_PATH = False
 
     PUBLIC_CONFIG = {}
@@ -189,7 +190,7 @@ class FutureFashionCommunity(Community):
 
     @property
     def manifestation(self):
-        return list(super(FutureFashionCommunity, self).manifestation)[:20]
+        return islice(super(FutureFashionCommunity, self).manifestation, 0, 20)
 
     class Meta:
         verbose_name = "Future fashion"

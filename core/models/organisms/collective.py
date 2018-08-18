@@ -1,5 +1,6 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 import six
+import warnings
 
 from collections import Iterator, Iterable
 
@@ -130,6 +131,27 @@ class Collective(Organism):  # TODO: rename to family
         json_content = [ind.json_content for ind in self.individual_set.all()]
         return "[{}]".format(",".join(json_content))
 
+    def split(self, train=0.8, validate=0.1, test=0.1, query_set=None, as_content=False):  # TODO: test to unlock
+        assert train + validate + test == 1.0, "Expected sum of train, validate and test to be 1"
+        assert train > 0, "Expected train set to be bigger than 0"
+        assert validate > 0, "Expected validate set to be bigger than 0"
+        query_set = query_set or self.individual_set
+        content_count = query_set.count()
+        # TODO: take into account that random ordering in MySQL is a bad idea
+        # Details: http://www.titov.net/2005/09/21/do-not-use-order-by-rand-or-how-to-get-random-rows-from-table/
+        individuals = query_set.order_by("?").iterator()
+        test_set = []
+        if test:
+            test_size = round(content_count * test)
+            test_set = [next(individuals) for ix in range(0, test_size)]
+        validate_size = round(content_count * validate)
+        validate_set = [next(individuals) for ix in range(0, validate_size)]
+        return (
+            (individual.content if as_content else individual for individual in individuals),
+            [individual.content if as_content else individual for individual in validate_set],
+            [individual.content if as_content else individual for individual in test_set]
+        )
+
     def output(self, *args):
         if len(args) > 1:
             return map(self.output, args)
@@ -173,17 +195,18 @@ class Collective(Organism):  # TODO: rename to family
         :param keys:
         :return:
         """
+        warnings.warn("Collective.build_index is depecrated in favor of Postgres BSON fields", DeprecationWarning)
         assert isinstance(keys, list) and len(keys), \
             "Expected a list with at least one element for argument keys."
 
         individuals = []
         for ind in self.individual_set.all():
-            self.set_index_for_individual(ind, keys)
+            self._set_index_for_individual(ind, keys)
             individuals.append(ind)
         self.update(individuals)
         self.save()
 
-    def set_index_for_individual(self, individual, index_keys):
+    def _set_index_for_individual(self, individual, index_keys):
         index = tuple([(key, individual[key]) for key in index_keys])
         if index not in self.indexes:
             index_code = len(self.indexes)
@@ -202,11 +225,12 @@ class Collective(Organism):  # TODO: rename to family
             individual.identity = reach("$." + self.identifier, individual.properties)
         if self.indexes:
             index_keys = self._get_index_keys()
-            individual = self.set_index_for_individual(individual, index_keys)
+            individual = self._set_index_for_individual(individual, index_keys)
 
         return individual
 
     def select(self, **kwargs):
+        warnings.warn("Collective.select is deprecated in favor of Postgres BSON fields", DeprecationWarning)
         select = set()
         for item in six.iteritems(kwargs):
             for index in self.indexes.keys():

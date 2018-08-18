@@ -1,4 +1,4 @@
-import six
+import warnings
 
 from itertools import groupby
 from collections import OrderedDict, Iterator
@@ -12,7 +12,6 @@ from core.models.organisms.states import CommunityState, COMMUNITY_STATE_CHOICES
 from core.models.organisms import Growth, Collective, Individual, Organism
 from core.models.organisms.managers.community import CommunityManager
 from core.models.resources.manifestation import Manifestation
-from core.models.user import DataScopeUser
 from core.processors.mixins import ProcessorMixin
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
@@ -26,8 +25,6 @@ class Community(models.Model, ProcessorMixin):
     """
 
     """
-    #user = models.ForeignKey(DataScopeUser, null=True)
-    #predecessor = models.ForeignKey('Community', null=True)
 
     signature = models.CharField(max_length=255, db_index=True)
     config = ConfigurationField(
@@ -56,25 +53,52 @@ class Community(models.Model, ProcessorMixin):
     COMMUNITY_BODY = []
     ASYNC_MANIFEST = False
     INPUT_THROUGH_PATH = True
-    PUBLIC_CONFIG = {}
+    PUBLIC_CONFIG = None  # obsolete
     SAMPLE_SIZE = 0
 
     objects = CommunityManager()
 
     @classmethod
     def get_signature_from_input(cls, *args, **kwargs):
-        signature = list(args) + [
-            "{}={}".format(key, value)
-            for key, value in six.iteritems(kwargs)
-            if key in cls.PUBLIC_CONFIG and not key.startswith("$")
-        ]
+        growth_configuration = cls.filter_growth_configuration(**kwargs)
+        signature = list(args) + ["{}={}".format(key, value) for key, value in growth_configuration.items()]
         signature = list(filter(bool, signature))
         signature.sort()
         return "&".join(signature)
 
     @classmethod
+    def filter_growth_configuration(cls, *args, **kwargs):
+        # Calculate which keys are whitelisted
+        growth_keys = set()
+        for name, phase in cls.COMMUNITY_SPIRIT.items():
+            growth_keys.update({key[1:] for key in phase.get("config", {}).keys() if key.startswith("$")})
+        # Also allow obsolete PUBLIC_CONFIG variables
+        public_config_keys = {
+            key for key, value in kwargs.items() if key in cls.PUBLIC_CONFIG and not key.startswith("$")
+        } if isinstance(cls.PUBLIC_CONFIG, dict) else set()
+        growth_keys.update(public_config_keys)
+        # Actual filtering of input
+        return {key: value for key, value in kwargs.items() if key.strip("$") in growth_keys}
+
+    @classmethod
+    def filter_scope_configuration(cls, *args, **kwargs):
+        # Calculate which keys are whitelisted
+        scope_keys = set()
+        for part in cls.COMMUNITY_BODY:
+            scope_keys.update({key[1:] for key in part.get("config", {}).keys() if key.startswith("$")})
+        # Also allow obsolete PUBLIC_CONFIG variables
+        public_config_keys = {
+            key[1:] for key, value in kwargs.items() if key in cls.PUBLIC_CONFIG and key.startswith("$")
+        } if isinstance(cls.PUBLIC_CONFIG, dict) else set()
+        scope_keys.update(public_config_keys)
+        # Actual filtering of input
+        return {key: value for key, value in kwargs.items() if key.strip("$") in scope_keys}
+
+    @classmethod
     def get_configuration_from_input(cls, *args, **kwargs):
-        return {key: value for key, value in six.iteritems(kwargs) if key in cls.PUBLIC_CONFIG}
+        warnings.warn("Community.get_configuration_from_input is deprecated in favor of "
+                      "Community.filter_growth_configuration or Community.filter_scope_configuration")
+        return cls.filter_growth_configuration(*args, **kwargs)
 
     def call_finish_callback(self, phase, out, errors):
         callback_name = "finish_" + phase
@@ -122,7 +146,7 @@ class Community(models.Model, ProcessorMixin):
         """
         Will create all Growth objects based on the community_spirit
         """
-        for growth_type, growth_config in six.iteritems(self.COMMUNITY_SPIRIT):
+        for growth_type, growth_config in self.COMMUNITY_SPIRIT.items():
             sch = growth_config["schema"]
             cnf = self.config.to_dict(protected=True)
             if self.SAMPLE_SIZE:
@@ -287,7 +311,7 @@ class Community(models.Model, ProcessorMixin):
         content = self.kernel.content
         for part in self.COMMUNITY_BODY:
             self.call_manifestation_callbacks(part)
-            processor, method, args_type = self.prepare_process(part["process"], extra_config=part.get("config"))
+            processor, method, args_type = self.prepare_process(part["process"], class_config=part.get("config"))
             content = method(content)
             assert isinstance(content, Iterator), \
                 "To prevent high memory usage processors should return iterators when manifestating"

@@ -32,20 +32,22 @@ def manifest(config, *args, **kwargs):
     except community_model.DoesNotExist:
         # We can't manifest without a community, so no results effectively
         # But something should not have been calling this task probably
-        log.warn("Community of class {} does not have instance with signature {}".format(
+        log.warning("Community of class {} does not have instance with signature {}".format(
             community_model.__class__.__name__,
             signature
         ))
         return [success, errors]
-    input_configuration = community_model.get_configuration_from_input(**kwargs)
-    community_path = CommunityView.get_full_path(community_model, "/".join(args), input_configuration)
+    growth_configuration = community_model.filter_growth_configuration(**kwargs)
+    scope_configuration = community_model.filter_scope_configuration(**kwargs)
+    configuration = dict(**growth_configuration, **scope_configuration)
+    uri = CommunityView.get_uri(community_model, "/".join(args), configuration)
     try:
-        manifestation = Manifestation.objects.get(uri=community_path)
+        manifestation = Manifestation.objects.get(uri=uri)
     except Manifestation.DoesNotExist:
         manifestation = Manifestation(
-            uri=community_path,
+            uri=uri,
             community=community_instance,
-            config=community_model.get_configuration_from_input(*args, **kwargs)
+            config=community_model.filter_scope_configuration(*args, **kwargs)
         )
         manifestation.save()
     try:

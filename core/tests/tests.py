@@ -1,11 +1,12 @@
-from core.utils.tests.configuration import TestConfigurationType, TestConfigurationProperty, TestLoadConfigDecorator
-from core.utils.tests.data import TestPythonReach
+from core.utils.tests.configuration import (TestConfigurationType, TestConfigurationProperty, TestLoadConfigDecorator,
+                                            TestGetStandardizedConfiguration)
+from core.utils.tests.data import TestPythonReach, TestNumericFeaturesFrame
 from core.utils.tests.image import TestImageGrid
 from core.utils.tests.helpers import TestUtilHelpers
 
 from core.processors.tests.resources import TestHttpResourceProcessor
 from core.processors.tests.extraction import TestExtractProcessor
-from core.processors.tests.rank import TestRankProcessor
+from core.processors.tests.rank import TestRankProcessor, TestRankProcessorLegacy
 from core.processors.tests.expansion import TestExpansionProcessor
 from core.processors.tests.compare import TestCompareProcessor
 from core.processors.tests.manifest import TestManifestProcessor

@@ -53,6 +53,8 @@ class ExtractProcessor(Processor):
     def extract(self, content_type, data):
         assert self.config.objective, \
             "ExtractProcessor.extract expects an objective to extract in the configuration."
+        if content_type is None:
+            return []
         content_type_method = content_type.replace("/", "_")
         method = getattr(self, content_type_method, None)
         if method is not None:

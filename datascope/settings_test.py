@@ -22,7 +22,9 @@ MIGRATION_MODULES = {
     'future_fashion': None,
     'open_data': None,
     'topic_research': None,
+    'wiki_scope': None,
     'online_discourse': None,
     'nautilus': None,
-    'trolls': None
+    'trolls': None,
+    'setup_utrecht': None,
 }

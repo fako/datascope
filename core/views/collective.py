@@ -1,7 +1,3 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
-import json
-
 from django.core.exceptions import ValidationError
 from django.shortcuts import Http404
 

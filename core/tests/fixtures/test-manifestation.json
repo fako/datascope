@@ -70,7 +70,7 @@
     "fields": {
         "modified_at": "2015-05-12T18:45:22.105",
         "created_at": "2015-05-12T18:45:22.105",
-        "uri": "/data/v1/mock/service/test-ready?setting1=const",
+        "uri": "/data/v1/mock/service/test-ready?setting1=const#6eab071abbb42b649255ae8131f580986c750a5cf444166d3c1db00446ddc32a",
         "config": "{}",
         "purge_at": null,
         "retainer_type": null,
@@ -85,7 +85,7 @@
     "fields": {
         "modified_at": "2015-05-12T18:45:22.105",
         "created_at": "2015-05-12T18:45:22.105",
-        "uri": "/data/v1/mock/service/test-ready?$setting2=override&setting1=const",
+        "uri": "/data/v1/mock/service/test-ready?$setting2=override&setting1=const#0a1c0f20880d9c27caa0f3e69c35ab1f75b1f23a336f7b014fe60c8951f48c5d",
         "config": "{\"include_even\": true}",
         "purge_at": null,
         "retainer_type": null,

@@ -42,23 +42,62 @@ class TestCommunityMock(CommunityTestMixin):
         self.error.error_phase1_not_found = Mock(return_value=False)
 
     def test_get_signature_from_input(self):
-        # Legal and illegal config mixed
-        signature = CommunityMock.get_signature_from_input("test", setting1="const", illegal="please")
+        input_configuration = {
+            "setting0": "possible?!",
+            "$setting2": "variable",
+            "setting1": "const",
+            "illegal": "please",
+            "setting3": "growth",
+            "$setting4": "input"
+        }
+        signature = CommunityMock.get_signature_from_input("test", **input_configuration)
         self.assertEqual(signature, "setting1=const&test")
-        # With variable config
-        signature = CommunityMock.get_signature_from_input("test", **{"$setting2": "variable"})
-        self.assertEqual(signature, "test")
 
-    def test_configuration_from_input(self):
-        # Legal and illegal config mixed
-        configuration = CommunityMock.get_configuration_from_input("test", setting1="const", illegal="please")
+    def test_filter_growth_configuration(self):
+        CommunityMock.PUBLIC_CONFIG = {  # TODO: public config is obsolete
+            "setting3": "public",
+            "$setting4": "public 2"
+        }
+        input_configuration = {
+            "setting0": "possible?!",
+            "$setting2": "variable",
+            "setting1": "const",
+            "illegal": "please",
+            "setting3": "growth",
+            "$setting4": "input"
+        }
+        configuration = CommunityMock.filter_growth_configuration("test", **input_configuration)
         self.assertIsInstance(configuration, dict)
         self.assertEqual(configuration["setting1"], "const")
+        self.assertEqual(configuration["setting3"], "growth")
+        self.assertNotIn("$setting2", configuration)
+        self.assertNotIn("$setting4", configuration)
         self.assertNotIn("illegal", configuration)
-        # With variable config
-        configuration = CommunityMock.get_configuration_from_input("test", **{"$setting2": "variable"})
+        self.assertNotIn("setting0", configuration)
+        CommunityMock.PUBLIC_CONFIG = None
+
+    def test_filter_scope_configuration(self):
+        CommunityMock.PUBLIC_CONFIG = {  # TODO: public config is obsolete
+            "setting3": "public",
+            "$setting4": "public 2"
+        }
+        input_configuration = {
+            "setting0": "possible?!",
+            "$setting2": "variable",
+            "setting1": "const",
+            "illegal": "please",
+            "setting3": "growth",
+            "$setting4": "input"
+        }
+        configuration = CommunityMock.filter_scope_configuration("test", **input_configuration)
         self.assertIsInstance(configuration, dict)
         self.assertEqual(configuration["$setting2"], "variable")
+        self.assertEqual(configuration["$setting4"], "input")
+        self.assertNotIn("setting1", configuration)
+        self.assertNotIn("setting3", configuration)
+        self.assertNotIn("setting0", configuration)
+        self.assertNotIn("illegal", configuration)
+        CommunityMock.PUBLIC_CONFIG = None
 
     def test_callbacks(self):
         self.instance.begin_phase1 = Mock()

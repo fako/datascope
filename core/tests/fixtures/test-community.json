@@ -43,9 +43,9 @@
         "completed_at": "2014-06-05T16:17:54.000",
         "state": "Asynchronous",
         "current_growth": 1,
-        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\", \"setting1\": \"const\"}",
         "purge_at": null,
-        "signature": "test-multiple"
+        "signature": "setting1=const&test-multiple"
     },
     "model": "core.CommunityMock",
     "pk": 3
@@ -60,9 +60,9 @@
         "completed_at": "2015-06-05T16:17:54.000",
         "state": "Asynchronous",
         "current_growth": 3,
-        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\", \"setting1\": \"const\"}",
         "purge_at": null,
-        "signature": "test-multiple"
+        "signature": "setting1=const&test-multiple"
     },
     "model": "core.CommunityMock",
     "pk": 4

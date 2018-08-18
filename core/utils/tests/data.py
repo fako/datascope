@@ -1,7 +1,14 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
+from mock import patch, Mock
 
-from unittest import TestCase
-from core.utils.data import extractor, reach, expand, interpolate
+import numpy as np
+import pandas as pd
+from pandas.testing import assert_frame_equal
+
+from django.test import TestCase
+
+from core.utils.data import reach, NumericFeaturesFrame
+from core.models import Collective, Individual
+from core.exceptions import DSFileLoadError
 
 
 class TestPythonReach(TestCase):
@@ -48,181 +55,395 @@ class TestPythonReach(TestCase):
             pass
 
 
-class TestPythonExtractor(TestCase):
+class TestNumericFeaturesFrame(TestCase):
+
+    fixtures = ["test-organisms"]
 
     def setUp(self):
-        self.fixture_list = [
-            1,
-            2,
-            3,
-            "skip",
-            "skip"
-        ]
-        self.fixture_dict = {
-            "include": "include",
-            "skip": "skip",
-            "include2": "include2"
-        }
-        self.fixture_list_of_dicts = [
-            self.fixture_dict,
-            self.fixture_dict,
-            self.fixture_dict
-        ]
-        self.fixture_dict_with_lists_of_dicts = {
-            "list of dicts": self.fixture_list_of_dicts,
-            "skip": self.fixture_list,
-            "list of dicts 2": self.fixture_list_of_dicts
-        }
-        self.fixture_dict_with_dicts = {
-            "dict 1": self.fixture_dict,
-            "skip": self.fixture_list,
-            "skip 2": "skip",
-            "dict 2": self.fixture_dict
-        }
-        self.fixture_reach = {
-            "dict": {
-                "dict": True
+        super().setUp()
+        self.test_fixture = Collective.objects.get(id=2)
+        self.test_records = [
+            {
+                "is_dutch": 1.0,
+                "is_english": 0.0,
+                "value_number": 1.0
             },
-            "list": [False, False, True]
-        }
-
-        self.objective = {
-            "include": None,
-            "include2": None,
-            "include3": True,
-            "dict.dict": None,
-            "list.2": None
-        }
-
-    def check_result(self, result):
-        self.assertIsInstance(result, dict)
-        self.assertIn("include", result)
-        self.assertIn("include2", result)
-        self.assertIn("include3", result)
-        self.assertIn("dict.dict", result)
-        self.assertIn("list.2", result)
-        self.assertTrue(result["include3"])
-
-    def test_dict(self):
-        results = extractor(self.fixture_dict, self.objective)
-        result = results[0]
-        self.assertIsInstance(results, list)
-        self.assertEqual(len(results), 1)
-        self.check_result(result)
-
-    def test_list(self):
-        results = extractor(self.fixture_list, self.objective)
-        self.assertIsInstance(results, list)
-        self.assertEqual(len(results), 0)
-
-    def test_list_of_dicts(self):
-        results = extractor(self.fixture_list_of_dicts, self.objective)
-        result = results[0]
-        self.assertIsInstance(results, list)
-        self.assertEqual(len(results), 3)
-        self.check_result(result)
-
-    def test_dict_with_lists_of_dicts(self):
-        results = extractor(self.fixture_dict_with_lists_of_dicts, self.objective)
-        result = results[0]
-        self.assertIsInstance(results, list)
-        self.assertEqual(len(results), 6)
-        self.check_result(result)
-
-    def test_dict_with_dicts(self):
-        results = extractor(self.fixture_dict_with_dicts, self.objective)
-        result = results[0]
-        self.assertIsInstance(results, list)
-        self.assertEqual(len(results), 2)
-        self.check_result(result)
-
-    def test_reach(self):
-        # check reach results
-        results = extractor(self.fixture_reach, self.objective)
-        result = results[0]
-        self.assertIsInstance(results, list)
-        self.assertEqual(len(results), 1)
-        self.check_result(result)
-        self.assertTrue(result["dict.dict"])
-        self.assertTrue(result["list.2"])
-        # invalid triggers shouldn't create any objects
-        self.fixture_reach["dict"] = False
-        self.fixture_reach["list"] = False
-        results = extractor(self.fixture_reach, self.objective)
-        self.assertIsInstance(results, list)
-        self.assertEqual(len(results), 0)
-
-
-class TestPythonExpand(TestCase):
-
-    def setUp(self):
-        self.test_dict = {
-            "dict": {
-                "test": "nested value",
-                "list": ["nested value 0", "nested value 1", "nested value 2"],
-                "dict": {"test": "test"}
+            {
+                "is_dutch": 1.0,
+                "is_english": 0.0,
+                "value_number": 2.0
             },
-            "list": ["value 0", "value 1", "value 2"],
-            "dotted.key": "another value"
-        }
-        self.test_list = [
-            self.test_dict, self.test_dict, self.test_dict
+            {
+                "is_dutch": 1.0,
+                "is_english": 0.0,
+                "value_number": 1.0
+            },
+            {
+                "is_dutch": 0.0,
+                "is_english": 1.0,
+                "value_number": 1.0
+            },
+            {
+                "is_dutch": 0.0,
+                "is_english": 1.0,
+                "value_number": 2.0
+            }
         ]
-
-    def test_list_in_dict(self):
-        results = expand('list.*', self.test_dict)
-        self.assertEqual(results, ['list.0', 'list.1', 'list.2'])
-
-    def test_list(self):
-        results = expand('*', self.test_list)
-        self.assertEqual(results, ['0', '1', '2'])
-
-    def test_list_of_dicts(self):
-        results = expand('*.dict', self.test_list)
-        self.assertEqual(results, ['0.dict', '1.dict', '2.dict'])
-
-    def test_list_of_dicts_with_list(self):
-        results = expand('*.dict.list.*', self.test_list)
-        self.assertEqual(results, [
-            '0.dict.list.0', '0.dict.list.1', '0.dict.list.2',
-            '1.dict.list.0', '1.dict.list.1', '1.dict.list.2',
-            '2.dict.list.0', '2.dict.list.1', '2.dict.list.2',
-        ])
-
-
-class TestPythonInterpolate(TestCase):
-
-    def test_single_interpolation(self):
-        result = interpolate('*', '8')
-        self.assertEqual(result, '8')
-
-    def test_multi_interpolation(self):
-        result = interpolate('*.this.is.*.simply.*.test', '6.this.is.3.simply.1.test')
-        self.assertEqual(result, '6.this.is.3.simply.1.test')
-
-    def test_shorter_source(self):
-        result = interpolate('*.this.is.*.simply.a.test', '6.this.is.3')
-        self.assertEqual(result, '6.this.is.3.simply.a.test')
-
-    def test_longer_source(self):
-        result = interpolate('*.this.is.*.simply.a.test', '6.this.is.3.simply.a.test.8.5.longer.3.is.ignored')
-        self.assertEqual(result, '6.this.is.3.simply.a.test')
-
-    def test_mismatch_paths(self):
-        try:
-            interpolate('*.this.is.*.simply.a.test', '6.this.is.666.not.correct')
-        except ValueError as exception:
-            self.assertEqual(
-                str(exception),
-                "Can't interpolate *.this.is.*.simply.a.test with 6.this.is.666.not.correct, because paths differ at simply/not."
+        test_frame = pd.DataFrame.from_records(self.test_records, index=[4, 5, 6, 7, 8])
+        test_frame = (test_frame - test_frame.min()) / (test_frame.max() - test_frame.min())
+        self.test_frame = test_frame.fillna(0)
+        self.test_records_extra = [
+            {
+                "is_dutch": 0.0,
+                "is_english": 0.0,
+                "value_number": 1.0
+            },
+            {
+                "is_dutch": 0.0,
+                "is_english": 0.0,
+                "value_number": 2.0
+            }
+        ]
+        test_frame_extra = pd.DataFrame.from_records(self.test_records + self.test_records_extra,
+                                                          index=[4, 5, 6, 7, 8, 9, 10])
+        test_frame_extra = (test_frame_extra - test_frame_extra.min()) / \
+                           (test_frame_extra.max() - test_frame_extra.min())
+        self.test_frame_extra = test_frame_extra.fillna(0)
+        self.features = [
+            TestNumericFeaturesFrame.is_dutch,
+            TestNumericFeaturesFrame.is_english,
+            TestNumericFeaturesFrame.value_number
+        ]
+        self.frame = NumericFeaturesFrame(
+            TestNumericFeaturesFrame.get_identifier,
+            self.features,
+            self.get_iterator
+        )
+        self.extra_individuals = [
+            Individual.objects.create(
+                id=9,
+                properties={
+                    'country': 'FR',
+                    'language': 'fr',
+                    'value': '1',
+                    'word': 'pension'
+                },
+                community=self.test_fixture.community,
+                collective=self.test_fixture
+            ),
+            Individual.objects.create(
+                id=10,
+                properties={
+                    'country': 'FR',
+                    'language': 'fr',
+                    'value': '2',
+                    'word': 'pension'
+                },
+                community=self.test_fixture.community,
+                collective=self.test_fixture
             )
-            return
-        self.fail("Did not raise ValueError on path mismatch.")
+        ]
 
-    def test_non_digit(self):
+    @staticmethod
+    def get_identifier(test):
+        return test.id
+
+    def get_iterator(self):
+        """
+        Returns content that is already in fixtures
+        """
+        return self.test_fixture.individual_set.filter(id__lt=9).iterator()
+
+    def get_extra_iterator(self):
+        """
+        Returns content that is created in setUp
+        """
+        return iter(self.extra_individuals)
+
+    @staticmethod
+    def is_dutch(test):
+        return float(test["language"] == "nl")
+
+    @staticmethod
+    def is_english(test):
+        return int(test["language"] == "en")  # NB: features should return floats, but ints are allowed
+
+    @staticmethod
+    def value_number(test):
+        return test["value"]
+
+    @staticmethod
+    def invalid_arguments():
+        return 0.0
+
+    @staticmethod
+    def invalid_return(test):
+        return "invalid"
+
+    @staticmethod
+    def set_language_to_fr(test):
+        test["language"] = "fr"
+        return 0.0
+
+    def test_init(self):
+        sorted_feature_names = ["is_dutch", "is_english", "value_number"]
+        self.assertEquals(
+            sorted(self.frame.features.keys()),
+            sorted_feature_names
+        )
+        self.assertTrue(callable(self.frame.content))
+        assert_frame_equal(self.frame.data, self.test_frame, check_like=True)
+
+    def test_init_invalid_features(self):
+        features = [
+            TestNumericFeaturesFrame.invalid_arguments
+        ]
         try:
-            interpolate('*.this.is.*.simply.a.test', '6.this.is.not.correct')
-        except ValueError as exception:
-            self.assertEqual(str(exception), "Can't interpolate * with non-digit value 'not'.")
-            return
-        self.fail("Did not raise ValueError on path mismatch.")
+            NumericFeaturesFrame(
+                TestNumericFeaturesFrame.get_identifier,
+                features,
+                self.get_iterator
+            )
+            self.fail("NumericFeaturesFrame did not raise with invalid feature")
+        except Exception as exc:
+            self.assertEqual(
+                str(exc),
+                "invalid_arguments feature: TypeError: invalid_arguments() takes 0 positional arguments but 1 was given"
+            )
+        features = [
+            TestNumericFeaturesFrame.invalid_return
+        ]
+        try:
+            NumericFeaturesFrame(
+                TestNumericFeaturesFrame.get_identifier,
+                features,
+                self.get_iterator
+            )
+            self.fail("NumericFeaturesFrame did not raise with invalid feature return value")
+        except ValueError as exc:
+            self.assertEqual(
+                str(exc),
+                "invalid_return feature did not return float but <class 'str'>"
+            )
+
+    def test_init_immutable_content(self):
+        content = list(self.get_iterator())
+        features = [
+            TestNumericFeaturesFrame.set_language_to_fr
+        ]
+        try:
+            NumericFeaturesFrame(
+                self.get_identifier,
+                features,
+                lambda: content
+            )
+            self.fail("NumericFeaturesFrame did not raise when features modified content")
+        except ValueError:
+            pass
+
+    def test_init_file(self):
+        with patch("core.utils.data.numeric_features.NumericFeaturesFrame.from_disk", return_value=self.test_frame) as \
+                from_disk_patch:
+            frame = NumericFeaturesFrame(
+                self.get_identifier,
+                self.features,
+                file_path="test/path/to/frame.pkl"
+            )
+            sorted_feature_names = ["is_dutch", "is_english", "value_number"]
+            self.assertEquals(
+                sorted(frame.features.keys()),
+                sorted_feature_names
+            )
+            from_disk_patch.assert_called_once_with("test/path/to/frame.pkl")
+
+    def test_to_disk(self):
+        self.frame.data.to_pickle = Mock()
+        self.frame.to_disk("test/path/to/frame.pkl")
+        self.frame.data.to_pickle.assert_called_once_with('test/path/to/frame.pkl')
+
+    def test_from_disk(self):
+        with patch("core.utils.data.numeric_features.pd.read_pickle", return_value=self.test_frame) as pandas_patch:
+            self.frame.from_disk("test/path/to/frame.pkl")
+            pandas_patch.assert_called_once_with("test/path/to/frame.pkl")
+            assert_frame_equal(self.frame.data, self.test_frame, check_like=True)
+
+    def test_from_disk_invalid(self):
+        self.test_frame["extra"] = self.test_frame["is_dutch"]
+        with patch("core.utils.data.numeric_features.pd.read_pickle", return_value=self.test_frame) as pandas_patch:
+            try:
+                self.frame.from_disk("test/path/to/frame.pkl")
+                self.fail("NumericFeatureFrame.from_disk did not raise an assertion when loading too much data")
+            except DSFileLoadError as exc:
+                pass
+            pandas_patch.assert_called_once_with("test/path/to/frame.pkl")
+        self.test_frame.drop("is_dutch", axis=1)
+        with patch("core.utils.data.numeric_features.pd.read_pickle", return_value=self.test_frame) as pandas_patch:
+            try:
+                self.frame.from_disk("test/path/to/frame.pkl")
+                self.fail("NumericFeatureFrame.from_disk did not raise an assertion when loading wrong data")
+            except DSFileLoadError:
+                pass
+            pandas_patch.assert_called_once_with("test/path/to/frame.pkl")
+        self.test_frame.drop("extra", axis=1)
+        with patch("core.utils.data.numeric_features.pd.read_pickle", return_value=self.test_frame) as pandas_patch:
+            try:
+                self.frame.from_disk("test/path/to/frame.pkl")
+                self.fail("NumericFeatureFrame.from_disk did not raise an assertion when loading too little data")
+            except DSFileLoadError:
+                pass
+            pandas_patch.assert_called_once_with("test/path/to/frame.pkl")
+
+    def test_adding_features(self):
+        features = [
+            TestNumericFeaturesFrame.is_dutch
+        ]
+        frame = NumericFeaturesFrame(
+            TestNumericFeaturesFrame.get_identifier,
+            features,
+            self.get_iterator
+        )
+        frame.load_features([
+            TestNumericFeaturesFrame.value_number,
+            TestNumericFeaturesFrame.is_english
+        ])
+        assert_frame_equal(frame.data, self.test_frame, check_like=True)
+        sorted_feature_names = ["is_dutch", "is_english", "value_number"]
+        self.assertEquals(
+            sorted(self.frame.features.keys()),
+            sorted_feature_names
+        )
+
+    def test_adding_content(self):
+        self.frame.load_content(self.get_extra_iterator)
+        assert_frame_equal(self.frame.data, self.test_frame_extra, check_like=True)
+
+    def test_adding_content_mixed(self):
+        self.skipTest("Bug: GH-109")
+        old = list(self.get_iterator())[-2:]
+
+        def update(ind):
+            ind.properties["value"] = int(ind.properties["value"]) * 5
+            return ind
+
+        updated = list(map(update, old))
+        self.frame.load_content(
+            lambda: iter(list(self.get_extra_iterator()) + updated)
+        )
+        self.test_frame_extra["value_number"].loc[[7, 8]] *= 5
+        assert_frame_equal(self.frame.data, self.test_frame_extra, check_like=True)
+
+    def test_resetting_features_and_content(self):
+        features = [
+            TestNumericFeaturesFrame.is_dutch
+        ]
+        frame = NumericFeaturesFrame(
+            TestNumericFeaturesFrame.get_identifier,
+            features,
+            self.get_iterator
+        )
+        frame.reset(
+            features=[
+                TestNumericFeaturesFrame.value_number,
+                TestNumericFeaturesFrame.is_english
+            ],
+            content=self.get_extra_iterator
+        )
+        self.test_frame_extra = self.test_frame_extra.drop([4, 5, 6, 7, 8], axis=0)
+        self.test_frame_extra = self.test_frame_extra.drop(labels="is_dutch", axis=1)
+        assert_frame_equal(frame.data, self.test_frame_extra, check_like=True)
+        sorted_feature_names = ["is_english", "value_number"]
+        self.assertEquals(
+            sorted(frame.features.keys()),
+            sorted_feature_names
+        )
+
+    def test_resetting_features(self):
+        features = [
+            TestNumericFeaturesFrame.is_dutch
+        ]
+        frame = NumericFeaturesFrame(
+            TestNumericFeaturesFrame.get_identifier,
+            features,
+            self.get_iterator
+        )
+        frame.reset(features=[
+            TestNumericFeaturesFrame.value_number,
+            TestNumericFeaturesFrame.is_english
+        ])
+        self.test_frame = self.test_frame.drop(labels="is_dutch", axis=1)
+        assert_frame_equal(frame.data, self.test_frame, check_like=True)
+        sorted_feature_names = ["is_english", "value_number"]
+        self.assertEquals(
+            sorted(frame.features.keys()),
+            sorted_feature_names
+        )
+
+    def test_resetting_features_no_content(self):
+        features = [
+            TestNumericFeaturesFrame.is_dutch
+        ]
+        frame = NumericFeaturesFrame(
+            TestNumericFeaturesFrame.get_identifier,
+            features
+        )
+        frame.reset(features=[
+            TestNumericFeaturesFrame.value_number,
+            TestNumericFeaturesFrame.is_english
+        ])
+        self.test_frame = self.test_frame.drop(labels="is_dutch", axis=1)
+        assert_frame_equal(frame.data, self.test_frame[0:0], check_like=True)
+        sorted_feature_names = ["is_english", "value_number"]
+        self.assertEquals(
+            sorted(frame.features.keys()),
+            sorted_feature_names
+        )
+
+    def test_resetting_content(self):
+        self.frame.reset(content=self.get_extra_iterator)
+        self.test_frame_extra = self.test_frame_extra.drop([4, 5, 6, 7, 8], axis=0)
+        assert_frame_equal(self.frame.data, self.test_frame_extra, check_like=True)
+
+    def test_resetting_content_no_features(self):
+        self.frame.features = None
+        self.frame.reset(content=self.get_extra_iterator)
+        self.assertEqual(self.frame.content.__name__, self.get_extra_iterator.__name__)  # TODO: better equality test
+        assert_frame_equal(self.frame.data, pd.DataFrame(dtype=np.float), check_like=True)
+
+    def test_clean_params(self):
+        test_params = {
+            "is_dutch": "1",  # get converted to float
+            "is_french": 1.0,  # gets skipped
+            "$is_french": 1.0,  # gets skipped (without errors)
+            "value_number": None,  # gets skipped a a non-numeric
+            "is_english": "test",  # gets skipped as a non-numeric
+            "$value_number": 2.0
+        }
+        for function in [str, int, float]:
+            test_params["is_dutch"] = function(test_params["is_dutch"])
+            cleaned_params = self.frame.clean_params(test_params)
+            self.assertEquals(cleaned_params, {"is_dutch": 1.0, "value_number": 2.0})
+
+        test_error_params = {
+            "is_dutch": "1",
+            "$is_dutch": 1.0,
+        }
+        try:
+            self.frame.clean_params(test_error_params)
+            self.fail("Clean params should have raised for invalid params")
+        except ValueError:
+            pass
+
+    def test_rank_by_params(self):
+        ranking = self.frame.rank_by_params({"is_dutch": 1, "value_number": 1})
+        self.assertEquals(ranking, [5, 8, 6, 4, 7])
+        ranking = self.frame.rank_by_params({"is_dutch": 0.5, "value_number": -1, "is_english": 2, "is_french": 100})
+        self.assertEquals(ranking, [7, 8, 6, 4, 5])
+
+    def test_get_content_hash(self):
+        self.skipTest("not tested")
+
+    def test_get_feature_value(self):
+        self.skipTest("not tested")
+
+    def test_get_feature_series(self):
+        self.skipTest("not tested")

@@ -1,5 +1,6 @@
 from copy import copy
 from mock import patch, MagicMock
+import json
 
 from django.test import TestCase
 from django.core.exceptions import ValidationError
@@ -29,9 +30,16 @@ class TestCommunityView(TestCase):
     def check_manifestations(self, count):
         self.assertEqual(Manifestation.objects.count(), count)
 
-    def test_get_full_path(self):
-        full_path = CommunityView.get_full_path(CommunityMock, "test/path", {"test": "test"})
-        self.assertEqual(full_path, "/data/v1/mock/service/test/path?test=test")
+    def test_get_uri(self):
+        full_path = CommunityView.get_uri(CommunityMock, "test/path", {"test": "test"})
+        self.assertEqual(
+            full_path,
+            "/data/v1/mock/service/test/path?test=test#0dcbfb0b84aff2403ed170e77c8e80b5c2aac17586a55f03b500446a4291b105"
+        )
+        self.skipTest("add test for created_at argument")
+
+    def test_get_configuration_from_request(self):
+        self.skipTest("not tested")
 
     @patch("core.models.organisms.community.Community.grow", side_effect=ValidationError("Invalid"))
     def test_get_response_invalid(self, grow_patch):
@@ -98,6 +106,29 @@ class TestCommunityView(TestCase):
             ]
         })
 
+    def test_get_filter(self):
+        client = Client()
+        response = client.get("/data/v1/mock/service/test-ready/?setting1=const&include_even=0")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {
+            "error": None,
+            "status": {},
+            "result": {},
+            "actions": [],
+            "results": [
+                {
+                    "context": "nested value",
+                    "value": "nested value 0",
+                    "number": 1
+                },
+                {
+                    "context": "nested value",
+                    "value": "nested value 2",
+                    "number": 3
+                }
+            ]
+        })
+
     def test_get_invalid_time(self):
         client = Client()
         response = client.get("/data/v1/mock/service/test-ready/?setting1=const&t=1")
@@ -106,6 +137,37 @@ class TestCommunityView(TestCase):
     def test_get_valid_time(self):
         client = Client()
         response = client.get("/data/v1/mock/service/test-ready/?setting1=const&t=20160605161754000")
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {
+            "error": None,
+            "status": {},
+            "result": {},
+            "actions": [],
+            "results": [
+                {
+                    "context": "nested value",
+                    "value": "nested value 0",
+                    "number": 1
+                },
+                {
+                    "context": "nested value",
+                    "value": "nested value 2",
+                    "number": 3
+                }
+            ]
+        })
+
+    def test_post(self):
+        data = {
+            "action": "scope",
+            "config": {
+                "include_even": 0
+            }
+        }
+        client = Client()
+        response = client.post("/data/v1/mock/service/test-ready/?setting1=const",
+                               json.dumps(data),
+                               content_type="application/json")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {
             "error": None,
