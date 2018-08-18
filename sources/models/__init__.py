@@ -18,6 +18,3 @@ from .google.text import GoogleText
 from .downloads import ImageDownload
 
 from .indico.images import ImageFeatures
-
-from .governments.netherlands.official_announcements import (OfficialAnnouncementsNetherlands,
-                                                             OfficialAnnouncementsDocumentNetherlands)
