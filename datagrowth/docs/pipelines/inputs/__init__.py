@@ -1,4 +1,4 @@
-from datagrowth.pipelines.base import DataProcess
+from datagrowth.docs.pipelines.base import DataProcess
 
 
 class Input(object):

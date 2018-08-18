@@ -1,6 +1,6 @@
-from datagrowth.pipelines.base import DataProcess
-from datagrowth.pipelines.inputs import Input
-from datagrowth.pipelines.outputs import Output
+from datagrowth.docs.pipelines.base import DataProcess
+from datagrowth.docs.pipelines.inputs import Input
+from datagrowth.docs.pipelines.outputs import Output
 
 
 class Payload(DataProcess, Input, Output):
