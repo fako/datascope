@@ -66,9 +66,9 @@ class DiscourseSearchCommunity(Community):
         },
         {
             "name": "rank",
-            "process": "OnlineDiscourseRankProcessor.by_feature",
+            "process": "OnlineDiscourseRankProcessor.default_ranking",
             "config": {
-                "result_size": 60,
+                "$result_size": 60,
                 "ranking_feature": "argument_score",
                 "identifier_key": "url",
                 "feature_frame_path": None,
