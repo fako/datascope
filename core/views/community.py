@@ -58,7 +58,7 @@ class CommunityView(APIView):
         configuration = dict(**get_configuration, **post_configuration)
         for key, value in configuration.items():
             if isinstance(value, str) and value.isnumeric() and not key == "t":
-                configuration[key] = float(value)
+                configuration[key] = float(value) if "." in key else int(value)
         try:
             created_at_parameter = configuration.pop("t")
             warnings.warn("The t parameter to retrieve older communities is deprecated. Use the versions view instead.",
