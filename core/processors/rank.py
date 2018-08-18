@@ -130,6 +130,27 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
             attr not in cls.contextual_features
         ]
 
+    def get_ranking_results(self, ranking, individuals, series):
+        results = OrderedDict([(ix, None,) for ix in ranking.index])
+        for individual in individuals:
+            ix = individual[self.config.identifier_key]
+            if ix not in results:
+                continue
+            individual["ds_rank"] = {
+                "rank": ranking.loc[ix]
+            }
+            for serie in series:
+                individual["ds_rank"][serie.name] = {
+                    "rank": serie.loc[ix],  # rank is value multiplied by weight
+                    "value": serie.loc[ix],
+                    "weight": 1.0
+                }
+                results[ix] = individual
+        return (value for value in results.values() if value is not None)
+
+    def default_ranking(self, individuals):
+        raise NotImplementedError("The default_ranking method should be implemented in its context")
+
     def by_feature(self, individuals):
         assert "ranking_feature" in self.config, "RankProcessor.by_feature needs a ranking_feature from config"
         assert self.feature_frame, \
@@ -148,22 +169,7 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
                 content_callable=lambda: individuals, context=self.config.to_dict()
             )
         ranked_feature = ranked_feature.sort_values(ascending=False)[:self.config.result_size]
-
-        results = OrderedDict([(ix, None,) for ix in ranked_feature.index])
-        for individual in individuals:
-            ix = individual[self.config.identifier_key]
-            if ix not in results:
-                continue
-            individual["ds_rank"] = {
-                "rank": ranked_feature.loc[ix]
-            }
-            individual["ds_rank"][ranking_feature] = {
-                "rank": ranked_feature.loc[ix],  # rank is value multiplied by weight
-                "value": ranked_feature.loc[ix],
-                "weight": 1.0
-            }
-            results[ix] = individual
-        return (value for value in results.values() if value is not None)
+        return self.get_ranking_results(ranked_feature, individuals, [ranked_feature])
 
     def by_params(self, individuals):
         pass
