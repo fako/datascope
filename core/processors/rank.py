@@ -6,6 +6,7 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 from six.moves import reduce
 import six
 
+import warnings
 from collections import OrderedDict
 from itertools import islice
 from copy import deepcopy
@@ -16,6 +17,7 @@ from core.utils.helpers import merge_iter
 class LegacyRankProcessorMixin(object):
 
     def score(self, individuals):
+        warnings.warn("The RankProcessor.score method is deprecated. Use by_feature instead.")
         sort_key = lambda el: el.get(self.config.score_key, 0)
         results = []
         batch = []
