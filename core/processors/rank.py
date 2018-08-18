@@ -17,7 +17,7 @@ from core.utils.helpers import merge_iter
 class LegacyRankProcessorMixin(object):
 
     def score(self, individuals):
-        warnings.warn("The RankProcessor.score method is deprecated. Use by_feature instead.")
+        warnings.warn("The RankProcessor.score method is deprecated. Use by_feature instead.", DeprecationWarning)
         sort_key = lambda el: el.get(self.config.score_key, 0)
         results = []
         batch = []
