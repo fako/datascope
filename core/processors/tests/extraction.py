@@ -101,3 +101,6 @@ class TestExtractProcessor(TestCase):
         rsl = keys_processor.application_json(self.json_dict)
         self.assertEqual(list(rsl), MOCK_JSON_DATA)
         self.assertIsInstance(rsl, GeneratorType, "Extractors are expected to return generators.")
+
+    def test_content_type_none(self):
+        self.skipTest("not tested")

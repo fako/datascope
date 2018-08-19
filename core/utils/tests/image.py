@@ -159,3 +159,6 @@ class TestImageGrid(TestCase):
             pass
 
         self.skipTest("Test with panorama images at the border")
+
+    def test_fill_from_directory(self):
+        self.skipTest("not tested")

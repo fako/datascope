@@ -21,14 +21,14 @@ def get_any_model(name):  # TODO: test to unlock
     return django_apps.get_model(app_label, name)
 
 
-def parse_datetime_string(time_str):  # TODO: test to unlock
+def parse_datetime_string(time_str):
     try:
         return datetime.strptime(time_str, settings.DATASCOPE_DATETIME_FORMAT)
     except (ValueError, TypeError):
         return datetime(month=1, day=1, year=1970)
 
 
-def format_datetime(datetime):  # TODO: test to unlock
+def format_datetime(datetime):
     return datetime.strftime(settings.DATASCOPE_DATETIME_FORMAT)
 
 
