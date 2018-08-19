@@ -31,7 +31,6 @@ selenium==2.47.1
 pillow==2.9.0
 IndicoIo==0.15.4
 colorz==1.0.3
-scikit-learn==0.19.1
 
 # Debug and test
 raven==6.3.0
