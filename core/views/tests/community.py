@@ -76,7 +76,7 @@ class TestCommunityView(TestCase):
         response = self.view.get_response(CommunityMock, "test-ready", {"setting1": "const"})
         self.check_response(response, 200)
         self.check_manifestations(1)
-        grow_patch.assert_called_once()
+        grow_patch.assert_called_once_with("test-ready")
 
     def test_get(self):
         client = Client()
@@ -278,7 +278,7 @@ class TestHtmlCommunityView(TestCase):
         response = self.client.get(self.index_url)
         self.check_response(response, "accepted.html", None)
         self.assertContains(response, '<p id="wait-text">')
-        grow_patch.assert_called_once()
+        grow_patch.assert_called_once_with("")
         CommunityMock.INPUT_THROUGH_PATH = True
 
     @patch("core.models.organisms.community.Community.grow")

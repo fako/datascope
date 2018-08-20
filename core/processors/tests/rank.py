@@ -258,7 +258,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
             "$rank_by_value": 1
         })
         instance.hooks(self.test_content)
-        islice_patch.assert_called_once()
+        self.assertEqual(islice_patch.call_count, 1)
         args, kwargs = islice_patch.call_args
         order = list(args[0])
         order_keys = list(map(itemgetter('name'), order))
