@@ -130,5 +130,5 @@ class Individual(Organism):
             self.collective.influence(self)
         # After influence check integrity
         identity_max_length = Individual._meta.get_field('identity').max_length
-        if self.identity and len(self.identity) > identity_max_length:
+        if self.identity and type(self.identity, str) and len(self.identity) > identity_max_length:
             self.identity = self.identity[:identity_max_length]
