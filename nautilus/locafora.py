@@ -80,8 +80,17 @@ PRODUCT_TRANSLATIONS = {
     "cocktail trostomaatjes": "tomaatjes, tros, cocktail",
     "gele paprika klasse 2": "paprika, gele, 2e klas",
     "rode druivensap - 100% sap": "sap, rode druiven",
-    "verse kurkuma": "kurkuma, verse"
-
+    "verse kurkuma": "kurkuma, verse",
+    "frans knipje brood van eigen graan": "brood, frans knipje",
+    "gele courgette": "courgette, geel",
+    "kastanjechampignons": "champignons, kastanje",
+    "losse tomaten": "tomaten, losse",
+    "rode bessen van richard sjerps": "bessen, rode",
+    "verse koriander": "koriander, verse",
+    "volle kwark van zuivelboerderij fam. de lange uit de weerribben": "kwark, volle",
+    "warm gerookte zalmmoot": "zalmmoot, warm gerookte",
+    "blauwe bessen": "bessen, blauwe",
+    "batavia sla": "sla, batavia"
 }
 
 
