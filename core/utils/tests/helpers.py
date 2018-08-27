@@ -45,3 +45,6 @@ class TestUtilHelpers(TestCase):
 
     def test_cross_combine(self):
         self.skipTest("not tested")
+
+    def test_batchize(self):
+        self.skipTest("not tested")

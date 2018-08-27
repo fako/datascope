@@ -1,6 +1,7 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
 import operator
+import math
 from datetime import datetime
 from itertools import islice, cycle
 from functools import reduce
@@ -101,3 +102,11 @@ def cross_combine_2(*args):  # NB: beta
                 yield (primary, secondary)
 
     return reduce(dual_combine, args)
+
+
+def batchize(elements, batch_size):  # TODO: test to unlock
+    batches = int(math.floor(elements / batch_size))
+    rest = elements % batch_size
+    if rest:
+        batches += 1
+    return batches, rest

@@ -12,21 +12,14 @@ db-dump.*.json
 
 datagrowth/docs/_build/
 
-system/coverage/
-system/profile/
 system/files/media/
 system/files/static/
-system/data/
 
 datascope/settings.py
 datascope/bootstrap.py
 datascope/secrets.py
 
-# Internet Archive files
-*.warc.gz
-*.megawarc.warc.os.cdx
-*.megawarc.warc.os.cdx.gz
-nl-hyves*.html
+data/
 
 # Wikipedia labs specific file
 app.py
