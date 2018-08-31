@@ -30,6 +30,6 @@ class Command(CommunityCommand):
             for _ in dump_file.readlines():
                 batch_count += 1
             dump_file.seek(0)
-            for line in tqdm(dump_file.readlines(), total=batch_count):
+            for line in tqdm(dump_file, total=batch_count):
                 objects = [wrapper.object for wrapper in deserialize("json", line)]
                 self.bulk_create_objects(objects)

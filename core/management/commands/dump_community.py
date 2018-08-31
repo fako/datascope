@@ -21,12 +21,12 @@ class Command(CommunityCommand):
             batch_iterator = tqdm(batch_iterator, total=batches)
         for batch in batch_iterator:
             batch_data = serialize("json", batch, use_natural_foreign_keys=True)
-            json_file.write(batch_data)
+            json_file.writelines([batch_data + "\n"])
 
     @staticmethod
     def object_to_disk(object, json_file):
         batch_data = serialize("json", [object], use_natural_foreign_keys=True)
-        json_file.write(batch_data)
+        json_file.write(batch_data + "\n")
 
     def handle_community(self, community, *args, **options):
         destination = os.path.join(community._meta.app_label, "data", "dumps", community.get_name())
