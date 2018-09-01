@@ -90,7 +90,18 @@ PRODUCT_TRANSLATIONS = {
     "volle kwark van zuivelboerderij fam. de lange uit de weerribben": "kwark, volle",
     "warm gerookte zalmmoot": "zalmmoot, warm gerookte",
     "blauwe bessen": "bessen, blauwe",
-    "batavia sla": "sla, batavia"
+    "batavia sla": "sla, batavia",
+    "cocktail tomaat": "tomaten, cocktail",
+    "cripps pink appels - nieuwe buitenlandse oogst!": "appels, pink",
+    "gekleurde snijbiet van reggy": "bieten, snij",
+    "gekookte bietjes": "bieten, gekookte",
+    "gesneden roggebrood van boerderij-bakker zonnelied": "brood, rogge, gesneden",
+    "palestijnse olijfoliesoep met linzen": "soep, olijfolie met linzen",
+    "snelkookrijst half volkoren": "rijst, snelkook, half volkoren",
+    "verse suikermais": "suikermais, verse",
+    "verse uien met steel, maar zonder loof": "uien, vers zonder loof",
+    "witte druiven": "druiven, witte",
+
 }
 
 
