@@ -14,6 +14,36 @@ class ComplexityAnalysis(HttpResource):
     CONFIG_NAMESPACE = "wizenoze"
 
     # TODO: validate that kwargs match necessary body (especially the url kwarg)
+    """
+    TODO: this resource requires a POST, but it takes one static argument "languageCode".
+    This argument should come from config or somewhere else,
+    because as kwargs to post() does not work well with the pipeline below:
+
+    ("wizenoze", {
+        "process": "HttpResourceProcessor.submit_mass",
+        "input": "@search",
+        "contribute": "Update:ExtractProcessor.extract_from_resource",
+        "output": "@search",
+        "config": {
+            "_args": [],
+            "_kwargs": {
+                "url": "$.url",
+                "languageCode": "en"
+            },
+            "_resource": "ComplexityAnalysis",
+            "_objective": {
+                "@": "$",
+                "url": "$.metadata.url",
+                "audience": "$.classification.audience",
+                "document": "$.contentMetadata.documentStats",
+                "audience_probabilities": "$.complexity.audienceProbabilities"
+            },
+            "_update_key": "url"
+        },
+        "schema": {},
+        "errors": {},
+    })
+    """
 
     def headers(self):
         headers = copy(self.HEADERS)

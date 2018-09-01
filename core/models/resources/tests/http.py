@@ -642,3 +642,6 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         args, kwargs = instance.session.send.call_args
         preq = args[0]
         self.assert_agent_header(preq, "DataScope (custom)")
+
+    def test_get_data_key(self):
+        self.skipTest("not tested")

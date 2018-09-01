@@ -104,7 +104,7 @@ class Individual(Organism):
         if not frm:
             return frm
         if isinstance(frm, str):
-            return reach(frm, content) if frm.startswith("$") else frm
+            return reach(frm, content)
         elif isinstance(frm, list):
             if len(frm) > 1:
                 return Individual.output_from_content(content, *frm)
