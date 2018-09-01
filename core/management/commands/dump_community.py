@@ -25,6 +25,7 @@ class Command(CommunityCommand):
 
     @staticmethod
     def object_to_disk(object, json_file):
+        setattr(object, "current_growth", None)  # resets community
         batch_data = serialize("json", [object], use_natural_foreign_keys=True)
         json_file.write(batch_data + "\n")
 
