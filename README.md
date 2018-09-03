@@ -61,7 +61,7 @@ These steps are outlined in the readme's of these projects. Below are the links 
 
 * [Wiki Feed](wiki_feed/README.md)
 * [Union Scope](visual_translations/README.md)
-* [Robo Roaster](trolls/README.md)
+* [Robo Roaster](setup_utrecht/README.md)
 
 Roadmap
 =======
