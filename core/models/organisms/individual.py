@@ -87,6 +87,7 @@ class Individual(Organism):
         """
         return dict(
             {key: value for key, value in self.properties.items() if not key.startswith('_')},
+            _id=self.id
         )
 
     @property

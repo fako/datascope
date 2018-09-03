@@ -1,3 +1,4 @@
+import warnings
 import itertools
 from PIL import Image
 from collections import Counter
@@ -70,6 +71,8 @@ def create_colors_data(rgb_colors, balance):
 
 
 def get_colors_frame(content, num_colors=3, by_hue=False):
+    warnings.warn("get_colors_frame is deprecated in favor of ClothingFrame.get_colors_frame",
+                  DeprecationWarning)
     records = []
     for ix, ind in enumerate(content):
         colors = get_colors_individual(ind, num_colors=num_colors, space="rgb")

@@ -57,8 +57,9 @@ class InventoryCommunity(Community):
     COMMUNITY_BODY = [
         {
             "name": "color_match",
-            "process": "ClothingSetMatchProcessor.color",
+            "process": "ClothingSetMatchProcessor.color_and_type",
             "config": {
+                "type_limit": 10,
                 "$top": None,
                 "$bottom": None,
                 "$accessories": None
