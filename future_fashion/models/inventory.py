@@ -54,6 +54,18 @@ class InventoryCommunity(Community):
         })
     ])
 
+    COMMUNITY_BODY = [
+        {
+            "name": "color_match",
+            "process": "ClothingSetMatchProcessor.color",
+            "config": {
+                "$top": None,
+                "$bottom": None,
+                "$accessories": None
+            }
+        }
+    ]
+
     def initial_input(self, *args):
         collective = self.create_organism("Collective", schema={}, identifier="path")
         scanner = SemanticDirectoryScan(file_pattern="*f.jpg")
@@ -85,6 +97,12 @@ class InventoryCommunity(Community):
 
     def set_kernel(self):
         self.kernel = self.get_growth("types").output
+
+    def get_color_frame_file(self):
+        return os.path.join(self._meta.app_label, "data", "color_frames", self.signature + ".pkl")
+
+    def before_color_match_manifestation(self, manifestation_part):
+        manifestation_part["config"]["color_frame_path"] = self.get_color_frame_file()
 
     class Meta:
         verbose_name = "Inventory community"
