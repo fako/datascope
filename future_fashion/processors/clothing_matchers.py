@@ -13,7 +13,7 @@ class ClothingSetMatchProcessor(Processor):
 
     def __init__(self, config):
         super().__init__(config)
-        self.clothing_frame = ClothingFrame(file_path=self.config.color_frame_path)
+        self.clothing_frame = ClothingFrame(file_path=self.config.clothing_frame_path)
 
     def color_and_type(self, individuals):
         palette = {

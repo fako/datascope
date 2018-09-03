@@ -56,7 +56,7 @@ class InventoryCommunity(Community):
 
     COMMUNITY_BODY = [
         {
-            "name": "color_match",
+            "name": "color_and_type_match",
             "process": "ClothingSetMatchProcessor.color_and_type",
             "config": {
                 "type_limit": 10,
@@ -99,11 +99,11 @@ class InventoryCommunity(Community):
     def set_kernel(self):
         self.kernel = self.get_growth("types").output
 
-    def get_color_frame_file(self):
-        return os.path.join(self._meta.app_label, "data", "color_frames", self.signature + ".pkl")
+    def get_clothing_frame_file(self):
+        return os.path.join(self._meta.app_label, "data", "clothing_frames", self.signature + ".pkl")
 
-    def before_color_match_manifestation(self, manifestation_part):
-        manifestation_part["config"]["color_frame_path"] = self.get_color_frame_file()
+    def before_color_and_type_match_manifestation(self, manifestation_part):
+        manifestation_part["config"]["clothing_frame_path"] = self.get_clothing_frame_file()
 
     class Meta:
         verbose_name = "Inventory community"

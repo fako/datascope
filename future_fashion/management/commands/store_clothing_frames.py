@@ -12,7 +12,7 @@ class Command(BaseCommand):
     def handle(self, *arguments, **options):
         for inventory in InventoryCommunity.objects.filter(state=CommunityState.READY):
             frame = ClothingFrame(inventory.kernel.individual_set.iterator())
-            frame_file = inventory.get_color_frame_file()
+            frame_file = inventory.get_clothing_frame_file()
             tail, head = os.path.split(frame_file)
             if not os.path.exists(tail):
                 os.makedirs(tail)

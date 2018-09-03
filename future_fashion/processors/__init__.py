@@ -1,1 +1,1 @@
-from .color_similarity import ClothingSetMatchProcessor
+from .clothing_matchers import ClothingSetMatchProcessor
