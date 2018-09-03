@@ -20,7 +20,10 @@ log = logging.getLogger("datascope")
 
 class Command(CommunityCommand):
     """
-    Example: /manage.py match_palette_colors FutureFashionCommunity -a tagged_kleding -p "top=228,85,52&bottom=108,25,63&accessories=164,192,217" -t little-french-dress
+    Examples:
+        ./manage.py match_palette_colors InventoryCommunity -a 16-07-18 -p "top=228,85,52&bottom=108,25,63&accessories=164,192,217" -t little-french-dress
+        ./manage.py match_palette_colors InventoryCommunity -a 16-07-18 -p "top=241,166,101&bottom=50,93,142&accessories=179,111,114" -t fading-sunshine
+        ./manage.py match_palette_colors InventoryCommunity -a 16-07-18 -p "top=217,163,214&bottom=167,142,191&accessories=197,185,211" -t dozing-off-now
     """
 
     def add_arguments(self, parser):
@@ -71,14 +74,14 @@ class Command(CommunityCommand):
         vector = get_vector_from_colors(colors)
         colors_frame = get_colors_frame(content, num_colors=num_colors)
         log.info("Color frame shape: {}".format(colors_frame.shape))
-        for num in range(0, num_colors):
+        for num in range(0, num_colors * 3, 3):
             color_vector = vector[num:num+3]
             color_columns = colors_frame.columns[num:num+3]
             color_similarity = cosine_similarity(colors_frame.loc[:,color_columns], np.array(color_vector).reshape(1, -1)).flatten()
             indices = np.argsort(color_similarity)
             cut_ix = next((num for num, ix in enumerate(indices[::-1]) if color_similarity[ix] < 0.99), None)
             if cut_ix is None:
-                log.info("Terminating match at color: {}".format(num))
+                log.info("Terminating match at color: {}".format(num % 3))
                 break
             colors_frame = colors_frame.iloc[indices[-1 * cut_ix:]]
         else:
