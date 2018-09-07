@@ -32,7 +32,7 @@ class FutureFashionHtmlView(HtmlCommunityView):
         return super(FutureFashionHtmlView, self).get(request, community_class, path=path, *args, **kwargs)
 
 
-@api_view(["POST"])
+@api_view(["POST", "OPTIONS"])
 def swipe_interface_view(request):
 
     def format_data(entry):
