@@ -4,6 +4,7 @@ from mock import patch
 from json import loads
 
 from django.test import TestCase
+from django.core.exceptions import ValidationError
 
 from core.models.organisms import Individual
 
@@ -55,8 +56,31 @@ class TestIndividual(TestCase):
     def test_update(self):
         self.skipTest("not tested")
 
-    def test_validate(self):
-        self.skipTest("not tested (should validate with Individual and dicts)")
+    @patch("jsonschema.validate")
+    def test_validate(self, jsonschema_validate):
+        Individual.validate(self.instance, self.instance.schema)
+        jsonschema_validate.assert_called_with(self.instance.properties, self.instance.schema)
+        jsonschema_validate.reset_mock()
+        Individual.validate(self.instance.properties, self.instance.schema)
+        jsonschema_validate.assert_called_with(self.instance.properties, self.instance.schema)
+        jsonschema_validate.reset_mock()
+        Individual.validate(self.instance.content, self.instance.schema)
+        jsonschema_validate.assert_called_with(self.instance.properties, self.instance.schema)
+        jsonschema_validate.reset_mock()
+        try:
+            Individual.validate([self.instance], self.instance.schema)
+        except ValidationError:
+            jsonschema_validate.assert_not_called()
+
+    def test_validate_error(self):
+        wrong_content = self.instance.content
+        wrong_content["wrong"] = True
+        try:
+            Individual.validate(wrong_content, self.instance.schema)
+            self.fail("Individual.validate did not raise upon wrong content")
+        except ValidationError:
+            pass
+        Individual.validate(wrong_content, {"bullshit": "schema"})  # TODO: assert schema?
 
     @patch('core.models.organisms.collective.Collective.influence')
     def test_clean_without_collective(self, influence_method):

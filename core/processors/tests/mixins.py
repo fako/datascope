@@ -1,15 +1,12 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
 from types import MethodType
 
-from django.test import TestCase
 from celery.canvas import Signature
 
 from core.processors.resources import HttpResourceProcessor
 from core.processors.base import ArgumentsTypes
 
 
-class TestProcessorMixin(TestCase):
+class TestProcessorMixin(object):
 
     def test_prepare_process_async(self):
         process, method, args_type = self.instance.prepare_process(self.instance.process, async=True)

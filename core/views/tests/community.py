@@ -89,16 +89,19 @@ class TestCommunityView(TestCase):
             "actions": [],
             "results": [
                 {
+                    "_id": 4,
                     "context": "nested value",
                     "value": "nested value 0",
                     "number": 1
                 },
                 {
+                    "_id": 5,
                     "context": "nested value",
                     "value": "nested value 1",
                     "number": 2
                 },
                 {
+                    "_id": 6,
                     "context": "nested value",
                     "value": "nested value 2",
                     "number": 3
@@ -117,11 +120,13 @@ class TestCommunityView(TestCase):
             "actions": [],
             "results": [
                 {
+                    "_id": 4,
                     "context": "nested value",
                     "value": "nested value 0",
                     "number": 1
                 },
                 {
+                    "_id": 6,
                     "context": "nested value",
                     "value": "nested value 2",
                     "number": 3
@@ -145,11 +150,13 @@ class TestCommunityView(TestCase):
             "actions": [],
             "results": [
                 {
+                    "_id": 4,
                     "context": "nested value",
                     "value": "nested value 0",
                     "number": 1
                 },
                 {
+                    "_id": 6,
                     "context": "nested value",
                     "value": "nested value 2",
                     "number": 3
@@ -176,11 +183,13 @@ class TestCommunityView(TestCase):
             "actions": [],
             "results": [
                 {
+                    "_id": 4,
                     "context": "nested value",
                     "value": "nested value 0",
                     "number": 1
                 },
                 {
+                    "_id": 6,
                     "context": "nested value",
                     "value": "nested value 2",
                     "number": 3
@@ -291,16 +300,19 @@ class TestHtmlCommunityView(TestCase):
             "actions": [],
             "results": [
                 {
+                    "_id": 4,
                     "context": "nested value",
                     "value": "nested value 0",
                     "number": 1
                 },
                 {
+                    "_id": 5,
                     "context": "nested value",
                     "value": "nested value 1",
                     "number": 2
                 },
                 {
+                    "_id": 6,
                     "context": "nested value",
                     "value": "nested value 2",
                     "number": 3
@@ -330,11 +342,13 @@ class TestHtmlCommunityView(TestCase):
             "actions": [],
             "results": [
                 {
+                    "_id": 4,
                     "context": "nested value",
                     "value": "nested value 0",
                     "number": 1
                 },
                 {
+                    "_id": 6,
                     "context": "nested value",
                     "value": "nested value 2",
                     "number": 3

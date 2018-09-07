@@ -1,5 +1,3 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
 from django.test import TestCase
 
 from core.models.organisms import Individual
@@ -23,6 +21,7 @@ class TestExpansionProcessor(TestCase):
             "individual": "content",
             "expand": [
                 {
+                    "_id": index + 1,
                     "value": "nested value {}".format(index),
                     "context": "nested value"
                 }
@@ -33,6 +32,7 @@ class TestExpansionProcessor(TestCase):
             "individual": "instance",
             "expand": [
                 {
+                    "_id": index + 1,
                     "value": "nested value {}".format(index),
                     "context": "nested value"
                 }
@@ -50,7 +50,6 @@ class TestExpansionProcessor(TestCase):
         self.assertEqual(test_individual.properties, self.expected_instance_expansion)
 
     def test_collective_content_iterator(self):
-
         processor = ExpansionProcessor(config={})
         generator = processor.collective_content(
             iter([self.individual_content, self.individual])
