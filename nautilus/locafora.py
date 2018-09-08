@@ -101,7 +101,17 @@ PRODUCT_TRANSLATIONS = {
     "verse suikermais": "suikermais, verse",
     "verse uien met steel, maar zonder loof": "uien, vers zonder loof",
     "witte druiven": "druiven, witte",
-
+    "bospeen": "peen, bos",
+    "bosui": "ui, bos",
+    "chinese kool": "kool, chinese",
+    "eieren van eko boerderij de eerste, 10 st": "eieren, 10 st",
+    "eieren van eko boerderij de eerste, 6 st": "eieren, 6 st",
+    "graffiti aubergine": "aubergine, graffiti",
+    "grasboter": "boter, gras",
+    "rode kool": "kool, rode",
+    "verse bladselderij": "bladselderij, verse",
+    "zoete bataat": "bataat, zoete",
+    "bosbieten nieuwe oogst!": "bieten, bos"
 }
 
 
