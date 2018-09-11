@@ -25,7 +25,7 @@ urlpatterns = [
     url(
         r'^future-fashion/annotate/$',
         swipe_interface_view,
-        name=InventoryCommunity.get_name() + "_swipe"
+        name=InventoryCommunity.get_name() + "_annotate"
     )
 ]
 
