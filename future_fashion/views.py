@@ -18,7 +18,7 @@ def swipe_interface_view(request):
     def format_data(entry):
         return {
             "id": entry["id"],
-            "url": entry["path"].replace("future_fashion/data/", "")
+            "url": entry["path"].replace("future_fashion/data", "")
         }
 
     api_view = CommunityView()
