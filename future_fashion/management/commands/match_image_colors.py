@@ -21,7 +21,7 @@ log = logging.getLogger("datascope")
 
 class Command(CommunityCommand):
     """
-    Example: ./manage.py match_image_colors FutureFashionCommunity -i ~/Downloads/fairy-tale.jpg -a tagged_kleding
+    Example: ./manage.py match_image_colors ClothingDataCommunity -i ~/Downloads/fairy-tale.jpg -a tagged_kleding
     """
 
     def add_arguments(self, parser):

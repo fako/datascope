@@ -7,7 +7,7 @@ from core.utils.configuration import DecodeConfigAction
 class Command(GrowCommand):
 
     def add_arguments(self, parser):
-        parser.add_argument('community', type=str, nargs="?", default="FutureFashionCommunity")
+        parser.add_argument('community', type=str, nargs="?", default="ClothingDataCommunity")
         parser.add_argument('-c', '--config', type=str, action=DecodeConfigAction, nargs="?", default={})
 
     def handle_community(self, community, **options):

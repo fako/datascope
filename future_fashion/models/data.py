@@ -101,7 +101,7 @@ TARGET_LISTINGS = [
 ]
 
 
-class FutureFashionCommunity(Community):
+class ClothingDataCommunity(Community):
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("items", {
@@ -282,8 +282,8 @@ class FutureFashionCommunity(Community):
 
     @property
     def manifestation(self):
-        return islice(super(FutureFashionCommunity, self).manifestation, 0, 20)
+        return islice(super().manifestation, 0, 20)
 
     class Meta:
-        verbose_name = "Future fashion"
-        verbose_name_plural = "Future fashions"
+        verbose_name = "Clothing data community"
+        verbose_name_plural = "Clothing data communities"

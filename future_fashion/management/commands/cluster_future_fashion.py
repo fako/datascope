@@ -19,7 +19,7 @@ def cast_elements_to_floats(lst):
 class Command(CommunityCommand):
 
     def add_arguments(self, parser):
-        parser.add_argument('community', type=str, nargs="?", default="FutureFashionCommunity")
+        parser.add_argument('community', type=str, nargs="?", default="ClothingDataCommunity")
         parser.add_argument('-c', '--config', type=str, action=DecodeConfigAction, nargs="?", default={})
 
     def get_community(self):
