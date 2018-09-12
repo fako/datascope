@@ -17,5 +17,3 @@ from .google.text import GoogleText
 
 from .downloads import ImageDownload
 from .micro import ImageRecognitionService
-
-from .indico.images import ImageFeatures
