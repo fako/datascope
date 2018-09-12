@@ -21,9 +21,9 @@ log = logging.getLogger("datascope")
 class Command(CommunityCommand):
     """
     Examples:
-        ./manage.py match_palette_colors InventoryCommunity -a 16-07-18 -p "top=228,85,52&bottom=108,25,63&accessories=164,192,217" -t little-french-dress
-        ./manage.py match_palette_colors InventoryCommunity -a 16-07-18 -p "top=241,166,101&bottom=50,93,142&accessories=179,111,114" -t fading-sunshine
-        ./manage.py match_palette_colors InventoryCommunity -a 16-07-18 -p "top=217,163,214&bottom=167,142,191&accessories=197,185,211" -t dozing-off-now
+        ./manage.py match_palette_colors ClothingInventoryCommunity -a 16-07-18 -p "top=228,85,52&bottom=108,25,63&accessories=164,192,217" -t little-french-dress
+        ./manage.py match_palette_colors ClothingInventoryCommunity -a 16-07-18 -p "top=241,166,101&bottom=50,93,142&accessories=179,111,114" -t fading-sunshine
+        ./manage.py match_palette_colors ClothingInventoryCommunity -a 16-07-18 -p "top=217,163,214&bottom=167,142,191&accessories=197,185,211" -t dozing-off-now
     """
 
     def add_arguments(self, parser):

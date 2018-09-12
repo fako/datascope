@@ -6,7 +6,7 @@ from rest_framework import status
 
 from core.views import CommunityView
 
-from future_fashion.models import InventoryCommunity
+from future_fashion.models import ClothingInventoryCommunity
 
 
 hex_color_pattern = re.compile("^[A-F0-9]{6}$")
@@ -47,7 +47,7 @@ def swipe_interface_view(request):
 
     # We're dealing with a valid request. Get the data.
     api_response = api_view.get_response(
-        InventoryCommunity,
+        ClothingInventoryCommunity,
         "pilot",
         configuration,
         created_at_info

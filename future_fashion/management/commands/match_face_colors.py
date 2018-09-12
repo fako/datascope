@@ -21,7 +21,7 @@ log = logging.getLogger("datascope")
 
 class Command(CommunityCommand):
     """
-    Example: ./manage.py match_face_colors InventoryCommunity -f fako_01 -a multi-color-sklearn
+    Example: ./manage.py match_face_colors ClothingInventoryCommunity -f fako_01 -a multi-color-sklearn
     """
 
     def add_arguments(self, parser):

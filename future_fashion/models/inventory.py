@@ -8,7 +8,7 @@ from core.utils.files import SemanticDirectoryScan
 from future_fashion.colors import extract_dominant_colors, create_colors_data
 
 
-class InventoryCommunity(Community):
+class ClothingInventoryCommunity(Community):
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("types", {
@@ -79,5 +79,5 @@ class InventoryCommunity(Community):
         manifestation_part["config"]["clothing_frame_path"] = self.get_clothing_frame_file()
 
     class Meta:
-        verbose_name = "Inventory community"
-        verbose_name_plural = "Inventory communities"
+        verbose_name = "Clothing inventory community"
+        verbose_name_plural = "Clothing inventory communities"
