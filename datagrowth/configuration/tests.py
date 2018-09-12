@@ -138,6 +138,9 @@ class TestConfigurationType(TestCase):
     def test_clean_key(self):
         self.skipTest("not tested")
 
+    def test_get(self):
+        self.skipTest("not tested")
+
 
 class ConfigurationPropertyHolder(object):
     property = ConfigurationProperty(

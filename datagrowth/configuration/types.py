@@ -202,6 +202,13 @@ class ConfigurationType(object):
         item = self.clean_key(item)
         return self._get_configuration(item)
 
+    def get(self, item, default):
+        item = self.clean_key(item)
+        try:
+            return self._get_configuration(item)
+        except ConfigurationNotFoundError:
+            return default
+
     def __contains__(self, item):
         item = self.clean_key(item)
         try:
