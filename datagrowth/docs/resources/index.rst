@@ -3,5 +3,5 @@
 Resources
 =========
 
-.. automodule:: core.models.resources.http
-    :members: HttpResource
+.. automodule:: datagrowth.resources
+    :members: ShellResource
