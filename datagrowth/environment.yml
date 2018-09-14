@@ -1,0 +1,12 @@
+# TODO: handle dependencies in package not in a manual list
+# This list is here to keep track of dependencies
+# Copy paste it into your project and add project dependencies yourself
+name: dg-env
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - django==1.11.*  # BSD 3-Clause
+  - jsonschema==2.6.0  # MIT, update from 2.4.0, deprecated because of speed and maintenance concerns
+  - pip:
+    - git+https://github.com/fako/django-json-field.git  # BSD license, killer lazy load feature, but unmaintained
