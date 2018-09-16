@@ -5,7 +5,7 @@ from future_fashion.colors import get_colors_individual, get_vector_from_colors
 
 class ClothingFrame(object):
 
-    def __init__(self, individuals=None, file_path=None, num_colors=3):
+    def __init__(self, individuals=None, file_path=None, num_colors=2):
         assert individuals or file_path, "ClothingFrame needs either individuals or a file path"
         self.num_colors = num_colors
         self.frame = None

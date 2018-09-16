@@ -29,7 +29,7 @@ def swipe_interface_view(request):
     })
 
     # Checking validity of request
-    for parameter in ["$top", "$bottom", "$accessories"]:
+    for parameter in ["$top", "$bottom"]:
         # Check required configuration
         if parameter not in configuration:
             return Response(

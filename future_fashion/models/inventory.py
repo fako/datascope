@@ -44,8 +44,7 @@ class ClothingInventoryCommunity(Community):
             "config": {
                 "type_limit": 10,
                 "$top": None,
-                "$bottom": None,
-                "$accessories": None
+                "$bottom": None
             }
         }
     ]

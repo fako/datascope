@@ -39,11 +39,9 @@ class ClothingSetMatchProcessor(Processor):
     @staticmethod
     def _get_colors_from_palette(palette, clothing_type):
         if clothing_type == "top":
-            return [palette["top"], palette["accessories"], palette["bottom"]]
+            return [palette["top"], palette["bottom"]]
         elif clothing_type == "bottom":
-            return [palette["bottom"], palette["accessories"], palette["top"]]
-        elif clothing_type == "accessories":
-            return [palette["accessories"], palette["top"], palette["bottom"]]
+            return [palette["bottom"], palette["top"]]
         else:
             raise ValueError("Unknown clothing type {}".format(clothing_type))
 
