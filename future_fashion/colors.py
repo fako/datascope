@@ -98,9 +98,8 @@ def remove_white_image_background(file_path):
     for x in range(width):
         for y in range(height):
             r, g, b, a = pix[x, y]
-
             min_c = min(r, g, b)
-            max_c = max(r ,g, b)
+            max_c = max(r, g, b)
             delta = max_c - min_c
             if min_c >= 200 and delta <= 8:
                 pix[x, y] = (0, 0, 0, 0)
