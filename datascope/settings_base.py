@@ -119,6 +119,7 @@ ALLOWED_HOSTS = [
     '.tools.wmflabs.org',
     '37.139.16.242',
     'ec2-34-251-167-142.eu-west-1.compute.amazonaws.com',
+    '.2ndhandstylist.com',
 ]
 
 APPEND_SLASH = False
