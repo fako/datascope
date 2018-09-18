@@ -11,7 +11,7 @@ Run the following commands to install an inventory to use with Future Fashion:
 * Place these files inside of ```future_fashion/data/media/future_fashion``` under a unique name
 * Make sure that you run the image_recognition service under ```localhost:2001``` with the ```clothing_type``` project
 * Now run ```./manage.py grow_community ClothingInventoryCommunity -a <unique-name>```
-* Still command will take a while
+* This command will take a while
 * To use the service now run ```./manage.py store_clothing_frames```
 
 After these commands you should be able to call the service under 
@@ -23,7 +23,7 @@ After these commands you should be able to call the service under
 Deploy
 ------
 
-Before you import Future Fashion for a deploy make sure to run: ```./manage.py dump_community ClothingInventoryCommunity -a pilot```. 
+Before you import Future Fashion for a deploy make sure to run: ```./manage.py dump_community ClothingInventoryCommunity -a <unique-name>```.
 This ensures that the data will become available on the server.
-After installation but before deploy run ```./manage.py load_community ClothingInventoryCommunity -a pilot```
+After installation but before deploy run ```./manage.py load_community ClothingInventoryCommunity -a <unique-name>```
 on the server to load the data.

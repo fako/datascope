@@ -34,7 +34,7 @@ class Command(CommunityCommand):
         canvas.plot_surface(X, Y, data_frame.T.as_matrix(), rstride=1, cstride=1, color='b', linewidth=0, antialiased=False)
 
     def handle_community(self, community, **options):
-        from mpl_toolkits.mplot3d import Axes3D
+        #from mpl_toolkits.mplot3d import Axes3D
         canvas = pyplot.figure().gca(projection='3d')
 
         clothing_vectors = numpy.array([
