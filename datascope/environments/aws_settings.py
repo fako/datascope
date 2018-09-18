@@ -12,3 +12,8 @@ RAVEN_CONFIG = {
     'release': DATASCOPE_VERSION,
     'site': '34.251.167.142'
 }
+
+# This disables sessions for other than admin
+# CSRF problems with rest_framework need to be solved
+# Before we can allow sessions on /data
+SESSION_COOKIE_PATH = "/admin"
