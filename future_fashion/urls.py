@@ -6,7 +6,7 @@ from django.conf.urls.static import static
 
 from core.views.community import CommunityView, HtmlCommunityView
 from future_fashion.models import ClothingInventoryCommunity
-from future_fashion.views import swipe_interface_view
+from future_fashion.views import swipe_interface_view, CreateColorClothingSet
 
 
 urlpatterns = [
@@ -26,6 +26,11 @@ urlpatterns = [
         r'^future-fashion/annotate/$',
         swipe_interface_view,
         name=ClothingInventoryCommunity.get_name() + "_annotate"
+    ),
+    url(
+        r'^future-fashion/color-clothing-set/$',
+        CreateColorClothingSet.as_view(),
+        name="color_clothing_set"
     )
 ]
 
