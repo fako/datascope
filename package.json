@@ -1,6 +1,6 @@
 {
     "name": "datascope",
-    "version": "0.7.3",
+    "version": "0.7.4",
     "artefact": {
         "includes": [
             "online_discourse/data/dumps/",
