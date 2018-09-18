@@ -11,8 +11,8 @@ class ColorClothingSet(models.Model):
     bottom_color = models.CharField(max_length=6)
     match_style = models.CharField(max_length=20, null=True, blank=True)
 
-    top_item = models.ForeignKey("core.Individual", related_name="+")
-    bottom_item = models.ForeignKey("core.Individual", related_name="+")
+    top_item = models.ForeignKey("core.Individual", related_name="+", on_delete=models.DO_NOTHING)
+    bottom_item = models.ForeignKey("core.Individual", related_name="+", on_delete=models.DO_NOTHING)
 
     def top_item_image(self):
         return u'<img width="100px" src="{}" /><div>{}</div'.format(
