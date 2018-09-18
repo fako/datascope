@@ -9,7 +9,7 @@ from core.views import CommunityView
 from future_fashion.models import ClothingInventoryCommunity
 
 
-hex_color_pattern = re.compile("^[A-F0-9]{6}$")
+hex_color_pattern = re.compile("^[A-Fa-z0-9]{6}$")
 
 
 @api_view(["POST", "OPTIONS"])
