@@ -70,7 +70,7 @@ class ClothingInventoryCommunity(Community):
             file_data.update({
                 "store": store,
                 "year": int(year),
-                "id": int(id_),
+                "rid": int(id_),
                 "colors": color_data
             })
             content.append(file_data)

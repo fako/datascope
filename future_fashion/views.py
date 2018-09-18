@@ -17,7 +17,7 @@ def swipe_interface_view(request):
 
     def format_data(entry):
         return {
-            "id": entry["id"],
+            "id": entry["_id"],
             "url": request.build_absolute_uri(entry["path"].replace("future_fashion/data", "")),
             "type": entry["type"]
         }
@@ -82,7 +82,7 @@ def swipe_interface_view(request):
     # Figure out next object to return
     # Should act like a carousel
     # Initial position comes from _id
-    ixs = [entry["id"] for entry in data]
+    ixs = [entry["_id"] for entry in data]
     ix = ixs.index(_id)
     if like:
         ix += 1
