@@ -16,6 +16,9 @@ hex_color_pattern = re.compile("^[A-Fa-z0-9]{6}$")
 @api_view(["POST", "OPTIONS"])
 def swipe_interface_view(request):
 
+    if request.method == "OPTIONS":
+        return Response({}, status.HTTP_200_OK)
+
     def format_data(entry):
         return {
             "id": entry["_id"],
