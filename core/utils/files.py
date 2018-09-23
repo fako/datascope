@@ -58,7 +58,6 @@ class FileBalancer(object):  # TODO: test, it has a serious bug
     def __call__(self, target):
         for category_path in glob(target + "/train/*/"):
             category = self.get_category(category_path)
-            print()
             imbalance = self.balance_category(target, category)
             if imbalance < 0:
                 print("upsampled", category, abs(imbalance))
