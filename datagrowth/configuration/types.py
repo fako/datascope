@@ -22,7 +22,6 @@ class ConfigurationType(object):
 
     You can check if a configuration exists by using the `in` operator.
     """
-    # TODO: protect against unexpected user input configurations
 
     _private_defaults = ["_private", "_defaults", "_namespace"]
     _global_prefix = "global"
@@ -133,11 +132,16 @@ class ConfigurationType(object):
     @classmethod
     def from_dict(cls, config, defaults):
         """
-        To be written
+        Creates a configuration using a dictionary.
+        The dictionary should hold the appropriate _private and _namespace values.
+        The _private value specifies which configurations should not be passed on
+        to configuration that use this configuration as a base.
+        The _namespace value specifies which prefix should be used to search default configurations,
+        when a key can not be found in the configuration.
 
-        :param config:
-        :param defaults:
-        :return:
+        :param config: (dict) the configuration keys and values to create a configuration with
+        :param defaults: (dict) the configuration keys and values that act as a fallback
+        :return: a configuration instance
         """
         assert isinstance(config, dict), \
             "Config should be a dict which values are the configurations."
@@ -157,10 +161,12 @@ class ConfigurationType(object):
 
     def supplement(self, other):
         """
-        To be written
+        This method updates the configuration with keys from other
+        if the configuration key does not exist in the configuration already.
+        This allows configurations to update with only new values.
 
-        :param other:
-        :return:
+        :param other: (dict) the configuration keys and values to possibly update the configuration with
+        :return: None
         """
         supplement = {}
         for key, value in other.items():
@@ -171,10 +177,11 @@ class ConfigurationType(object):
 
     def items(self, protected=False, private=False):
         """
-        To be written
+        Iterates over all configurations in a (key, value,) manner.
+        It allows to skip over protected and private configurations, which happens by default.
 
-        :param protected:
-        :param private:
+        :param protected: (boolean) flag to include protected configurations
+        :param private: (boolean) flag to include private configurations
         :return:
         """
         for key, value in self.__dict__.items():
@@ -189,10 +196,11 @@ class ConfigurationType(object):
     @staticmethod
     def clean_key(key):
         """
-        To be written
+        Strips characters from the input key that have a special meaning to the configuration type.
+        Namely '$' and '_'.
 
-        :param key:
-        :return:
+        :param key: (string) the key to strip special characters from
+        :return: (string) the original or stripped key
         """
         if key.startswith("$") or key.startswith("_"):
             return key[1:]
@@ -202,12 +210,21 @@ class ConfigurationType(object):
         item = self.clean_key(item)
         return self._get_configuration(item)
 
-    def get(self, item, default):
+    def get(self, item, default=None):
+        """
+        Getter for configuration item.
+        When the configuration key is not found it raises a ConfigurationNotFoundError unless default is specified.
+        If this is the case it returns the default instead.
+
+        :param item: (string) key to get a configuration value for
+        :param default: (mixed) value to return if configuration does not exist
+        :return: (mixed) the configuration value or the default value
+        """
         item = self.clean_key(item)
-        try:
-            return self._get_configuration(item)
-        except ConfigurationNotFoundError:
-            return default
+        if default:
+            return getattr(self, item, default)
+        else:
+            return getattr(self, item)
 
     def __contains__(self, item):
         item = self.clean_key(item)
