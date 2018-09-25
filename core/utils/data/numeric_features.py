@@ -33,7 +33,7 @@ class NumericFeaturesFrame(object):
         self.content = None
         self.features = None
         # Fill actual data frame with content
-        self.reset(features=features, content=content if not file_path else None, )
+        self.reset(features=features, content=content if not file_path else None)
         if file_path:
             self.from_disk(file_path)
 
@@ -75,8 +75,12 @@ class NumericFeaturesFrame(object):
             series = self.get_feature_series(column, self.features[column], content_callable=content_callable)
             intersection = self.data[column].index.intersection(series.index)
             if len(intersection) == self.data.shape[0]:
+                # the entire column is new
+                # we simply add it to the frame
                 self.data[column] = series
             else:
+                # the column partially exists
+                # we add what is new and update existing rows
                 missing = series.index.difference(self.data[column].index)
                 new[series.name] = series.loc[list(missing.get_values())]
                 update[series.name] = series.loc[list(intersection.get_values())]
