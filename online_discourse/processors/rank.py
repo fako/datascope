@@ -5,6 +5,13 @@ class OnlineDiscourseRankProcessor(RankProcessor):
 
     contextual_features = ["keyword_count"]
 
+    def get_text(self, document):
+        paragraph_groups = document.get("paragraph_groups", [])
+        text = ""
+        for paragraph_group in paragraph_groups:
+            text += " ".join(paragraph_group) + " "
+        return text
+
     def default_ranking(self, individuals):
         individuals = list(individuals)  # TODO: optimize memory use
         argument_score_rank = self.feature_frame.data["argument_score"]

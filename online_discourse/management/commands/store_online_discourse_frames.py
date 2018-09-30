@@ -8,4 +8,4 @@ class Command(BaseCommand):
 
     def handle(self, *arguments, **options):
         for inst in DiscourseSearchCommunity.objects.filter(state=CommunityState.READY):
-            inst.store_feature_frame()
+            inst.store_frames()

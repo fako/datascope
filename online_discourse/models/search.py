@@ -3,7 +3,6 @@ from collections import OrderedDict
 
 import spacy
 from spacy_arguing_lexicon import ArguingLexiconParser
-from sklearn.feature_extraction.text import CountVectorizer
 
 from core.models.organisms import Community, Collective, Individual
 from core.models.organisms.states import CommunityState
@@ -72,6 +71,7 @@ class DiscourseSearchCommunity(Community):
                 "ranking_feature": "argument_score",
                 "identifier_key": "url",
                 "feature_frame_path": None,
+                "text_frame_path": None,
                 "$keywords": []
             }
         }
@@ -135,24 +135,30 @@ class DiscourseSearchCommunity(Community):
     def set_kernel(self):
         self.kernel = self.current_growth.output
 
-    def get_feature_frame_file(self):
-        return os.path.join(self._meta.app_label, "data", "feature_frames", self.signature + ".pkl")
+    def get_feature_frame_file(self, frame_type):
+        return os.path.join(self._meta.app_label, "data", frame_type + "s", self.signature + ".pkl")
 
     def before_rank_manifestation(self, manifestation_part):
-        manifestation_part["config"]["feature_frame_path"] = self.get_feature_frame_file()
+        manifestation_part["config"]["feature_frame_path"] = self.get_feature_frame_file("feature_frame")
+        manifestation_part["config"]["text_frame_path"] = self.get_feature_frame_file("text_frame")
 
-    def store_feature_frame(self):
-        assert self.state == CommunityState.READY, "Can't store a frame for a Community that is not ready"
-        path, file_name = os.path.split(self.get_feature_frame_file())
-        if not os.path.exists(path):
-            os.makedirs(path)
-
+    def store_frames(self):
+        assert self.state == CommunityState.READY, "Can't store frames for a Community that is not ready"
         part = next((part for part in self.COMMUNITY_BODY if part.get("name") == "rank"), None)
         if part is None:
             raise TypeError("No RankProcessor part found in COMMUNITY_BODY")
         rank_processor, method, args_type = self.prepare_process(part["process"], class_config=part.get("config"))
+
+        for frame_type in ["feature_frame", "text_frame"]:
+            path, file_name = os.path.split(self.get_feature_frame_file(frame_type))
+            if not os.path.exists(path):
+                os.makedirs(path)
+
         rank_processor.feature_frame.load_content(lambda: self.kernel.content)
-        rank_processor.feature_frame.to_disk(self.get_feature_frame_file())
+        rank_processor.feature_frame.to_disk(self.get_feature_frame_file("feature_frame"))
+
+        rank_processor.text_frame.load_content(lambda: self.kernel.content)
+        rank_processor.text_frame.to_disk(self.get_feature_frame_file("text_frame"))
 
     class Meta:
         verbose_name = "Discourse search community"

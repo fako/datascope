@@ -8,8 +8,9 @@ from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 
 class TextContentReader(object):
 
-    def __init__(self, get_identifier, content_callable):
+    def __init__(self, get_identifier, get_text, content_callable):
         self.get_identifier = get_identifier
+        self.get_text = get_text
         self.content_callable = content_callable
         self.content = None
         self.identifiers = None
@@ -22,15 +23,14 @@ class TextContentReader(object):
     def __next__(self):
         entry = next(self.content)
         self.identifiers.append(self.get_identifier(entry))
-        return entry
+        return self.get_text(entry)
 
 
 class TextFeaturesFrame(object):
 
-    def __init__(self, identifier, content=None, file_path=None):
-        assert content is not None or file_path is not None, \
-            "Either content or file_path should be given to init a TextFeaturesFrame"
-        self.get_identifier = identifier
+    def __init__(self, get_identifier, get_text, content=None, file_path=None):
+        self.get_identifier = get_identifier
+        self.get_text = get_text
         # Initialize attributes used by this class
         self.raw_data = None
         self.vectorizer = None
@@ -41,7 +41,7 @@ class TextFeaturesFrame(object):
         # Fill actual data frame with content
         if file_path:
             self.from_disk(file_path)
-        else:
+        elif content:
             self.reset(content=content)
 
     def from_disk(self, file_path):
@@ -73,7 +73,7 @@ class TextFeaturesFrame(object):
             should_fit = True
         else:
             should_fit = False
-        content_reader = TextContentReader(self.get_identifier, content_callable or self.content)
+        content_reader = TextContentReader(self.get_identifier, self.get_text, content_callable or self.content)
         # Get vector and identifier for batch
         matrix = self.vectorizer.fit_transform(content_reader) if should_fit \
             else self.vectorizer.transform(content_reader)

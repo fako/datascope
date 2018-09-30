@@ -96,7 +96,7 @@ class LegacyRankProcessorMixin(object):
 
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.processors.base import Processor
-from core.utils.data import NumericFeaturesFrame
+from core.utils.data import NumericFeaturesFrame, TextFeaturesFrame
 from core.utils.configuration import ConfigurationProperty
 
 
@@ -121,6 +121,17 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
             )
         else:
             self.feature_frame = None
+        if "identifier_key" in self.config and "text_frame_path" in self.config:
+            self.text_frame = TextFeaturesFrame(
+                get_identifier=lambda ind: ind[self.config.identifier_key],
+                get_text=self.get_text,
+                file_path=self.config.text_frame_path
+            )
+        else:
+            self.text_frame = None
+
+    def get_text(self, document):
+        raise NotImplementedError("The get_text method should be implemented in its context")
 
     @classmethod
     def get_features(cls):
