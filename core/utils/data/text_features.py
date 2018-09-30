@@ -4,6 +4,7 @@ import pickle
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
+from scipy.sparse import save_npz, load_npz
 
 
 class TextContentReader(object):
@@ -46,7 +47,7 @@ class TextFeaturesFrame(object):
 
     def from_disk(self, file_path):
         file_name, ext = os.path.splitext(file_path)
-        self.raw_data = pd.read_pickle(file_path)
+        self.raw_data = pd.SparseDataFrame(load_npz(file_path))
         with open(file_name + ".voc", "rb") as vocab_file:
             self.vectorizer = pickle.load(vocab_file)
         self.load_features(self.vectorizer)
@@ -54,7 +55,7 @@ class TextFeaturesFrame(object):
 
     def to_disk(self, file_path):
         file_name, ext = os.path.splitext(file_path)
-        self.raw_data.to_pickle(file_path)
+        save_npz(file_path, self.raw_data.to_coo())
         with open(file_name + ".voc", "wb") as vocab_file:
             pickle.dump(self.vectorizer, vocab_file)
 
