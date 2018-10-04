@@ -1,1 +1,1 @@
-from .http import HttpResource
+from .generic import HttpResource
