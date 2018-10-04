@@ -7,3 +7,11 @@ class DGResourceException(Exception):
 
 class DGShellError(DGResourceException):
     pass
+
+
+class DGHttpError50X(DGResourceException):
+    pass
+
+
+class DGHttpError40X(DGResourceException):
+    pass

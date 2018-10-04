@@ -17,8 +17,8 @@ from django.conf import settings
 
 import json_field
 
-from core.models.resources.resource import Resource
-from core.exceptions import DSHttpError50X, DSHttpError40X
+from datagrowth.resources.base import Resource
+from datagrowth.exceptions import DGHttpError50X as DSHttpError50X, DGHttpError40X as DSHttpError40X
 
 
 class HttpResource(Resource):

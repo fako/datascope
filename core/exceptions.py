@@ -1,13 +1,6 @@
 from datagrowth.exceptions import DGResourceException as DSResourceException
-from datagrowth.exceptions import DGShellError as DSShellError
-
-
-class DSHttpError50X(DSResourceException):
-    pass
-
-
-class DSHttpError40X(DSResourceException):
-    pass
+from datagrowth.exceptions import (DGShellError as DSShellError, DGHttpError50X as DSHttpError50X,
+                                   DGHttpError40X as DSHttpError40X)
 
 
 class DSHttpError403LimitExceeded(DSResourceException):
