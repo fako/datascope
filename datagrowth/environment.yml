@@ -10,5 +10,6 @@ dependencies:
   - jsonschema==2.6.0  # MIT, update from 2.4.0, deprecated because of speed and maintenance concerns
   - beautifulsoup4==4.4.0  # MIT
   - urlobject==2.4.3  # Unlicense
+  - requests==2.19.1  # Apache 2.0
   - pip:
     - git+https://github.com/fako/django-json-field.git  # BSD license, killer lazy load feature, but unmaintained
