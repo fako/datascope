@@ -4,7 +4,7 @@ import pickle
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from scipy.sparse import save_npz, load_npz
+from scipy.sparse import csc_matrix, vstack, hstack, save_npz, load_npz
 
 
 class TextContentReader(object):
@@ -38,6 +38,7 @@ class TextFeaturesFrame(object):
         self.data = None
         self.content = None
         self.features = None
+        self.identifiers = None
         self.count_dtype = np.int16
         # Fill actual data frame with content
         if file_path:
@@ -47,7 +48,7 @@ class TextFeaturesFrame(object):
 
     def from_disk(self, file_path):
         file_name, ext = os.path.splitext(file_path)
-        self.raw_data = pd.SparseDataFrame(load_npz(file_path))
+        self.raw_data = load_npz(file_path)
         with open(file_name + ".voc", "rb") as vocab_file:
             self.vectorizer = pickle.load(vocab_file)
         self.load_features(self.vectorizer)
@@ -55,7 +56,7 @@ class TextFeaturesFrame(object):
 
     def to_disk(self, file_path):
         file_name, ext = os.path.splitext(file_path)
-        save_npz(file_path, self.raw_data.to_coo())
+        save_npz(file_path, self.raw_data)
         with open(file_name + ".voc", "wb") as vocab_file:
             pickle.dump(self.vectorizer, vocab_file)
 
@@ -63,10 +64,9 @@ class TextFeaturesFrame(object):
         return CountVectorizer()
 
     def load_data(self, raw_data):
-        transformer = TfidfTransformer()
-        tfidf_matrix = transformer.fit_transform(raw_data.to_coo())
-        self.data = pd.SparseDataFrame(tfidf_matrix)
-        self.data /= self.data.max().max()  # min-max normalisation across columns with min=0
+        transformer = TfidfTransformer(norm=None)
+        self.data = transformer.fit_transform(raw_data).tocsc()
+        self.data /= self.data.max()  # min-max normalisation across columns with min=0
 
     def load_content(self, content_callable=None):
         if not self.vectorizer:
@@ -75,15 +75,20 @@ class TextFeaturesFrame(object):
         else:
             should_fit = False
         content_reader = TextContentReader(self.get_identifier, self.get_text, content_callable or self.content)
-        # Get vector and identifier for batch
-        matrix = self.vectorizer.fit_transform(content_reader) if should_fit \
-            else self.vectorizer.transform(content_reader)
-        frame = pd.SparseDataFrame(matrix, index=content_reader.identifiers, dtype=self.count_dtype)
+        matrix = self.vectorizer.fit_transform(content_reader).tocsc() if should_fit \
+            else self.vectorizer.transform(content_reader).tocsc()
         # Update existing data and deduplicate on index
-        self.raw_data = pd.concat([self.raw_data, frame])
-        duplicates = self.raw_data.index.duplicated(keep="first")
-        if duplicates.any():
-            self.raw_data = self.raw_data[~duplicates]
+        self.raw_data = vstack([self.raw_data, matrix]) if self.raw_data is not None else matrix
+        if self.identifiers is None:
+            self.identifiers = pd.Series(content_reader.identifiers)
+        else:
+            new = pd.Series(content_reader.identifiers)
+            self.identifiers = self.identifiers.append(new) \
+                .drop_duplicates(keep="last") \
+                .reset_index(drop=True)
+        # Converting the data to dok_matrix should deduplicate values
+        # See: https://stackoverflow.com/questions/28677162/ignoring-duplicate-entries-in-sparse-matrix
+        self.raw_data = self.raw_data.tocoo().todok().tocsc()
         self.load_data(self.raw_data)
         if should_fit:
             self.load_features(self.vectorizer)
@@ -95,19 +100,21 @@ class TextFeaturesFrame(object):
         }
 
     def reset(self, content):
-        self.raw_data = pd.SparseDataFrame(dtype=self.count_dtype)
+        self.raw_data = None
         self.content = content
         self.vectorizer = None
         self.load_content(content)
 
     def rank_by_params(self, params):
-        clean_params = self.clean_params(params)
-        input_data = {self.features[key]: value for key, value in clean_params.items()}
-        input_vector = pd.Series(data=input_data)
-        data = self.data[list(input_data.keys())].dropna(how="all")
-        data.fillna(0.0, inplace=True)
-        ranking = data.dot(input_vector).sort_values(ascending=False)
-        return ranking
+        matrix = None
+        vector = []
+        for key, value in self.clean_params(params).items():
+            col = self.data.getcol(self.features[key])
+            matrix = hstack([matrix, col]) if matrix is not None else col
+            vector.append(value)
+        vector = np.array(vector)
+        indices = matrix.dot(vector).argsort()
+        return pd.Series([self.identifiers[ix] for ix in indices[::-1]])
 
     def clean_params(self, params):
         cleaned = {}
