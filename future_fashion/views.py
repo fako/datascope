@@ -23,6 +23,10 @@ def swipe_interface_view(request):
 
     api_view = CommunityView()
     configuration, created_at_info = api_view.get_configuration_from_request(request)
+    configuration.update({
+        "brighten": 50,
+        "remove_background": 1
+    })
 
     # Checking validity of request
     for parameter in ["$top", "$bottom", "$accessories"]:

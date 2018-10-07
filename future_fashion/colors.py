@@ -8,7 +8,7 @@ import pandas as pd
 import numpy as np
 from sklearn.cluster import KMeans
 from colorz import DEFAULT_NUM_COLORS, DEFAULT_MINV,DEFAULT_MAXV, THUMB_SIZE
-from colorz import get_colors, clamp, order_by_hue
+from colorz import get_colors, clamp, order_by_hue, brighten
 
 
 def convert_rgb_to_hsv(rgb):
@@ -88,3 +88,20 @@ def get_colors_frame(content, num_colors=3, by_hue=False):
         num = str(num)
         labels += ["r"+num, "g"+num, "b"+num]
     return pd.DataFrame.from_records(records, index="ix", columns=labels).dropna(axis=0)
+
+
+def remove_white_image_background(file_path):
+    im = Image.open(file_path)
+    im = im.convert('RGBA')
+    pix = im.load()
+    width, height = im.size
+    for x in range(width):
+        for y in range(height):
+            r, g, b, a = pix[x, y]
+
+            min_c = min(r, g, b)
+            max_c = max(r ,g, b)
+            delta = max_c - min_c
+            if min_c >= 200 and delta <= 8:
+                pix[x, y] = (0, 0, 0, 0)
+    return im

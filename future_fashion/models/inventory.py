@@ -5,7 +5,8 @@ from django.core.exceptions import ValidationError
 
 from core.models.organisms import Community
 from core.utils.files import SemanticDirectoryScan
-from future_fashion.colors import extract_dominant_colors, create_colors_data
+from future_fashion.colors import (extract_dominant_colors, create_colors_data, remove_white_image_background,
+                                   brighten as colorz_brighten)
 
 
 class ClothingInventoryCommunity(Community):
@@ -26,7 +27,10 @@ class ClothingInventoryCommunity(Community):
                     "type": "$.results.prediction",
                     "confidence": "$.results.confidence"
                 },
-                "_update_key": "path"
+                "_update_key": "path",
+                # TODO: below configs should be set by image processor stage, they are not used by "types"
+                "$brighten": 0,
+                "$remove_background": False
             },
             "schema": {},
             "errors": {},
@@ -53,10 +57,15 @@ class ClothingInventoryCommunity(Community):
         target_directory = os.path.join("future_fashion", "data", "media", "future_fashion", args[0])
         if not os.path.exists(target_directory):
             raise ValidationError("Directory {} does not exist".format(target_directory))
+        brighten = self.config.get("brighten", 0)
+        remove_background = self.config.get("remove_background", False)
         for file_data in scanner(target_directory):
             color_data = {}
+            img = remove_white_image_background(file_data["path"]) if remove_background else file_data["path"]
             for num_colors in [2, 3, 6]:
-                colors, balance = extract_dominant_colors(file_data["path"], num=num_colors)
+                colors, balance = extract_dominant_colors(img, num=num_colors)
+                if brighten:
+                    colors = [list(colorz_brighten(color, brighten)) for color in colors]
                 color_data.update(create_colors_data(colors, balance))
             store, year, id_, view = file_data["name"].split("_")
             file_data.update({
