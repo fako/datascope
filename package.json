@@ -1,10 +1,11 @@
 {
     "name": "datascope",
-    "version": "0.6.4",
+    "version": "0.6.5",
     "artefact": {
         "includes": [
             "online_discourse/data/dumps/",
-            "online_discourse/data/feature_frames/"
+            "online_discourse/data/feature_frames/",
+            "online_discourse/data/text_frames/"
         ]
     }
 }
