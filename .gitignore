@@ -19,7 +19,7 @@ datascope/settings.py
 datascope/bootstrap.py
 datascope/secrets.py
 
-data/
+*/data/
 
 # Wikipedia labs specific file
 app.py

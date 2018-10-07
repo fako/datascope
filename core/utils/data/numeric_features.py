@@ -22,7 +22,7 @@ class NumericFeaturesFrame(object):
     def __init__(self, identifier, features, content=None, file_path=None):
         """
         Initiates a DataFrame and fills the frame using the content and features arguments.
-        
+
         :param identifier: callable that takes content and returns the identifier
         :param content: callable that returns lazy content iterator (e.g. lazy QuerySet iterator)
         :param features: iterator with named callables that represent features
@@ -33,7 +33,7 @@ class NumericFeaturesFrame(object):
         self.content = None
         self.features = None
         # Fill actual data frame with content
-        self.reset(features=features, content=content if not file_path else None, )
+        self.reset(features=features, content=content if not file_path else None)
         if file_path:
             self.from_disk(file_path)
 
@@ -61,10 +61,10 @@ class NumericFeaturesFrame(object):
         Then it will add the content to the DataFrame by calling all feature callables and add the return values.
         Specify feature_names to limit which feature callables will be used.
         Features not in this list will remain unchanged.
-        
+
         :param content: iterator with Individuals or content
         :param feature_names: a list of feature names to load the content for
-        :return: 
+        :return:
         """
         columns = feature_names if feature_names else self.features.keys()
         assert len(columns), "Can't load_content if feature_names is an empty list or self.features is missing"
@@ -75,12 +75,16 @@ class NumericFeaturesFrame(object):
             series = self.get_feature_series(column, self.features[column], content_callable=content_callable)
             intersection = self.data[column].index.intersection(series.index)
             if len(intersection) == self.data.shape[0]:
+                # the entire column is new
+                # we simply add it to the frame
                 self.data[column] = series
             else:
+                # the column partially exists
+                # we add what is new and update existing rows
                 missing = series.index.difference(self.data[column].index)
                 new[series.name] = series.loc[list(missing.get_values())]
                 update[series.name] = series.loc[list(intersection.get_values())]
-        self.data = self.data.append(new)
+        self.data = self.data.append(new, sort=False)
         self.data.update(update)
 
     @staticmethod
@@ -123,9 +127,9 @@ class NumericFeaturesFrame(object):
         Will add all features in callables to the numeric frames as empty columns.
         As label it will use the name of the callable.
         Then it passes all content to load_content, but only loads content for the new features
-        
-        :param callables: iterator with callables that return features 
-        :return: 
+
+        :param callables: iterator with callables that return features
+        :return:
         """
         features = {
             feature_callable.__name__: feature_callable
@@ -143,10 +147,10 @@ class NumericFeaturesFrame(object):
         Either creates a DataFrame from scratch using content and features given.
         Or resets rows with only new content.
         Or resets columns with only new features.
-        
+
         :param content: callable that returns lazy content iterator (e.g. lazy QuerySet iterator)
         :param features: iterator with named callables that represent features
-        :return: 
+        :return:
         """
         assert content is not None or features is not None, \
             "Either content or features should be given to reset the numeric frame"
@@ -165,8 +169,8 @@ class NumericFeaturesFrame(object):
         """
         Creates a Series out of params and then performs dotproduct on every row in DataFrame.
         It then sorts the scalars and returns indexes for highest scalars up to a amount of limit
-        
-        :param params: dict of GET parameters 
+
+        :param params: dict of GET parameters
         :return: sorted list of index values
         """
         input_data = {key: 0.0 for key in self.features.keys()}
@@ -179,7 +183,7 @@ class NumericFeaturesFrame(object):
         """
         Checks if keys in params exist in self.features and if values are of correct type.
         Strip $ from start of keys.
-        
+
         :param params: dict of GET parameters
         :return: tuple with accepted and rejected items
         """
