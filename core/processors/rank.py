@@ -150,15 +150,15 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
             if ix not in results:
                 continue
             individual["ds_rank"] = {
-                "rank": ranking.loc[ix]
+                "rank": ranking.get_value(ix)
             }
             for serie in series:
                 individual["ds_rank"][serie.name] = {
-                    "rank": serie.loc[ix],  # rank is value multiplied by weight
-                    "value": serie.loc[ix],
+                    "rank": serie.get_value(ix),  # TODO: rank value should be multiplied by weight
+                    "value": serie.get_value(ix),
                     "weight": 1.0
                 }
-                results[ix] = individual
+            results[ix] = individual
         return (value for value in results.values() if value is not None)
 
     def default_ranking(self, individuals):
@@ -175,7 +175,7 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
         if ranking_feature not in self.contextual_features:
             ranked_feature = self.feature_frame.data[ranking_feature]
         else:
-            # TODO: optimize memory use
+            # TODO: optimize memory use for contextual features or deprecate contextual features
             individuals = list(individuals)
             ranked_feature = self.feature_frame.get_feature_series(
                 ranking_feature, getattr(self, ranking_feature),

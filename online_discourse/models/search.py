@@ -140,7 +140,7 @@ class DiscourseSearchCommunity(Community):
 
     def before_rank_manifestation(self, manifestation_part):
         manifestation_part["config"]["feature_frame_path"] = self.get_feature_frame_file("feature_frame")
-        manifestation_part["config"]["text_frame_path"] = self.get_feature_frame_file("text_frame")
+        manifestation_part["config"]["text_frame_path"] = self.get_feature_frame_file("text_frame", ".npz")
 
     def store_frames(self):
         assert self.state == CommunityState.READY, "Can't store frames for a Community that is not ready"

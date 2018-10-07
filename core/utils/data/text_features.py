@@ -51,6 +51,7 @@ class TextFeaturesFrame(object):
         self.raw_data = load_npz(file_path)
         with open(file_name + ".voc", "rb") as vocab_file:
             self.vectorizer = pickle.load(vocab_file)
+        self.identifiers = pd.read_pickle(file_name + ".pkl")
         self.load_features(self.vectorizer)
         self.load_data(self.raw_data)
 
@@ -59,12 +60,13 @@ class TextFeaturesFrame(object):
         save_npz(file_path, self.raw_data)
         with open(file_name + ".voc", "wb") as vocab_file:
             pickle.dump(self.vectorizer, vocab_file)
+        self.identifiers.to_pickle(file_name + ".pkl")
 
     def get_vectorizer(self):
         return CountVectorizer()
 
     def load_data(self, raw_data):
-        transformer = TfidfTransformer(norm=None)
+        transformer = TfidfTransformer()
         self.data = transformer.fit_transform(raw_data).tocsc()
         self.data /= self.data.max()  # min-max normalisation across columns with min=0
 
@@ -105,7 +107,7 @@ class TextFeaturesFrame(object):
         self.vectorizer = None
         self.load_content(content)
 
-    def rank_by_params(self, params):
+    def score_by_params(self, params):
         matrix = None
         vector = []
         for key, value in self.clean_params(params).items():
@@ -113,8 +115,8 @@ class TextFeaturesFrame(object):
             matrix = hstack([matrix, col]) if matrix is not None else col
             vector.append(value)
         vector = np.array(vector)
-        indices = matrix.dot(vector).argsort()
-        return pd.Series([self.identifiers[ix] for ix in indices[::-1]])
+        values = matrix.dot(vector)
+        return pd.Series(values, index=self.identifiers)
 
     def clean_params(self, params):
         cleaned = {}

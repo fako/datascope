@@ -1,4 +1,5 @@
 from core.processors.rank import RankProcessor
+from datagrowth.configuration import ConfigurationNotFoundError
 
 
 class OnlineDiscourseRankProcessor(RankProcessor):
@@ -13,12 +14,22 @@ class OnlineDiscourseRankProcessor(RankProcessor):
         return text
 
     def default_ranking(self, individuals):
-        individuals = list(individuals)  # TODO: optimize memory use
-        argument_score_rank = self.feature_frame.data["argument_score"]
-        keyword_count_rank = self.feature_frame.get_feature_series(
-            "keyword_count", self.keyword_count,
-            content_callable=lambda: individuals, context=self.config.to_dict()
-        )
+        argument_score_rank = self.feature_frame.data["argument_score"].drop_duplicates()  # TODO: deduplicate in frame
+        argument_score_max = argument_score_rank.max()
+        argument_score_rank /= argument_score_max
+        try:  # TODO: replace try with .get from config
+            keywords = self.config.keywords
+        except ConfigurationNotFoundError:
+            keywords = []
+        keyword_params = {
+            keyword: 1
+            for keyword in keywords
+        }
+        keyword_count_rank = \
+            self.text_frame.score_by_params(keyword_params).drop_duplicates() # TODO: deduplicate in frame
+        keyword_count_rank.name = "keywords"
+        keyword_max = keyword_count_rank.max()
+        keyword_count_rank /= keyword_max
         ranking_series = argument_score_rank.add(keyword_count_rank)
         ranking_series = ranking_series.sort_values(ascending=False)[:self.config.result_size]
         return self.get_ranking_results(ranking_series, individuals, [argument_score_rank, keyword_count_rank])
@@ -26,14 +37,3 @@ class OnlineDiscourseRankProcessor(RankProcessor):
     @staticmethod
     def argument_score(individual):
         return individual.get("argument_score", 0.0)
-
-    @staticmethod
-    def keyword_count(individual, context):
-        # Early exit if context does not require any calculation
-        keywords = context.get("keywords", [])
-        word_count = individual.get("word_count", {})
-        if not keywords or not word_count:
-            return 0
-        word_total = sum(word_count.values())
-        # The actual keyword_count calculation
-        return sum([word_count.get(keyword, 0) / word_total for keyword in keywords], 0)
