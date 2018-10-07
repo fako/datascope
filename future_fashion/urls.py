@@ -1,4 +1,8 @@
+import os
+
 from django.conf.urls import url
+from django.conf import settings
+from django.conf.urls.static import static
 
 from core.views.community import CommunityView, HtmlCommunityView
 from future_fashion.models import InventoryCommunity
@@ -24,3 +28,10 @@ urlpatterns = [
         name=InventoryCommunity.get_name() + "_swipe"
     )
 ]
+
+mediapatterns = []
+if settings.DEBUG:
+    mediapatterns = static(
+        settings.MEDIA_URL + "future_fashion/",
+        document_root=os.path.join("future_fashion", "data", "media", "future_fashion")
+    )

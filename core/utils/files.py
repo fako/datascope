@@ -3,6 +3,7 @@ import shutil
 from random import shuffle
 from glob import glob
 from collections import Counter
+from tqdm import tqdm
 
 
 class MissingFileSource(Exception):
@@ -162,15 +163,19 @@ class FileBalancer(object):  # TODO: test, it has a serious bug
 
 class SemanticDirectoryScan(object):
 
-    def __init__(self, file_pattern, ignore_directories=None):
+    def __init__(self, file_pattern, ignore_directories=None, progress_bar=False):
         self.file_pattern = file_pattern
         self.ignore_directories = ignore_directories or []
+        self.progress_bar = progress_bar
 
     def __call__(self, directory_path):
         if not directory_path.endswith("/"):
             directory_path += "/"
         glob_pattern = "{}**/{}".format(directory_path, self.file_pattern)
-        for file_path in glob(glob_pattern, recursive=True):
+        file_paths = glob(glob_pattern, recursive=True) \
+            if not self.progress_bar \
+            else tqdm(glob(glob_pattern, recursive=True))
+        for file_path in file_paths:
             relative_path = file_path.replace(directory_path, "")
             head, tail = os.path.split(relative_path)
             if not tail:
