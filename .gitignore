@@ -19,7 +19,7 @@ datascope/settings.py
 datascope/bootstrap.py
 datascope/secrets.py
 
-*/data/
+data/
 
 # Experimental files
 docker-compose.yml

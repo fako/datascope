@@ -1,8 +1,8 @@
-from datagrowth.resources import HttpFileResource
+from datagrowth.resources import HttpImageResource
 from core.utils.files import FileSorter, MissingFileSource
 
 
-class ImageDownload(HttpFileResource):
+class ImageDownload(HttpImageResource):
     pass
 
 

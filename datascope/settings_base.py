@@ -1,5 +1,12 @@
+import os
 import logging
+
+
 log = logging.getLogger(__name__)
+
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 #######################################################
@@ -166,7 +173,7 @@ SEGMENTS_TO_SERVICE = SEGMENTS_BEFORE_PROJECT_ROOT + 3  # /data/v1/<service-name
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = PATH_TO_PROJECT + 'system/files/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'data', 'media/')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
