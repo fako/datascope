@@ -367,7 +367,7 @@ class HttpResource(Resource):
         self.body = response.content if isinstance(response.content, str) else \
             response.content.decode("utf-8", "replace")
 
-    def _handle_errors(self):
+    def _handle_errors(self):  # TODO: fix error handling to use DG exceptions
         """
         Raises exceptions upon error statuses
         """
