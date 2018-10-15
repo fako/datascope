@@ -21,5 +21,5 @@ datascope/secrets.py
 
 */data/
 
-# Wikipedia labs specific file
-app.py
+# Experimental files
+docker-compose.yml
