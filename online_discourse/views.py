@@ -2,8 +2,9 @@ from django.core.mail import mail_managers
 from rest_framework import generics, throttling, viewsets
 from rest_framework.response import Response
 
+from core.models.organisms.community import CommunityState
+from online_discourse.models import DiscourseSearchCommunity
 from online_discourse.models.orders import DiscourseOrderSerializer
-from online_discourse.discourse import configurations, DiscourseConfiguration
 
 
 class AnonDiscourseOrderThrottle(throttling.AnonRateThrottle):
@@ -22,15 +23,31 @@ class CreateDiscourseOrder(generics.CreateAPIView):
 
 class DiscourseViewSet(viewsets.ViewSet):
 
+    @staticmethod
+    def _community_as_dict(community):
+        name, configuration = community.get_configuration_module()
+        configuration = configuration._asdict()
+        configuration["id"] = community.id
+        configuration["name"] = name
+        return name, configuration
+
     def list(self, request):
-        discourses = {
-            name: discourse._asdict() for name, discourse in configurations.__dict__.items()
-            if isinstance(discourse, DiscourseConfiguration)
-        }
-        return Response(discourses)
+        english = []
+        dutch = []
+        for community in DiscourseSearchCommunity.objects.filter(state=CommunityState.READY):
+            name, configuration = self._community_as_dict(community)
+            if configuration["language"] == "en":
+                english.append(configuration)
+            elif configuration["language"] == "nl":
+                dutch.append(configuration)
+            else:
+                raise AssertionError("Unknown language for {}".format(community.signature))
+        return Response({
+            "en": english,
+            "nl": dutch
+        })
 
     def retrieve(self, request, pk=None):
-        pass
-
-
-list_discourse_view = DiscourseViewSet.as_view({"get": "list"})
+        community = DiscourseSearchCommunity.objects.get(id=pk)
+        name, configuration = self._community_as_dict(community)
+        return Response(configuration)

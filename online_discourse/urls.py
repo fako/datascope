@@ -1,8 +1,9 @@
 from django.conf.urls import url
+from rest_framework import routers
 
 from core.views.community import CommunityView
 from online_discourse.models import DiscourseSearchCommunity
-from online_discourse.views import CreateDiscourseOrder, list_discourse_view
+from online_discourse.views import CreateDiscourseOrder, DiscourseViewSet
 
 
 urlpatterns = [
@@ -16,10 +17,14 @@ urlpatterns = [
         r'^discourse-search/order/?$',
         CreateDiscourseOrder.as_view(),
         name=DiscourseSearchCommunity.get_name() + "_order"
-    ),
-    url(
-        r'^discourse-search/discourses/?$',
-        list_discourse_view,
-        name=DiscourseSearchCommunity.get_name() + "_list"
-    ),
+    )
 ]
+
+
+router = routers.SimpleRouter()
+router.register(
+    'discourse-search/discourses',
+    DiscourseViewSet,
+    base_name=DiscourseSearchCommunity.get_name()
+)
+urlpatterns += router.urls

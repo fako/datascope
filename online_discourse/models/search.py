@@ -160,6 +160,10 @@ class DiscourseSearchCommunity(Community):
         rank_processor.text_frame.load_content(lambda: self.kernel.content)
         rank_processor.text_frame.to_disk(self.get_feature_frame_file("text_frame", file_ext=".npz"))
 
+    def get_configuration_module(self):
+        name, language = self.signature.split("&")
+        return name, getattr(configurations, name)
+
     class Meta:
         verbose_name = "Discourse search community"
         verbose_name_plural = "Discourse search communities"
