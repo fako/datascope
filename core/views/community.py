@@ -55,7 +55,8 @@ class CommunityView(APIView):
         for get_parameter in get_configuration:
             if get_parameter in post_configuration:
                 raise ValidationError( "{} should be specified in either GET and POST not both".format(get_parameter))
-        configuration = dict(**get_configuration, **post_configuration)
+        configuration = dict(**get_configuration)
+        configuration.update(**post_configuration)
         for key, value in configuration.items():
             if isinstance(value, str) and value.isnumeric() and not key == "t":
                 configuration[key] = float(value) if "." in key else int(value)
