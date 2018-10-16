@@ -73,11 +73,9 @@ INSTALLED_APPS = (
     'visual_translations',
     'future_fashion',
     'open_data',
-    'topic_research',
     'wiki_scope',
     'online_discourse',
     'nautilus',
-    'trolls',
     'setup_utrecht'
 )
 
