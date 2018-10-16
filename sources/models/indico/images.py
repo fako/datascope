@@ -1,13 +1,17 @@
 from __future__ import unicode_literals, absolute_import, print_function, division
 
 import logging
+log = logging.getLogger(__name__)
 import json
 
-import indicoio
+try:
+    import indicoio
+except ImportError:
+    log.warn("Not supporting indicoio on this platform")
 
 from core.models.resources.http import HttpResource
 
-log = logging.getLogger(__name__)
+
 
 
 class ImageFeatures(HttpResource):

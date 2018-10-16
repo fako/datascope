@@ -1,8 +1,13 @@
+import logging
+log = logging.getLogger(__name__)
 import os
 from collections import OrderedDict
 
-import spacy
-from spacy_arguing_lexicon import ArguingLexiconParser
+try:
+    import spacy
+    from spacy_arguing_lexicon import ArguingLexiconParser
+except ImportError:
+    log.warn("Not supporting spacy on this platform")
 
 from core.models.organisms import Community, Collective, Individual
 from core.models.organisms.states import CommunityState
