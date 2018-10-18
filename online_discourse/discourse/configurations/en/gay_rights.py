@@ -76,6 +76,10 @@ DESCRIPTIVE_ADJECTIVES = [
 ]
 
 gay_rights = DiscourseConfiguration(
+    title="Gay Rights",
+    description="In large parts of America people with a non-hetero sexual orientation "
+                "do not get accepted in local communties. "
+                "There is disagreement around how much rights these people have to feel how they feel.",
     language="en",
     singular_subjects=SINGULAR_SUBJECTS,
     plural_subjects=PLURAL_SUBJECTS,

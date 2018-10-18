@@ -93,6 +93,9 @@ DESCRIPTIVE_ADJECTIVES = [
 ]
 
 death_penalty = DiscourseConfiguration(
+    title="Death Penalty",
+    description="America is one of the few Western countries upholding the death penalty. " + \
+                "There is a constant debate about whether the death penalty should get abolished.",
     language="en",
     singular_subjects=SINGULAR_SUBJECTS,
     plural_subjects=PLURAL_SUBJECTS,
