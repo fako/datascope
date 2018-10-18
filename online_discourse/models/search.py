@@ -162,7 +162,7 @@ class DiscourseSearchCommunity(Community):
 
     def get_configuration_module(self):
         name, language = self.signature.split("&")
-        return name, getattr(configurations, name)
+        return name, getattr(configurations, name, None)
 
     class Meta:
         verbose_name = "Discourse search community"
