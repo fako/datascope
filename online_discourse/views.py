@@ -3,6 +3,7 @@ from rest_framework import generics, throttling, viewsets
 from rest_framework.response import Response
 
 from core.models.organisms.community import CommunityState
+from core.utils.data import TextFeaturesFrame
 from online_discourse.models import DiscourseSearchCommunity
 from online_discourse.models.orders import DiscourseOrderSerializer
 
@@ -53,4 +54,13 @@ class DiscourseViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk=None):
         community = DiscourseSearchCommunity.objects.get(id=pk)
         name, configuration = self._community_as_dict(community)
+        text_frame = TextFeaturesFrame(
+            get_identifier=lambda ind: ind["url"],
+            get_text=lambda ind: " ".join([paragraph for paragraph in ind["paragraph_groups"][0]]),
+            file_path=community.get_feature_frame_file("text_frame", file_ext=".npz")
+        )
+        tfidf_sum = text_frame.data.sum(axis=0)
+        indices = tfidf_sum.A1.argsort()
+        feature_names = text_frame.vectorizer.get_feature_names()
+        configuration["most_important_words"] = [feature_names[ix] for ix in indices[-10:]]
         return Response(configuration)
