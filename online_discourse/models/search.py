@@ -163,7 +163,7 @@ class DiscourseSearchCommunity(Community):
         rank_processor.text_frame.to_disk(self.get_feature_frame_file("text_frame", file_ext=".npz"))
 
     def get_configuration_module(self):
-        name, language = self.signature.split("&")
+        name = next((part for part in self.signature.split("&") if "=" not in part))
         return name, getattr(configurations, name, None)
 
     class Meta:
