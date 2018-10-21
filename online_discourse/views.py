@@ -1,3 +1,5 @@
+from urlobject import URLObject
+
 from django.core.mail import mail_managers
 from rest_framework import generics, throttling, viewsets
 from rest_framework.response import Response
@@ -54,6 +56,7 @@ class DiscourseViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk=None):
         community = DiscourseSearchCommunity.objects.get(id=pk)
         name, configuration = self._community_as_dict(community)
+        # Set most_important_words
         text_frame = TextFeaturesFrame(
             get_identifier=lambda ind: ind["url"],
             get_text=lambda ind: " ".join([paragraph for paragraph in ind["paragraph_groups"][0]]),
@@ -65,4 +68,17 @@ class DiscourseViewSet(viewsets.ViewSet):
         most_important_words = [feature_names[ix] for ix in indices[-20:]]
         most_important_words.reverse()
         configuration["most_important_words"] = most_important_words
+        # Retrieve sets
+        authors = set()
+        sources = set()
+        for individual in community.kernel.individual_set.all():
+            author = individual.properties.get("author", None)
+            if author and author.strip():
+                authors.add(author.strip())
+            url = individual.properties.get("url")
+            if url:
+                source = URLObject(url).hostname
+                sources.add(source)
+        configuration["authors"] = sorted(authors)
+        configuration["sources"] = sorted(sources)
         return Response(configuration)
