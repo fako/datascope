@@ -73,7 +73,7 @@ def swipe_interface_view(request):
     # We're dealing with a valid request. Get the data.
     api_response = api_view.get_response(
         ClothingInventoryCommunity,
-        "bunb",
+        "alpha",
         configuration,
         created_at_info
     )
