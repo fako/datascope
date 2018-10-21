@@ -150,12 +150,12 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
             if ix not in results:
                 continue
             individual["ds_rank"] = {
-                "rank": ranking.get_value(ix)
+                "rank": ranking.at[ix]
             }
             for serie in series:
                 individual["ds_rank"][serie.name] = {
-                    "rank": serie.get_value(ix),  # TODO: rank value should be multiplied by weight
-                    "value": serie.get_value(ix),
+                    "rank": serie.at[ix] ,  # TODO: rank value should be multiplied by weight
+                    "value": serie.at[ix],
                     "weight": 1.0
                 }
             results[ix] = individual

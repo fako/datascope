@@ -4,7 +4,7 @@ import pickle
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from scipy.sparse import csc_matrix, vstack, hstack, save_npz, load_npz
+from scipy.sparse import vstack, hstack, save_npz, load_npz
 
 
 class TextContentReader(object):
