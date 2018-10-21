@@ -147,7 +147,9 @@ class DiscourseSearchCommunity(Community):
         part = next((part for part in self.COMMUNITY_BODY if part.get("name") == "rank"), None)
         if part is None:
             raise TypeError("No RankProcessor part found in COMMUNITY_BODY")
-        rank_processor, method, args_type = self.prepare_process(part["process"], class_config=part.get("config"))
+        config = part.get("config")
+        config["language"] = self.config.language
+        rank_processor, method, args_type = self.prepare_process(part["process"], class_config=config)
 
         for frame_type in ["feature_frame", "text_frame"]:
             path, file_name = os.path.split(self.get_feature_frame_file(frame_type))

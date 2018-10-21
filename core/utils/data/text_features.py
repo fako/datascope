@@ -1,5 +1,6 @@
 import os
 import pickle
+from importlib import import_module
 
 import pandas as pd
 import numpy as np
@@ -29,9 +30,10 @@ class TextContentReader(object):
 
 class TextFeaturesFrame(object):
 
-    def __init__(self, get_identifier, get_text, content=None, file_path=None):
+    def __init__(self, get_identifier, get_text, content=None, file_path=None, language="en"):
         self.get_identifier = get_identifier
         self.get_text = get_text
+        self.language = language
         # Initialize attributes used by this class
         self.raw_data = None
         self.vectorizer = None
@@ -63,7 +65,9 @@ class TextFeaturesFrame(object):
         self.identifiers.to_pickle(file_name + ".pkl")
 
     def get_vectorizer(self):
-        return CountVectorizer()
+        stop_words_module = import_module("spacy.lang.{}.stop_words".format(self.language))
+        stop_words = list(getattr(stop_words_module, 'STOP_WORDS'))
+        return CountVectorizer(stop_words=stop_words)
 
     def load_data(self, raw_data):
         transformer = TfidfTransformer()

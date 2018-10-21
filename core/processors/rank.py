@@ -121,10 +121,11 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
             )
         else:
             self.feature_frame = None
-        if "identifier_key" in self.config and "text_frame_path" in self.config:
+        if "identifier_key" in self.config and "text_frame_path" in self.config and "language" in self.config:
             self.text_frame = TextFeaturesFrame(
                 get_identifier=lambda ind: ind[self.config.identifier_key],
                 get_text=self.get_text,
+                language=self.config.language,
                 file_path=self.config.text_frame_path
             )
         else:
