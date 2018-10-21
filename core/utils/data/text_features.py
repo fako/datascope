@@ -114,6 +114,8 @@ class TextFeaturesFrame(object):
             col = self.data.getcol(self.features[key])
             matrix = hstack([matrix, col]) if matrix is not None else col
             vector.append(value)
+        if matrix is None:
+            return None
         vector = np.array(vector)
         values = matrix.dot(vector)
         return pd.Series(values, index=self.identifiers)

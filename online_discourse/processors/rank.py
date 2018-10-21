@@ -26,7 +26,11 @@ class OnlineDiscourseRankProcessor(RankProcessor):
             for keyword in keywords
         }
         keyword_count_rank = \
-            self.text_frame.score_by_params(keyword_params).drop_duplicates() # TODO: deduplicate in frame
+            self.text_frame.score_by_params(keyword_params)
+        if keyword_count_rank is None:
+            ranking_series = argument_score_rank.sort_values(ascending=False)[:self.config.result_size]
+            return self.get_ranking_results(ranking_series, individuals, [argument_score_rank])
+        keyword_count_rank = keyword_count_rank.drop_duplicates() # TODO: deduplicate in frame
         keyword_count_rank.name = "keywords"
         keyword_max = keyword_count_rank.max()
         keyword_count_rank /= keyword_max
