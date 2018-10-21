@@ -62,5 +62,7 @@ class DiscourseViewSet(viewsets.ViewSet):
         tfidf_sum = text_frame.data.sum(axis=0)
         indices = tfidf_sum.A1.argsort()
         feature_names = text_frame.vectorizer.get_feature_names()
-        configuration["most_important_words"] = [feature_names[ix] for ix in indices[-10:]]
+        most_important_words = [feature_names[ix] for ix in indices[-20:]]
+        most_important_words.reverse()
+        configuration["most_important_words"] = most_important_words
         return Response(configuration)
