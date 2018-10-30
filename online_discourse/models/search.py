@@ -64,6 +64,14 @@ class DiscourseSearchCommunity(Community):
             }
         },
         {
+            "process": "FilterProcessor.select",
+            "config": {
+                "select_keys": ["author", "source"],
+                "$author": None,
+                "$source": None
+            }
+        },
+        {
             "name": "rank",
             "process": "OnlineDiscourseRankProcessor.default_ranking",
             "config": {
