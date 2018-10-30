@@ -94,6 +94,8 @@ class LegacyRankProcessorMixin(object):
 ##################################################################
 
 
+from itertools import islice
+
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.processors.base import Processor
 from core.utils.data import NumericFeaturesFrame, TextFeaturesFrame
@@ -145,22 +147,31 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
         ]
 
     def get_ranking_results(self, ranking, individuals, series):
-        results = OrderedDict([(ix, None,) for ix in ranking.index])
+        results = []
+        max_size = self.config.result_size
         for individual in individuals:
             ix = individual[self.config.identifier_key]
-            if ix not in results:
+            if ix not in ranking.index:
                 continue
+            if len(results) < max_size:
+                results.append(individual)
+                continue
+            results.append(individual)
+            results.sort(key=lambda ind: ranking[ind[self.config.identifier_key]], reverse=True)
+            results = results[:max_size]
+        for individual in results:
+            ix = individual[self.config.identifier_key]
             individual["ds_rank"] = {
                 "rank": ranking.at[ix]
             }
             for serie in series:
+                value = serie.at[ix]
                 individual["ds_rank"][serie.name] = {
-                    "rank": serie.at[ix] ,  # TODO: rank value should be multiplied by weight
-                    "value": serie.at[ix],
+                    "rank": value,  # TODO: rank value should be multiplied by weight
+                    "value": value,
                     "weight": 1.0
                 }
-            results[ix] = individual
-        return (value for value in results.values() if value is not None)
+            yield individual
 
     def default_ranking(self, individuals):
         raise NotImplementedError("The default_ranking method should be implemented in its context")
