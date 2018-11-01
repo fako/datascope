@@ -5,7 +5,7 @@
 
     <div>
         {% for image in response.results %}
-            <h4>{{ image.name }} {% if image.ds_rank.rank %}({{ image.ds_rank.rank }}){% endif %}</h4>
+            <h4>{{ image.name }} {% if image._rank.rank %}({{ image._rank.rank }}){% endif %}</h4>
             <a href="{{ request.path }}?$euclidian_distance=1&$reference={{ image.id }}"><img src="{{ image.url }}"/></a>
         {% endfor %}
     </div>

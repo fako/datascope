@@ -70,9 +70,9 @@ class TestRankProcessorBase(TestCase):
         # Make sure that elements did not change except for added ranking
         for element in ranking:
             keys = sorted(element.keys())
-            self.assertEqual(keys, ['ds_rank', 'name', 'value'])
+            self.assertEqual(keys, ['_rank', 'name', 'value'])
         # Check structure of rank details separately
-        rank_details = map(itemgetter('ds_rank'), ranking)
+        rank_details = map(itemgetter('_rank'), ranking)
         for rank_detail in rank_details:
             self.assert_rank_details(rank_detail, modules)
         return ranking
@@ -179,7 +179,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
         ranking = list(instance.hooks(self.test_content))
         names = list(map(itemgetter('name'), ranking))
         self.assertEqual(names, ['highest', 'highest-of-triple'], "Order of ranked dictionaries is not correct.")
-        self.assertEqual(ranking[0]["ds_rank"]["rank"], ranking[1]["ds_rank"]["rank"])
+        self.assertEqual(ranking[0]["_rank"]["rank"], ranking[1]["_rank"]["rank"])
 
     def test_no_hooks(self):
         instance = MockRankProcessor({

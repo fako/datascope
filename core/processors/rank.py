@@ -45,7 +45,7 @@ class LegacyRankProcessorMixin(object):
             for hook, weight in six.iteritems(config_dict)  # config gets whitelisted by Community
             if isinstance(hook, str) and hook.startswith("$") and callable(getattr(self, hook[1:], None)) and weight
         ]
-        sort_key = lambda el: el["ds_rank"].get("rank", 0)
+        sort_key = lambda el: el["_rank"].get("rank", 0)
         results = []
         batch = []
 
@@ -80,7 +80,7 @@ class LegacyRankProcessorMixin(object):
                     0
                 )
             # Set info on individual and write batch to results when appropriate
-            individual['ds_rank'] = rank_info
+            individual['_rank'] = rank_info
             if not idx % self.config.batch_size and len(batch):
                 flush_batch(batch, self.config.result_size)
                 batch = []
@@ -161,12 +161,12 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
             results = results[:max_size]
         for individual in results:
             ix = individual[self.config.identifier_key]
-            individual["ds_rank"] = {
+            individual["_rank"] = {
                 "rank": ranking.at[ix]
             }
             for serie in series:
                 value = serie.at[ix]
-                individual["ds_rank"][serie.name] = {
+                individual["_rank"][serie.name] = {
                     "rank": value,  # TODO: rank value should be multiplied by weight
                     "value": value,
                     "weight": 1.0

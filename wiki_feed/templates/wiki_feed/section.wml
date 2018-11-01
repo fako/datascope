@@ -5,8 +5,8 @@
 ===[[w:{{ page.title }}|{{ page.title }}]]===
 {{  page.wikidata.description }}
 
-{% templatetag openvariable %}collapse top|title=Algorithm Score: {{ page.ds_rank.rank }}{% templatetag closevariable %}
-The score of a page is calculated by the sum of all filter scores for a page. A filter score is the output of the filter multiplied with the weight of the filter. The score of this page ({{ page.ds_rank.rank }}) comes from these filter scores:
+{% templatetag openvariable %}collapse top|title=Algorithm Score: {{ page._rank.rank }}{% templatetag closevariable %}
+The score of a page is calculated by the sum of all filter scores for a page. A filter score is the output of the filter multiplied with the weight of the filter. The score of this page ({{ page._rank.rank }}) comes from these filter scores:
 {% for module, rank_info in modules %}
 * Score by "{{ module }}" filter = {{ rank_info.value }} * {{ rank_info.weight }} = {{ rank_info.rank }}
 {% endfor %}
