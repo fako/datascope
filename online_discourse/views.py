@@ -75,7 +75,7 @@ class DiscourseViewSet(viewsets.ViewSet):
             author = individual.get("author", None)
             if author and author.strip():
                 authors.add(author)
-            url = individual.properties.get("url")
+            url = individual.get("url")
             if url:
                 source = URLObject(url).hostname
                 if source.startswith('www.'):
