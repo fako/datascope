@@ -151,7 +151,7 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
         max_size = self.config.result_size
         for individual in individuals:
             ix = individual[self.config.identifier_key]
-            if ix not in ranking.index:
+            if ix not in ranking.index:  # TODO: assess necessity
                 continue
             if len(results) < max_size:
                 results.append(individual)
