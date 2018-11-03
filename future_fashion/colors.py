@@ -11,6 +11,9 @@ from colorz import DEFAULT_NUM_COLORS, DEFAULT_MINV,DEFAULT_MAXV, THUMB_SIZE
 from colorz import get_colors, clamp, order_by_hue, brighten
 
 
+GRAY_DELTA_TRESHOLD = 8
+
+
 def convert_rgb_to_hsv(rgb):
     hsv = list(rgb_to_hsv(*map(lambda x: x / 256, rgb)))
     hsv[0] = round(hsv[0] * 360)
@@ -38,8 +41,27 @@ def extract_dominant_colors(fd, num=DEFAULT_NUM_COLORS, min_v=DEFAULT_MINV, max_
 
     total = len(labels)
     counts = Counter(labels)
-    colors = [clusters[ix].astype(np.int32).tolist() for ix, count in counts.most_common()]
-    balance = [round(count / total * 100) for ix, count in counts.most_common()]
+    raw_colors = [clusters[ix].astype(np.int32).tolist() for ix, count in counts.most_common()]
+    raw_balance = [round(count / total * 100) for ix, count in counts.most_common()]
+
+    # Placing greyish in the back
+    colors = []
+    balance = []
+    grays = []
+    gray_balance = []
+    for color, percentage in zip(raw_colors, raw_balance):
+        r, g, b = color
+        min_c = min(r, g, b)
+        max_c = max(r, g, b)
+        delta = max_c - min_c
+        if delta <= 2 * GRAY_DELTA_TRESHOLD:
+            grays.append(color)
+            gray_balance.append(percentage)
+        else:
+            colors.append(color)
+            balance.append(percentage)
+    colors += gray_balance
+    balance += gray_balance
 
     return colors, balance
 
@@ -101,6 +123,6 @@ def remove_white_image_background(file_path):
             min_c = min(r, g, b)
             max_c = max(r, g, b)
             delta = max_c - min_c
-            if min_c >= 200 and delta <= 8:
+            if min_c >= 200 and delta <= GRAY_DELTA_TRESHOLD:
                 pix[x, y] = (0, 0, 0, 0)
     return im
