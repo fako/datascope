@@ -6,6 +6,7 @@ class ColorClothingSet(models.Model):
 
     email = models.EmailField(null=True, blank=True)
     processing_permission = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     top_color = models.CharField(max_length=6)
     bottom_color = models.CharField(max_length=6)

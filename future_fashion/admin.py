@@ -7,7 +7,7 @@ from future_fashion.models import (ClothingDataCommunity, ClothingInventoryCommu
 
 
 class ColorClothingSetAdmin(admin.ModelAdmin):
-    list_display = ["email", "processing_permission", "top_item_image", "bottom_item_image", "match_style"]
+    list_display = ["email", "processing_permission", "top_item_image", "bottom_item_image", "created_at"]
     readonly_fields = ("processing_permission", "top_item_image", "bottom_item_image",)
 
 
