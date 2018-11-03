@@ -60,7 +60,7 @@ def extract_dominant_colors(fd, num=DEFAULT_NUM_COLORS, min_v=DEFAULT_MINV, max_
         else:
             colors.append(color)
             balance.append(percentage)
-    colors += gray_balance
+    colors += grays
     balance += gray_balance
 
     return colors, balance
