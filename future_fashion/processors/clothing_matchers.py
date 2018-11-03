@@ -47,18 +47,16 @@ class ClothingSetMatchProcessor(Processor):
 
     def _get_prominent_color_match_indices(self, colors, colors_frame):
         vector = get_vector_from_colors(colors)
-        for num in range(0, self.clothing_frame.num_colors * 3, 3):
-            color_vector = vector[num:num+3]
-            color_columns = colors_frame.columns[num:num+3]
-            color_similarity = cosine_similarity(
-                colors_frame.loc[:,color_columns],
-                np.array(color_vector).reshape(1, -1)
-            )
-            color_similarity = color_similarity.flatten()
-            indices = np.argsort(color_similarity)
-            cut_ix = next((num for num, ix in enumerate(indices[::-1]) if color_similarity[ix] < 0.99), None)
-            if cut_ix is None:
-                break
-            colors_frame = colors_frame.iloc[indices[-1 * cut_ix:]]
+        num = 0  # TODO: use secondary colors to order/filter the initial results
+        color_vector = vector[num:num+3]
+        color_columns = colors_frame.columns[num:num+3]
+        color_similarity = cosine_similarity(
+            colors_frame.loc[:,color_columns],
+            np.array(color_vector).reshape(1, -1)
+        )
+        color_similarity = color_similarity.flatten()
+        indices = np.argsort(color_similarity)[::-1]  # [::-1] reverses the ndarray
+        cut_ix = next((num for num, ix in enumerate(indices) if color_similarity[ix] < 0.85), len(indices)-1)
+        colors_frame = colors_frame.iloc[indices[:cut_ix]]
         indices = list(colors_frame.index.values)
         return indices

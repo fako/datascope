@@ -82,6 +82,8 @@ def swipe_interface_view(request):
     data = [entry for entry in api_response.data["results"] if entry["type"] == type]
     if not _id:
         return Response(format_data(data[0]), status.HTTP_200_OK)
+    elif not len(data):
+        return Response({}, status.HTTP_200_OK)
 
     # Figure out next object to return
     # Should act like a carousel
