@@ -17,8 +17,12 @@ DEFAULT_CONFIGURATION = {
         'http://www.globe-scope.com',
         'http://debatkijker.nl',
         'http://www.debatkijker.nl',
+        'https://debatkijker.nl',
+        'https://www.debatkijker.nl',
         'http://2ndhandstylist.com',
         'http://www.2ndhandstylist.com',
+        'https://2ndhandstylist.com',
+        'https://www.2ndhandstylist.com',
     ],
     "global_async": True,  # by default offload to celery where possible
     "global_user_agent": "DataScope (v{})".format(settings.DATASCOPE_VERSION),
