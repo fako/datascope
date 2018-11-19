@@ -37,7 +37,9 @@ class ShellResource(Resource):
     FLAGS = {
         "settings": "--settings="
     }
+    VARIABLES = {}
     DIRECTORY_SETTING = None
+    CONTENT_TYPE = "text/plain"
 
     SCHEMA = {
         "arguments": {},
@@ -62,7 +64,7 @@ class ShellResource(Resource):
 
         if not self.command:
             self.command = self._create_command(*args, **kwargs)
-            self.uri = ShellResource.uri_from_cmd(self.command.get("cmd"))
+            self.uri = self.uri_from_cmd(self.command.get("cmd"))
         else:
             self.validate_command(self.command)
 
@@ -95,7 +97,7 @@ class ShellResource(Resource):
 
     @property
     def content(self):
-        return "application/json", self.transform(self.stdout)
+        return self.CONTENT_TYPE, self.transform(self.stdout)
 
     def transform(self, stdout):
         """
@@ -108,6 +110,15 @@ class ShellResource(Resource):
         """
         return stdout
 
+    def environment(self, *args, **kwargs):
+        if not self.VARIABLES:
+            return None
+        else:
+            return self.VARIABLES
+
+    def debug(self):
+        print(subprocess.list2cmdline(self.command.get("cmd", [])))
+
     #######################################################
     # CREATE COMMAND
     #######################################################
@@ -115,7 +126,10 @@ class ShellResource(Resource):
     # The values inside are passed to the subprocess library
 
     def variables(self, *args):
-        raise NotImplementedError("Variables are not specified on this resource")
+        args = args or self.command.get("args")
+        return {
+            "input": args
+        }
 
     def _create_command(self, *args, **kwargs):
         self._validate_input(*args, **kwargs)
@@ -192,6 +206,12 @@ class ShellResource(Resource):
         # All is fine :)
         return command
 
+    def clean_stdout(self, stdout):
+        return stdout.decode("utf-8")
+
+    def clean_stderr(self, stderr):
+        return stderr.decode("utf-8")
+
     #######################################################
     # PROTECTED METHODS
     #######################################################
@@ -201,6 +221,7 @@ class ShellResource(Resource):
     def _run(self):
         cmd = self.command.get("cmd")
         cwd = None
+        env = self.environment(*self.command.get("args"), **self.command.get("kwargs"))
         if self.DIRECTORY_SETTING:
             cwd = getattr(settings, self.DIRECTORY_SETTING)
         results = subprocess.run(
@@ -208,11 +229,15 @@ class ShellResource(Resource):
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            cwd=cwd
+            cwd=cwd,
+            env=env
         )
+        self._update_from_results(results)
+
+    def _update_from_results(self, results):
         self.status = results.returncode
-        self.stdout = results.stdout
-        self.stderr = results.stderr
+        self.stdout = self.clean_stdout(results.stdout)
+        self.stderr = self.clean_stderr(results.stderr)
 
     def _handle_errors(self):
         if not self.success:
