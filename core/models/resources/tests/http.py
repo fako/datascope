@@ -8,7 +8,7 @@ from copy import deepcopy
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
-from core.exceptions import DSHttpError50X, DSHttpError40X
+from datagrowth.exceptions import DGHttpError50X, DGHttpError40X
 from core.models.resources.http import HttpResource
 from core.tests.mocks.data import MOCK_DATA
 from core.tests.mocks.http import HttpResourceMock
@@ -187,7 +187,7 @@ class HttpResourceTestMixin(TestCase):
             try:
                 self.instance._handle_errors()
                 self.fail("Handle error doesn't handle status {}".format(status))
-            except DSHttpError50X as exc:
+            except DGHttpError50X as exc:
                 self.assertIsInstance(exc.resource, HttpResource)
                 self.assertEqual(exc.resource.status, status)
             except Exception as exception:
@@ -197,7 +197,7 @@ class HttpResourceTestMixin(TestCase):
             try:
                 self.instance._handle_errors()
                 self.fail("Handle error doesn't handle status {}".format(status))
-            except DSHttpError40X as exc:
+            except DGHttpError40X as exc:
                 self.assertIsInstance(exc.resource, HttpResource)
                 self.assertEqual(exc.resource.status, status)
             except Exception as exception:

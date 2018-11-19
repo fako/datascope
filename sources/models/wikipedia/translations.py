@@ -1,7 +1,5 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
+from datagrowth.exceptions import DGHttpError40X
 from core.utils.helpers import override_dict
-from core.exceptions import DSHttpError40X, DSInvalidResource
 from sources.models.wikipedia.query import WikipediaPage
 
 
@@ -18,7 +16,7 @@ class WikipediaTranslate(WikipediaPage):
         super(WikipediaTranslate, self)._handle_errors()
         if not "iwlinks" in self.body:
             self.status = 404
-            raise DSHttpError40X("No translations found for {} in {}".format(*self.meta), resource=self)
+            raise DGHttpError40X("No translations found for {} in {}".format(*self.meta), resource=self)
 
     @property
     def meta(self):

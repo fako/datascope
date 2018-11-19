@@ -18,7 +18,7 @@ from django.conf import settings
 import json_field
 
 from datagrowth.resources.base import Resource
-from datagrowth.exceptions import DGHttpError50X as DSHttpError50X, DGHttpError40X as DSHttpError40X
+from datagrowth.exceptions import DGHttpError50X, DGHttpError40X
 
 
 class HttpResource(Resource):
@@ -369,17 +369,17 @@ class HttpResource(Resource):
         self.body = response.content if isinstance(response.content, str) else \
             response.content.decode("utf-8", "replace")
 
-    def _handle_errors(self):  # TODO: fix error handling to use DG exceptions
+    def _handle_errors(self):
         """
         Raises exceptions upon error statuses
         """
         class_name = self.__class__.__name__
         if self.status >= 500:
             message = "{} > {} \n\n {}".format(class_name, self.status, self.body)
-            raise DSHttpError50X(message, resource=self)
+            raise DGHttpError50X(message, resource=self)
         elif self.status >= 400:
             message = "{} > {} \n\n {}".format(class_name, self.status, self.body)
-            raise DSHttpError40X(message, resource=self)
+            raise DGHttpError40X(message, resource=self)
         else:
             return True
 

@@ -15,3 +15,11 @@ class DGHttpError50X(DGResourceException):
 
 class DGHttpError40X(DGResourceException):
     pass
+
+
+class DSHttpError403LimitExceeded(DGResourceException):
+    pass
+
+
+class DGHttpWarning204(DGResourceException):
+    pass
