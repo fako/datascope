@@ -46,23 +46,37 @@ class DiscourseSearchCommunity(Community):
         ("download", {
             "process": "HttpResourceProcessor.fetch_mass",
             "input": "@search",
-            "contribute": "Update:ExtractProcessor.extract_from_resource",
+            "contribute": "Update:ExtractProcessor.pass_resource_through",
             "output": "@search",
             "config": {
                 "_args": ["$.url"],
                 "_kwargs": {},
-                "_resource": "WebTextResource",
-                "_objective": {  # objective uses properties added to the soup by WebTextResource
-                    "#url": "soup.source",
-                    "#paragraph_groups": "soup.paragraph_groups",
-                    "#author": "soup.find('meta', attrs={'name':'author'}).get('content') if soup.find('meta', attrs={'name':'author'}) else None"
-                },
-                "_update_key": "url",
-                "$language": "en"
+                "_resource": "WebContentDownload",
+                "_update_key": "url"
             },
             "schema": {},
             "errors": {},
         })
+        # ("download", {
+        #     "process": "HttpResourceProcessor.fetch_mass",
+        #     "input": "@search",
+        #     "contribute": "Update:ExtractProcessor.extract_from_resource",
+        #     "output": "@search",
+        #     "config": {
+        #         "_args": ["$.url"],
+        #         "_kwargs": {},
+        #         "_resource": "WebTextResource",
+        #         "_objective": {  # objective uses properties added to the soup by WebTextResource
+        #             "#url": "soup.source",
+        #             "#paragraph_groups": "soup.paragraph_groups",
+        #             "#author": "soup.find('meta', attrs={'name':'author'}).get('content') if soup.find('meta', attrs={'name':'author'}) else None"
+        #         },
+        #         "_update_key": "url",
+        #         "$language": "en"
+        #     },
+        #     "schema": {},
+        #     "errors": {},
+        # })
     ])
 
     COMMUNITY_BODY = [
@@ -123,31 +137,26 @@ class DiscourseSearchCommunity(Community):
             )
         return collective
 
-    def begin_download(self, inp):
-        for individual in inp.individual_set.all():
-            if individual.properties.get("url", "").endswith("pdf"):
-                individual.delete()
-
-    def finish_download(self, out, err):
-
-        nlp = spacy.load(self.SPACY_PACKAGES[self.config.language])
-        nlp.add_pipe(ArguingLexiconParser(lang=nlp.lang))
-
-        for individual in out.individual_set.iterator():
-            argument_count = 0
-            sents_count = 0
-            paragraph_groups = individual.properties.get("paragraph_groups", [])
-            if not paragraph_groups:
-                continue
-            for paragraph_group in paragraph_groups:
-                for doc in nlp.pipe(paragraph_group):
-                    sents_count += len(list(doc.sents))
-                    argument_spans = list(doc._.arguments.get_argument_spans())
-                    argument_count += len(argument_spans)
-            if sents_count:
-                individual.properties["argument_score"] = argument_count / sents_count
-                individual.clean()
-                individual.save()
+    # def finish_download(self, out, err):
+    #
+    #     nlp = spacy.load(self.SPACY_PACKAGES[self.config.language])
+    #     nlp.add_pipe(ArguingLexiconParser(lang=nlp.lang))
+    #
+    #     for individual in out.individual_set.iterator():
+    #         argument_count = 0
+    #         sents_count = 0
+    #         paragraph_groups = individual.properties.get("paragraph_groups", [])
+    #         if not paragraph_groups:
+    #             continue
+    #         for paragraph_group in paragraph_groups:
+    #             for doc in nlp.pipe(paragraph_group):
+    #                 sents_count += len(list(doc.sents))
+    #                 argument_spans = list(doc._.arguments.get_argument_spans())
+    #                 argument_count += len(argument_spans)
+    #         if sents_count:
+    #             individual.properties["argument_score"] = argument_count / sents_count
+    #             individual.clean()
+    #             individual.save()
 
     def set_kernel(self):
         self.kernel = self.current_growth.output
