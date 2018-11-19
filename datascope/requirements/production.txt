@@ -3,6 +3,7 @@
 spacy==2.0.0
 spacy-arguing-lexicon==0.0.2
 IndicoIo==0.15.4
+colorz==1.0.3
 
 # SpaCy language models
 https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-2.0.0/en_core_web_sm-2.0.0.tar.gz
