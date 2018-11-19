@@ -1,1 +1,1 @@
-from datagrowth.admin import ResourceAdmin
+from datagrowth.admin import HttpResourceAdmin as ResourceAdmin
