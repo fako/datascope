@@ -5,7 +5,6 @@ from PIL import Image
 from urlobject import URLObject
 from datetime import datetime
 
-from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.files.storage import default_storage
 from django.core.files import File
@@ -82,7 +81,7 @@ class HttpFileResource(HttpResource):  # TODO: write tests
         file_hash = hasher.hexdigest()
         # Constructing file path
         file_path = os.path.join(
-            settings.MEDIA_ROOT,
+            datagrowth_settings.DATAGROWTH_MEDIA_ROOT,
             self._meta.app_label,
             "downloads",
             file_hash[0], file_hash[1:3]  # this prevents huge (problematic) directory listings
