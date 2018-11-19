@@ -39,7 +39,8 @@ def manifest(config, *args, **kwargs):
         return [success, errors]
     growth_configuration = community_model.filter_growth_configuration(**kwargs)
     scope_configuration = community_model.filter_scope_configuration(**kwargs)
-    configuration = dict(**growth_configuration, **scope_configuration)
+    configuration = dict(**growth_configuration)
+    configuration.update(**scope_configuration)
     uri = CommunityView.get_uri(community_model, "/".join(args), configuration)
     try:
         manifestation = Manifestation.objects.get(uri=uri)
