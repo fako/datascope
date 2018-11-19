@@ -1,9 +1,24 @@
 import logging
 
+from datagrowth.resources import HttpFileResource
 from core.models.resources.http import URLResource
 
 
 log = logging.getLogger("datascope")
+
+
+class WebContentDownload(HttpFileResource):
+
+    @property
+    def content(self):
+        content_type, file = super().content
+        if not file:
+            return content_type, file
+        vars = self.variables()
+        return content_type, {
+            "url": vars["url"],
+            "file_path": self.body
+        }
 
 
 class WebTextResource(URLResource):

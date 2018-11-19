@@ -1,8 +1,9 @@
 from django.contrib import admin
 
+from datagrowth.admin import HttpResourceAdmin
 from core.admin.organisms import CommunityAdmin
-from core.admin.resources import ResourceAdmin
-from online_discourse.models import DiscourseSearchCommunity, DiscourseOrder, ComplexityAnalysis, WebTextResource
+from online_discourse.models import (DiscourseSearchCommunity, DiscourseOrder, ComplexityAnalysis, WebTextResource,
+                                     WebContentDownload)
 
 
 class DiscourseOrderAdmin(admin.ModelAdmin):
@@ -11,5 +12,6 @@ class DiscourseOrderAdmin(admin.ModelAdmin):
 
 admin.site.register(DiscourseSearchCommunity, CommunityAdmin)
 admin.site.register(DiscourseOrder, DiscourseOrderAdmin)
-admin.site.register(ComplexityAnalysis, ResourceAdmin)
-admin.site.register(WebTextResource, ResourceAdmin)
+admin.site.register(ComplexityAnalysis, HttpResourceAdmin)
+admin.site.register(WebTextResource, HttpResourceAdmin)
+admin.site.register(WebContentDownload, HttpResourceAdmin)
