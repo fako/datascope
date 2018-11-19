@@ -13,10 +13,10 @@ from bs4 import BeautifulSoup
 
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.conf import settings
 
 import json_field
 
+from datagrowth import settings as datagrowth_settings
 from datagrowth.resources.base import Resource
 from datagrowth.exceptions import DGHttpError50X, DGHttpError40X
 
@@ -349,10 +349,13 @@ class HttpResource(Resource):
         try:
             response = self.session.send(
                 preq,
-                proxies=settings.REQUESTS_PROXIES,
-                verify=settings.REQUESTS_VERIFY,
+                proxies=datagrowth_settings.DATAGROWTH_REQUESTS_PROXIES,
+                verify=datagrowth_settings.DATAGROWTH_REQUESTS_VERIFY,
                 timeout=self.timeout
             )
+        except requests.exceptions.SSLError:
+            self.set_error(496, connection_error=True)
+            return
         except (requests.ConnectionError, IOError):
             self.set_error(502, connection_error=True)
             return

@@ -46,11 +46,6 @@ except ImportError:
 
 DEBUG = False
 DEBUG_TOOLBAR = False
-REQUESTS_PROXIES = None
-REQUESTS_VERIFY = True
-REQUESTS_PROXIES_ENABLED = {
-    "http": "localhost:8888"
-}
 
 MAX_BATCH_SIZE = 1000
 PATH_TO_LOGS = PATH_TO_PROJECT + "system/logs/"
