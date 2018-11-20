@@ -56,27 +56,27 @@ class DiscourseSearchCommunity(Community):
             },
             "schema": {},
             "errors": {},
+        }),
+        ("content", {
+            "process": "ShellResourceProcessor.run_mass",
+            "input": "@search",
+            "contribute": "Inline:ExtractProcessor.extract_from_resource",
+            "output": "@search",
+            "config": {
+                "_args": ["$.resourcePath"],
+                "_kwargs": {},
+                "_resource": "WebTextTikaResource",
+                "_objective": {  # objective uses properties added to the soup by WebTextResource
+                    "#resourcePath": "$.resourcePath",
+                    "#title": "$.title",
+                    "#language": "$.Content-Language",
+                    "#content": "$.X-TIKA:content"
+                },
+                "_inline_key": "resourcePath"
+            },
+            "schema": {},
+            "errors": {},
         })
-        # ("download", {
-        #     "process": "HttpResourceProcessor.fetch_mass",
-        #     "input": "@search",
-        #     "contribute": "Update:ExtractProcessor.extract_from_resource",
-        #     "output": "@search",
-        #     "config": {
-        #         "_args": ["$.url"],
-        #         "_kwargs": {},
-        #         "_resource": "WebTextResource",
-        #         "_objective": {  # objective uses properties added to the soup by WebTextResource
-        #             "#url": "soup.source",
-        #             "#paragraph_groups": "soup.paragraph_groups",
-        #             "#author": "soup.find('meta', attrs={'name':'author'}).get('content') if soup.find('meta', attrs={'name':'author'}) else None"
-        #         },
-        #         "_update_key": "url",
-        #         "$language": "en"
-        #     },
-        #     "schema": {},
-        #     "errors": {},
-        # })
     ])
 
     COMMUNITY_BODY = [
@@ -136,6 +136,13 @@ class DiscourseSearchCommunity(Community):
                 }
             )
         return collective
+
+    def finish_download(self, out, err):
+        out.identifier = "resourcePath"
+        out.save()
+        for entry in out.individual_set.all():
+            entry.clean()
+            entry.save()
 
     # def finish_download(self, out, err):
     #

@@ -21,8 +21,10 @@ class TikaResource(ShellResource):
         content_type, raw = super().content
         if not raw:
             return content_type, raw
-        data = json.loads(raw)
-        return content_type, data[0]  # TODO: allow multiple document input
+        data = json.loads(raw)[0]  # TODO: allow multiple document input
+        variables = self.variables()
+        data["resourcePath"] = variables["input"][0]
+        return content_type, data
 
     class Meta:
         abstract = True
