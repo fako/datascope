@@ -66,11 +66,12 @@ class DiscourseSearchCommunity(Community):
                 "_args": ["$.resourcePath"],
                 "_kwargs": {},
                 "_resource": "WebTextTikaResource",
-                "_objective": {  # objective uses properties added to the soup by WebTextResource
+                "_objective": {
                     "#resourcePath": "$.resourcePath",
                     "#title": "$.title",
                     "#language": "$.Content-Language",
-                    "#content": "$.X-TIKA:content"
+                    "#content": "$.X-TIKA:content",
+                    "#author": "$.author"
                 },
                 "_inline_key": "resourcePath"
             },
