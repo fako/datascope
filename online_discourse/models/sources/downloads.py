@@ -1,6 +1,6 @@
 import logging
 
-from datagrowth.resources import HttpFileResource
+from datagrowth.resources import HttpFileResource, TikaResource
 from core.models.resources.http import URLResource
 
 
@@ -19,6 +19,10 @@ class WebContentDownload(HttpFileResource):
             "url": vars["url"],
             "file_path": self.body
         }
+
+
+class WebTextTikaResource(TikaResource):
+    pass
 
 
 class WebTextResource(URLResource):

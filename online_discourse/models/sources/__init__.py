@@ -1,2 +1,2 @@
-from .downloads import WebTextResource, WebContentDownload
+from .downloads import WebTextResource, WebContentDownload, WebTextTikaResource
 from .wizenoze import ComplexityAnalysis

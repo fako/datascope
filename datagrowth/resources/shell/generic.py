@@ -33,10 +33,8 @@ class ShellResource(Resource):
     stderr = models.TextField(default=None, null=True, blank=True)
 
     # Class constants that determine behavior
-    CMD_TEMPLATE = ["python", "manage.py", "shell", "CMD_FLAGS"]
-    FLAGS = {
-        "settings": "--settings="
-    }
+    CMD_TEMPLATE = []  # Example: ["python", "manage.py", "shell", "CMD_FLAGS"]
+    FLAGS = {}  # Example: {"settings": "--settings="}
     VARIABLES = {}
     DIRECTORY_SETTING = None
     CONTENT_TYPE = "text/plain"
