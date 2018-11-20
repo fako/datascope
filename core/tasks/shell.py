@@ -45,4 +45,4 @@ def run_serie(config, args_list, kwargs_list):
         scc, err = run(config=config, *args, **kwargs)
         success += scc
         errors += err
-        return [success, errors]
+    return [success, errors]
