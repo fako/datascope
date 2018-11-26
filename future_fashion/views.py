@@ -81,7 +81,7 @@ def swipe_interface_view(request):
         return api_response
     data = [entry for entry in api_response.data["results"] if entry["type"] == type]
     if not len(data):
-        return Response({}, status.HTTP_200_OK)
+        return Response({}, status.HTTP_204_NO_CONTENT)
     elif not _id:
         return Response(format_data(data[0]), status.HTTP_200_OK)
 
