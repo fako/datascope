@@ -55,7 +55,8 @@ class DiscourseSearchCommunity(Community):
                 "_args": ["$.url"],
                 "_kwargs": {},
                 "_resource": "WebContentDownload",
-                "_update_key": "url"
+                "_update_key": "url",
+                "$language": "en"
             },
             "schema": {},
             "errors": {},
