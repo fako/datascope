@@ -6,6 +6,7 @@ from core.models.organisms.community import CommunityState
 from core.utils.data import TextFeaturesFrame
 from online_discourse.models import DiscourseSearchCommunity
 from online_discourse.models.orders import DiscourseOrderSerializer
+from online_discourse.processors import OnlineDiscourseRankProcessor
 
 
 class AnonDiscourseOrderThrottle(throttling.AnonRateThrottle):
@@ -57,7 +58,7 @@ class DiscourseViewSet(viewsets.ViewSet):
         # Set most_important_words
         text_frame = TextFeaturesFrame(
             get_identifier=lambda ind: ind["url"],
-            get_text=lambda ind: " ".join([paragraph for paragraph in ind["paragraph_groups"][0]]),
+            get_text=OnlineDiscourseRankProcessor.get_text,
             file_path=community.get_feature_frame_file("text_frame", file_ext=".npz")
         )
         tfidf_sum = text_frame.data.sum(axis=0)

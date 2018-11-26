@@ -133,7 +133,8 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
         else:
             self.text_frame = None
 
-    def get_text(self, document):
+    @staticmethod
+    def get_text(document):
         raise NotImplementedError("The get_text method should be implemented in its context")
 
     @classmethod

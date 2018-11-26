@@ -6,11 +6,13 @@ class OnlineDiscourseRankProcessor(RankProcessor):
 
     contextual_features = ["keyword_count"]
 
-    def get_text(self, document):
+    @staticmethod
+    def get_text(document):
         paragraph_groups = document.get("paragraph_groups", [])
         text = ""
         for paragraph_group in paragraph_groups:
-            text += " ".join(paragraph_group) + " "
+            paragraphs = [paragraph for paragraph in paragraph_group if isinstance(paragraph, str)]
+            text += " ".join(paragraphs) + " "
         return text
 
     def default_ranking(self, individuals):
