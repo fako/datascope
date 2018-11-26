@@ -81,6 +81,7 @@ gay_rights = DiscourseConfiguration(
                 "do not get accepted in local communties. "
                 "There is disagreement around how much rights these people have to feel how they feel.",
     language="en",
+    topics=['lesb', 'gay', 'homo', 'queer', 'BT', 'straight'],
     singular_subjects=SINGULAR_SUBJECTS,
     plural_subjects=PLURAL_SUBJECTS,
     descriptive_adjectives=DESCRIPTIVE_ADJECTIVES

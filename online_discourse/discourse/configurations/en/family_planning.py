@@ -92,6 +92,7 @@ family_planning = DiscourseConfiguration(
     description="Many people at some point face the question whether they want to start a family. " + \
                 "Most people choose a traditional family, but there are alternatives to choose from.",
     language="en",
+    topics=["family model", "parent", "child", "babies", "baby"],
     singular_subjects=SINGULAR_SUBJECTS,
     plural_subjects=PLURAL_SUBJECTS,
     descriptive_adjectives=DESCRIPTIVE_ADJECTIVES

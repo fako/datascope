@@ -102,6 +102,7 @@ biomassa = DiscourseConfiguration(
                 "Hoe dit probleem moet worden opgelost staat wel ter discussie. "
                 "Vooral biomassa is omstreden.",
     language="nl",
+    topics=["biomassa"],
     singular_subjects=SINGULAR_SUBJECTS,
     plural_subjects=PLURAL_SUBJECTS,
     descriptive_adjectives=DESCRIPTIVE_ADJECTIVES
