@@ -1,7 +1,7 @@
 -r minimal.txt
 
 spacy==2.0.0
-spacy-arguing-lexicon==0.0.2
+spacy-arguing-lexicon==0.0.3
 IndicoIo==0.15.4
 colorz==1.0.3
 
