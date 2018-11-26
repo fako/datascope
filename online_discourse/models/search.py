@@ -2,6 +2,8 @@ import logging
 log = logging.getLogger(__name__)
 import os
 from collections import OrderedDict
+from urlobject import URLObject
+from tqdm import tqdm
 
 try:
     import spacy
@@ -14,6 +16,7 @@ import json_field
 from core.models.organisms import Community, Collective, Individual
 from core.models.organisms.states import CommunityState
 from core.utils.helpers import cross_combine
+from online_discourse.models.sources import WebTextTikaResource
 from online_discourse.discourse import configurations
 
 
@@ -145,26 +148,72 @@ class DiscourseSearchCommunity(Community):
             entry.clean()
             entry.save()
 
-    # def finish_download(self, out, err):
-    #
-    #     nlp = spacy.load(self.SPACY_PACKAGES[self.config.language])
-    #     nlp.add_pipe(ArguingLexiconParser(lang=nlp.lang))
-    #
-    #     for individual in out.individual_set.iterator():
-    #         argument_count = 0
-    #         sents_count = 0
-    #         paragraph_groups = individual.properties.get("paragraph_groups", [])
-    #         if not paragraph_groups:
-    #             continue
-    #         for paragraph_group in paragraph_groups:
-    #             for doc in nlp.pipe(paragraph_group):
-    #                 sents_count += len(list(doc.sents))
-    #                 argument_spans = list(doc._.arguments.get_argument_spans())
-    #                 argument_count += len(argument_spans)
-    #         if sents_count:
-    #             individual.properties["argument_score"] = argument_count / sents_count
-    #             individual.clean()
-    #             individual.save()
+    def finish_content(self, out, err):
+
+        spacy_parsers = {}
+        for language, package in self.SPACY_PACKAGES.items():
+            nlp = spacy.load(package)
+            nlp.add_pipe(ArguingLexiconParser(lang=nlp.lang))
+            spacy_parsers[language] = nlp
+
+        # File paths to downloads is not a useful identifier after dataset creation
+        # Resetting to source URL
+        out.identifier = "url"
+        out.save()
+        total = out.individual_set.count()
+
+        for individual in tqdm(out.individual_set.iterator(), total=total):
+
+            if individual.properties.get("source", None):
+                continue
+
+            source = URLObject(individual.properties["url"]).hostname
+            if source.startswith('www.'):
+                source = source.replace('www.', '', 1)
+            individual.properties["source"] = source
+
+            # Checking if there is any content data to work with.
+            # Then undoing a weird hack where content data gets stored under resourcePath
+            # It happens because inline_key and identifier need to match
+            # TODO: allow inline_key to be different from identifier
+            data = individual.properties.get("resourcePath", None)
+            if not isinstance(data, dict):
+                individual.clean()
+                individual.save()
+                continue
+
+            titles, paragraphs, junk = WebTextTikaResource.extract_texts(data.get("title"), data.get("content"))
+            del data["content"]
+            data["titles"] = titles
+            data["paragraphs"] = paragraphs
+            data["junk"] = junk
+            individual.properties["content"] = data
+            del individual.properties["resourcePath"]
+
+            # Lots of code still depends on a property named "paragraph_groups".
+            # This was used in an early version of text extraction
+            # We mimick it here to keep backwards compatability
+            # TODO: migrate code away from paragraph_groups
+            content = titles + paragraphs
+            if not len(content):
+                individual.clean()
+                individual.save()
+                continue
+            paragraph_groups = [content]
+            individual.properties["paragraph_groups"] = paragraph_groups
+
+            nlp = spacy_parsers[self.config.language]
+            argument_count = 0
+            sents_count = 0
+            for doc in nlp.pipe(content):
+                sents_count += len(list(doc.sents))
+                argument_spans = list(doc._.arguments.get_argument_spans())
+                argument_count += len(argument_spans)
+            if sents_count:
+                individual.properties["argument_score"] = argument_count / sents_count
+
+            individual.clean()
+            individual.save()
 
     def set_kernel(self):
         self.kernel = self.current_growth.output
