@@ -72,14 +72,12 @@ class DiscourseViewSet(viewsets.ViewSet):
         authors = set()
         sources = set()
         for individual in community.kernel.content:
-            author = individual.get("author", None)
-            if author and author.strip():
+            content = individual.get("content", individual)
+            author = content.get("author", None)
+            if author and isinstance(author, str) and author.strip():  # TODO: deal with author lists
                 authors.add(author)
-            url = individual.get("url")
-            if url:
-                source = URLObject(url).hostname
-                if source.startswith('www.'):
-                    source = source.replace('www.', '', 1)
+            source = individual.get("source", None)
+            if source:
                 sources.add(source)
         configuration["authors"] = sorted(authors)
         configuration["sources"] = sorted(sources)
