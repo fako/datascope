@@ -146,9 +146,12 @@ class DiscourseSearchCommunity(Community):
     def finish_download(self, out, err):
         out.identifier = "resourcePath"
         out.save()
-        for entry in out.individual_set.all():
+        total = out.individual_set.count()
+        for entry in tqdm(out.individual_set.iterator(), total=total):
             entry.clean()
             entry.save()
+        deletes = out.individual_set.filter(identity__isnull=True).delete()
+        log.info(deletes)
 
     def finish_content(self, out, err):
 
