@@ -11,6 +11,7 @@ try:
 except ImportError:
     log.warn("Not supporting spacy on this platform")
 
+from django.db.models import Q
 import json_field
 
 from core.models.organisms import Community, Collective, Individual
@@ -215,6 +216,13 @@ class DiscourseSearchCommunity(Community):
 
             individual.clean()
             individual.save()
+
+        # Now that text has been extracted. Delete irrelevant entries not about specified topics
+        name, configuration = self.get_configuration_module()
+        query_filter = Q()
+        for topic in configuration.topics:
+            query_filter |= Q(properties__icontains=topic)
+        out.individual_set.exclude(query_filter).delete()
 
     def set_kernel(self):
         self.kernel = self.current_growth.output
