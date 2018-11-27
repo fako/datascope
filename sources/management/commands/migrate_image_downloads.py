@@ -1,4 +1,3 @@
-import json
 import os
 import logging
 from tqdm import tqdm
@@ -6,8 +5,8 @@ from datetime import datetime, timedelta
 
 from django.core.management.base import BaseCommand
 from django.apps import apps
-from django.core import serializers
 
+from datagrowth import settings as datagrowth_settings
 from core.utils.helpers import ibatch, batchize
 from sources.models import ImageDownload
 
@@ -23,21 +22,23 @@ class Command(BaseCommand):
         parser.add_argument('-m', '--new-model', type=str, required=True)
 
     def _handle_batch(self, batch, new_model, base_dir):
-        raw_json = serializers.serialize("json", batch)
-        model = apps.get_model(new_model)
-        data = []
-        for record in json.loads(raw_json):
-            record["fields"]["model"] = new_model
-            del record["pk"]
-            data.append(record)
-        print(data[:10])
+        Model = apps.get_model(new_model)
+        instances = []
+        for instance in batch:
+            instance.__class__ = Model
+            instance.pk = None
+            instances.append(instance)
+            print("From:", os.path.join(base_dir, instance.body))
+            file_path, file_name, extension = instance._get_file_info(instance.request.get("url"))
+            file_path = file_path.replace(datagrowth_settings.DATAGROWTH_MEDIA_ROOT + os.sep, "")
+            print("To:", os.path.join(file_path, file_name + extension))
 
     def handle(self, *args, **options):
         media_dir = os.path.join("system", "files", "media")
         start = datetime.strptime(options["start"], "%Y-%m-%d")
         end = datetime.strptime(options["end"], "%Y-%m-%d")
         end += timedelta(days=1)
-        batch_size = 500
+        batch_size = 10
 
         queryset = ImageDownload.objects.filter(created_at__gte=start, created_at__lte=end)
         count = queryset.all().count()
