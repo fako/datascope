@@ -1,5 +1,3 @@
-from urlobject import URLObject
-
 from django.core.mail import mail_managers
 from rest_framework import generics, throttling, viewsets
 from rest_framework.response import Response
@@ -72,9 +70,8 @@ class DiscourseViewSet(viewsets.ViewSet):
         authors = set()
         sources = set()
         for individual in community.kernel.content:
-            content = individual.get("content", individual)
-            author = content.get("author", None)
-            if author and isinstance(author, str) and author.strip():  # TODO: deal with author lists
+            author = individual.get("author", None)
+            if author and author.strip():  # TODO: strip is not necessary with new data format
                 authors.add(author)
             source = individual.get("source", None)
             if source:
