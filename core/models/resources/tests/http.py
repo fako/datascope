@@ -495,6 +495,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertIn("key=oehhh", request["url"])
         self.assertNotIn("key=oehhh", self.instance.request["url"], "request_with_auth should not alter existing request")
         self.assertEqual(request["data"], self.test_post_request["data"])
+        self.skipTest("test the auth with headers")
 
     def test_request_without_auth(self):
         self.instance.request = deepcopy(self.test_post_request)
@@ -505,6 +506,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertNotIn("key=oehhh", request["url"])
         self.assertIn("key=ahhh", self.instance.request["url"], "request_without_auth should not alter existing request")
         self.assertEqual(request["data"], self.test_post_request["data"])
+        self.skipTest("test the auth with headers")
 
     def test_create_next_request(self):
         # Test with get
