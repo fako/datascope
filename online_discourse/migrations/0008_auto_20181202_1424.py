@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('online_discourse', '0006_webcontentdownload_webtexttikaresource'),
+        ('online_discourse', '0007_discoursesearchcommunity_aggregates'),
     ]
 
     operations = [
