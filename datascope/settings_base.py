@@ -68,6 +68,7 @@ INSTALLED_APPS = (
     # Main app
     'datascope',
     # Framework apps
+    'datagrowth',
     'core',
     'sources',
     # Algorithms
@@ -167,7 +168,7 @@ SEGMENTS_TO_SERVICE = SEGMENTS_BEFORE_PROJECT_ROOT + 3  # /data/v1/<service-name
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, 'data', 'media/')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'data', 'media', '')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -277,6 +278,11 @@ LOGGING = {
         },
         'datascope': {
             'handlers': ['console', 'sentry'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'datagrowth.command': {
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
         }

@@ -1,4 +1,7 @@
+import os
 import logging
+
+from django.core.files.storage import default_storage
 
 from datagrowth.resources import HttpFileResource, TikaResource
 from core.models.resources.http import URLResource
@@ -17,7 +20,7 @@ class WebContentDownload(HttpFileResource):
         variables = self.variables()
         return content_type, {
             "url": variables["url"],
-            "resourcePath": self.body
+            "resourcePath": os.path.join(default_storage.location, self.body)
         }
 
 

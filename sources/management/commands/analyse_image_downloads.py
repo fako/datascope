@@ -50,4 +50,3 @@ class Command(BaseCommand):
         groups = invalid.groupby(pd.Grouper(freq='D')).size()
         groups = groups[groups > 0]
         print(groups)
-

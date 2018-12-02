@@ -106,7 +106,7 @@ class HttpFileResource(HttpResource):  # TODO: write tests
         file_name = self._save_file(self.request["url"], response.content)
         self.head = dict(response.headers)
         self.status = response.status_code
-        self.body = file_name
+        self.body = file_name.replace(datagrowth_settings.DATAGROWTH_MEDIA_ROOT, "").lstrip("/")
 
     def transform(self, file):
         return file
@@ -115,7 +115,8 @@ class HttpFileResource(HttpResource):  # TODO: write tests
     def content(self):
         if self.success:
             content_type = self.head.get("content-type", "unknown/unknown").split(';')[0]
-            file = default_storage.open(self.body)
+            file_path = os.path.join(default_storage.location, self.body)
+            file = default_storage.open(file_path)
             try:
                 return content_type, self.transform(file)
             except IOError:
