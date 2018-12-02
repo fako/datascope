@@ -27,8 +27,8 @@ class Resource(models.Model):
 
     # Retention
     retainer = GenericForeignKey(ct_field="retainer_type", fk_field="retainer_id")
-    retainer_type = models.ForeignKey(ContentType, null=True)
-    retainer_id = models.PositiveIntegerField(null=True)
+    retainer_type = models.ForeignKey(ContentType, null=True, blank=True)
+    retainer_id = models.PositiveIntegerField(null=True, blank=True)
 
     class Meta:
         abstract = True
