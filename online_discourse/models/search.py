@@ -187,6 +187,15 @@ class DiscourseSearchCommunity(Community):
                 individual.save()
                 continue
 
+            author = data.get("author", None)
+            if author and isinstance(author, str):
+                pass
+            elif author:
+                author = author[0]  # TODO: we take the primary author now, but should also consider other authors
+            else:
+                author = None
+            individual.properties["author"] = author
+
             titles, paragraphs, junk = WebTextTikaResource.extract_texts(data.get("title"), data.get("content"))
             del data["content"]
             data["titles"] = titles
