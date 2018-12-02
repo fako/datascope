@@ -11,8 +11,7 @@ import json_field.fields
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
-        ('online_discourse', '0005_webtextresource'),
+        ('online_discourse', '0006_discoursesearchcommunity_aggregates'),
     ]
 
     operations = [
