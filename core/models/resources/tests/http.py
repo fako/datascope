@@ -231,6 +231,9 @@ class HttpResourceTestMixin(TestCase):
         self.assertEqual(self.instance.body, "")
         self.assertEqual(self.instance.status, 0)
 
+    def test_close(self):
+        self.skipTest("not tested")
+
 
 class ConfigurationFieldTestMixin(TestCase):
 

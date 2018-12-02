@@ -152,6 +152,10 @@ class HttpResource(Resource):
         """
         return None
 
+    def close(self):
+        self.clean()
+        self.save()
+
     #######################################################
     # CREATE REQUEST
     #######################################################
