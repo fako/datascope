@@ -143,6 +143,24 @@ class DiscourseSearchCommunity(Community):
             )
         return collective
 
+    def finish_search(self, out, err):
+        total = out.individual_set.count()
+        current_entry = None
+        deletes = []
+        for entry in tqdm(out.individual_set.order_by("identity").iterator(), total=total):
+            if current_entry is None or current_entry.identity != entry.identity:
+                if current_entry is not None:
+                    current_entry.save()
+                if len(deletes):
+                    out.individual_set.filter(id__in=deletes).delete()
+                current_entry = entry
+                deletes = []
+                if isinstance(current_entry.properties["term"], str):
+                    current_entry.properties["term"] = [current_entry.properties["term"]]
+            else:
+                current_entry.properties["term"].append(entry.properties["term"])
+                deletes.append(entry.id)
+
     def finish_download(self, out, err):
         out.identifier = "resourcePath"
         out.save()
