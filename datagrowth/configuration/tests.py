@@ -329,3 +329,9 @@ class TestGetStandardizedConfiguration(TestCase):
 
     def test_standardized_configuration(self):
         self.skipTest("not tested")
+
+
+class TestCreateConfig(TestCase):
+
+    def test_create_config(self):
+        self.skipTest("not tested")
