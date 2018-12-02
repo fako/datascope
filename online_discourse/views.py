@@ -66,6 +66,11 @@ class DiscourseViewSet(viewsets.ViewSet):
         most_important_words = [feature_names[ix] for ix in indices[-20:]]
         most_important_words.reverse()
         configuration["most_important_words"] = most_important_words
+        if community.aggregates:
+            configuration.update(community.aggregates)
+            return Response(configuration)
+
+        # TODO: below is very slow and deprecated. Should be removed
         # Retrieve sets
         authors = set()
         sources = set()
