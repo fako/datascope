@@ -86,6 +86,10 @@ def send(config, *args, **kwargs):
         # Prepare next request
         has_next_request = current_request = link.create_next_request()
         count += 1
+        # Take a break for scraping if configured
+        interval_duration = config.interval_duration / 1000
+        if has_next_request and interval_duration:
+            sleep(interval_duration)
     # Output results in simple type for json serialization
     return [success, errors]
 
