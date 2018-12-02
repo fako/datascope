@@ -319,9 +319,3 @@ if USE_WEBSOCKETS:
     WSGI_APPLICATION = 'ws4redis.django_runserver.application'
     WS4REDIS_EXPIRE = 0
     WS4REDIS_HEARTBEAT = '--heartbeat--'
-
-#######################################################
-# DATASCOPE SETTINGS
-#######################################################
-
-DATASCOPE_DATETIME_FORMAT = "%Y%m%d%H%M%S%f"
