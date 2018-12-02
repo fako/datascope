@@ -147,7 +147,7 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
             attr not in cls.contextual_features
         ]
 
-    def get_ranking_results(self, ranking, individuals, series):
+    def get_ranking_results(self, ranking, individuals, series):  # TODO: rethink performance
         results = []
         max_size = self.config.result_size
         for individual in individuals:
