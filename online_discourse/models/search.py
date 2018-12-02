@@ -185,15 +185,18 @@ class DiscourseSearchCommunity(Community):
         out.save()
         total = out.individual_set.count()
 
+        sources = set()
+        authors = set()
         for individual in tqdm(out.individual_set.iterator(), total=total):
 
             if individual.properties.get("source", None):
                 continue
 
             source = URLObject(individual.properties["url"]).hostname
-            if source.startswith('www.'):
-                source = source.replace('www.', '', 1)
+            if source.startswith("www."):
+                source = source.replace("www.", "", 1)
             individual.properties["source"] = source
+            sources.add(source)
 
             # Checking if there is any content data to work with.
             # Then undoing a weird hack where content data gets stored under resourcePath
@@ -213,6 +216,7 @@ class DiscourseSearchCommunity(Community):
             else:
                 author = None
             individual.properties["author"] = author
+            authors.add(author)
 
             titles, paragraphs, junk = WebTextTikaResource.extract_texts(data.get("title"), data.get("content"))
             del data["content"]
@@ -246,6 +250,11 @@ class DiscourseSearchCommunity(Community):
 
             individual.clean()
             individual.save()
+
+        self.aggregates.update({
+            "authors": sorted(list(authors)),
+            "sources": sorted(list(sources))
+        })
 
         # Now that text has been extracted. Delete irrelevant entries not about specified topics
         name, configuration = self.get_configuration_module()
