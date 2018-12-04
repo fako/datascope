@@ -210,7 +210,8 @@ class DiscourseSearchCommunity(Community):
             else:
                 author = None
             individual.properties["author"] = author
-            authors.add(author)
+            if author:
+                authors.add(author)
 
             titles, paragraphs, junk = WebTextTikaResource.extract_texts(data.get("title"), data.get("content"))
             del data["content"]
