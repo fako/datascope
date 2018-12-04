@@ -3,16 +3,6 @@ from core.processors.base import Processor
 
 class FilterProcessor(Processor):
 
-    def distinct(self, individuals):
-        # TODO: do not do this in memory?
-        yields = set()
-        for individual in individuals:
-            if not self.config.distinct_key in individual:
-                yield individual
-            elif individual[self.config.distinct_key] not in yields:
-                yields.add(individual[self.config.distinct_key])
-                yield individual
-
     def select(self, individuals):
         criteria = {  # TODO: use config.get instead
             key: getattr(self.config, key).split("|") for key in self.config.select_keys
