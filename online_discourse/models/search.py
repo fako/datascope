@@ -87,12 +87,6 @@ class DiscourseSearchCommunity(Community):
 
     COMMUNITY_BODY = [
         {
-            "process": "FilterProcessor.distinct",
-            "config": {
-                "distinct_key": "url"
-            }
-        },
-        {
             "process": "FilterProcessor.select",
             "config": {
                 "select_keys": ["author", "source"],
