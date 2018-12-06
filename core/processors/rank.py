@@ -11,10 +11,20 @@ from collections import OrderedDict
 from itertools import islice
 from copy import deepcopy
 
+from datascope.configuration import DEFAULT_CONFIGURATION
 from core.utils.helpers import merge_iter
+from core.processors.base import Processor
+from core.utils.configuration import ConfigurationProperty
 
 
-class LegacyRankProcessorMixin(object):
+class LegacyRankProcessor(Processor):
+
+    config = ConfigurationProperty(
+        storage_attribute="_config",
+        defaults=DEFAULT_CONFIGURATION,
+        private=[],
+        namespace="rank_processor"
+    )
 
     def score(self, individuals):
         warnings.warn("The RankProcessor.score method is deprecated. Use by_feature instead.", DeprecationWarning)
@@ -97,12 +107,12 @@ class LegacyRankProcessorMixin(object):
 from itertools import islice
 
 from datascope.configuration import DEFAULT_CONFIGURATION
-from core.processors.base import Processor
+from core.processors.base import QuerySetProcessor
 from core.utils.data import NumericFeaturesFrame, TextFeaturesFrame
 from core.utils.configuration import ConfigurationProperty
 
 
-class RankProcessor(Processor, LegacyRankProcessorMixin):
+class RankProcessor(QuerySetProcessor):
 
     config = ConfigurationProperty(
         storage_attribute="_config",
@@ -147,37 +157,37 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
             attr not in cls.contextual_features
         ]
 
-    def get_ranking_results(self, ranking, individuals, series):  # TODO: rethink performance
-        results = []
+    def get_ranking_results(self, ranking, query_set, series):
+
+        # TODO: assert identity? how?
         max_size = self.config.result_size
-        for individual in individuals:
-            ix = individual[self.config.identifier_key]
-            if ix not in ranking.index:  # TODO: assess necessity
-                continue
-            if len(results) < max_size:
-                results.append(individual)
-                continue
-            results.append(individual)
-            results.sort(key=lambda ind: ranking[ind[self.config.identifier_key]], reverse=True)
-            results = results[:max_size]
+
+        if query_set.count() >= len(ranking):
+            results = list(query_set.filter(identity__in=ranking.index[:max_size]))
+        else:
+            results = list(query_set)
+        results.sort(key=lambda entry: ranking.at[entry.identity], reverse=True)
+        results = results[:max_size]
+
         for individual in results:
             ix = individual[self.config.identifier_key]
-            individual["_rank"] = {
+            content = individual.content
+            content["_rank"] = {
                 "rank": ranking.at[ix]
             }
             for serie in series:
                 value = serie.at[ix]
-                individual["_rank"][serie.name] = {
+                content["_rank"][serie.name] = {
                     "rank": value,  # TODO: rank value should be multiplied by weight
                     "value": value,
                     "weight": 1.0
                 }
-            yield individual
+            yield content
 
-    def default_ranking(self, individuals):
+    def default_ranking(self, query_set):
         raise NotImplementedError("The default_ranking method should be implemented in its context")
 
-    def by_feature(self, individuals):
+    def by_feature(self, query_set):
         assert "ranking_feature" in self.config, "RankProcessor.by_feature needs a ranking_feature from config"
         assert self.feature_frame, \
             "RankProcessor needs a identifier_key and feature_frame_path configuration " \
@@ -188,14 +198,12 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
         if ranking_feature not in self.contextual_features:
             ranked_feature = self.feature_frame.data[ranking_feature]
         else:
-            # TODO: optimize memory use for contextual features or deprecate contextual features
-            individuals = list(individuals)
             ranked_feature = self.feature_frame.get_feature_series(
                 ranking_feature, getattr(self, ranking_feature),
-                content_callable=lambda: individuals, context=self.config.to_dict()
+                content_callable=query_set.iterator, context=self.config.to_dict()
             )
-        ranked_feature = ranked_feature.sort_values(ascending=False)[:self.config.result_size]
-        return self.get_ranking_results(ranked_feature, individuals, [ranked_feature])
+        ranked_feature = ranked_feature.fillna(0).sort_values(ascending=False)
+        return self.get_ranking_results(ranked_feature, query_set, [ranked_feature])
 
     def by_params(self, individuals):
         pass

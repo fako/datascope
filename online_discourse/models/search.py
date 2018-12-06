@@ -87,7 +87,7 @@ class DiscourseSearchCommunity(Community):
 
     COMMUNITY_BODY = [
         {
-            "process": "FilterProcessor.select",
+            "process": "FilterProcessor.filter",
             "config": {
                 "select_keys": ["author", "source"],
                 "$author": None,

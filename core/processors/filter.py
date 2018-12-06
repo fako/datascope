@@ -1,21 +1,17 @@
-from core.processors.base import Processor
+from django.db.models.query import Q
+
+from core.processors.base import QuerySetProcessor
 
 
-class FilterProcessor(Processor):
+class FilterProcessor(QuerySetProcessor):
 
-    def select(self, individuals):
-        criteria = {  # TODO: use config.get instead
-            key: getattr(self.config, key).split("|") for key in self.config.select_keys
-            if getattr(self.config, key, None)
+    def filter(self, query_set):
+        criteria = {
+            key: self.config.get(key).split("|") for key in self.config.select_keys
+            if self.config.get(key, None)
         }
-        if not criteria:
-            for individual in individuals:
-                yield individual
-        else:
-            for individual in individuals:
-                for key in criteria.keys():
-                    if key in individual and individual[key] in criteria[key]:
-                        break
-                else:
-                    continue
-                yield individual
+        query_filter = Q()
+        for key, values in criteria.items():
+            for value in values:
+                query_filter |= Q(properties__contains='{}": "{}'.format(key, value))
+        return query_set.filter(query_filter)

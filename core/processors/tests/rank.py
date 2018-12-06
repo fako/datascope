@@ -2,12 +2,14 @@ import os
 from functools import reduce
 from collections import Iterator
 from operator import itemgetter
-from mock import patch
+from mock import patch, Mock
 
 from django.test import TestCase
+from django.db.models.query import QuerySet
 
+from core.models import Individual
 from core.utils.data import NumericFeaturesFrame
-from core.tests.mocks.processor import MockRankProcessor
+from core.tests.mocks.processor import MockRankProcessor, MockLegacyRankProcessor
 
 
 class TestRankProcessorBase(TestCase):
@@ -109,12 +111,31 @@ class TestRankProcessor(TestRankProcessorBase):
             "ranking_feature": "rank_by_value",
             "result_size": 2
         })
-        ranking = instance.by_feature(self.test_content)
+        content_iterator = Mock(
+            return_value=(
+                Mock(
+                    spec_set=Individual,
+                    properties=content,
+                    content=content,
+                    identity=content[self.identifier_key],
+                    __getitem__=Individual.__getitem__
+                )
+                for content in self.test_content
+            )
+        )
+        query_set = Mock(
+            spec_set=QuerySet,
+            count=Mock(return_value=len(self.test_content)),
+            iterator=content_iterator,
+            filter=content_iterator
+        )
+        ranking = instance.by_feature(query_set)
         self.assertTrue(issubclass(ranking.__class__, Iterator))
         ranking = self.assert_ranking(ranking, 2, ['rank_by_value'])
         # Check order of results
         names = list(map(itemgetter('name'), ranking))
         self.assertEqual(names, ['highest', 'highest-of-triple'], "Order of ranked dictionaries is not correct.")
+        self.skipTest("Rewrite with real query set instead of a mock")
 
 
 class TestRankProcessorLegacy(TestRankProcessorBase):
@@ -123,7 +144,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
         self.skipTest("not tested")  # TODO: make sure that partial batches work
 
     def test_ranking_with_one_hook(self):
-        instance = MockRankProcessor({
+        instance = MockLegacyRankProcessor({
             "result_size": 2,
             "batch_size": 3,
             "$rank_by_value": 1
@@ -136,7 +157,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
         self.assertEqual(names, ['highest', 'highest-of-triple'], "Order of ranked dictionaries is not correct.")
 
     def test_ranking_with_multiple_hooks(self):
-        instance = MockRankProcessor({
+        instance = MockLegacyRankProcessor({
             "result_size": 2,
             "batch_size": 3,
             "$rank_by_value": 1,
@@ -149,7 +170,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
         self.assertEqual(names, ['double-1', 'double-2'], "Order of ranked dictionaries is not correct.")
 
     def test_floats_as_weights(self):
-        instance = MockRankProcessor({
+        instance = MockLegacyRankProcessor({
             "result_size": 3,
             "batch_size": 4,
             "$rank_by_value": 1,
@@ -160,7 +181,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
         self.assertEqual(names, ['highest', 'highest-of-triple', 'double-1'], "Order of ranked dictionaries is not correct.")
 
     def test_negative_weights(self):
-        instance = MockRankProcessor({
+        instance = MockLegacyRankProcessor({
             "result_size": 3,
             "batch_size": 4,
             "$rank_by_value": 1,
@@ -171,7 +192,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
         self.assertEqual(names, ['double-1', 'double-2', 'under-double'], "Order of ranked dictionaries is not correct.")
 
     def test_boolean_ranking(self):
-        instance = MockRankProcessor({
+        instance = MockLegacyRankProcessor({
             "result_size": 2,
             "batch_size": 3,
             "$is_highest": 1
@@ -182,7 +203,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
         self.assertEqual(ranking[0]["_rank"]["rank"], ranking[1]["_rank"]["rank"])
 
     def test_no_hooks(self):
-        instance = MockRankProcessor({
+        instance = MockLegacyRankProcessor({
             "result_size": 2,
             "batch_size": 3
         })
@@ -191,7 +212,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
         self.assertEqual(names, ['lowest', 'lowest-2'], "Order of ranked dictionaries is not correct.")
 
     def test_not_existing_hooks(self):
-        instance = MockRankProcessor({
+        instance = MockLegacyRankProcessor({
             "result_size": 2,
             "batch_size": 3,
             "$does_not_exist": 1
@@ -201,7 +222,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
         self.assertEqual(names, ['lowest', 'lowest-2'], "Order of ranked dictionaries is not correct.")
 
     def test_invalid_hook_name(self):
-        instance = MockRankProcessor({
+        instance = MockLegacyRankProcessor({
             "result_size": 2,
             "batch_size": 3,
             "rank_by_value": 1  # misses $
@@ -211,7 +232,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
         self.assertEqual(names, ['lowest', 'lowest-2'], "Order of ranked dictionaries is not correct.")
 
     def test_invalid_hook_weight(self):
-        instance = MockRankProcessor({
+        instance = MockLegacyRankProcessor({
             "result_size": 2,
             "batch_size": 3,
             "$rank_by_value": "makes no sense"
@@ -221,7 +242,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
         self.assertEqual(names, ['lowest', 'lowest-2'], "Order of ranked dictionaries is not correct.")
 
     def test_disabled_hook(self):
-        instance = MockRankProcessor({
+        instance = MockLegacyRankProcessor({
             "result_size": 2,
             "batch_size": 3,
             "$rank_by_value": 0
@@ -231,7 +252,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
         self.assertEqual(names, ['lowest', 'lowest-2'], "Order of ranked dictionaries is not correct.")
 
     def test_wrong_hook_return_value(self):
-        instance = MockRankProcessor({
+        instance = MockLegacyRankProcessor({
             "result_size": 2,
             "batch_size": 3,
             "$wrong_return_value": 1
@@ -241,7 +262,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
         self.assertEqual(names, ['lowest', 'lowest-2'], "Order of ranked dictionaries is not correct.")
 
     def test_hook_none_value(self):
-        instance = MockRankProcessor({
+        instance = MockLegacyRankProcessor({
             "result_size": 2,
             "batch_size": 3,
             "$i_think_none_of_it": 1
@@ -252,7 +273,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
 
     @patch('core.processors.rank.islice')
     def test_order(self, islice_patch):
-        instance = MockRankProcessor({
+        instance = MockLegacyRankProcessor({
             "result_size": 2,
             "batch_size": 3,
             "$rank_by_value": 1
@@ -270,7 +291,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
         self.assertEqual(args[1], 2, "Slice should be the size of the result")
 
     def test_floats_as_values(self):
-        instance = MockRankProcessor({
+        instance = MockLegacyRankProcessor({
             "result_size": 2,
             "batch_size": 3,
             "$rank_by_value": 1,
@@ -281,7 +302,7 @@ class TestRankProcessorLegacy(TestRankProcessorBase):
         self.assertEqual(names, ['double-1', 'double-2'], "Order of ranked dictionaries is not correct.")
 
     def test_module_changing_individual(self):
-        instance = MockRankProcessor({
+        instance = MockLegacyRankProcessor({
             "result_size": 2,
             "batch_size": 3,
             "$alter_individual": 1,
