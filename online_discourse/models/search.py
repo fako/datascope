@@ -179,8 +179,7 @@ class DiscourseSearchCommunity(Community):
         out.save()
         total = out.individual_set.count()
 
-        sources = set()
-        authors = set()
+
         for individual in tqdm(out.individual_set.iterator(), total=total):
 
             if individual.properties.get("source", None):
@@ -190,7 +189,6 @@ class DiscourseSearchCommunity(Community):
             if source.startswith("www."):
                 source = source.replace("www.", "", 1)
             individual.properties["source"] = source
-            sources.add(source)
 
             # Checking if there is any content data to work with.
             # Then undoing a weird hack where content data gets stored under resourcePath
@@ -210,8 +208,6 @@ class DiscourseSearchCommunity(Community):
             else:
                 author = None
             individual.properties["author"] = author
-            if author:
-                authors.add(author)
 
             titles, paragraphs, junk = WebTextTikaResource.extract_texts(data.get("title"), data.get("content"))
             del data["content"]
@@ -246,17 +242,26 @@ class DiscourseSearchCommunity(Community):
             individual.clean()
             individual.save()
 
-        self.aggregates.update({
-            "authors": sorted(list(authors)),
-            "sources": sorted(list(sources))
-        })
-
         # Now that text has been extracted. Delete irrelevant entries not about specified topics
         name, configuration = self.get_configuration_module()
         query_filter = Q()
         for topic in configuration.topics:
             query_filter |= Q(properties__icontains=topic)
         out.individual_set.exclude(query_filter).delete()
+
+        # And finally calculate the aggregates
+        sources = set()
+        authors = set()
+        for individual in out.individual_set.iterator():
+            sources.add(individual.properties["source"])
+            author = individual.properties["author"]
+            if author:
+                authors.add(author)
+        self.aggregates.update({
+            "authors": sorted(list(authors)),
+            "sources": sorted(list(sources))
+        })
+        self.save()
 
     def set_kernel(self):
         self.kernel = self.current_growth.output
