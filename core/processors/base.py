@@ -59,3 +59,7 @@ class Processor(object):
     def get_processor_class(processor_name):
         core_config = apps.get_app_config("core")
         return core_config.get_processor_class(processor_name)
+
+
+class QuerySetProcessor(Processor):
+    pass

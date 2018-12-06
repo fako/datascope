@@ -389,6 +389,7 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertEqual(len(list(manifestation)), 0)
         self.complete.before_filter_individuals_manifestation.assert_called_with(self.complete.COMMUNITY_BODY[1])
         self.assertEqual(self.complete.before_filter_individuals_manifestation.call_count, 4)
+        self.skipTest("test with query sets")
 
     def test_get_name(self):
         self.assertEqual(self.instance.get_name(), 'mock')
