@@ -6,6 +6,7 @@ from pandas import DataFrame
 
 from core.management.commands.grow_community import Command as GrowCommand
 from core.utils.configuration import DecodeConfigAction
+from core.utils.helpers import format_datetime
 
 from nautilus.models import LocaforaOrders
 
@@ -20,7 +21,7 @@ class Command(GrowCommand):
     def handle_community(self, community, **options):
         if options["delete"]:
             LocaforaOrders.objects.all().delete()
-        community.signature = datetime.utcnow().strftime(settings.DATASCOPE_DATETIME_FORMAT)
+        community.signature = format_datetime(datetime.utcnow())
         super(Command, self).handle_community(community, **options)
         result = DataFrame()
         for customer in community.kernel.individual_set.all():
