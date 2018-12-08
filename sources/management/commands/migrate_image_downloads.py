@@ -2,6 +2,7 @@ import os
 import logging
 from tqdm import tqdm
 from datetime import datetime, timedelta
+import shutil
 
 from django.core.management.base import BaseCommand
 from django.apps import apps
@@ -22,16 +23,40 @@ class Command(BaseCommand):
         parser.add_argument('-m', '--new-model', type=str, required=True)
 
     def _handle_batch(self, batch, new_model, base_dir):
+
+        # Check batch
         Model = apps.get_model(new_model)
+        existing_set = Model.objects.filter(uri__in=[instance.uri for instance in batch])
+        if existing_set.count() == len(batch):
+            log.info("Skipping batch because instances are migrated")
+            return
+
+        # Prepare migration
         instances = []
         for instance in batch:
+            # Check if source file exist
+            source_file = os.path.join(base_dir, instance.body)
+            if existing_set.filter(uri=instance.uri).exists():
+                log.info("Skipping instance because instance was migrated: {}".format(instance.id))
+                continue
+            if not os.path.exists(source_file):
+                log.warning("Skipping instance because file is missing: {}".format(instance.id))
+                continue
+            # Basic model transfer
             instance.__class__ = Model
             instance.pk = None
-            instances.append(instance)
-            print("From:", os.path.join(base_dir, instance.body))
+            # Check destination and copy
             file_path, file_name, extension = instance._get_file_info(instance.request.get("url"))
-            file_path = file_path.replace(datagrowth_settings.DATAGROWTH_MEDIA_ROOT + os.sep, "")
-            print("To:", os.path.join(file_path, file_name + extension))
+            if not os.path.exists(file_path):
+                os.makedirs(file_path)
+            dest_file = os.path.join(file_path, file_name + extension)
+            shutil.copy(source_file, dest_file)  # TODO: figure out correct function
+            # Update instance info
+            instance.body = file_path.replace(datagrowth_settings.DATAGROWTH_MEDIA_ROOT, "").lstrip()
+            instances.append(instance)
+
+        # Execute migration
+        Model.objects.batch_create(instances)
 
     def handle(self, *args, **options):
         media_dir = os.path.join("system", "files", "media")
