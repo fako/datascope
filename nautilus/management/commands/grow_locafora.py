@@ -1,7 +1,5 @@
 from datetime import datetime
 
-from django.conf import settings
-
 from pandas import DataFrame
 
 from core.management.commands.grow_community import Command as GrowCommand
