@@ -109,7 +109,7 @@ class DiscourseSearchCommunity(Community):
     ]
 
     SPACY_PACKAGES = {
-        "en": "en_core_web_md",
+        "en": "en_core_web_sm",
         "nl": "nl_core_news_sm"
     }
 
@@ -178,7 +178,6 @@ class DiscourseSearchCommunity(Community):
         out.identifier = "url"
         out.save()
         total = out.individual_set.count()
-
 
         for individual in tqdm(out.individual_set.iterator(), total=total):
 
@@ -253,8 +252,8 @@ class DiscourseSearchCommunity(Community):
         sources = set()
         authors = set()
         for individual in out.individual_set.iterator():
-            sources.add(individual.properties["source"])
-            author = individual.properties["author"]
+            sources.add(individual.properties.get("source", None))
+            author = individual.properties.get("author", None)
             if author:
                 authors.add(author)
         self.aggregates.update({
