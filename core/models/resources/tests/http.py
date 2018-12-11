@@ -163,6 +163,9 @@ class HttpResourceTestMixin(TestCase):
         except AssertionError:
             pass
 
+    def test_send_request_connection_error(self):
+        self.skipTest("not tested")
+
     def test_create_request_post(self):
         request = self.instance._create_request("post", "en", "test", query="test")
         self.assertEqual(request["data"], {"test": "test"})

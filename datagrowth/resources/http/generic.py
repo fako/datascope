@@ -373,6 +373,9 @@ class HttpResource(Resource):
         except requests.Timeout:
             self.set_error(504, connection_error=True)
             return
+        except UnicodeDecodeError:
+            self.set_error(600, connection_error=True)
+            return
         self._update_from_response(response)
 
     def _update_from_response(self, response):
