@@ -8,7 +8,9 @@ from tqdm import tqdm
 try:
     import spacy
     from spacy_arguing_lexicon import ArguingLexiconParser
+    from spacy.lang.nl.stop_words import STOP_WORDS as NL_STOP_WORDS
 except ImportError:
+    NL_STOP_WORDS = []
     log.warn("Not supporting spacy on this platform")
 
 from django.db.models import Q
@@ -19,6 +21,7 @@ from core.models.organisms.states import CommunityState
 from core.utils.helpers import cross_combine
 from online_discourse.models.sources import WebTextTikaResource
 from online_discourse.discourse import configurations
+from online_discourse.processors import TopicDetector, OnlineDiscourseRankProcessor
 
 
 class DiscourseSearchCommunity(Community):
@@ -111,6 +114,14 @@ class DiscourseSearchCommunity(Community):
     SPACY_PACKAGES = {
         "en": "en_core_web_sm",
         "nl": "nl_core_news_sm"
+    }
+    STOP_WORDS = {
+        "en": "english",  # grabs sklearn stopwords
+        "nl": NL_STOP_WORDS
+    }
+    NON_TOPICS = {
+        "en": [],
+        "nl": ["cookies", "website", "browser", "advertenties"]
     }
 
     def initial_input(self, *args):
@@ -249,18 +260,39 @@ class DiscourseSearchCommunity(Community):
         out.individual_set.exclude(query_filter).delete()
 
         # And finally calculate the aggregates
+        self.set_aggregates(out)
+        self.save()
+
+    def set_aggregates(self, collection):
+        self.aggregates.update(
+            self.get_source_and_author_aggregates(collection)
+        )
+        self.aggregates.update(
+            self.get_topic_aggregates(collection)
+        )
+
+    def get_source_and_author_aggregates(self, collection):
         sources = set()
         authors = set()
-        for individual in out.individual_set.iterator():
+        for individual in collection.individual_set.iterator():
             sources.add(individual.properties.get("source", None))
             author = individual.properties.get("author", None)
             if author:
                 authors.add(author)
-        self.aggregates.update({
+        return {
             "authors": sorted(list(authors)),
             "sources": sorted(list(sources))
-        })
-        self.save()
+        }
+
+    def get_topic_aggregates(self, collection):
+        detector = TopicDetector(
+            OnlineDiscourseRankProcessor.get_text,
+            stop_words=list(self.STOP_WORDS[self.config.language]),
+            topic_filter_words=self.NON_TOPICS[self.config.language]
+        )
+        return {
+            "most_important_topics": detector.run(collection.content)
+        }
 
     def set_kernel(self):
         self.kernel = self.current_growth.output
