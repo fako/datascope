@@ -176,6 +176,14 @@ class DiscourseSearchCommunity(Community):
         deletes = out.individual_set.filter(identity__isnull=True).delete()
         log.info(deletes)
 
+        # Now that text has been extracted. Delete irrelevant entries not about specified topics
+        name, configuration = self.get_configuration_module()
+        query_filter = Q()
+        for topic in configuration.topics:
+            query_filter |= Q(properties__icontains=topic)
+        deletes = out.individual_set.exclude(query_filter).delete()
+        log.info(deletes)
+
     def finish_content(self, out, err):
 
         spacy_parsers = {}
@@ -251,13 +259,6 @@ class DiscourseSearchCommunity(Community):
 
             individual.clean()
             individual.save()
-
-        # Now that text has been extracted. Delete irrelevant entries not about specified topics
-        name, configuration = self.get_configuration_module()
-        query_filter = Q()
-        for topic in configuration.topics:
-            query_filter |= Q(properties__icontains=topic)
-        out.individual_set.exclude(query_filter).delete()
 
         # And finally calculate the aggregates
         self.set_aggregates(out)
