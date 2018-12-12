@@ -20,21 +20,15 @@ class TopicDetector(object):
         self.tfidf_treshold = tfidf_treshold
         self.max_ngram = max_ngram
         self.topic_filter_words = topic_filter_words
-        self.ngram_frames = None
+        self.sorted_ngrams = {}
 
     def run(self, inputs, limit_per_ngram=10):
+
+        # Generate ngrams out of texts
         texts = [self.get_text(inp) for inp in inputs if self.get_text(inp)]
-        self.ngram_frames = {
-            ix: self.get_word_frame(texts, ix, self.topic_filter_words)
-            for ix in range(1, self.max_ngram+1)
-        }
-        self.sorted_ngrams = {
-            ix: frame.sum(axis=0)
-                .sort_values(ascending=False)
-                .where(lambda value: value >= self.tfidf_treshold)
-                .dropna()
-            for ix, frame in self.ngram_frames.items()
-        }
+        for ix in range(1, self.max_ngram+1):
+            self.sorted_ngrams[ix] = self.get_topics(texts, ix, self.topic_filter_words)
+
         # Here we iterate backwards over the ngrams
         # Trigrams occuring inside tetragrams should be dropped and all bigrams in trigrams etc.
         drop_index = set()
@@ -56,7 +50,7 @@ class TopicDetector(object):
             results
         ]
 
-    def get_word_frame(self, texts, ngram, filter_features):
+    def get_topics(self, texts, ngram, filter_features):
         vectorizer = TfidfVectorizer(stop_words=self.stop_words, ngram_range=(ngram, ngram))
         vectorizer.fit(texts)
         feature_names = vectorizer.get_feature_names()
@@ -73,7 +67,10 @@ class TopicDetector(object):
                 if filter_feature in feature:
                     filtered.append(feature)
         frame.drop(labels=filtered, axis=1, inplace=True)
-        return frame
+        return frame.sum(axis=0) \
+            .where(lambda value: value >= self.tfidf_treshold) \
+            .dropna() \
+            .sort_values(ascending=False)
 
     def _get_drop_index(self, ngram_series, ngram_history):
         drop_index = set()
