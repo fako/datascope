@@ -6,20 +6,20 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 class TopicDetector(object):
 
-    def __init__(self, get_text, stop_words="english", tfidf_treshold=0.95, max_ngram=4, topic_filter_words=None):
+    def __init__(self, get_text, stop_words="english", tfidf_treshold=0.95, max_ngram=4, filter_words=None):
         assert callable(get_text), "Expected get_text to be a callable"
         assert max_ngram >= 2, "Expected max_ngram to be at least 2"
         assert isinstance(stop_words, (list, str)), \
             "Expected stop_words to be passed to sklearn but got a {}".format(type(stop_words))
         assert 0 < tfidf_treshold < 1, "Expected tfidf_treshold to be between 0 and 1"
-        topic_filter_words = topic_filter_words or []
-        assert  isinstance(topic_filter_words, list), "Expected topic_filter_words to be a list of words"
+        filter_words = filter_words or []
+        assert  isinstance(filter_words, list), "Expected filter_words to be a list of words"
 
         self.get_text = get_text
         self.stop_words = stop_words
         self.tfidf_treshold = tfidf_treshold
         self.max_ngram = max_ngram
-        self.topic_filter_words = topic_filter_words
+        self.filter_words = filter_words
         self.sorted_ngrams = {}
 
     def run(self, inputs, limit_per_ngram=10):
@@ -27,7 +27,7 @@ class TopicDetector(object):
         # Generate ngrams out of texts
         texts = [self.get_text(inp) for inp in inputs if self.get_text(inp)]
         for ix in range(1, self.max_ngram+1):
-            self.sorted_ngrams[ix] = self.get_topics(texts, ix, self.topic_filter_words)
+            self.sorted_ngrams[ix] = self.get_words(texts, ix, self.filter_words)
 
         # Here we iterate backwards over the ngrams
         # Trigrams occuring inside tetragrams should be dropped and all bigrams in trigrams etc.
@@ -50,7 +50,7 @@ class TopicDetector(object):
             results
         ]
 
-    def get_topics(self, texts, ngram, filter_features):
+    def get_words(self, texts, ngram, filter_features):
         vectorizer = TfidfVectorizer(stop_words=self.stop_words, ngram_range=(ngram, ngram))
         vectorizer.fit(texts)
         feature_names = vectorizer.get_feature_names()

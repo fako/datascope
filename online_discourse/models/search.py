@@ -289,10 +289,10 @@ class DiscourseSearchCommunity(Community):
         detector = TopicDetector(
             OnlineDiscourseRankProcessor.get_text,
             stop_words=list(self.STOP_WORDS[self.config.language]),
-            topic_filter_words=self.NON_TOPICS[self.config.language]
+            filter_words=self.NON_TOPICS[self.config.language]
         )
         return {
-            "most_important_topics": detector.run(collection.content)
+            "most_important_words": detector.run(collection.content)
         }
 
     def set_kernel(self):
