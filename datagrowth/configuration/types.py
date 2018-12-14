@@ -23,6 +23,12 @@ class ConfigurationType(object):
     So a configuration named `my_config` will be accessible with `config.my_config`.
 
     You can check if a configuration exists by using the `in` operator.
+
+    :param defaults: (dict) that should hold default configurations as items
+        or None to load defaults from settings at runtime
+    :param namespace: (string) prefix to search default configurations with
+    :param private: (list) keys that are considered as private
+    :return: ConfigurationType
     """
 
     _private_defaults = ["_private", "_defaults", "_namespace"]
@@ -33,12 +39,12 @@ class ConfigurationType(object):
         Initiates the ConfigurationType by checking arguments and setting logically private attributes
 
         :param defaults: (dict) that should hold default configurations as items
+            or None to load defaults from settings at runtime
         :param namespace: (string) prefix to search default configurations with
         :param private: (list) keys that are considered as private
         :return: None
         """
-        defaults = defaults or DATAGROWTH_DEFAULT_CONFIGURATION
-        assert isinstance(defaults, dict), \
+        assert isinstance(defaults, dict) or defaults is None, \
             "Defaults should be a dict which values are the configuration defaults."
         assert isinstance(namespace, str), \
             "Namespaces should be a string that acts as a prefix for finding configurations."
@@ -109,6 +115,11 @@ class ConfigurationType(object):
             return self.__dict__[shielded_key]
         elif variable_key in self.__dict__:
             return self.__dict__[variable_key]
+
+        # Lazy load the default configuration from settings to allow apps to register their own defaults
+        if self._defaults is None:
+            self._defaults = DATAGROWTH_DEFAULT_CONFIGURATION
+
         if namespace_attr in self._defaults:
             return self._defaults[namespace_attr]
         elif global_attr in self._defaults:
@@ -144,6 +155,7 @@ class ConfigurationType(object):
 
         :param config: (dict) the configuration keys and values to create a configuration with
         :param defaults: (dict) the configuration keys and values that act as a fallback
+            or None to load defaults from settings at runtime
         :return: a configuration instance
         """
         assert isinstance(config, dict), \
@@ -152,7 +164,7 @@ class ConfigurationType(object):
             "_namespace needs to be specified in the configuration."
         assert "_private" in config, \
             "_private needs to be specified in the configuration."
-        assert isinstance(defaults, dict), \
+        assert isinstance(defaults, dict) or defaults is None, \
             "Defaults should be a dict which values are the configuration defaults."
         instance = cls(
             defaults=defaults,
@@ -256,6 +268,7 @@ class ConfigurationProperty(object):
 
     :param storage_attribute: (string) name of the attribute used to store configurations on the owner class
     :param defaults: (dict) should hold default configurations as items
+        or None to load defaults from settings at runtime
     :param namespace: (string) prefix to search default configurations with
     :param private: (list) keys that are considered as private for this property
     :return: ConfigurationType
@@ -267,6 +280,7 @@ class ConfigurationProperty(object):
 
         :param storage_attribute: (string) name of the attribute used to store configurations on the owner class
         :param defaults: (dict) should hold default configurations as items
+            or None to load defaults from settings at runtime
         :param namespace: (string) prefix to search default configurations with
         :param private: (list) keys that are considered as private for this property
         :return: ConfigurationType
