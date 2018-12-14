@@ -10,6 +10,8 @@ Configurations may get overridden at runtime, which typically happens during req
 import warnings
 from copy import copy
 
+from datagrowth.settings import DATAGROWTH_DEFAULT_CONFIGURATION
+
 
 class ConfigurationNotFoundError(AttributeError):
     pass
@@ -26,7 +28,7 @@ class ConfigurationType(object):
     _private_defaults = ["_private", "_defaults", "_namespace"]
     _global_prefix = "global"
 
-    def __init__(self, defaults, namespace="", private=tuple()):
+    def __init__(self, defaults=None, namespace="", private=tuple()):
         """
         Initiates the ConfigurationType by checking arguments and setting logically private attributes
 
@@ -35,6 +37,7 @@ class ConfigurationType(object):
         :param private: (list) keys that are considered as private
         :return: None
         """
+        defaults = defaults or DATAGROWTH_DEFAULT_CONFIGURATION
         assert isinstance(defaults, dict), \
             "Defaults should be a dict which values are the configuration defaults."
         assert isinstance(namespace, str), \
@@ -313,9 +316,17 @@ def create_config(namespace, configuration):
     :return: ConfigurationType
     """
     config = ConfigurationType(
-        defaults={},  #DEFAULT_CONFIGURATION,
+        defaults=DATAGROWTH_DEFAULT_CONFIGURATION,
         namespace=namespace,
         private=("_private", "_namespace", "_defaults",)
     )
     config.update(configuration)
     return config
+
+
+def register_config_defaults(namespace, configuration):
+    defaults = {
+        "{}_{}".format(namespace, key): value
+        for key, value in configuration
+    }
+    DATAGROWTH_DEFAULT_CONFIGURATION.update(defaults)

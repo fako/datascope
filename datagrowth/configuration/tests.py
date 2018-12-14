@@ -29,6 +29,7 @@ class TestConfigurationType(TestCase):
         self.assertEqual(instance._defaults, MOCK_CONFIGURATION)
         self.assertEqual(instance._namespace, "name")
         self.assertEqual(instance._private, ConfigurationType._private_defaults + ["_test", "_oops"])
+        self.skipTest("test a defaults of None")
 
     def test_attribute_access(self):
         self.assertEqual(self.config.test, "public")
@@ -345,4 +346,10 @@ class TestGetStandardizedConfiguration(TestCase):
 class TestCreateConfig(TestCase):
 
     def test_create_config(self):
+        self.skipTest("not tested")
+
+
+class TestRegisterConfigDefaults(TestCase):
+
+    def test_register_config_defaults(self):
         self.skipTest("not tested")
