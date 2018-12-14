@@ -4,7 +4,7 @@ from collections import Iterator
 from django.test import TestCase
 
 from datagrowth.configuration import (ConfigurationType, ConfigurationNotFoundError, ConfigurationProperty, load_config,
-                                      MOCK_CONFIGURATION)
+                                      get_standardized_configuration, MOCK_CONFIGURATION)
 
 
 class TestConfigurationType(TestCase):
@@ -327,8 +327,19 @@ class TestLoadConfigDecorator(TestCase):
 
 class TestGetStandardizedConfiguration(TestCase):
 
+    def setUp(self):
+        self.config = ConfigurationType(namespace="name", private=["_test3"], defaults=MOCK_CONFIGURATION)
+        self.config.update({
+            "test": "public",
+            "_test2": "protected",
+            "_test3": "private"
+        })
+
     def test_standardized_configuration(self):
-        self.skipTest("not tested")
+        out = get_standardized_configuration(self.config)
+        self.assertEqual(out, "3601ce2b866f9ccff5e9e49b628e65108abb3d5ada72fce6511645212c0ce520")
+        out = get_standardized_configuration(self.config, as_hash=False)
+        self.assertEqual(out, "test=public")
 
 
 class TestCreateConfig(TestCase):

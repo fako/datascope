@@ -9,7 +9,7 @@ from .types import ConfigurationProperty
 
 class ConfigurationFormField(form_fields.CharField):
     """
-    This form field correctly serializes the configuration when saving an (admin) form.
+    This form field correctly serializes the configuration inside of text area's when saving an (admin) form.
     """
     def to_python(self, value):
         if isinstance(value, str):
@@ -22,23 +22,23 @@ class ConfigurationFormField(form_fields.CharField):
 
 class ConfigurationField(fields.TextField):
     """
-    This field creates a property of ConfigurationType on models.
+    This field creates a property of ConfigurationType on Django models.
+    All values will be saved in the database upon save of a model.
+    Note that the default value in the database is always an empty dictionary. Despite setting defaults.
 
-    NB: default that gets stored in the database is always an empty dictionary.
+    :param config_defaults: (dict) should hold default configurations as items
+    :param namespace: (string) prefix to search default configurations with if a configuration is missing
+    :param private: (list) keys that are considered as private
+    :param args: additional field arguments
+    :param kwargs: additional field keyword arguments
     """
+
     form_class = ConfigurationFormField
 
     def __init__(self, config_defaults=None, namespace="", private=tuple(), *args, **kwargs):
         """
         Stores its arguments for later use by contribute_to_class.
         Assertions are done by the ConfigurationType class, upon contribute_to_class.
-
-        :param config_defaults: (dict) that should hold default configurations as items
-        :param namespace: (string) prefix to search default configurations with
-        :param private: (list) keys that are considered as private
-        :param args: additional field arguments
-        :param kwargs: additional field keyword arguments
-        :return:
         """
         super(ConfigurationField, self).__init__(*args, **kwargs)
         self._defaults = config_defaults
@@ -46,7 +46,6 @@ class ConfigurationField(fields.TextField):
         self._private = private
 
     def contribute_to_class(self, cls, name, private_only=False, **kwargs):
-
         configuration_property = ConfigurationProperty(
             storage_attribute=name,
             defaults=getattr(cls, 'CONFIG_DEFAULTS', self._defaults),
@@ -64,9 +63,6 @@ class ConfigurationField(fields.TextField):
             try:
                 return json.loads(value)
             except ValueError:
-                # due to legacy some fixtures may contain stringyfied dicts instead of JSON objects
-                # uncomment below and comment the raise statement to fix this during fixture load
-                # value = dict(eval(value))
                 raise ValidationError("Enter valid JSON: " + value)
         return value
 
