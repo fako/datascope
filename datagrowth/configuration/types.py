@@ -301,11 +301,21 @@ class ConfigurationProperty(object):
             obj.__dict__[self._storage_attribute].update(new)
 
 
-def create_config(namespace, values):
+def create_config(namespace, configuration):
+    """
+    A convenience function to quickly create a configuration of the ConfigurationType.
+    You need specify under which namespace the configuration should search for defaults.
+    The configuration names and their values need to be supplied as well as a simple dictionary.
+    Apart from that the configuration needs no setup and the most common use cases will be supported.
+
+    :param namespace: the namespace under which missing configurations should be searched when defaulting
+    :param values: (dict) the configuration keys and values that should be set on the configuration instance
+    :return: ConfigurationType
+    """
     config = ConfigurationType(
         defaults={},  #DEFAULT_CONFIGURATION,
         namespace=namespace,
         private=("_private", "_namespace", "_defaults",)
     )
-    config.update(values)
+    config.update(configuration)
     return config
