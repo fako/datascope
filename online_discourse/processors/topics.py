@@ -67,6 +67,8 @@ class TopicDetector(object):
                 if filter_feature in feature:
                     filtered.append(feature)
         frame.drop(labels=filtered, axis=1, inplace=True)
+        # As we're taking the whole corpus into account. What would it mean to use idf vector instead?
+        # It saves us a lot of memory
         return frame.sum(axis=0) \
             .where(lambda value: value >= self.tfidf_treshold) \
             .dropna() \

@@ -21,7 +21,7 @@ from core.models.organisms.states import CommunityState
 from core.utils.helpers import cross_combine
 from online_discourse.models.sources import WebTextTikaResource
 from online_discourse.discourse import configurations
-from online_discourse.processors import TopicDetector, OnlineDiscourseRankProcessor
+from online_discourse.processors import TopicDetector, EntityDetector, OnlineDiscourseRankProcessor
 
 
 class DiscourseSearchCommunity(Community):
@@ -271,6 +271,9 @@ class DiscourseSearchCommunity(Community):
         self.aggregates.update(
             self.get_topic_aggregates(collection)
         )
+        self.aggregates.update(
+            self.get_entity_aggregates(collection)
+        )
 
     def get_source_and_author_aggregates(self, collection):
         sources = set()
@@ -293,6 +296,16 @@ class DiscourseSearchCommunity(Community):
         )
         return {
             "most_important_words": detector.run(collection.content)
+        }
+
+    def get_entity_aggregates(self, collection):
+        nlp = spacy.load(self.SPACY_PACKAGES[self.config.language])
+        detector = EntityDetector(
+            OnlineDiscourseRankProcessor.get_text,
+            nlp
+        )
+        return {
+            "entities": detector.run(collection.content)
         }
 
     def set_kernel(self):
