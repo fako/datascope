@@ -55,22 +55,9 @@ class DiscourseViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk=None):
         community = DiscourseSearchCommunity.objects.get(id=pk)
         name, configuration = self._community_as_dict(community)
-        # Set most_important_words
-        text_frame = TextFeaturesFrame(
-            get_identifier=lambda ind: ind["url"],
-            get_text=OnlineDiscourseRankProcessor.get_text,
-            file_path=community.get_feature_frame_file("text_frame", file_ext=".npz")
-        )
-        tfidf_sum = text_frame.data.sum(axis=0)
-        indices = tfidf_sum.A1.argsort()
-        feature_names = text_frame.vectorizer.get_feature_names()
-        most_important_words = [feature_names[ix] for ix in indices[-20:]]
-        most_important_words.reverse()
-        configuration["most_important_words"] = most_important_words
         if community.aggregates:
             configuration.update(community.aggregates)
             return Response(configuration)
-
         # TODO: below is very slow and deprecated. Should be removed
         # Retrieve sets
         authors = set()
