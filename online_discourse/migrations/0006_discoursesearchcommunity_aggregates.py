@@ -17,6 +17,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='discoursesearchcommunity',
             name='aggregates',
-            field=json_field.fields.JSONField(default={}, help_text='Enter a valid JSON object'),
+            field=json_field.fields.JSONField(default={}, help_text='Enter a valid JSON object', blank=True),
         ),
     ]

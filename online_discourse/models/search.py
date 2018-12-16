@@ -26,7 +26,7 @@ from online_discourse.processors import TopicDetector, EntityDetector, OnlineDis
 
 class DiscourseSearchCommunity(Community):
 
-    aggregates = json_field.JSONField(default={})
+    aggregates = json_field.JSONField(default={}, blank=True)
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("search", {
