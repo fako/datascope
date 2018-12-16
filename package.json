@@ -3,6 +3,7 @@
     "version": "0.9.0",
     "artefact": {
         "includes": [
+            "datagrowth/resources/shell/bin/",
             "data/online_discourse/",
             "data/future_fashion/"
         ]
