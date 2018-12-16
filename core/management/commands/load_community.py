@@ -20,7 +20,7 @@ class Command(CommunityCommand):
         model.objects.bulk_create(objects)
 
     def handle_community(self, community, *args, **options):
-        source = os.path.join(community._meta.app_label, "data", "dumps", community.get_name())
+        source = os.path.join("data", community._meta.app_label, "dumps", community.get_name())
         file_name = os.path.join(source, "{}.json".format(self.signature))
         if not os.path.exists(file_name):
             print("Dump with signature {} does not exist".format(self.signature))

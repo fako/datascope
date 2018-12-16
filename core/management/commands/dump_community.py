@@ -30,7 +30,7 @@ class Command(CommunityCommand):
         json_file.write(batch_data + "\n")
 
     def handle_community(self, community, *args, **options):
-        destination = os.path.join(community._meta.app_label, "data", "dumps", community.get_name())
+        destination = os.path.join("data", community._meta.app_label , "dumps", community.get_name())
         if not os.path.exists(destination):
             os.makedirs(destination)
         file_name = os.path.join(destination, "{}.json".format(community.signature))

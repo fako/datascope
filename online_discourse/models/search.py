@@ -312,7 +312,7 @@ class DiscourseSearchCommunity(Community):
         self.kernel = self.current_growth.output
 
     def get_feature_frame_file(self, frame_type, file_ext=".pkl"):
-        return os.path.join(self._meta.app_label, "data", frame_type + "s", self.signature + file_ext)
+        return os.path.join("data", self._meta.app_label, frame_type + "s", self.signature + file_ext)
 
     def before_rank_manifestation(self, manifestation_part):
         manifestation_part["config"]["feature_frame_path"] = self.get_feature_frame_file("feature_frame")
