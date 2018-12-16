@@ -1,5 +1,3 @@
-from itertools import chain
-
 from spacy.language import Language
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -9,7 +7,7 @@ class EntityDetector(object):
 
     def __init__(self, get_text, nlp):
         assert callable(get_text), "Expected get_text to be a callable"
-        assert issubclass(nlp, Language), "nlp argument should be a spaCy Language model"
+        assert isinstance(nlp, Language), "nlp argument should be a spaCy Language model"
         self.get_text = get_text
         self.nlp = nlp
         self.entities = ["PERSON"]
@@ -42,37 +40,11 @@ class EntityDetector(object):
         vectorizer = TfidfVectorizer(
             tokenizer=self.get_entity_tokenizer(entity)
         )
-        tfidf_entities = vectorizer.fit(texts)
-        sorted_idf_entities = tfidf_entities.idf_.argsort()
+        entities_matrix = vectorizer.fit_transform(texts)
+        tfidf_entities_matrix = entities_matrix.sum(axis=0)
+        tfidf_entities = tfidf_entities_matrix.tolist()[0]
         feature_names = vectorizer.get_feature_names()
-        entities_data = dict(zip(feature_names, sorted_idf_entities))
+        entities_data = dict(zip(feature_names, tfidf_entities))
         series = pd.Series(entities_data)
-        series.sort_values(ascending=True, inplace=True)
+        series.sort_values(ascending=False, inplace=True)
         return series
-        # vectors = vectorizer.transform(texts)
-        # frame = pd.DataFrame(vectors.toarray(), columns=feature_names)
-
-
-
-
-        # # Remove features that are in specified list
-        # filtered = []
-        # for feature in feature_names:
-        #     for filter_feature in filter_features:
-        #         if filter_feature in feature:
-        #             filtered.append(feature)
-        # frame.drop(labels=filtered, axis=1, inplace=True)
-        # # As we're taking the whole corpus into account. What would it mean to use idf vector instead?
-        # # It saves us a lot of memory
-        # return frame.sum(axis=0) \
-        #     .where(lambda value: value >= self.tfidf_treshold) \
-        #     .dropna() \
-        #     .sort_values(ascending=False)
-
-    def _get_drop_index(self, ngram_series, ngram_history):
-        drop_index = set()
-        for ngram in chain(ngram_series, ngram_history):
-            ngram_split = ngram.split(" ")
-            drop_index.add(" ".join(ngram_split[0:-1]))
-            drop_index.add(" ".join(ngram_split[1:]))
-        return drop_index

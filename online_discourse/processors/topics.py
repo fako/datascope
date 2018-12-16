@@ -51,28 +51,36 @@ class TopicDetector(object):
         ]
 
     def get_words(self, texts, ngram, filter_features):
-        vectorizer = TfidfVectorizer(stop_words=self.stop_words, ngram_range=(ngram, ngram))
-        vectorizer.fit(texts)
+        vectorizer = TfidfVectorizer(
+            stop_words=self.stop_words,
+            ngram_range=(ngram, ngram)
+        )
+        words_matrix = vectorizer.fit_transform(texts)
+        tfidf_words_matrix = words_matrix.sum(axis=0)
+        tfidf_words = tfidf_words_matrix.tolist()[0]
         feature_names = vectorizer.get_feature_names()
-        vectors = vectorizer.transform(texts)
-        frame = pd.DataFrame(vectors.toarray(), columns=feature_names)
+
+        filtered_indices = set()
         # Remove all numeric features
         if ngram == 1:
-            number_features = [feature for feature in feature_names if not feature.isalpha()]
-            frame.drop(labels=number_features, axis=1, inplace=True)
+            for ix, feature in enumerate(feature_names):
+                if not feature.isalpha():
+                    filtered_indices.add(ix)
         # Remove features that are in specified list
-        filtered = []
-        for feature in feature_names:
+        for ix, feature in enumerate(feature_names):
             for filter_feature in filter_features:
                 if filter_feature in feature:
-                    filtered.append(feature)
-        frame.drop(labels=filtered, axis=1, inplace=True)
-        # As we're taking the whole corpus into account. What would it mean to use idf vector instead?
-        # It saves us a lot of memory
-        return frame.sum(axis=0) \
-            .where(lambda value: value >= self.tfidf_treshold) \
-            .dropna() \
-            .sort_values(ascending=False)
+                    filtered_indices.add(ix)
+
+        words_data = dict(
+            zip(
+                (feature for ix, feature in enumerate(feature_names) if ix not in filtered_indices),
+                (tfidf for ix, tfidf in enumerate(tfidf_words) if ix not in filtered_indices)
+            )
+        )
+        series = pd.Series(words_data)
+        series.sort_values(ascending=False, inplace=True)
+        return series
 
     def _get_drop_index(self, ngram_series, ngram_history):
         drop_index = set()
