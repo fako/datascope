@@ -1,10 +1,12 @@
 """
-Datagrowth configurations can be serialized to JSON dicts for storage and transfer.
+Configurations can be serialized to JSON dicts for storage and transfer (to for instance task servers).
 They can also be passed on to other configuration instances in a parent/child like relationship.
-Datagrowth configurations are namespaced.
-Upon initialization defaults can be specified globally and per namespace.
-Initialization typically happens when application loads.
-Configurations may get overridden at runtime, which typically happens during requests.
+Configurations have defaults which can be set when Django loads.
+These defaults are namespaced to prevent name clashes across apps.
+
+Usually a request will set configurations during runtime to configure long running tasks.
+Configurations can also be used as a bag of properties.
+This is useful for Django models that have a very wide configuration range.
 """
 
 import warnings
