@@ -391,4 +391,13 @@ class TestCreateConfig(TestCase):
 class TestRegisterConfigDefaults(TestCase):
 
     def test_register_config_defaults(self):
-        self.skipTest("not tested")
+        self.assertFalse(DEFAULT_CONFIGURATION["global_purge_immediately"])
+        register_defaults("global", {
+            "purge_immediately": True
+        })
+        self.assertTrue(DEFAULT_CONFIGURATION["global_purge_immediately"])
+        self.assertNotIn("mock_test", DEFAULT_CONFIGURATION)
+        register_defaults("mock", {
+            "test": "create"
+        })
+        self.assertEqual(DEFAULT_CONFIGURATION["mock_test"], "create")
