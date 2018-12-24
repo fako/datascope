@@ -48,9 +48,14 @@ class Command(BaseCommand):
             instance.pk = None
             # Check destination and copy
             file_path, file_name, extension = instance._get_file_info(instance.request.get("url"))
+            if len(file_name) > 150:
+                file_name = file_name[:150]
+            file_name += extension
+            if len(file_name) > 155:
+                file_name = file_name[:155]
             if not os.path.exists(file_path):
                 os.makedirs(file_path)
-            dest_file = os.path.join(file_path, file_name + extension)
+            dest_file = os.path.join(file_path, file_name)
             shutil.copy2(source_file, dest_file)
             # Update instance info
             instance.body = dest_file.replace(datagrowth_settings.DATAGROWTH_MEDIA_ROOT, "").lstrip()
