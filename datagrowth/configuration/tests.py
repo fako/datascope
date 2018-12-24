@@ -390,7 +390,7 @@ class TestCreateConfig(TestCase):
 
 class TestRegisterConfigDefaults(TestCase):
 
-    def test_register_config_defaults(self):
+    def test_register_defaults(self):
         self.assertFalse(DEFAULT_CONFIGURATION["global_purge_immediately"])
         register_defaults("global", {
             "purge_immediately": True
