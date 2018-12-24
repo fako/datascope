@@ -74,7 +74,7 @@ class VisualTranslationsEUCommunity(Community):
             "config": {
                 "_args": ["$.url"],
                 "_kwargs": {},
-                "_resource": "ImageDownload"
+                "_resource": "WebImageDownload"
             },
             "schema": {},
             "errors": None,

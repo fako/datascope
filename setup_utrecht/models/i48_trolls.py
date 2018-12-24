@@ -79,7 +79,7 @@ class RedditScrapeCommunity(Community):
             "config": {
                 "_args": ["$.media_preview"],
                 "_kwargs": {},
-                "_resource": "ImageDownload",
+                "_resource": "RedditImageDownload",
                 "_interval_duration": 2000,
             },
             "schema": {},
