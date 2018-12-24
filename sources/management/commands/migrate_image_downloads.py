@@ -21,6 +21,7 @@ class Command(BaseCommand):
         parser.add_argument('-s', '--start', type=str, required=True)
         parser.add_argument('-e', '--end', type=str, required=True)
         parser.add_argument('-m', '--new-model', type=str, required=True)
+        parser.add_argument('-c', '--clean', action="store_true")
 
     def _handle_batch(self, batch, new_model, base_dir):
 
@@ -58,14 +59,25 @@ class Command(BaseCommand):
         # Execute migration
         Model.objects.bulk_create(instances)
 
+    def _handle_clean(self, queryset):
+        confirm = input("Are you sure you want to delete {} ImageDownload instances? (y/n) ".format(queryset.count()))
+        if confirm == "y":
+            print(queryset.delete())
+        else:
+            print("Deletion aborted")
+
     def handle(self, *args, **options):
         media_dir = os.path.join("system", "files", "media")
         start = datetime.strptime(options["start"], "%Y-%m-%d")
         end = datetime.strptime(options["end"], "%Y-%m-%d")
         end += timedelta(days=1)
         batch_size = 100
-
         queryset = ImageDownload.objects.filter(created_at__gte=start, created_at__lte=end)
+
+        if options["clean"]:
+            self._handle_clean(queryset)
+            return
+
         count = queryset.all().count()
         batch_iterator = ibatch(queryset.iterator(), batch_size=batch_size)
         if count >= batch_size * 5:
