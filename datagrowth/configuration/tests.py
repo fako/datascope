@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from datagrowth.configuration import (ConfigurationType, ConfigurationNotFoundError, ConfigurationProperty, load_config,
                                       get_standardized_configuration, MOCK_CONFIGURATION, DEFAULT_CONFIGURATION,
-                                      create_config)
+                                      create_config, register_defaults)
 
 
 class TestConfigurationType(TestCase):
@@ -366,12 +366,26 @@ class TestCreateConfig(TestCase):
         })
         self.assertIsNone(test_config._defaults)
         self.assertIsInstance(test_config, ConfigurationType)
-        self.assertEqual(test_config._namespace, "name")
         self.assertEqual(test_config.test, "public")
         self.assertEqual(test_config.test2, "protected")
         self.assertEqual(test_config.test3, "protected 2")
         self.assertEqual(test_config._test2, "protected")
         self.assertEqual(test_config._test3, "protected 2")
+
+    def test_create_config_registered_defaults(self):
+        register_defaults("name", {
+            "test4": "namespaced default"
+        })
+        test_config = create_config("name", {
+            "test": "public",
+            "_test2": "protected",
+            "_test3": "protected 2"
+        })
+        self.assertIsNone(test_config._defaults)
+        self.assertIsInstance(test_config, ConfigurationType)
+        self.assertEqual(test_config._namespace, "name")
+        self.assertEqual(test_config.test4, "namespaced default")
+        self.assertEqual(test_config._defaults, DEFAULT_CONFIGURATION)
 
 
 class TestRegisterConfigDefaults(TestCase):
