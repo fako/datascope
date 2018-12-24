@@ -63,7 +63,7 @@ class Command(BaseCommand):
         start = datetime.strptime(options["start"], "%Y-%m-%d")
         end = datetime.strptime(options["end"], "%Y-%m-%d")
         end += timedelta(days=1)
-        batch_size = 10
+        batch_size = 100
 
         queryset = ImageDownload.objects.filter(created_at__gte=start, created_at__lte=end)
         count = queryset.all().count()
