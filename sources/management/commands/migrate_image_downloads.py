@@ -56,7 +56,7 @@ class Command(BaseCommand):
             instances.append(instance)
 
         # Execute migration
-        Model.objects.batch_create(instances)
+        Model.objects.bulk_create(instances)
 
     def handle(self, *args, **options):
         media_dir = os.path.join("system", "files", "media")
@@ -73,4 +73,3 @@ class Command(BaseCommand):
             batch_iterator = tqdm(batch_iterator, total=batches)
         for batch in batch_iterator:
             self._handle_batch(batch, options["new_model"], media_dir)
-            break
