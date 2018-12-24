@@ -4,7 +4,7 @@ from collections import Iterator
 from django.test import TestCase
 
 from datagrowth.configuration import (ConfigurationType, ConfigurationNotFoundError, ConfigurationProperty, load_config,
-                                      get_standardized_configuration, MOCK_CONFIGURATION)
+                                      get_standardized_configuration, MOCK_CONFIGURATION, DEFAULT_CONFIGURATION)
 
 
 class TestConfigurationType(TestCase):
@@ -19,17 +19,29 @@ class TestConfigurationType(TestCase):
         })
 
     def test_init(self):
-        # Implicit init
+        # Implicit init without defaults
+        # Notice that apps can manipulate the DEFAULT_CONFIGURATION upon app.ready
+        # Therefor defaults are not loaded until first access
+        instance = ConfigurationType()
+        self.assertEqual(instance._defaults, None)
+        self.assertEqual(instance._namespace, ConfigurationType._global_prefix)
+        self.assertEqual(instance._private, ConfigurationType._private_defaults)
+        purge_immediately = instance.purge_immediately  # this loads the defaults
+        self.assertFalse(purge_immediately)
+        self.assertEqual(instance._defaults, DEFAULT_CONFIGURATION)
+        # Implicit init with defaults
         instance = ConfigurationType(defaults=MOCK_CONFIGURATION)
         self.assertEqual(instance._defaults, MOCK_CONFIGURATION)
         self.assertEqual(instance._namespace, ConfigurationType._global_prefix)
         self.assertEqual(instance._private, ConfigurationType._private_defaults)
+        purge_immediately = instance.purge_immediately  # this won't load defaults as defaults got set
+        self.assertFalse(purge_immediately)
+        self.assertEqual(instance._defaults, MOCK_CONFIGURATION)
         # Explicit init with double private key
         instance = ConfigurationType(namespace="name", private=["_test", "_test", "oops"], defaults=MOCK_CONFIGURATION)
         self.assertEqual(instance._defaults, MOCK_CONFIGURATION)
         self.assertEqual(instance._namespace, "name")
         self.assertEqual(instance._private, ConfigurationType._private_defaults + ["_test", "_oops"])
-        self.skipTest("test a defaults of None")
 
     def test_attribute_access(self):
         self.assertEqual(self.config.test, "public")
