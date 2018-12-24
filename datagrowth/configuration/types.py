@@ -339,9 +339,9 @@ def create_config(namespace, configuration):
     return config
 
 
-def register_config_defaults(namespace, configuration):
+def register_defaults(namespace, configuration):
     defaults = {
         "{}_{}".format(namespace, key): value
-        for key, value in configuration
+        for key, value in configuration.items()
     }
     DATAGROWTH_DEFAULT_CONFIGURATION.update(defaults)
