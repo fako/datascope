@@ -332,7 +332,6 @@ def create_config(namespace, configuration):
     :return: ConfigurationType
     """
     config = ConfigurationType(
-        defaults=DATAGROWTH_DEFAULT_CONFIGURATION,
         namespace=namespace,
         private=("_private", "_namespace", "_defaults",)
     )
