@@ -138,7 +138,7 @@ class ClothingDataCommunity(Community):
             "config": {
                 "_args": ["$.image"],
                 "_kwargs": {},
-                "_resource": "ImageDownload",
+                "_resource": "ClothingImageDownload",
                 "_interval_duration": 100
             },
             "schema": {},
