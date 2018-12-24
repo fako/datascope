@@ -50,9 +50,9 @@ class Command(BaseCommand):
             if not os.path.exists(file_path):
                 os.makedirs(file_path)
             dest_file = os.path.join(file_path, file_name + extension)
-            shutil.copy(source_file, dest_file)  # TODO: figure out correct function
+            shutil.copy2(source_file, dest_file)
             # Update instance info
-            instance.body = file_path.replace(datagrowth_settings.DATAGROWTH_MEDIA_ROOT, "").lstrip()
+            instance.body = dest_file.replace(datagrowth_settings.DATAGROWTH_MEDIA_ROOT, "").lstrip()
             instances.append(instance)
 
         # Execute migration
