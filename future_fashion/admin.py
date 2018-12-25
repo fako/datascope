@@ -1,9 +1,10 @@
 from django.contrib import admin
 
+from datagrowth.admin import HttpResourceAdmin
 from core.admin.organisms import CommunityAdmin
-from core.admin.resources import ResourceAdmin
 from future_fashion.models import (ClothingDataCommunity, ClothingInventoryCommunity, BrandRecognitionService,
-                                   ClothingTypeRecognitionService, ImageFeatures, ColorClothingSet)
+                                   ClothingTypeRecognitionService, ImageFeatures, ColorClothingSet,
+                                   ClothingImageDownload)
 
 
 class ColorClothingSetAdmin(admin.ModelAdmin):
@@ -13,7 +14,8 @@ class ColorClothingSetAdmin(admin.ModelAdmin):
 
 admin.site.register(ClothingDataCommunity, CommunityAdmin)
 admin.site.register(ClothingInventoryCommunity, CommunityAdmin)
-admin.site.register(BrandRecognitionService, ResourceAdmin)
-admin.site.register(ClothingTypeRecognitionService, ResourceAdmin)
-admin.site.register(ImageFeatures, ResourceAdmin)
+admin.site.register(BrandRecognitionService, HttpResourceAdmin)
+admin.site.register(ClothingTypeRecognitionService, HttpResourceAdmin)
+admin.site.register(ImageFeatures, HttpResourceAdmin)
 admin.site.register(ColorClothingSet, ColorClothingSetAdmin)
+admin.site.register(ClothingImageDownload, HttpResourceAdmin)
