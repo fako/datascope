@@ -13,7 +13,7 @@ from core.utils.image import ImageGrid
 from core.utils.helpers import format_datetime, iroundrobin
 from core.processors.expansion import ExpansionProcessor
 
-from sources.models.downloads import ImageDownload
+from visual_translations.models.sources.files import WebImageDownload
 
 
 class VisualTranslationsEUCommunity(Community):
@@ -213,7 +213,7 @@ class VisualTranslationsEUCommunity(Community):
         query = translation_growth.input.individual_set.last().properties["query"]
         grids = {"{}_{}".format(language, country): (grid, factor) for language, country, grid, factor in self.LOCALES}
         grouped_translations = translation_growth.output.group_by("locale")
-        directory = "visual_translations/{}/{}".format(query, format_datetime(self.created_at))
+        directory = "visual_translations/grids/{}/{}".format(query, format_datetime(self.created_at))
         os.makedirs(os.path.join(settings.MEDIA_ROOT, directory), 0o0755, True)
         for locale, translations in six.iteritems(grouped_translations):
             expansion_processor = ExpansionProcessor(self.config.to_dict())
@@ -233,8 +233,8 @@ class VisualTranslationsEUCommunity(Community):
                 except StopIteration:
                     break
                 try:
-                    download = ImageDownload.objects.get(uri=ImageDownload.uri_from_url(image["url"]))
-                except ImageDownload.DoesNotExist:
+                    download = WebImageDownload.objects.get(uri=WebImageDownload.uri_from_url(image["url"]))
+                except WebImageDownload.DoesNotExist:
                     continue
                 content_type, image = download.content
                 if image is not None:
