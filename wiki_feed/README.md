@@ -11,6 +11,7 @@ Follow these steps after uploading the artefacts:
 
 ```bash
 cp -r /home/fako/uploads/datascope/<version> /data/project/algo-news/artefacts/datascope/
+cp /data/project/algo-news/artefacts/datascope/<version>/src/datascope/wsgi.py /data/project/algo-news/artefacts/datascope/<version>/src/app.py
 
 ```
 
@@ -32,7 +33,7 @@ Time to make the installation:
 
 ```bash
 deactivate
-/urs/bin/python3 -m venv --copies env
+/usr/bin/python3 -m venv --copies env
 source env/bin/activate
 pip install --upgrade pip
 pip install -r src/datascope/environments/wikipedia_requirements.txt
@@ -54,6 +55,9 @@ And last but not least we can deploy once we exit the pod with CTRL-D
 
 ```bash
 ln -sfn artefacts/datascope/<version> datascope
+webservice --backend=kubernetes python stop
+webservice --backend=kubernetes python start
+kubectl delete deployment algo-news.celery
 kubectl create -f /data/project/algo-news/deployment.yaml
 ```
 
@@ -62,5 +66,5 @@ Once the deployment is made you can control it with:
 ```bash
 kubectl get pods
 kubectl logs <name>
-kubectl delete deployment algo-news.bot
+kubectl delete deployment algo-news.celery
 ```
