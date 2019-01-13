@@ -11,6 +11,7 @@ Follow these steps after uploading the artefacts:
 
 ```bash
 cp -r /home/fako/uploads/datascope/<version> /data/project/algo-news/artefacts/datascope/
+cp /data/project/algo-news/artefacts/datascope/<version>/src/datascope/wsgi.py /data/project/algo-news/artefacts/datascope/<version>/src/app.py
 
 ```
 
@@ -54,6 +55,8 @@ And last but not least we can deploy once we exit the pod with CTRL-D
 
 ```bash
 ln -sfn artefacts/datascope/<version> datascope
+webservice --backend=kubernetes python stop
+webservice --backend=kubernetes python start
 kubectl create -f /data/project/algo-news/deployment.yaml
 ```
 
