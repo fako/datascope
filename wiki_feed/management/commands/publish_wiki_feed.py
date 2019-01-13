@@ -1,5 +1,3 @@
-from datetime import date, datetime, timedelta
-
 from core.management.commands.grow_community import Command as GrowCommand
 from core.utils.configuration import DecodeConfigAction
 from sources.models import WikipediaTransclusions, WikipediaRevisions
