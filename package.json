@@ -3,10 +3,8 @@
     "version": "0.8.3",
     "artefact": {
         "includes": [
-            "online_discourse/data/dumps/",
-            "online_discourse/data/feature_frames/",
-            "online_discourse/data/text_frames/",
-            "future_fashion/data/"
+            "data/online_discourse/",
+            "data/future_fashion/"
         ]
     }
 }
