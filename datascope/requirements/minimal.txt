@@ -22,7 +22,7 @@ redis==2.10.5
 
 # Advanced features
 selenium==2.47.1
-pillow==2.6.1
+pillow==2.9.0
 
 # Debug and test
 raven==6.3.0

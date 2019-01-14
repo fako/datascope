@@ -69,6 +69,14 @@ class DiscourseSearchCommunity(Community):
             }
         },
         {
+            "process": "FilterProcessor.select",
+            "config": {
+                "select_keys": ["author", "source"],
+                "$author": None,
+                "$source": None
+            }
+        },
+        {
             "name": "rank",
             "process": "OnlineDiscourseRankProcessor.default_ranking",
             "config": {
@@ -152,7 +160,9 @@ class DiscourseSearchCommunity(Community):
         part = next((part for part in self.COMMUNITY_BODY if part.get("name") == "rank"), None)
         if part is None:
             raise TypeError("No RankProcessor part found in COMMUNITY_BODY")
-        rank_processor, method, args_type = self.prepare_process(part["process"], class_config=part.get("config"))
+        config = part.get("config")
+        config["language"] = self.config.language
+        rank_processor, method, args_type = self.prepare_process(part["process"], class_config=config)
 
         for frame_type in ["feature_frame", "text_frame"]:
             path, file_name = os.path.split(self.get_feature_frame_file(frame_type))
@@ -164,6 +174,10 @@ class DiscourseSearchCommunity(Community):
 
         rank_processor.text_frame.load_content(lambda: self.kernel.content)
         rank_processor.text_frame.to_disk(self.get_feature_frame_file("text_frame", file_ext=".npz"))
+
+    def get_configuration_module(self):
+        name = next((part for part in self.signature.split("&") if "=" not in part))
+        return name, getattr(configurations, name, None)
 
     class Meta:
         verbose_name = "Discourse search community"

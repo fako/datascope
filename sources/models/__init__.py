@@ -16,5 +16,4 @@ from .google.translations import GoogleTranslate
 from .google.text import GoogleText
 
 from .downloads import ImageDownload
-
-from .indico.images import ImageFeatures
+from .micro import ImageRecognitionService

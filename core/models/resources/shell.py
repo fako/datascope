@@ -1,56 +1,98 @@
 import subprocess
 import string
-from copy import deepcopy
 import jsonschema
+from copy import copy
+from datetime import datetime
 from jsonschema.exceptions import ValidationError as SchemaValidationError
 
+from django.conf import settings
 from django.db import models
 from django.core.exceptions import ValidationError
 import json_field
 
 from core.models.resources.resource import Resource
+from core.exceptions import DSShellError
 
 
 class ShellResource(Resource):
 
     # Getting data
     command = json_field.JSONField(default=None)
+    stdin = models.TextField(default=None, null=True, blank=True)
 
     # Storing data
     stdout = models.TextField(default=None, null=True, blank=True)
     stderr = models.TextField(default=None, null=True, blank=True)
 
     # Class constants that determine behavior
-    CMD_TEMPLATE = ["python", "manage.py", "shell"]
+    CMD_TEMPLATE = ["python", "manage.py", "shell", "CMD_FLAGS"]
     FLAGS = {
-        "settings": "--settings"
+        "settings": "--settings="
     }
+    DIRECTORY_SETTING = None
 
     SCHEMA = {
         "arguments": {},
         "flags": {}
     }
 
+    #######################################################
+    # PUBLIC FUNCTIONALITY
+    #######################################################
+    # Call run to execute the command
+    # Success and content are to handle the results
+    # Override transform to manipulate command results
+
     def run(self, *args, **kwargs):
 
-        # create command from args, kwargs and command template
-        # validate command
-        # set URI
-        # retrieve from cache resource=
-        # _run
-        # _handle_errors
-        # return resource
+        if not self.command:
+            self.command = self._create_command(*args, **kwargs)
+            self.uri = ShellResource.uri_from_cmd(self.command.get("cmd"))
+        else:
+            self.validate_command(self.command)
 
-        pass
+        self.clean()  # sets self.uri
+        resource = None
+        try:
+            resource = self.__class__.objects.get(
+                uri=self.uri,
+                stdin=self.stdin
+            )
+            self.validate_command(resource.command)
+        except (self.DoesNotExist, ValidationError):
+            if resource is not None:
+                resource.delete()
+            resource = self
 
-    def validate_command(self, command):
-        pass
+        if resource.success:
+            return resource
 
-    def transform(self):
-        pass
+        resource._run()
+        resource._handle_errors()
+        return resource
 
-    def line_to_dict(self, line):
-        pass
+    @property
+    def success(self):
+        """
+        Returns True if exit code is within success range
+        """
+        return self.status == 0 and self.stdout
+
+    @property
+    def content(self):
+        return "application/json", self.transform(self.stdout)
+
+    def transform(self, stdout):
+        return stdout
+
+    #######################################################
+    # CREATE COMMAND
+    #######################################################
+    # A set of methods to create a command dictionary
+    # The values inside are passed to the subprocess library
+
+    def variables(self, *args):
+        raise NotImplementedError("Variables are not specified on this resource")
 
     def _create_command(self, *args, **kwargs):
         self._validate_input(*args, **kwargs)
@@ -58,18 +100,35 @@ class ShellResource(Resource):
         # First we format the command template
         formatter = string.Formatter()
         arguments = iter(args)
-        command = []
+        cmd = []
         for part in self.CMD_TEMPLATE:
             fields = formatter.parse(part)
             for literal_text, field_name, format_spec, conversion in fields:
                 if field_name is not None:
                     part = part.format(next(arguments))
-            command.append(part)
+            cmd.append(part)
 
         # Then we set the flags
-        flags_index = command.index("CMD_FLAGS")
+        flags = ""
+        try:
+            flags_index = cmd.index("CMD_FLAGS")
+        except ValueError:
+            flags_index = None
+        if flags_index is not None:
+            for key, value in kwargs.items():
+                if key in self.FLAGS:
+                    flags += " " + self.FLAGS[key] + value
+            flags = flags.lstrip()
+            cmd[flags_index] = flags
 
-        return command
+        # Returning command
+        command = {
+            "args": args,
+            "kwargs": kwargs,
+            "cmd": cmd,
+            "flags": flags
+        }
+        return self.validate_command(command, validate_input=False)
 
     def _validate_input(self, *args, **kwargs):
         args_schema = self.SCHEMA.get("arguments")
@@ -93,11 +152,74 @@ class ShellResource(Resource):
                     "{}: {}".format(self.__class__.__name__, str(ex))
                 )
 
+    def validate_command(self, command, validate_input=True):
+        if self.purge_at is not None and self.purge_at <= datetime.now():
+            raise ValidationError("Resource is no longer valid and will get purged")
+        # Internal asserts about the request
+        assert isinstance(command, dict), \
+            "Command should be a dictionary."
+        assert isinstance(command["cmd"], list), \
+            "Cmd should be a list that can be passed on to subprocess.run"
+        if validate_input:
+            self._validate_input(
+
+                *command.get("args", tuple()),
+                **command.get("kwargs", {})
+            )
+        # All is fine :)
+        return command
+
+    #######################################################
+    # PROTECTED METHODS
+    #######################################################
+    # Some internal methods to execute the shell commands
+    # Currently it wraps subprocess
+
     def _run(self):
-        pass
+        cmd = self.command.get("cmd")
+        cwd = None
+        if self.DIRECTORY_SETTING:
+            cwd = getattr(settings, self.DIRECTORY_SETTING)
+        results = subprocess.run(
+            cmd,
+            stdin=subprocess.PIPE,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            cwd=cwd
+        )
+        self.status = results.returncode
+        self.stdout = results.stdout
+        self.stderr = results.stderr
 
     def _handle_errors(self):
-        pass
+        if not self.success:
+            class_name = self.__class__.__name__
+            message = "{} > {} \n\n {}".format(class_name, self.status, self.stderr)
+            raise DSShellError(message, resource=self)
+
+    #######################################################
+    # DJANGO MODEL
+    #######################################################
+    # Methods and properties to tweak Django
+
+    def clean(self):
+        if len(self.uri):
+            self.uri = self.uri[:255]
+        if not self.id and self.config.purge_immediately:
+            self.purge_at = datetime.now()
+
+    #######################################################
+    # CONVENIENCE
+    #######################################################
+    # Some static methods to provide standardization
+
+    @staticmethod
+    def uri_from_cmd(cmd):
+        cmd = copy(cmd)
+        main = cmd.pop(0)
+        cmd.sort()
+        cmd.insert(0, main)
+        return " ".join(cmd)
 
     class Meta:
         abstract = True

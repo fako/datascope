@@ -260,7 +260,11 @@ DESCRIPTIVE_ADJECTIVES = [
 ]
 
 immigranten = DiscourseConfiguration(
+    title="Immigranten",
+    description="Nederland is aantrekkelijk voor mensen om verschillende redenen. "
+                "In Nederland zelf is niet iedereen het eens hoe we met deze nieuwe mensen om moeten gaan.",
     language="nl",
+    topics=[],  # TODO: set to sane values
     singular_subjects=SINGULAR_SUBJECTS,
     plural_subjects=PLURAL_SUBJECTS,
     descriptive_adjectives=DESCRIPTIVE_ADJECTIVES

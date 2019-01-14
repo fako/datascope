@@ -6,10 +6,6 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
 
-    dependencies = [
-        ('topic_research', '0002_crosscombinetermsearchcommunity'),
-    ]
-
     operations = [
         migrations.CreateModel(
             name='DiscourseSearchCommunity',

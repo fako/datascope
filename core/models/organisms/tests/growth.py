@@ -1,6 +1,6 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
 from mock import patch, Mock
+
+from django.test import TransactionTestCase
 
 from core.models.organisms.growth import Growth, GrowthState
 from core.processors import HttpResourceProcessor
@@ -11,7 +11,7 @@ from core.tests.mocks.http import HttpResourceMock
 from core.exceptions import DSProcessError, DSProcessUnfinished
 
 
-class TestGrowth(TestProcessorMixin):
+class TestGrowth(TransactionTestCase, TestProcessorMixin):
 
     fixtures = ["test-growth"]
 
@@ -25,9 +25,17 @@ class TestGrowth(TestProcessorMixin):
             }
             for index in range(0, 9)
         ]
-        cls.expected_append_output = cls.expected_contributions
+        cls.expected_append_output = [
+            {
+                "_id": index + 6,
+                "context": "nested value",
+                "value": "nested value {}".format(index % 3)
+            }
+            for index in range(0, 9)
+        ]
         cls.expected_inline_output = [
             {
+                "_id": index + 3,
                 "context": "nested value",
                 "value": {
                     "value": "nested value {}".format(index % 3),
@@ -38,6 +46,7 @@ class TestGrowth(TestProcessorMixin):
         ]
         cls.expected_finished_output = [
             {
+                "_id": 2,
                 "context": "nested value",
                 "value": "nested value 0"
             }
@@ -51,6 +60,7 @@ class TestGrowth(TestProcessorMixin):
         ]
         cls.expected_update_output = [
             {
+                "_id": index + 3,
                 "context": "nested value",
                 "value": "nested value {}".format(index % 3),
                 "extra": "test {}".format(index % 3)
@@ -58,6 +68,7 @@ class TestGrowth(TestProcessorMixin):
             for index in range(0, 3)
         ]
         cls.expected_update_output_individual = {
+            '_id': 5,
             'context': 'nested value',
             'extra': 'test 2',
             'value': 'nested value 2'

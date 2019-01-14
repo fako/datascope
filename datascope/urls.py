@@ -5,6 +5,7 @@ from django.views import static
 admin.autodiscover()
 
 from core.urls import urlpatterns as core_patterns
+from future_fashion.urls import mediapatterns
 
 
 urlpatterns = [
@@ -13,6 +14,7 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
+    urlpatterns += mediapatterns
     urlpatterns += [
         url(r'^media/(?P<path>.*)$', static.serve,
             {'document_root': settings.MEDIA_ROOT, 'show_indexes': True }),

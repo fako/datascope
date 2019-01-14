@@ -88,7 +88,11 @@ DESCRIPTIVE_ADJECTIVES = [
 ]
 
 doodstraf = DiscourseConfiguration(
+    title="Doodstraf",
+    description="De doodstraf bestaat al heel lang niet in Nederland en er zijn geen plannen hem in te voeren. "
+                "Toch zijn er mensen die voor de doodstraf pleiten.",
     language="nl",
+    topics=["doodstraf"],
     singular_subjects=SINGULAR_SUBJECTS,
     plural_subjects=PLURAL_SUBJECTS,
     descriptive_adjectives=DESCRIPTIVE_ADJECTIVES

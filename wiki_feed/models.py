@@ -244,7 +244,7 @@ class WikiFeedCommunity(Community):
     def manifestation(self):
         pages = [
             page for page in super(WikiFeedCommunity, self).manifestation
-            if page.get("ds_rank", {}).get("rank", 0) > 0
+            if page.get("_rank", {}).get("rank", 0) > 0
         ]
         image_titles = ["File:{}".format(page["image"]) for page in pages if "image" in page and page["image"]]
         en_images = WikiFeedCommunity.filter_commons_images(image_titles)
@@ -429,7 +429,7 @@ class WikiFeedPublishCommunity(Community):
                 continue
             content = render_to_string("wiki_feed/header.wml", {"feed_template": page["feed"]["template"]})
             for page_details in page_data:
-                rank_info = page_details["ds_rank"]
+                rank_info = page_details["_rank"]
                 modules = (info for info in rank_info.items() if info[0] != "rank")
                 sorted_modules = sorted(modules, key=lambda item: float(item[1]["rank"]), reverse=True)
                 content += render_to_string("wiki_feed/section.wml", {

@@ -45,7 +45,7 @@ class LegacyRankProcessorMixin(object):
             for hook, weight in six.iteritems(config_dict)  # config gets whitelisted by Community
             if isinstance(hook, str) and hook.startswith("$") and callable(getattr(self, hook[1:], None)) and weight
         ]
-        sort_key = lambda el: el["ds_rank"].get("rank", 0)
+        sort_key = lambda el: el["_rank"].get("rank", 0)
         results = []
         batch = []
 
@@ -80,7 +80,7 @@ class LegacyRankProcessorMixin(object):
                     0
                 )
             # Set info on individual and write batch to results when appropriate
-            individual['ds_rank'] = rank_info
+            individual['_rank'] = rank_info
             if not idx % self.config.batch_size and len(batch):
                 flush_batch(batch, self.config.result_size)
                 batch = []
@@ -93,6 +93,8 @@ class LegacyRankProcessorMixin(object):
 # END LEGACY
 ##################################################################
 
+
+from itertools import islice
 
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.processors.base import Processor
@@ -121,10 +123,11 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
             )
         else:
             self.feature_frame = None
-        if "identifier_key" in self.config and "text_frame_path" in self.config:
+        if "identifier_key" in self.config and "text_frame_path" in self.config and "language" in self.config:
             self.text_frame = TextFeaturesFrame(
                 get_identifier=lambda ind: ind[self.config.identifier_key],
                 get_text=self.get_text,
+                language=self.config.language,
                 file_path=self.config.text_frame_path
             )
         else:
@@ -144,22 +147,31 @@ class RankProcessor(Processor, LegacyRankProcessorMixin):
         ]
 
     def get_ranking_results(self, ranking, individuals, series):
-        results = OrderedDict([(ix, None,) for ix in ranking.index])
+        results = []
+        max_size = self.config.result_size
         for individual in individuals:
             ix = individual[self.config.identifier_key]
-            if ix not in results:
+            if ix not in ranking.index:  # TODO: assess necessity
                 continue
-            individual["ds_rank"] = {
-                "rank": ranking.get_value(ix)
+            if len(results) < max_size:
+                results.append(individual)
+                continue
+            results.append(individual)
+            results.sort(key=lambda ind: ranking[ind[self.config.identifier_key]], reverse=True)
+            results = results[:max_size]
+        for individual in results:
+            ix = individual[self.config.identifier_key]
+            individual["_rank"] = {
+                "rank": ranking.at[ix]
             }
             for serie in series:
-                individual["ds_rank"][serie.name] = {
-                    "rank": serie.get_value(ix),  # TODO: rank value should be multiplied by weight
-                    "value": serie.get_value(ix),
+                value = serie.at[ix]
+                individual["_rank"][serie.name] = {
+                    "rank": value,  # TODO: rank value should be multiplied by weight
+                    "value": value,
                     "weight": 1.0
                 }
-            results[ix] = individual
-        return (value for value in results.values() if value is not None)
+            yield individual
 
     def default_ranking(self, individuals):
         raise NotImplementedError("The default_ranking method should be implemented in its context")

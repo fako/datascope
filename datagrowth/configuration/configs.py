@@ -17,6 +17,12 @@ DEFAULT_CONFIGURATION = {
         'http://www.globe-scope.com',
         'http://debatkijker.nl',
         'http://www.debatkijker.nl',
+        'https://debatkijker.nl',
+        'https://www.debatkijker.nl',
+        'http://2ndhandstylist.com',
+        'http://www.2ndhandstylist.com',
+        'https://2ndhandstylist.com',
+        'https://www.2ndhandstylist.com',
     ],
     "global_async": True,  # by default offload to celery where possible
     "global_user_agent": "DataScope (v{})".format(settings.DATASCOPE_VERSION),
@@ -43,7 +49,21 @@ DEFAULT_CONFIGURATION = {
     "wizenoze_api_key": getattr(settings, 'WIZENOZE_API_KEY', ''),
 
     "rank_processor_batch_size": 1000,
-    "rank_processor_result_size": 20
+    "rank_processor_result_size": 20,
+
+    "micro_service_connections": {
+        "image_recognition": {
+            "protocol": "http",
+            "host": "localhost:2000",
+            "path": "/predict/"
+        },
+        "clothing_type_recognition": {
+            "protocol": "http",
+            "host": "localhost:2001",
+            "path": "/predict/"
+        }
+    }
+
 }
 
 
@@ -66,4 +86,12 @@ MOCK_CONFIGURATION = {
     "http_resource_concat_args_symbol": "|",
     "mock_processor_include_odd": False,
     "mock_processor_include_even": False,
+    # micro services
+    "micro_service_connections": {
+        "mock_service": {
+            "protocol": "http",
+            "host": "localhost:2000",
+            "path": "/service/"
+        }
+    }
 }

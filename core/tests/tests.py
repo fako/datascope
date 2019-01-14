@@ -1,6 +1,7 @@
 from core.utils.tests.data import TestPythonReach, TestNumericFeaturesFrame
 from core.utils.tests.image import TestImageGrid
 from core.utils.tests.helpers import TestUtilHelpers
+from core.utils.tests.files import TestFileSorter, TestFileBalancer, TestSemanticDirectoryScan
 
 from core.processors.tests.resources import TestHttpResourceProcessor
 from core.processors.tests.extraction import TestExtractProcessor

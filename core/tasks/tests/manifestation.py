@@ -22,15 +22,15 @@ class TestManifestationTasks(TestCase):
         manifestation_data = get_manifestation_data(1)
         self.assertIsInstance(manifestation_data, list)
         self.assertEqual(manifestation_data, [
-            {"context": "nested value", "number": 1, "value": "nested value 0"},
-            {"context": "nested value", "number": 3, "value": "nested value 2"},
+            {"_id": 1, "context": "nested value", "number": 1, "value": "nested value 0"},
+            {"_id": 3, "context": "nested value", "number": 3, "value": "nested value 2"},
         ])
         manifestation_data = get_manifestation_data(2)
         self.assertIsInstance(manifestation_data, list)
         self.assertEqual(manifestation_data, [
-            {"context": "nested value", "number": 1, "value": "nested value 0"},
-            {"context": "nested value", "number": 2, "value": "nested value 1"},
-            {"context": "nested value", "number": 3, "value": "nested value 2"},
+            {"_id": 1, "context": "nested value", "number": 1, "value": "nested value 0"},
+            {"_id": 2, "context": "nested value", "number": 2, "value": "nested value 1"},
+            {"_id": 3, "context": "nested value", "number": 3, "value": "nested value 2"},
         ])
         try:
             get_manifestation_data(666)

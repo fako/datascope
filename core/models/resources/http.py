@@ -49,6 +49,7 @@ class HttpResource(Resource):
     PARAMETERS = {}
     DATA = {}
     HEADERS = {}
+    FILE_DATA_KEYS = []
     GET_SCHEMA = {
         "args": {},
         "kwargs": {}
@@ -150,10 +151,6 @@ class HttpResource(Resource):
         :return: None
         """
         return None
-
-    def retain(self, retainer):
-        self.retainer = retainer
-        self.save()
 
     #######################################################
     # CREATE REQUEST
@@ -267,6 +264,15 @@ class HttpResource(Resource):
                     "{}: {}".format(self.__class__.__name__, str(ex))
                 )
 
+    def _format_data(self, data):
+        if data is None:
+            return None, None
+        files = {}
+        for file_key in self.FILE_DATA_KEYS:
+            file_path = data.pop(file_key)
+            files[file_key] = open(file_path, "rb")
+        return data, files if files else None
+
     #######################################################
     # AUTH LOGIC
     #######################################################
@@ -327,6 +333,7 @@ class HttpResource(Resource):
 
         method = self.request.get("method")
         form_data = self.request.get("data") if not method == "get" else None
+        form_data, files = self._format_data(form_data)
         json_data = self.request.get("json") if not method == "get" else None
 
         request = requests.Request(
@@ -334,7 +341,8 @@ class HttpResource(Resource):
             url=self.request.get("url"),
             headers=self.request.get("headers"),
             data=form_data,
-            json=json_data
+            json=json_data,
+            files=files
         )
         preq = self.session.prepare_request(request)
 
@@ -508,6 +516,28 @@ class URLResource(HttpResource):
 
     def _create_url(self, *args):
         return args[0]
+
+    class Meta:
+        abstract = True
+
+
+class MicroServiceResource(HttpResource):
+
+    CONFIG_NAMESPACE = "micro_service"
+
+    MICRO_SERVICE = "mock_service"
+    MICRO_SERVICE_PROTOCOL = "http"
+    MICRO_SERVICE_PATH = "/service/"
+
+    URI_TEMPLATE = "{}://{}{}"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.connection = self.config.connections[self.MICRO_SERVICE]
+
+    def send(self, method, *args, **kwargs):
+        args = (self.connection["protocol"], self.connection["host"], self.connection["path"]) + args
+        return super().send(method, *args, **kwargs)
 
     class Meta:
         abstract = True

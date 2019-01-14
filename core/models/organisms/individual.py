@@ -34,7 +34,7 @@ class Individual(Organism):
         return reverse("v1:individual-content", args=[self.id])  # TODO: make version aware
 
     @staticmethod
-    def validate(data, schema):  # TODO: test to unlock
+    def validate(data, schema):
         """
         Validates the data against given schema and checks validity of ds_id and ds_spirit.
 
@@ -51,13 +51,15 @@ class Individual(Organism):
             raise ValidationError(
                 "An Individual can only work with a dict as data and got {} instead".format(type(data))
             )
+        if "_id" in properties:
+            del properties["_id"]
 
         try:
             jsonschema.validate(properties, schema)
         except SchemaValidationError as exc:
-            djang_exception = ValidationError(exc.message)
-            djang_exception.schema = exc.schema
-            raise djang_exception
+            django_exception = ValidationError(exc.message)
+            django_exception.schema = exc.schema
+            raise django_exception
 
     def update(self, data, validate=True):  # TODO: test to unlock
         """
@@ -87,6 +89,7 @@ class Individual(Organism):
         """
         return dict(
             {key: value for key, value in self.properties.items() if not key.startswith('_')},
+            _id=self.id
         )
 
     @property

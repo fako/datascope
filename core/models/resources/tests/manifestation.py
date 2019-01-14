@@ -19,15 +19,15 @@ class TestManifestationResource(TestCase):
         data = self.instance.get_data()
         self.assertEqual(self.instance.status, 0)
         self.assertEqual(data, [
-            {"context": "nested value", "number": 1, "value": "nested value 0"},
-            {"context": "nested value", "number": 3, "value": "nested value 2"},
+            {"_id": 1, "context": "nested value", "number": 1, "value": "nested value 0"},
+            {"_id": 3, "context": "nested value", "number": 3, "value": "nested value 2"},
         ])
         completed_at = self.instance.completed_at
         self.assertIsNotNone(completed_at)
         data = self.instance.get_data()
         self.assertEqual(data, [
-            {"context": "nested value", "number": 1, "value": "nested value 0"},
-            {"context": "nested value", "number": 3, "value": "nested value 2"},
+            {"_id": 1, "context": "nested value", "number": 1, "value": "nested value 0"},
+            {"_id": 3, "context": "nested value", "number": 3, "value": "nested value 2"},
         ])
         self.assertEqual(completed_at, self.instance.completed_at)
 
@@ -74,7 +74,7 @@ class TestManifestationResource(TestCase):
         self.assertEqual(data, {
             "service": "/data/v1/mock/service/test-ready?setting1=const#" + expected_manifestation_hash,
             "data": [
-                {"context": "nested value", "number": 1, "value": "nested value 0"},
-                {"context": "nested value", "number": 3, "value": "nested value 2"},
+                {"_id": 1, "context": "nested value", "number": 1, "value": "nested value 0"},
+                {"_id": 3, "context": "nested value", "number": 3, "value": "nested value 2"},
             ]
         })

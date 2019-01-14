@@ -1,8 +1,9 @@
-import os
+import os  # TODO: use os.path.join everywhere
 import shutil
 from random import shuffle
 from glob import glob
 from collections import Counter
+from tqdm import tqdm
 
 
 class MissingFileSource(Exception):
@@ -46,7 +47,7 @@ class FileSorter(object):
         raise NotImplementedError()
 
 
-class FileBalancer(object):
+class FileBalancer(object):  # TODO: test, it has a serious bug
 
     def __init__(self, train_files, validate_files, test_files, dry_run=True):
         self.train_files = train_files
@@ -70,32 +71,35 @@ class FileBalancer(object):
         return path_segments[-3]
 
     def random_move(self, source, target, count):
+        print("Random move {} from {} to {}".format(count, source, target))
         source_paths = glob(source)
         shuffle(source_paths)
         for source_path in source_paths[:count]:
             if self.dry_run:
-                print("Moving {} to {}".format(source_path, target))
+                pass
             else:
                 tail, head = os.path.split(source_path)
                 os.replace(source_path, os.path.join(target, head))
 
     def random_upsample(self, source, count):
+        print("Random sampling {} times from {}".format(count, source))
         source_paths = glob(source)
         shuffle(source_paths)
         for ix, source_path in enumerate(source_paths[:count]):
             head, tail = os.path.split(source_path)
             target_path = "{}/{}_{}".format(head, ix, tail)
             if self.dry_run:
-                print("Up sampling {} to {}".format(source_path, target_path))
+                pass
             else:
                 shutil.copy2(source_path, target_path)
 
     def random_remove(self, source, count):
+        print("Random remove {} from {}".format(count, source))
         source_paths = glob(source)
         shuffle(source_paths)
         for source_path in source_paths[:count]:
             if self.dry_run:
-                print("Removing {}".format(source_path))
+                pass
             else:
                 os.remove(source_path)
 
@@ -158,15 +162,19 @@ class FileBalancer(object):
 
 class SemanticDirectoryScan(object):
 
-    def __init__(self, file_pattern, ignore_directories=None):
+    def __init__(self, file_pattern, ignore_directories=None, progress_bar=False):
         self.file_pattern = file_pattern
         self.ignore_directories = ignore_directories or []
+        self.progress_bar = progress_bar
 
     def __call__(self, directory_path):
         if not directory_path.endswith("/"):
             directory_path += "/"
         glob_pattern = "{}**/{}".format(directory_path, self.file_pattern)
-        for file_path in glob(glob_pattern, recursive=True):
+        file_paths = glob(glob_pattern, recursive=True) \
+            if not self.progress_bar \
+            else tqdm(glob(glob_pattern, recursive=True))
+        for file_path in file_paths:
             relative_path = file_path.replace(directory_path, "")
             head, tail = os.path.split(relative_path)
             if not tail:
@@ -175,7 +183,7 @@ class SemanticDirectoryScan(object):
             tags = [part for part in head.split(os.sep) if part not in self.ignore_directories]
             name, extension = os.path.splitext(tail)
             yield {
-                "path": os.path.abspath(file_path),
+                "path": file_path,
                 "file": tail,
                 "name": name,
                 "extension": extension[1:],

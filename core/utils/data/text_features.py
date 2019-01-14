@@ -1,10 +1,11 @@
 import os
 import pickle
+from importlib import import_module
 
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
-from scipy.sparse import csc_matrix, vstack, hstack, save_npz, load_npz
+from scipy.sparse import vstack, hstack, save_npz, load_npz
 
 
 class TextContentReader(object):
@@ -29,9 +30,10 @@ class TextContentReader(object):
 
 class TextFeaturesFrame(object):
 
-    def __init__(self, get_identifier, get_text, content=None, file_path=None):
+    def __init__(self, get_identifier, get_text, content=None, file_path=None, language="en"):
         self.get_identifier = get_identifier
         self.get_text = get_text
+        self.language = language
         # Initialize attributes used by this class
         self.raw_data = None
         self.vectorizer = None
@@ -63,7 +65,9 @@ class TextFeaturesFrame(object):
         self.identifiers.to_pickle(file_name + ".pkl")
 
     def get_vectorizer(self):
-        return CountVectorizer()
+        stop_words_module = import_module("spacy.lang.{}.stop_words".format(self.language))
+        stop_words = list(getattr(stop_words_module, 'STOP_WORDS'))
+        return CountVectorizer(stop_words=stop_words)
 
     def load_data(self, raw_data):
         transformer = TfidfTransformer()
@@ -114,6 +118,8 @@ class TextFeaturesFrame(object):
             col = self.data.getcol(self.features[key])
             matrix = hstack([matrix, col]) if matrix is not None else col
             vector.append(value)
+        if matrix is None:
+            return None
         vector = np.array(vector)
         values = matrix.dot(vector)
         return pd.Series(values, index=self.identifiers)
