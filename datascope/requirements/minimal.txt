@@ -14,6 +14,7 @@ pandas==0.22.0
 humanize==0.5.1
 scipy==1.1.0
 scikit-learn==0.19.1
+tqdm==4.19.8
 
 # Celery plugins
 django-celery-results==1.0.1
@@ -23,6 +24,7 @@ redis==2.10.5
 # Advanced features
 selenium==2.47.1
 pillow==2.9.0
+colorz==1.0.3
 
 # Debug and test
 raven==6.3.0
