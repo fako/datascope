@@ -429,9 +429,10 @@ class WikiFeedPublishCommunity(Community):
                 continue
             content = render_to_string("wiki_feed/header.wml", {"feed_template": page["feed"]["template"]})
             for page_details in page_data:
-                rank_info = page_details["_rank"]
+                rank_info = page_details.pop("_rank")
                 modules = (info for info in rank_info.items() if info[0] != "rank")
                 sorted_modules = sorted(modules, key=lambda item: float(item[1]["rank"]), reverse=True)
+                page_details["rank"] = rank_info
                 content += render_to_string("wiki_feed/section.wml", {
                     "page": page_details,
                     "modules": sorted_modules

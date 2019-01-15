@@ -6,7 +6,6 @@ from django.conf import settings
 from rest_framework import status
 
 from core.views import CommunityView
-from sources.models import WikipediaTransclusions, WikipediaRevisions
 from wiki_feed.models import WikiFeedPublishCommunity, WikiFeedCommunity
 
 
