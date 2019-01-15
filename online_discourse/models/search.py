@@ -9,6 +9,8 @@ try:
 except ImportError:
     log.warn("Not supporting spacy on this platform")
 
+import json_field
+
 from core.models.organisms import Community, Collective, Individual
 from core.models.organisms.states import CommunityState
 from core.utils.helpers import cross_combine
@@ -16,6 +18,8 @@ from online_discourse.discourse import configurations
 
 
 class DiscourseSearchCommunity(Community):
+
+    aggregates = json_field.JSONField(default={})
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("search", {

@@ -15,7 +15,6 @@ class OnlineDiscourseRankProcessor(RankProcessor):
 
     def default_ranking(self, individuals):
         argument_score_rank = self.feature_frame.data["argument_score"]
-        argument_score_rank = argument_score_rank[~argument_score_rank.index.duplicated(keep='first')]  # TODO: deduplicate in frame
         argument_score_max = argument_score_rank.max()
         argument_score_rank /= argument_score_max
         try:  # TODO: replace try with .get from config
@@ -30,7 +29,6 @@ class OnlineDiscourseRankProcessor(RankProcessor):
         if keyword_count_rank is None:
             ranking_series = argument_score_rank.fillna(0).sort_values(ascending=False)
             return self.get_ranking_results(ranking_series, individuals, [argument_score_rank])
-        keyword_count_rank = keyword_count_rank[~keyword_count_rank.index.duplicated(keep='first')] # TODO: deduplicate in frame
         keyword_count_rank.name = "keywords"
         keyword_max = keyword_count_rank.max()
         keyword_count_rank /= keyword_max
