@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  db:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: 33SebQd4Ugkqx4KjqanZDsWRXTR54M6k
+      MYSQL_USER: django
+      MYSQL_PASSWORD: ZV35A5x89pbHuiYSrvqroPHKDnng7dRF
+      MYSQL_DATABASE: datascope
+    volumes:
+      - ./datascope/mysql/data:/var/lib/mysql
+      - ./datascope/mysql/conf.d:/etc/mysql/conf.d
+    ports:
+      - 3306:3306
+  redis:
+    image: redis
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"

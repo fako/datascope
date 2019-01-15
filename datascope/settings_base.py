@@ -93,8 +93,7 @@ DATABASE_TYPES = {
         'NAME': 'datascope',
         'USER': MYSQL_USER,                    # Not used with sqlite3.
         'PASSWORD': MYSQL_PASSWORD,            # Not used with sqlite3.
-        'HOST': '',
-        'PORT': '',
+        'HOST': '127.0.0.1',
         'OPTIONS': {
             'charset': 'utf8mb4'
         }

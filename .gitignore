@@ -1,7 +1,6 @@
 .idea
 datascope.iml
 .DS_store
-dump.rdb
 
 *.pyc
 *.db
@@ -18,8 +17,6 @@ system/files/static/
 datascope/settings.py
 datascope/bootstrap.py
 datascope/secrets.py
+datascope/mysql/data/
 
 data/
-
-# Experimental files
-docker-compose.yml

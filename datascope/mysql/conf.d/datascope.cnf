@@ -1,0 +1,9 @@
+[mysqld]
+innodb_file_per_table=1
+max_allowed_packet=268435456
+open_files_limit=20000
+innodb_buffer_pool_size=4G
+#range_optimizer_max_mem_size=64M
+
+[mysqldump]
+max_allowed_packet=268435456

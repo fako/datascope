@@ -7,29 +7,17 @@ deploy: clean
 	sudo service uwsgi restart
 	sudo service celeryd restart
 
-deploy-wiki-labs: clean
-	jstop celery
-	webservice2 uwsgi-plain restart
-	jstart -N celery -l release=trusty -mem 2048m commands/celery.sh
+backup-db:
+	mysqldump -uroot -p --databases datascope > data/datascope.sql
 
-health-wiki-labs:
-	qstat
-
-dump:
-	mysqldump -uroot -p --databases datascope > datascope.sql
-
-start-development:
-	/usr/local/bin/mysql.server start
-	redis-server
+backup-data:
+	rsync -zrthv --progress data /Volumes/Leo65/data/datascope
 
 start-celery:
 	celery -A datascope worker --loglevel=info -B
 
-stop-development:
-	/usr/local/bin/mysql.server stop
+start-mysql:
+	mysql --protocol=tcp -uroot -p
 
 test:
 	./manage.py test --settings=datascope.settings_test $(filter)
-
-grow-feed-wiki-labs:
-	jsub -l release=trusty -mem 3072m commands/grow.sh
