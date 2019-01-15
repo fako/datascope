@@ -1,6 +1,6 @@
 {
     "name": "datascope",
-    "version": "0.9.1",
+    "version": "0.9.2",
     "artefact": {
         "includes": [
             "datagrowth/resources/shell/bin/",
