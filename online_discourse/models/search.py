@@ -112,7 +112,7 @@ class DiscourseSearchCommunity(Community):
     ]
 
     SPACY_PACKAGES = {
-        "en": "en_core_web_sm",
+        "en": "en_core_web_lg",
         "nl": "nl_core_news_sm"
     }
     STOP_WORDS = {
