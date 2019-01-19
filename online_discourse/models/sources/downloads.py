@@ -13,6 +13,8 @@ log = logging.getLogger("datascope")
 
 class WebContentDownload(HttpFileResource):
 
+    CONFIG_NAMESPACE = "discourse_download"
+
     @property
     def content(self):
         content_type, file = super().content
@@ -20,8 +22,8 @@ class WebContentDownload(HttpFileResource):
             return content_type, file
         variables = self.variables()
         return content_type, {
-            "url": variables["url"],
-            "resourcePath": os.path.join(default_storage.location, self.body)
+            self.config.url_key: variables["url"],
+            self.config.resource_key: os.path.join(default_storage.location, self.body)
         }
 
 
