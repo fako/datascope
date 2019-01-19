@@ -69,7 +69,11 @@ class HttpFileResource(HttpResource):  # TODO: write tests
         # Getting the file name and extension from url
         path = str(URLObject(url).path)
         tail, head = os.path.split(path)
+        if not head:
+            head = "index.html"
         name, extension = os.path.splitext(head)
+        if not extension:
+            extension = ".html"
         now = datetime.utcnow()
         file_name = "{}.{}".format(
             now.strftime(datagrowth_settings.DATAGROWTH_DATETIME_FORMAT),
