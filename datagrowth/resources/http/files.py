@@ -138,7 +138,7 @@ class HttpFileResource(HttpResource):  # TODO: write tests
         abstract = True
 
 
-class HttpImageResource(HttpFileResource):
+class HttpImageResource(HttpFileResource):  # TODO: write tests
 
     def _get_file_class(self):
         return ImageFile
@@ -148,3 +148,8 @@ class HttpImageResource(HttpFileResource):
 
     class Meta:
         abstract = True
+
+
+def file_resource_delete_handler(sender, instance, **kwargs):  # TODO: write tests
+    if instance.body:
+        default_storage.delete(instance.body)

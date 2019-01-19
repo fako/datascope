@@ -2,8 +2,9 @@ import os
 import logging
 
 from django.core.files.storage import default_storage
+from django.db.models import signals
 
-from datagrowth.resources import HttpFileResource, TikaResource
+from datagrowth.resources import HttpFileResource, TikaResource, file_resource_delete_handler
 from core.models.resources.http import URLResource
 
 
@@ -22,6 +23,9 @@ class WebContentDownload(HttpFileResource):
             "url": variables["url"],
             "resourcePath": os.path.join(default_storage.location, self.body)
         }
+
+
+signals.post_delete.connect(file_resource_delete_handler, sender=WebContentDownload)
 
 
 class WebTextTikaResource(TikaResource):
