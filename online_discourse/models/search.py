@@ -1,5 +1,5 @@
 import logging
-log = logging.getLogger(__name__)
+log = logging.getLogger("datascope")
 import os
 from collections import OrderedDict
 from urlobject import URLObject
@@ -11,7 +11,7 @@ try:
     from spacy.lang.nl.stop_words import STOP_WORDS as NL_STOP_WORDS
 except ImportError:
     NL_STOP_WORDS = []
-    log.warn("Not supporting spacy on this platform")
+    log.warning("Not supporting spacy on this platform")
 
 from django.db.models import Q
 import json_field
