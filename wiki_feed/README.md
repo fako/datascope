@@ -11,8 +11,6 @@ Follow these steps after uploading the artefacts:
 
 ```bash
 cp -r /home/fako/uploads/datascope/<version> /data/project/algo-news/artefacts/datascope/
-cp /data/project/algo-news/artefacts/datascope/<version>/src/datascope/wsgi.py /data/project/algo-news/artefacts/datascope/<version>/src/app.py
-
 ```
 
 Now become the tool and take control of the upload.
@@ -46,9 +44,11 @@ cp src/datascope/environments/wikipedia_settings.py src/datascope/settings.py
 echo 'DATASCOPE_VERSION = "<version>"' > src/datascope/bootstrap.py
 cat src/datascope/environments/wikipedia_bootstrap.py >> src/datascope/bootstrap.py
 cp /data/project/algo-news/secrets.py src/datascope/secrets.py
+cp src/datascope/wsgi.py src/app.py
 cd src
 python manage.py collectstatic --noinput
 cp -r system/files/static ../
+python manage.py migrate  # if required
 ```
 
 And last but not least we can deploy once we exit the pod with CTRL-D
