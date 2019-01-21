@@ -195,7 +195,11 @@ class DiscourseSearchCommunity(Community):
                 home = BeautifulSoup(fp, "html5lib")
         except FileNotFoundError:
             log.warning("Missing a file for individual: {}".format(individual.id))
-            individual["content"] = ""
+            individual["content"] = []
+            return individual
+        except UnicodeDecodeError:
+            log.warning("Encoding error with file for individual: {}".format(individual.id))
+            individual["content"] = []
             return individual
 
         # Calculate text diff between home, article and Tika
