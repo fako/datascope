@@ -47,7 +47,7 @@ class HttpFileResource(HttpResource):  # TODO: write tests
         try:
             self._validate_input("get", *args, **kwargs)
         except ValidationError as exc:
-            if variables["url"].startswith("http"):
+            if variables["url"] is None or variables["url"].startswith("http"):
                 raise exc
             # Wrong protocol given, like: x-raw-image://
             self.set_error(404)
