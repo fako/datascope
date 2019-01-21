@@ -48,7 +48,7 @@ DEBUG = False
 DEBUG_TOOLBAR = False
 
 MAX_BATCH_SIZE = 1000
-PATH_TO_LOGS = PATH_TO_PROJECT + "system/logs/"
+PATH_TO_LOGS = PATH_TO_PROJECT + "datascope/logs/"
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -268,7 +268,14 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler'
-        }
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': 'datascope/logs/datascope.log',
+            'when': 'midnight',
+            'backupCount': 10,
+        },
     },
     'loggers': {
         'django.request': {
@@ -277,7 +284,7 @@ LOGGING = {
             'propagate': True,
         },
         'datascope': {
-            'handlers': ['console', 'sentry'],
+            'handlers': ['file', 'sentry'],
             'level': 'DEBUG',
             'propagate': False,
         },

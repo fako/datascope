@@ -1,5 +1,5 @@
 import logging
-log = logging.getLogger("datascope")
+log = logging.getLogger("datagrowth.command")
 import os
 from collections import OrderedDict
 from urlobject import URLObject
