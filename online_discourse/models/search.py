@@ -18,6 +18,7 @@ except ImportError:
 from django.db.models import Q
 import json_field
 
+from datagrowth.resources import HttpResource
 from core.models.organisms import Community, Collective, Individual
 from core.models.organisms.states import CommunityState
 from core.utils.helpers import cross_combine
@@ -183,13 +184,14 @@ class DiscourseSearchCommunity(Community):
         # Loading data
         data = individual.properties.get("tika", {}) or {}
         content_type = data.get("content_type", "text/html")
-        if not content_type.startswith("text/html"):
+        mime_type, encoding = HttpResource.parse_content_type(content_type)
+        if not mime_type.startswith("text/html"):
             individual["content"] = data.get("content", "")
             return individual
         try:
-            with open(data["resourcePath"]) as fp:
+            with open(data["resourcePath"], encoding=encoding) as fp:
                 article = BeautifulSoup(fp, "html5lib")
-            with open(individual.properties["home_resource"]) as fp:
+            with open(individual.properties["home_resource"], encoding=encoding) as fp:
                 home = BeautifulSoup(fp, "html5lib")
         except FileNotFoundError:
             log.warning("Missing a file for individual: {}".format(individual.id))
