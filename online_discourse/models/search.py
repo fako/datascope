@@ -224,7 +224,7 @@ class DiscourseSearchCommunity(Community):
         return individual
 
     def _set_author(self, individual):
-        data = individual.properties.get("content", {})
+        data = individual.properties.get("tika", {})
         author = data.get("author", None)
         if author and isinstance(author, str):
             pass
@@ -294,6 +294,9 @@ class DiscourseSearchCommunity(Community):
         out.save()
         total = out.individual_set.count()
         for individual in tqdm(out.individual_set.iterator(), total=total):
+            # Skip reset when it has already been done
+            if individual.properties.get("tika", None):
+                continue
             # Checking if there is any content data to work with.
             # Then undoing a weird hack where content data gets stored under resourcePath
             # It happens because inline_key and identifier need to match
@@ -319,6 +322,10 @@ class DiscourseSearchCommunity(Community):
                 spacy_parsers[language] = nlp
         # Actual content extraction
         for individual in tqdm(out.individual_set.iterator(), total=total):
+
+            # We're skipping any entries that have already been processed at some point
+            if individual.properties.get("argument_score", None) is not None:
+                continue
 
             individual = self._set_author(individual)
             individual = self._set_main_content(individual)
