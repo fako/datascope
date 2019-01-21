@@ -1,5 +1,6 @@
 from urllib.parse import urlencode
 
+import re
 import hashlib
 import json
 from copy import copy, deepcopy
@@ -452,6 +453,16 @@ class HttpResource(Resource):
         elif headers:
             return "json" if headers.get("Content-Type") == "application/json" else "data"
         raise AssertionError("Could not determine data_key for request {} or headers {}".format(request, headers))
+
+    @staticmethod
+    def parse_content_type(content_type, default_encoding="utf-8"):
+        match = re.match(
+            "(?P<mime_type>[A-Za-z]+/[A-Za-z]+);? ?(charset=(?P<encoding>[A-Za-z0-9\-]+))?",
+            content_type
+        )
+        if match is None:
+            raise ValueError("Could not parse content_type")
+        return match.group("mime_type"), match.group("encoding") or default_encoding
 
     def set_error(self, status, connection_error=False):
         if connection_error:

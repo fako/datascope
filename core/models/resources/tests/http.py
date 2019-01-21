@@ -653,3 +653,6 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
 
     def test_get_data_key(self):
         self.skipTest("not tested")
+
+    def test_parse_content_type(self):
+        self.skipTest("not tested")
