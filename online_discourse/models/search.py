@@ -236,7 +236,7 @@ class DiscourseSearchCommunity(Community):
         return individual
 
     def finish_search(self, out, err):
-        log.info("Filter duplicates and save source")
+        log.info("Filter duplicates, save source and delete invalid")
         total = out.individual_set.count()
         current_entry = None
         deletes = []
@@ -256,15 +256,21 @@ class DiscourseSearchCommunity(Community):
             else:
                 current_entry.properties["term"].append(entry.properties["term"])
                 deletes.append(entry.id)
+        # Removing invalid entries
+        deletes = out.individual_set.filter(identity__isnull=True).delete()
+        log.info("Deletes: {}".format(deletes))
 
     def begin_download_home(self, out):
-        log.info("Resetting identifier to 'home'")
+        log.info("Resetting identifier to 'home' and delete invalid")
         out.identifier = "home"
         out.save()
         total = out.individual_set.count()
         for entry in tqdm(out.individual_set.iterator(), total=total):
             entry.clean()
             entry.save()
+        # Removing invalid entries
+        deletes = out.individual_set.filter(identity__isnull=True).delete()
+        log.info("Deletes: {}".format(deletes))
 
     def begin_content(self, out):
         log.info("Resetting identifier to 'resourcePath' and deleting non-content entries")
