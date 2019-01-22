@@ -186,7 +186,8 @@ class DiscourseSearchCommunity(Community):
         content_type = data.get("content_type", "text/html")
         mime_type, encoding = HttpResource.parse_content_type(content_type)
         if not mime_type.startswith("text/html"):
-            individual["content"] = data.get("content", "")
+            individual["content"] = data.get("content", "") or ""  # prevents None
+            individual["content"] = individual["content"].split("\n")
             return individual
         try:
             with open(data["resourcePath"], encoding=encoding) as fp:
@@ -199,6 +200,10 @@ class DiscourseSearchCommunity(Community):
             return individual
         except UnicodeDecodeError:
             log.warning("Encoding error with file for individual: {}".format(individual.id))
+            individual["content"] = []
+            return individual
+        except KeyError:
+            log.warning("Key error with file for individual when setting main content: {}".format(individual.id))
             individual["content"] = []
             return individual
 
