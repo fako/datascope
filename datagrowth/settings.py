@@ -53,6 +53,7 @@ DATAGROWTH_DEFAULT_CONFIGURATION = {
     "global_token": "",
     "global_purge_immediately": False,  # by default keep resources around
     "global_sample_size": 0,
+    "global_fetch_only": False,  # TODO: implement for Resource, cache_only is a better name, pol-harvester dependency
 
     "http_resource_batch_size": 0,
     "http_resource_continuation_limit": 1,
@@ -98,6 +99,7 @@ DATAGROWTH_MOCK_CONFIGURATION = {
     "global_token": "",
     "global_purge_immediately": False,
     "global_sample_size": 0,
+    "global_fetch_only": False,
     # mock configuration for testing HttpResourceMock
     "global_source_language": "en",
     "mock_secret": "oehhh",
