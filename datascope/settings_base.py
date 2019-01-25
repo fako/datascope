@@ -272,7 +272,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': 'datascope/logs/datascope.log',
+            'filename': PATH_TO_LOGS + 'datascope.log',
             'when': 'midnight',
             'backupCount': 10,
         },

@@ -15,5 +15,5 @@ class Command(CommunityCommand):
         community.config = {"async": False}
         community.save()
         community.grow(*args)
-        log.info("Result:", community.kernel)
-        log.info("Growth:", [growth.id for growth in community.growth_set.all()])
+        log.info("Result: {}".format(community.kernel))
+        log.info("Growth: {}".format([growth.id for growth in community.growth_set.all()]))
