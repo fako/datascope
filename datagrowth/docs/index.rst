@@ -24,6 +24,7 @@ Contents
 
    resources/index
    configuration/index
+   reference
 
 
 Indices and tables

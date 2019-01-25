@@ -1,14 +1,3 @@
-"""
-Configurations can be serialized to JSON dicts for storage and transfer (to for instance task servers).
-They can also be passed on to other configuration instances in a parent/child like relationship.
-Configurations have defaults which can be set when Django loads.
-These defaults are namespaced to prevent name clashes across apps.
-
-Usually a request will set configurations during runtime to configure long running tasks.
-Configurations can also be used as a bag of properties.
-This is useful for Django models that have a very wide configuration range.
-"""
-
 import warnings
 from copy import copy
 
@@ -322,12 +311,13 @@ class ConfigurationProperty(object):
 
 def create_config(namespace, configuration):
     """
-    A convenience function to quickly create a configuration of the ConfigurationType.
-    You need specify under which namespace the configuration should search for defaults.
+    Use this function to quickly create a configuration.
+    You need to specify under which namespace the configuration should search for defaults.
     The configuration names and their values need to be supplied as well as a simple dictionary.
+
     Apart from that the configuration needs no setup and the most common use cases will be supported.
 
-    :param namespace: the namespace under which missing configurations should be searched when defaulting
+    :param namespace: (str) the namespace under which missing configurations should be searched when defaulting
     :param values: (dict) the configuration keys and values that should be set on the configuration instance
     :return: ConfigurationType
     """
@@ -340,6 +330,18 @@ def create_config(namespace, configuration):
 
 
 def register_defaults(namespace, configuration):
+    """
+    This function updates a global configuration defaults object with your own defaults.
+    That way an application can set defaults at runtime during a configure stage like the Django apps ready hook.
+
+    You need to specify under which namespace the configuration should become available.
+    This should be the same as the namespace you create configurations with.
+    You can provide the default configuration for that namespace as a simple dictionary.
+
+    :param namespace: (str) the namespace under which the defaults will be registered.
+    :param configuration: (dict) the configuration keys and values that should be set as defaults
+    :return: None
+    """
     defaults = {
         "{}_{}".format(namespace, key): value
         for key, value in configuration.items()

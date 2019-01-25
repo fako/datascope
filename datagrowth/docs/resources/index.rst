@@ -3,5 +3,4 @@
 Resources
 =========
 
-.. automodule:: datagrowth.resources
-    :members: ShellResource
+TODO: usage documentation, only the reference is currently available
