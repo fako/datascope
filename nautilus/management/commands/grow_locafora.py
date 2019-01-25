@@ -1,3 +1,5 @@
+import logging
+import os
 from datetime import datetime
 
 from pandas import DataFrame
@@ -6,7 +8,11 @@ from core.management.commands.grow_community import Command as GrowCommand
 from core.utils.configuration import DecodeConfigAction
 from core.utils.helpers import format_datetime
 
+from datagrowth import settings as datascope_settings
 from nautilus.models import LocaforaOrders
+
+
+log = logging.getLogger("datagrowth.command")
 
 
 class Command(GrowCommand):
@@ -14,10 +20,10 @@ class Command(GrowCommand):
     def add_arguments(self, parser):
         parser.add_argument('community', type=str, nargs="?", default="LocaforaOrderOverviewCommunity")
         parser.add_argument('-c', '--config', type=str, action=DecodeConfigAction, nargs="?", default={})
-        parser.add_argument('-d', '--delete', action="store_true")
+        parser.add_argument('-d', '--debug', action="store_true")
 
     def handle_community(self, community, **options):
-        if options["delete"]:
+        if not options["debug"]:
             LocaforaOrders.objects.all().delete()
         community.signature = format_datetime(datetime.utcnow())
         super(Command, self).handle_community(community, **options)
@@ -26,7 +32,11 @@ class Command(GrowCommand):
             customer_frame = DataFrame(customer["order_lines"])
             result = result.append(customer_frame, ignore_index=True)
         if result.empty:
-            print("No orders to process")
+            log.warning("No orders to process")
             return
         result.sort_values(["product", "customer"], inplace=True)
-        result[["customer", "quantity", "product", "unit"]].to_csv('alfabetische-lijst.csv')
+        csv_file_name = '{today:%Y-%m-%d}-alfabetische-lijst.csv'.format(today=datetime.today())
+        dst = os.path.join(datascope_settings.DATAGROWTH_DATA_DIR, "nautilus", "locafora")
+        if not os.path.exists(dst):
+            os.makedirs(dst)
+        result[["customer", "quantity", "product", "unit"]].to_csv(os.path.join(dst, csv_file_name))
