@@ -26,8 +26,8 @@ class EntityDetector(object):
 
     def get_entity_tokenizer(self, entity):
 
-        def entity_tokenizer(text):
-            doc = self.nlp(text)
+        def entity_tokenizer(text):  # TODO: detect as pipe instead of cating entire document
+            doc = self.nlp(text[:self.nlp.max_length])  # limit is for spaCy memory usage
             entities = []
             for ent in doc.ents:
                 if ent.label_ == entity and " " in ent.text:
