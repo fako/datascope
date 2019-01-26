@@ -19,5 +19,5 @@ RAVEN_CONFIG = {
 SESSION_COOKIE_PATH = "/admin"
 
 DATAGROWTH_DATA_DIR = os.path.join(os.sep, "srv", "data")
-DATAGROWTH_MEDIA_ROOT = os.path.join(DATAGROWTH_DATA_DIR, "media")
+DATAGROWTH_MEDIA_ROOT = MEDIA_ROOT = os.path.join(DATAGROWTH_DATA_DIR, "media")
 DATAGROWTH_BIN_DIR = os.path.join(os.sep, "srv", "bin")
