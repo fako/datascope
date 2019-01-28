@@ -19,10 +19,15 @@ class EntityDetector(object):
         for entity in self.entities:
             self.sorted_entities[entity] = self.get_entities(texts, entity)
 
-        return {
-            entity: [list(info) for info in serie[:limit_per_entity].items()]
-            for entity, serie in self.sorted_entities.items()
-        }
+        results = {}
+        for entity, serie in self.sorted_entities.items():
+            results[entity] = []
+            for name, count in serie[:limit_per_entity].items():
+                if name == "NO_ENTITIES":
+                    continue
+                results[entity].append([name, count])
+
+        return results
 
     def get_entity_tokenizer(self, entity):
 

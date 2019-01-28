@@ -405,6 +405,7 @@ class DiscourseSearchCommunity(Community):
         }
 
     def get_topic_aggregates(self, collection):
+
         detector = TopicDetector(
             OnlineDiscourseRankProcessor.get_text,
             stop_words=list(self.STOP_WORDS[self.config.language]),
