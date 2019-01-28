@@ -208,7 +208,7 @@ class DiscourseSearchCommunity(Community):
             return individual
 
         # Calculate text diff between home, article and Tika
-        raw_content = data.get("content")
+        raw_content = data.get("content", "")  # prevents None with empty content
         home_contents = set()
         for el in home.descendants:
             if not isinstance(el, NavigableString):
@@ -282,6 +282,7 @@ class DiscourseSearchCommunity(Community):
         log.info("Deletes: {}".format(deletes))
 
     def begin_content(self, out):
+        # NB: non-content differs from empty content
         log.info("Resetting identifier to 'resourcePath' and deleting non-content entries")
         out.identifier = "resourcePath"
         out.save()
