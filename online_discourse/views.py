@@ -55,20 +55,5 @@ class DiscourseViewSet(viewsets.ViewSet):
     def retrieve(self, request, pk=None):
         community = DiscourseSearchCommunity.objects.get(id=pk)
         name, configuration = self._community_as_dict(community)
-        if community.aggregates:
-            configuration.update(community.aggregates)
-            return Response(configuration)
-        # TODO: below is very slow and deprecated. Should be removed
-        # Retrieve sets
-        authors = set()
-        sources = set()
-        for individual in community.kernel.content:
-            author = individual.get("author", None)
-            if author and author.strip():  # TODO: strip is not necessary with new data format
-                authors.add(author)
-            source = individual.get("source", None)
-            if source:
-                sources.add(source)
-        configuration["authors"] = sorted(authors)
-        configuration["sources"] = sorted(sources)
+        configuration.update(community.aggregates)
         return Response(configuration)
