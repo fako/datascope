@@ -2,11 +2,13 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 import six
 import warnings
 
+import json
 from collections import Iterator, Iterable
 
 from django.db import models
 from django.conf import settings
 from django.core.urlresolvers import reverse
+from django.core.serializers.json import DjangoJSONEncoder
 
 import json_field
 from json_field.fields import JSONEncoder, JSONDecoder
@@ -237,3 +239,7 @@ class Collective(Organism):  # TODO: rename to family
                 if item in index:
                     select.add(self.indexes[index])
         return self.individual_set.filter(index__in=select)
+
+    def to_file(self, file_path):
+        with open(file_path, "w") as json_file:
+            json.dump(list(self.content), json_file, cls=DjangoJSONEncoder)
