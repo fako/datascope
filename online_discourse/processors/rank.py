@@ -11,7 +11,10 @@ class OnlineDiscourseRankProcessor(RankProcessor):
         paragraph_groups = document.get("paragraph_groups", [])
         text = ""
         for paragraph_group in paragraph_groups:
-            paragraphs = [paragraph for paragraph in paragraph_group if isinstance(paragraph, str)]
+            paragraphs = [
+                paragraph for paragraph in paragraph_group
+                if isinstance(paragraph, str) and paragraph.strip()
+            ]
             text += " ".join(paragraphs) + " "
         return text
 

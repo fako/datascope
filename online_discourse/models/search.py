@@ -222,11 +222,11 @@ class DiscourseSearchCommunity(Community):
             if not isinstance(el, NavigableString):
                 continue
             text = el.string.strip()
-            if text and text not in home_contents:
+            if text and text not in home_contents and isinstance(text, str):
                 if text in raw_content:
-                    article_contents.append(text)
+                    article_contents += text.split("\n")
                 else:
-                    junk_contents.append(text)
+                    junk_contents += text.split("\n")
 
         individual.properties["junk"] = junk_contents
         individual.properties["content"] = article_contents
@@ -337,12 +337,22 @@ class DiscourseSearchCommunity(Community):
                 nlp.add_pipe(ArguingLexiconParser(lang=nlp.lang))
                 spacy_parsers[language] = nlp
         # Actual content extraction
+        off_topics = []
         for individual in tqdm(out.individual_set.iterator(), total=total):
 
             # We're skipping any entries that have already been processed at some point
             if individual.properties.get("argument_score", None) is not None:
                 continue
 
+            # We're only processing the content that actually holds topics of interest.
+            for topic in configuration.topics:
+                if topic in individual.properties.get("content", ""):
+                    break
+            else:
+                off_topics.append(individual.id)
+                continue
+
+            # Now we turn raw content into something consistent set on the individual
             individual = self._set_author(individual)
             individual = self._set_main_content(individual)
 
@@ -369,6 +379,11 @@ class DiscourseSearchCommunity(Community):
 
             individual.clean()
             individual.save()
+
+        # Now we'll delete entries with off-topic main content
+        log.info("Deleting entries with off topic content after processing")
+        deletes = out.individual_set.filter(id__in=off_topics).delete()
+        log.info("Deletes: {}".format(deletes))
 
         #################################################################################
         # Handling aggregations which is not supported by the framework at this time
