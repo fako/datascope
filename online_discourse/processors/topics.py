@@ -1,3 +1,4 @@
+import math
 from itertools import chain
 
 import pandas as pd
@@ -6,18 +7,18 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 class TopicDetector(object):
 
-    def __init__(self, get_text, stop_words="english", tfidf_treshold=0.95, max_ngram=4, filter_words=None):
+    def __init__(self, get_text, stop_words="english", cut_off_percentage=5, max_ngram=4, filter_words=None):
         assert callable(get_text), "Expected get_text to be a callable"
         assert max_ngram >= 2, "Expected max_ngram to be at least 2"
         assert isinstance(stop_words, (list, str)), \
             "Expected stop_words to be passed to sklearn but got a {}".format(type(stop_words))
-        assert 0 < tfidf_treshold < 1, "Expected tfidf_treshold to be between 0 and 1"
+        assert 0 < cut_off_percentage < 100, "Expected tfidf_treshold to be between 0 and 100"
         filter_words = filter_words or []
         assert  isinstance(filter_words, list), "Expected filter_words to be a list of words"
 
         self.get_text = get_text
         self.stop_words = stop_words
-        self.tfidf_treshold = tfidf_treshold
+        self.cut_off_percentage = cut_off_percentage
         self.max_ngram = max_ngram
         self.filter_words = filter_words
         self.sorted_ngrams = {}
@@ -79,8 +80,12 @@ class TopicDetector(object):
             )
         )
         series = pd.Series(words_data)
+        if not len(series):
+            return series
+
         series.sort_values(ascending=False, inplace=True)
-        return series
+        cut_off = math.floor(len(series) * self.cut_off_percentage / 100)
+        return series[:cut_off]
 
     def _get_drop_index(self, ngram_series, ngram_history):
         drop_index = set()
