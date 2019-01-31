@@ -8,9 +8,10 @@ from django.db import models
 from django.db.models.query import QuerySet
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, ContentType
 
+from datagrowth.datatypes.storage.base import DataStorage
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.models.organisms.states import CommunityState, COMMUNITY_STATE_CHOICES
-from core.models.organisms import Growth, Collective, Individual, Organism
+from core.models.organisms import Growth, Collective, Individual
 from core.models.organisms.managers.community import CommunityManager
 from core.models.resources.manifestation import Manifestation
 from core.processors.mixins import ProcessorMixin
@@ -233,7 +234,7 @@ class Community(models.Model, ProcessorMixin):
         assert self.kernel is not None, \
             "Community.set_kernel expected the kernel to be set. " \
             "The overriding method is failing, is not implemented or is calling its parent before the kernel is set."
-        assert issubclass(self.kernel.__class__, Organism), \
+        assert issubclass(self.kernel.__class__, DataStorage), \
             "The kernel should be an Organism."
 
     def initial_input(self, *args):

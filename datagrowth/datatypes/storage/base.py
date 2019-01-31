@@ -1,14 +1,9 @@
 from django.db import models
-from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 
 import json_field
 
 
-class Organism(models.Model):
-
-    community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
-    community_type = models.ForeignKey(ContentType, related_name="+")
-    community_id = models.PositiveIntegerField()
+class DataStorage(models.Model):
 
     schema = json_field.JSONField(default=None, null=False, blank=False)  # BUG: schema does not throw IntegrityError on None
 
@@ -38,5 +33,3 @@ class Organism(models.Model):
 
     class Meta:
         abstract = True
-        get_latest_by = "created_at"
-        ordering = ["created_at"]

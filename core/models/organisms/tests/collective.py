@@ -38,13 +38,13 @@ class TestCollective(TransactionTestCase):
         except ValueError:
             pass
 
-    @patch('core.models.organisms.collective.Individual.validate')
+    @patch('core.models.organisms.individual.Individual.validate')
     def test_validate_queryset(self, validate_method):
         self.instance.validate(self.instance.individual_set.all(), self.instance.schema)
         for ind in self.instance.individual_set.all():
             validate_method.assert_any_call(ind, self.instance.schema)
 
-    @patch('core.models.organisms.collective.Individual.validate')
+    @patch('core.models.organisms.individual.Individual.validate')
     def test_validate_content(self, validate_method):
         self.instance.validate(self.instance.content, self.instance.schema)
         for ind in self.instance.content:
@@ -59,7 +59,7 @@ class TestCollective(TransactionTestCase):
             updates.append(individual) if index % 2 else updates.append(individual.properties)
         return updates, individual_ids
 
-    @patch('core.models.organisms.collective.Individual.validate')
+    @patch('core.models.organisms.individual.Individual.validate')
     @patch('core.models.organisms.collective.Collective.influence')
     def test_update(self, influence_method, validate_method):
         updates, individual_ids = self.get_update_list_and_ids(value="value 3")
@@ -108,7 +108,7 @@ class TestCollective(TransactionTestCase):
 
     def test_update_batch(self):
         updates = list(self.instance2.individual_set.all()) * 5
-        with self.assertNumQueries(3):
+        with self.assertNumQueries(4):
             self.instance2.update(updates, validate=False, reset=True, batch_size=20)
         self.assertEqual(self.instance2.individual_set.count(), 25)
 
