@@ -25,7 +25,7 @@ DATAGROWTH_REQUESTS_VERIFY = getattr(settings, "DATAGROWTH_REQUESTS_VERIFY", Tru
 ######################################
 
 
-DATAGROWTH_DEFAULT_CONFIGURATION = {
+DATAGROWTH_DEFAULT_CONFIGURATION = getattr(settings, "DATAGROWTH_DEFAULT_CONFIGURATION", {
     "global_allowed_origins": [
         'http://localhost:9000',
         'http://127.0.0.1:9000',
@@ -88,7 +88,7 @@ DATAGROWTH_DEFAULT_CONFIGURATION = {
             "path": "/predict/"
         }
     }
-}
+})
 
 
 DATAGROWTH_MOCK_CONFIGURATION = {

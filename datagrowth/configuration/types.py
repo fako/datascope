@@ -36,7 +36,7 @@ class ConfigurationType(object):
         :return: None
         """
         assert isinstance(defaults, dict) or defaults is None, \
-            "Defaults should be a dict which values are the configuration defaults."
+            "Defaults should be a dict which values are the configuration defaults or None."
         assert isinstance(namespace, str), \
             "Namespaces should be a string that acts as a prefix for finding configurations."
         assert isinstance(private, (list, tuple,)), \
