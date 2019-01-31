@@ -20,7 +20,6 @@ class IndividualSerializer(serializers.ModelSerializer):
             "created_at",
             "modified_at",
             "identity",
-            "index",
             "properties",
         )
 

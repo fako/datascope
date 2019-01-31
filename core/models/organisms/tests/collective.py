@@ -164,16 +164,6 @@ class TestCollective(TransactionTestCase):
             for individual in individuals:
                 self.assertEqual(individual.properties["country"], country)
 
-    def test_set_index_for_individual(self):
-        individual = self.instance2._set_index_for_individual(self.individual, ["language"])
-        self.assertEqual(
-            self.instance2.indexes,
-            {
-                (("language", "nl",),): 0,
-            }
-        )
-        self.assertEqual(individual.index, 0)
-
     def test_influence(self):
         self.individual.identity = None
         self.instance2.influence(self.individual)
@@ -187,30 +177,6 @@ class TestCollective(TransactionTestCase):
         self.instance2.identifier = "does-not-exist"
         self.instance2.influence(self.individual)
         self.assertIsNone(self.individual.identity)
-
-    def test_select(self):
-        self.instance2.build_index(["language", "country"])
-        qs = self.instance2.select(country="NL")
-        self.assertIsInstance(qs, QuerySet)
-        words = [ind["word"] for ind in qs.all()]
-        self.assertEqual(words, ["pensioen", "ouderdom"])
-        qs = self.instance2.select(language="nl")
-        self.assertIsInstance(qs, QuerySet)
-        words = [ind["word"] for ind in qs.all()]
-        self.assertEqual(words, ["pensioen", "ouderdom", "pensioen"])
-
-    def test_build_index(self):
-        self.instance2.build_index(["language", "country"])
-        self.assertEqual(
-            self.instance2.indexes,
-            {
-                (("language", "nl",), ("country", "NL",),): 0,
-                (("language", "nl",), ("country", "BE",),): 1,
-                (("language", "en",), ("country", "GB",),): 2,
-            }
-        )
-        individual = Individual.objects.last()
-        self.assertEqual(individual.index, 2)
 
     def test_to_file(self):
         self.skipTest("not tested")

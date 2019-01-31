@@ -1,7 +1,3 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-import six
-import warnings
-
 import json
 from collections import Iterator, Iterable
 
@@ -11,34 +7,14 @@ from django.core.urlresolvers import reverse
 from django.core.serializers.json import DjangoJSONEncoder
 
 import json_field
-from json_field.fields import JSONEncoder, JSONDecoder
 
 from core.models.organisms import Organism, Individual
 from core.utils.helpers import ibatch
 from core.utils.data import reach
 
 
-class IndexEncoder(JSONEncoder):
-    def encode(self, obj):
-        obj = super(IndexEncoder, self).encode({str(value): key for key, value in six.iteritems(obj)})
-        return obj
-
-
-class IndexDecoder(JSONDecoder):
-    def decode(self, obj, *args, **kwargs):
-        obj = super(IndexDecoder, self).decode(obj, *args, **kwargs)
-        return {key: int(value) for value, key in six.iteritems(obj)}
-
-
 class Collective(Organism):  # TODO: rename to family
 
-    indexes = json_field.JSONField(
-        null=True,
-        blank=True,
-        default={},
-        encoder=IndexEncoder,
-        decoder=IndexDecoder
-    )
     identifier = models.CharField(max_length=255, null=True, blank=True)
 
     @property
@@ -188,34 +164,6 @@ class Collective(Organism):  # TODO: rename to family
                 grouped[value].append(ind)
         return grouped
 
-    def _get_index_keys(self):
-        return [item[0] for item in next(six.iterkeys(self.indexes))]
-
-    def build_index(self, keys):
-        """
-
-        :param keys:
-        :return:
-        """
-        warnings.warn("Collective.build_index is depecrated in favor of Postgres BSON fields", DeprecationWarning)
-        assert isinstance(keys, list) and len(keys), \
-            "Expected a list with at least one element for argument keys."
-
-        individuals = []
-        for ind in self.individual_set.all():
-            self._set_index_for_individual(ind, keys)
-            individuals.append(ind)
-        self.update(individuals)
-        self.save()
-
-    def _set_index_for_individual(self, individual, index_keys):
-        index = tuple([(key, individual[key]) for key in index_keys])
-        if index not in self.indexes:
-            index_code = len(self.indexes)
-            self.indexes[index] = index_code
-        individual.index = self.indexes[index]
-        return individual
-
     def influence(self, individual):
         """
         This allows the Collective to set some attributes and or properties on the Individual
@@ -225,20 +173,7 @@ class Collective(Organism):  # TODO: rename to family
         """
         if self.identifier:
             individual.identity = reach("$." + self.identifier, individual.properties)
-        if self.indexes:
-            index_keys = self._get_index_keys()
-            individual = self._set_index_for_individual(individual, index_keys)
-
         return individual
-
-    def select(self, **kwargs):
-        warnings.warn("Collective.select is deprecated in favor of Postgres BSON fields", DeprecationWarning)
-        select = set()
-        for item in six.iteritems(kwargs):
-            for index in self.indexes.keys():
-                if item in index:
-                    select.add(self.indexes[index])
-        return self.individual_set.filter(index__in=select)
 
     def to_file(self, file_path):
         with open(file_path, "w") as json_file:

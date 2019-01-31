@@ -19,7 +19,6 @@ class Individual(Organism):
     properties = json_field.JSONField(default={})
 
     identity = models.CharField(max_length=255, blank=True, null=True, db_index=True)
-    index = models.SmallIntegerField(blank=True, null=True)
 
     def __getitem__(self, key):
         return self.properties[key]

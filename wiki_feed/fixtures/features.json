@@ -54,7 +54,6 @@
             "identifier": "wikidata.wikidata",
             "modified_at": "2017-11-03T01:51:28",
             "created_at": "2017-11-03T01:26:04",
-            "indexes": "{}",
             "community_type": [
                 "wiki_feed",
                 "wikifeedcommunity"
@@ -76,7 +75,6 @@
             "created_at": "2017-11-03T01:43:53",
             "modified_at": "2017-11-03T02:00:49",
             "collective": 1,
-            "index": null,
             "identity": "Q42440670",
             "community_id": 1
         },
@@ -86,7 +84,6 @@
         "pk": 2,
         "model": "core.individual",
         "fields": {
-            "index": null,
             "community_type": [
                 "wiki_feed",
                 "wikifeedcommunity"

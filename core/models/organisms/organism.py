@@ -1,47 +1,9 @@
-import warnings
-
-from django.utils.encoding import python_2_unicode_compatible
-
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 
 import json_field
 
 
-class OrganismIterator(object):
-
-    def __init__(self, content):
-        warnings.warn(
-            "OrganismInterator is deprecated. There are no plans for replacement at this time",
-            DeprecationWarning
-        )
-        self._content = content
-        self._index = 0
-        self._candidate = None
-
-    def __iter__(self):
-        return self
-
-    def next(self):
-        if self._candidate is None:
-            try:
-                self._candidate = self._content[self._index]
-            except IndexError:
-                raise StopIteration()
-        result = None
-        try:
-            if isinstance(self._candidate, dict):
-                result = self._candidate
-                self._candidate = None
-            elif isinstance(self._candidate, list):
-                result = next(self._candidate)
-        except StopIteration:
-            self._candidate = None
-            return self.next()
-        return result
-
-
-@python_2_unicode_compatible
 class Organism(models.Model):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
