@@ -16,7 +16,7 @@ class OnlineDiscourseRankProcessor(RankProcessor):
                 if isinstance(paragraph, str) and paragraph.strip()
             ]
             text += " ".join(paragraphs) + " "
-        return text
+        return text.strip()
 
     def default_ranking(self, query_set):
         argument_score_rank = self.feature_frame.data["argument_score"]
