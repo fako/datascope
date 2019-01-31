@@ -303,12 +303,13 @@ class DiscourseSearchCommunity(Community):
         deletes = out.individual_set.exclude(query_filter).delete()
         log.info("Deletes: {}".format(deletes))
 
-        log.info("Resetting identifier to 'url' and cleaning output")
+        log.info("Resetting identifier to 'url', cleaning output and deleting invalids")
         # File paths to downloads is not a useful identifier after dataset creation
         # Resetting to source URL
         out.identifier = "url"
         out.save()
         total = out.individual_set.count()
+        invalids = []
         for individual in tqdm(out.individual_set.iterator(), total=total):
             # Skip reset when it has already been done
             if individual.properties.get("tika", None):
@@ -317,12 +318,25 @@ class DiscourseSearchCommunity(Community):
             # Then undoing a weird hack where content data gets stored under resourcePath
             # It happens because inline_key and identifier need to match
             # TODO: allow inline_key to be different from identifier
-            data = individual.properties.get("resourcePath", None)
+            data = individual.properties.get("resourcePath", {})
             individual.properties["tika"] = data
-            if data is not None:
-                del individual.properties["resourcePath"]
+            content = data.get("content", "")
+            # We're only keeping the content that actually holds topics of interest.
+            if not data or not content:
+                invalids.append(individual.id)
+                continue
+            for topic in configuration.topics:
+                if topic in content:
+                    break
+            else:
+                invalids.append(individual.id)
+                continue
+
+            del individual.properties["resourcePath"]
             individual.clean()
             individual.save()
+        deletes = out.individual_set.filter(id__in=invalids).delete()
+        log.info("Deletes: {}".format(deletes))
 
         #################################################################################
         # TODO: The next phases are better handled by a process_mini_batch task
@@ -342,14 +356,6 @@ class DiscourseSearchCommunity(Community):
 
             # We're skipping any entries that have already been processed at some point
             if individual.properties.get("argument_score", None) is not None:
-                continue
-
-            # We're only processing the content that actually holds topics of interest.
-            for topic in configuration.topics:
-                if topic in individual.properties.get("content", ""):
-                    break
-            else:
-                off_topics.append(individual.id)
                 continue
 
             # Now we turn raw content into something consistent set on the individual
@@ -379,11 +385,6 @@ class DiscourseSearchCommunity(Community):
 
             individual.clean()
             individual.save()
-
-        # Now we'll delete entries with off-topic main content
-        log.info("Deleting entries with off topic content after processing")
-        deletes = out.individual_set.filter(id__in=off_topics).delete()
-        log.info("Deletes: {}".format(deletes))
 
         #################################################################################
         # Handling aggregations which is not supported by the framework at this time
