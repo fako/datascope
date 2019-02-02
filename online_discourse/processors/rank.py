@@ -34,7 +34,10 @@ class OnlineDiscourseRankProcessor(RankProcessor):
         keyword_count_rank.name = "keywords"
         keyword_max = keyword_count_rank.max()
         keyword_count_rank /= keyword_max
-        ranking_series = argument_score_rank.add(keyword_count_rank)
+        ranking_series = argument_score_rank.add(keyword_count_rank, fill_value=0)
+        keyword_mask = keyword_count_rank.copy()
+        keyword_mask[keyword_mask > 0] = 1
+        ranking_series = ranking_series.multiply(keyword_mask, fill_value=0)
         ranking_series = ranking_series.fillna(0).sort_values(ascending=False)
         return self.get_ranking_results(ranking_series, query_set, [argument_score_rank, keyword_count_rank])
 
