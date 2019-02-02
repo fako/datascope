@@ -323,6 +323,9 @@ class DiscourseSearchCommunity(Community):
             # It happens because inline_key and identifier need to match
             # TODO: allow inline_key to be different from identifier
             data = individual.properties.get("resourcePath", {})
+            if isinstance(data, str):
+                log.warning("resourcePath not replaced by dict: {}".format(individual.id))
+                continue
             individual.properties["tika"] = data
             content = data.get("content", "")
             # We're only keeping the content that actually holds topics of interest.
