@@ -206,6 +206,10 @@ class DiscourseSearchCommunity(Community):
             log.warning("Key error with file for individual when setting main content: {}".format(individual.id))
             individual["content"] = []
             return individual
+        except LookupError:
+            log.warning("Lookup error with file encoding for individual when setting main content: {}".format(individual.id))
+            individual["content"] = []
+            return individual
 
         # Calculate text diff between home, article and Tika
         raw_content = data.get("content", "")  # prevents None with empty content

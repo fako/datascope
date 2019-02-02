@@ -10,6 +10,7 @@ class EntityDetector(object):
         assert isinstance(nlp, Language), "nlp argument should be a spaCy Language model"
         self.get_text = get_text
         self.nlp = nlp
+        self.nlp.max_length = 50000  # arbitrary, prevents memory errors, see: entity_tokenizer
         self.entities = ["PERSON"]
         self.sorted_entities = {}
 
