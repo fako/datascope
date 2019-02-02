@@ -3,10 +3,8 @@ from rest_framework import generics, throttling, viewsets
 from rest_framework.response import Response
 
 from core.models.organisms.community import CommunityState
-from core.utils.data import TextFeaturesFrame
 from online_discourse.models import DiscourseSearchCommunity
 from online_discourse.models.orders import DiscourseOrderSerializer
-from online_discourse.processors import OnlineDiscourseRankProcessor
 
 
 class AnonDiscourseOrderThrottle(throttling.AnonRateThrottle):

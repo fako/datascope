@@ -22,10 +22,7 @@ class OnlineDiscourseRankProcessor(RankProcessor):
         argument_score_rank = self.feature_frame.data["argument_score"]
         argument_score_max = argument_score_rank.max()
         argument_score_rank /= argument_score_max
-        try:  # TODO: replace try with .get from config
-            keywords = self.config.keywords
-        except ConfigurationNotFoundError:
-            keywords = []
+        keywords = self.config.get("keywords", [])
         keyword_params = {
             keyword: 1
             for keyword in keywords
