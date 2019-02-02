@@ -142,7 +142,7 @@ class DiscourseSearchCommunity(Community):
         "nl": NL_STOP_WORDS
     }
     NON_TOPICS = {  # TODO: remove NON_TOPICS?
-        "en": [],
+        "en": ["window", "story", "facebook", "twitter", "email"],
         "nl": []
     }
 
@@ -429,9 +429,14 @@ class DiscourseSearchCommunity(Community):
 
     def get_topic_aggregates(self, collection):
 
+        stop_words = self.STOP_WORDS[self.config.language]
+        if not isinstance(stop_words, (str, list)):
+            type(stop_words)
+            stop_words = list(stop_words)
+
         detector = TopicDetector(
             OnlineDiscourseRankProcessor.get_text,
-            stop_words=list(self.STOP_WORDS[self.config.language]),
+            stop_words=stop_words,
             filter_words=self.NON_TOPICS[self.config.language]
         )
         return {
