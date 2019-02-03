@@ -143,7 +143,7 @@ class DiscourseSearchCommunity(Community):
     }
     NON_TOPICS = {  # TODO: remove NON_TOPICS?
         "en": ["window", "story", "facebook", "twitter", "email"],
-        "nl": []
+        "nl": ["categorie", "tagarchief", "link"]
     }
 
     def initial_input(self, *args):
