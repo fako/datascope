@@ -13,12 +13,12 @@ STATIC_URL = "//tools-static.wmflabs.org/algo-news/static/"
 
 CELERY_DEFAULT_QUEUE = "datascope"
 CELERY_BROKER_URL = "redis://tools-redis:6379/0"
-CELERY_BEAT_SCHEDULE = {
-    "update_wiki_feed": {
-        "task": "wiki_feed.update_wiki_feed",
-        "schedule": crontab(minute=0, hour=6),
-    }
-}
+# CELERY_BEAT_SCHEDULE = {
+#     "update_wiki_feed": {
+#         "task": "wiki_feed.update_wiki_feed",
+#         "schedule": crontab(minute=0, hour=6),
+#     }
+# }
 
 MAX_BATCH_SIZE = 100
 
