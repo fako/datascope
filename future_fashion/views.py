@@ -1,3 +1,4 @@
+import os
 import re
 
 from rest_framework.decorators import api_view
@@ -22,7 +23,7 @@ def swipe_interface_view(request):
     def format_data(entry):
         return {
             "id": entry["_id"],
-            "url": request.build_absolute_uri(entry["path"].replace("future_fashion/data", "")),
+            "url": request.build_absolute_uri(os.sep + entry["path"]),
             "type": entry["type"]
         }
 

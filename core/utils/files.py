@@ -167,7 +167,7 @@ class SemanticDirectoryScan(object):
         self.ignore_directories = ignore_directories or []
         self.progress_bar = progress_bar
 
-    def __call__(self, directory_path):
+    def __call__(self, directory_path, path_prefix=""):
         if not directory_path.endswith("/"):
             directory_path += "/"
         glob_pattern = "{}**/{}".format(directory_path, self.file_pattern)
@@ -175,16 +175,16 @@ class SemanticDirectoryScan(object):
             if not self.progress_bar \
             else tqdm(glob(glob_pattern, recursive=True))
         for file_path in file_paths:
-            relative_path = file_path.replace(directory_path, "")
-            head, tail = os.path.split(relative_path)
-            if not tail:
+            relative_path = file_path.replace(directory_path, path_prefix)
+            tail, head = os.path.split(relative_path)
+            if not head:
                 # This is a directory not a file. Ignore
                 continue
-            tags = [part for part in head.split(os.sep) if part not in self.ignore_directories]
-            name, extension = os.path.splitext(tail)
+            tags = [part for part in tail.split(os.sep) if part not in self.ignore_directories]
+            name, extension = os.path.splitext(head)
             yield {
-                "path": file_path,
-                "file": tail,
+                "path": relative_path,
+                "file": head,
                 "name": name,
                 "extension": extension[1:],
                 "tags": tags
