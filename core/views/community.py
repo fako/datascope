@@ -205,12 +205,14 @@ class HtmlCommunityView(View):
     def cast_data_to_template(data):
         # TODO: make this a class method for appropriate model
         # TODO: test
+        cast_data = copy(data)
         for key, value in data.items():
             if key.startswith("_"):
                 key = key[1:]
                 if key in data:
                     raise AssertionError("Can't cast protected key to template key: _{}".format(key))
-                data[key] = value
+                cast_data[key] = value
+        return cast_data
 
     @staticmethod
     def data_for(community_class, response=None):
@@ -220,11 +222,13 @@ class HtmlCommunityView(View):
             # If data was returned successfully then for the templates we need to filter _ based results
             # As API responses should be limited the overhead should be acceptable.
             data = response.data
-            if data["result"]:
-                data["result"] = HtmlCommunityView.cast_data_to_template(data["result"])
-            if data["results"]:
+            result = data.get("result", {})
+            results = data.get("results", [])
+            if result:
+                data["result"] = HtmlCommunityView.cast_data_to_template(result)
+            if results:
                 data["results"] = [
-                    HtmlCommunityView.cast_data_to_template(rsl) for rsl in data["results"]
+                    HtmlCommunityView.cast_data_to_template(rsl) for rsl in results
                 ]
             return response.data
         elif response.status_code == 300:
