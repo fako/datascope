@@ -2,7 +2,7 @@ import re
 import hashlib
 
 from collections import OrderedDict
-from itertools import groupby, islice
+from itertools import groupby
 from datetime import datetime
 
 from django.conf import settings

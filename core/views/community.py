@@ -90,7 +90,13 @@ class CommunityView(APIView):
             configuration["t"] = format_datetime(created_at)
         query = "?" + get_standardized_configuration(simple_configuration, as_hash=False) if configuration else ""
         anchor = "#" + get_standardized_configuration(configuration) if configuration else ""
-        return service_view_url + query + anchor
+        # We need to make sure that URI's fit within the Resource URI limit of 255 chars
+        # However the anchor part is more important than the query part so we assure that it stays here
+        max_length = 255 - len(anchor)
+        base_uri = service_view_url + query
+        if len(base_uri) > max_length:
+            base_uri = base_uri[:max_length]
+        return base_uri + anchor
 
     def get_response(self, community_class, query_path, configuration, created_at_info=(None, None)):
         assert isinstance(configuration, dict), \
@@ -196,10 +202,30 @@ class HtmlCommunityView(View):
         return '{}/{}'.format(community_class.get_name(), template)
 
     @staticmethod
+    def cast_data_to_template(data):
+        # TODO: make this a class method for appropriate model
+        # TODO: test
+        for key, value in data.items():
+            if key.startswith("_"):
+                key = key[1:]
+                if key in data:
+                    raise AssertionError("Can't cast protected key to template key: _{}".format(key))
+                data[key] = value
+
+    @staticmethod
     def data_for(community_class, response=None):
         if response is None:
             return None
         if response.status_code == 200:
+            # If data was returned successfully then for the templates we need to filter _ based results
+            # As API responses should be limited the overhead should be acceptable.
+            data = response.data
+            if data["result"]:
+                data["result"] = HtmlCommunityView.cast_data_to_template(data["result"])
+            if data["results"]:
+                data["results"] = [
+                    HtmlCommunityView.cast_data_to_template(rsl) for rsl in data["results"]
+                ]
             return response.data
         elif response.status_code == 300:
             return response.data
