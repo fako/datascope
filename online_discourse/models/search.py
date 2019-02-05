@@ -18,6 +18,7 @@ except ImportError:
 from django.db.models import Q
 import json_field
 
+from datagrowth.utils import get_model_path
 from datagrowth.resources import HttpResource
 from core.models.organisms import Community, Collective, Individual
 from core.models.organisms.states import CommunityState
@@ -141,8 +142,8 @@ class DiscourseSearchCommunity(Community):
         "en": "english",  # grabs sklearn stopwords
         "nl": NL_STOP_WORDS
     }
-    NON_TOPICS = {  # TODO: remove NON_TOPICS?
-        "en": ["window", "story", "facebook", "twitter", "email"],
+    NON_TOPICS = {
+        "en": ["window", "story", "facebook", "twitter", "email", "search", "tweet"],
         "nl": ["categorie", "tagarchief", "link"]
     }
 
@@ -457,7 +458,8 @@ class DiscourseSearchCommunity(Community):
         self.kernel = self.current_growth.output
 
     def get_feature_frame_file(self, frame_type, file_ext=".pkl"):
-        return os.path.join("data", self._meta.app_label, frame_type + "s", self.signature + file_ext)
+        model_path = get_model_path( self._meta.app_label, frame_type + "s")
+        return os.path.join(model_path, self.signature + file_ext)
 
     def before_rank_manifestation(self, manifestation_part):
         manifestation_part["config"]["feature_frame_path"] = self.get_feature_frame_file("feature_frame")
