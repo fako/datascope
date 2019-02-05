@@ -3,6 +3,7 @@ from tqdm import tqdm
 
 from django.core.serializers import serialize
 
+from datagrowth.utils import get_dumps_path
 from core.management.commands import CommunityCommand
 from core.utils.helpers import ibatch, batchize
 
@@ -30,7 +31,7 @@ class Command(CommunityCommand):
         json_file.write(batch_data + "\n")
 
     def handle_community(self, community, *args, **options):
-        destination = os.path.join("data", community._meta.app_label , "dumps", community.get_name())
+        destination = get_dumps_path(community)
         if not os.path.exists(destination):
             os.makedirs(destination)
         file_name = os.path.join(destination, "{}.json".format(community.signature))
