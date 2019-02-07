@@ -11,13 +11,11 @@ db-dump.*.json
 
 datagrowth/docs/_build/
 
-system/files/media/
-system/files/static/
-
 datascope/settings.py
 datascope/bootstrap.py
 datascope/secrets.py
 datascope/mysql/data/
 datascope/logs/
+datascope/statics/
 
 data/
