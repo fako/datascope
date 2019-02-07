@@ -1,9 +1,37 @@
+import os
 import logging
 
+from django.core.files.storage import default_storage
+from django.db.models import signals
+
+from datagrowth.resources import HttpFileResource, TikaResource, file_resource_delete_handler
 from core.models.resources.http import URLResource
 
 
 log = logging.getLogger("datascope")
+
+
+class WebContentDownload(HttpFileResource):
+
+    CONFIG_NAMESPACE = "discourse_download"
+
+    @property
+    def content(self):
+        content_type, file = super().content
+        if not file:
+            return content_type, file
+        variables = self.variables()
+        return content_type, {
+            self.config.url_key: variables["url"],
+            self.config.resource_key: os.path.join(default_storage.location, self.body)
+        }
+
+
+signals.post_delete.connect(file_resource_delete_handler, sender=WebContentDownload)
+
+
+class WebTextTikaResource(TikaResource):
+    pass
 
 
 class WebTextResource(URLResource):

@@ -1,14 +1,7 @@
-"""
-Datagrowth configurations can be serialized to JSON dicts for storage and transfer.
-They can also be passed on to other configuration instances in a parent/child like relationship.
-Datagrowth configurations are namespaced.
-Upon initialization defaults can be specified globally and per namespace.
-Initialization typically happens when application loads.
-Configurations may get overridden at runtime, which typically happens during requests.
-"""
-
 import warnings
 from copy import copy
+
+from datagrowth.settings import DATAGROWTH_DEFAULT_CONFIGURATION
 
 
 class ConfigurationNotFoundError(AttributeError):
@@ -21,23 +14,29 @@ class ConfigurationType(object):
     So a configuration named `my_config` will be accessible with `config.my_config`.
 
     You can check if a configuration exists by using the `in` operator.
+
+    :param defaults: (dict) that should hold default configurations as items
+        or None to load defaults from settings at runtime
+    :param namespace: (string) prefix to search default configurations with
+    :param private: (list) keys that are considered as private
+    :return: ConfigurationType
     """
-    # TODO: protect against unexpected user input configurations
 
     _private_defaults = ["_private", "_defaults", "_namespace"]
     _global_prefix = "global"
 
-    def __init__(self, defaults, namespace="", private=tuple()):
+    def __init__(self, defaults=None, namespace="", private=tuple()):
         """
         Initiates the ConfigurationType by checking arguments and setting logically private attributes
 
         :param defaults: (dict) that should hold default configurations as items
+            or None to load defaults from settings at runtime
         :param namespace: (string) prefix to search default configurations with
         :param private: (list) keys that are considered as private
         :return: None
         """
-        assert isinstance(defaults, dict), \
-            "Defaults should be a dict which values are the configuration defaults."
+        assert isinstance(defaults, dict) or defaults is None, \
+            "Defaults should be a dict which values are the configuration defaults or None."
         assert isinstance(namespace, str), \
             "Namespaces should be a string that acts as a prefix for finding configurations."
         assert isinstance(private, (list, tuple,)), \
@@ -107,6 +106,11 @@ class ConfigurationType(object):
             return self.__dict__[shielded_key]
         elif variable_key in self.__dict__:
             return self.__dict__[variable_key]
+
+        # Lazy load the default configuration from settings to allow apps to register their own defaults
+        if self._defaults is None:
+            self._defaults = DATAGROWTH_DEFAULT_CONFIGURATION
+
         if namespace_attr in self._defaults:
             return self._defaults[namespace_attr]
         elif global_attr in self._defaults:
@@ -133,11 +137,17 @@ class ConfigurationType(object):
     @classmethod
     def from_dict(cls, config, defaults):
         """
-        To be written
+        Creates a configuration using a dictionary.
+        The dictionary should hold the appropriate _private and _namespace values.
+        The _private value specifies which configurations should not be passed on
+        to configuration that use this configuration as a base.
+        The _namespace value specifies which prefix should be used to search default configurations,
+        when a key can not be found in the configuration.
 
-        :param config:
-        :param defaults:
-        :return:
+        :param config: (dict) the configuration keys and values to create a configuration with
+        :param defaults: (dict) the configuration keys and values that act as a fallback
+            or None to load defaults from settings at runtime
+        :return: a configuration instance
         """
         assert isinstance(config, dict), \
             "Config should be a dict which values are the configurations."
@@ -145,7 +155,7 @@ class ConfigurationType(object):
             "_namespace needs to be specified in the configuration."
         assert "_private" in config, \
             "_private needs to be specified in the configuration."
-        assert isinstance(defaults, dict), \
+        assert isinstance(defaults, dict) or defaults is None, \
             "Defaults should be a dict which values are the configuration defaults."
         instance = cls(
             defaults=defaults,
@@ -157,10 +167,12 @@ class ConfigurationType(object):
 
     def supplement(self, other):
         """
-        To be written
+        This method updates the configuration with keys from other
+        if the configuration key does not exist in the configuration already.
+        This allows configurations to update with only new values.
 
-        :param other:
-        :return:
+        :param other: (dict) the configuration keys and values to possibly update the configuration with
+        :return: None
         """
         supplement = {}
         for key, value in other.items():
@@ -171,10 +183,11 @@ class ConfigurationType(object):
 
     def items(self, protected=False, private=False):
         """
-        To be written
+        Iterates over all configurations in a (key, value,) manner.
+        It allows to skip over protected and private configurations, which happens by default.
 
-        :param protected:
-        :param private:
+        :param protected: (boolean) flag to include protected configurations
+        :param private: (boolean) flag to include private configurations
         :return:
         """
         for key, value in self.__dict__.items():
@@ -189,10 +202,11 @@ class ConfigurationType(object):
     @staticmethod
     def clean_key(key):
         """
-        To be written
+        Strips characters from the input key that have a special meaning to the configuration type.
+        Namely '$' and '_'.
 
-        :param key:
-        :return:
+        :param key: (string) the key to strip special characters from
+        :return: (string) the original or stripped key
         """
         if key.startswith("$") or key.startswith("_"):
             return key[1:]
@@ -202,12 +216,21 @@ class ConfigurationType(object):
         item = self.clean_key(item)
         return self._get_configuration(item)
 
-    def get(self, item, default):
+    def get(self, item, default=None):
+        """
+        Getter for configuration item.
+        When the configuration key is not found it raises a ConfigurationNotFoundError unless default is specified.
+        If this is the case it returns the default instead.
+
+        :param item: (string) key to get a configuration value for
+        :param default: (mixed) value to return if configuration does not exist
+        :return: (mixed) the configuration value or the default value
+        """
         item = self.clean_key(item)
-        try:
-            return self._get_configuration(item)
-        except ConfigurationNotFoundError:
-            return default
+        if default:
+            return getattr(self, item, default)
+        else:
+            return getattr(self, item)
 
     def __contains__(self, item):
         item = self.clean_key(item)
@@ -236,6 +259,7 @@ class ConfigurationProperty(object):
 
     :param storage_attribute: (string) name of the attribute used to store configurations on the owner class
     :param defaults: (dict) should hold default configurations as items
+        or None to load defaults from settings at runtime
     :param namespace: (string) prefix to search default configurations with
     :param private: (list) keys that are considered as private for this property
     :return: ConfigurationType
@@ -247,6 +271,7 @@ class ConfigurationProperty(object):
 
         :param storage_attribute: (string) name of the attribute used to store configurations on the owner class
         :param defaults: (dict) should hold default configurations as items
+            or None to load defaults from settings at runtime
         :param namespace: (string) prefix to search default configurations with
         :param private: (list) keys that are considered as private for this property
         :return: ConfigurationType
@@ -282,3 +307,43 @@ class ConfigurationProperty(object):
             )
         else:
             obj.__dict__[self._storage_attribute].update(new)
+
+
+def create_config(namespace, configuration):
+    """
+    Use this function to quickly create a configuration.
+    You need to specify under which namespace the configuration should search for defaults.
+    The configuration names and their values need to be supplied as well as a simple dictionary.
+
+    Apart from that the configuration needs no setup and the most common use cases will be supported.
+
+    :param namespace: (str) the namespace under which missing configurations should be searched when defaulting
+    :param values: (dict) the configuration keys and values that should be set on the configuration instance
+    :return: ConfigurationType
+    """
+    config = ConfigurationType(
+        namespace=namespace,
+        private=("_private", "_namespace", "_defaults",)
+    )
+    config.update(configuration)
+    return config
+
+
+def register_defaults(namespace, configuration):
+    """
+    This function updates a global configuration defaults object with your own defaults.
+    That way an application can set defaults at runtime during a configure stage like the Django apps ready hook.
+
+    You need to specify under which namespace the configuration should become available.
+    This should be the same as the namespace you create configurations with.
+    You can provide the default configuration for that namespace as a simple dictionary.
+
+    :param namespace: (str) the namespace under which the defaults will be registered.
+    :param configuration: (dict) the configuration keys and values that should be set as defaults
+    :return: None
+    """
+    defaults = {
+        "{}_{}".format(namespace, key): value
+        for key, value in configuration.items()
+    }
+    DATAGROWTH_DEFAULT_CONFIGURATION.update(defaults)

@@ -2,13 +2,13 @@ from __future__ import unicode_literals, absolute_import, print_function, divisi
 
 import operator
 import math
-from datetime import datetime
 from itertools import islice, cycle
 from functools import reduce
 
-
 from django.apps import apps as django_apps
-from django.conf import settings
+
+from datagrowth.utils import parse_datetime_string, format_datetime
+
 
 
 def get_any_model(name):  # TODO: test to unlock
@@ -20,17 +20,6 @@ def get_any_model(name):  # TODO: test to unlock
     except StopIteration:
         raise LookupError("Could not find {} in any app_labels".format(name))
     return django_apps.get_model(app_label, name)
-
-
-def parse_datetime_string(time_str):
-    try:
-        return datetime.strptime(time_str, settings.DATASCOPE_DATETIME_FORMAT)
-    except (ValueError, TypeError):
-        return datetime(month=1, day=1, year=1970)
-
-
-def format_datetime(datetime):
-    return datetime.strftime(settings.DATASCOPE_DATETIME_FORMAT)
 
 
 def override_dict(parent, child):  # TODO: test to unlock
@@ -62,7 +51,7 @@ def merge_iter(*iterables, **kwargs):  # TODO: test to unlock, works bad with em
                 raise
 
 
-def ibatch(iterable, batch_size):  # TODO: test to unlock
+def ibatch(iterable, batch_size):  # TODO: test to unlock, should be deprecated in favour of datagrowth.utils.ibatch
     it = iter(iterable)
     while True:
         batch = list(islice(it, batch_size))
@@ -104,7 +93,7 @@ def cross_combine_2(*args):  # NB: beta
     return reduce(dual_combine, args)
 
 
-def batchize(elements, batch_size):  # TODO: test to unlock
+def batchize(elements, batch_size):  # TODO: test to unlock, should be deprecated in favour of datagrowth.utils.ibatch
     batches = int(math.floor(elements / batch_size))
     rest = elements % batch_size
     if rest:

@@ -42,7 +42,7 @@ class UniformImagesCommunity(Community):
             "config": {
                 "_args": ["$.url", "$.word"],
                 "_kwargs": {},
-                "_resource": "ImageDownload"
+                "_resource": "UniformImageDownload"
             },
             "schema": {},
             "errors": None,

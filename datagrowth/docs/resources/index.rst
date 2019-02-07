@@ -3,5 +3,4 @@
 Resources
 =========
 
-.. automodule:: core.models.resources.http
-    :members: HttpResource
+TODO: usage documentation, only the reference is currently available

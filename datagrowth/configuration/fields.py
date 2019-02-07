@@ -9,7 +9,7 @@ from .types import ConfigurationProperty
 
 class ConfigurationFormField(form_fields.CharField):
     """
-    This form field correctly serializes the configuration when saving an (admin) form.
+    This form field correctly serializes the configuration inside of text area's when saving an (admin) form.
     """
     def to_python(self, value):
         if isinstance(value, str):
@@ -22,31 +22,41 @@ class ConfigurationFormField(form_fields.CharField):
 
 class ConfigurationField(fields.TextField):
     """
-    This field creates a property of ConfigurationType on models.
+    This field creates a property of ConfigurationType on Django models.
+    All values will be saved in the database upon save of a model.
 
-    NB: default that gets stored in the database is always an empty dictionary.
+    All initialization parameters are optional and act as defaults.
+    By setting ``CONFIG_NAMESPACE``, ``CONFIG_PRIVATE`` or ``CONFIG_DEFAULTS`` on inheriting classes
+    these defaults get overridden.
+
+    The use of ``config_defaults`` or ``CONFIG_DEFAULTS`` is discouraged.
+    Because setting this value makes it impossible to change the defaults at runtime.
+    If you want to set defaults for a field it's recommended to use the DATAGROWTH_DEFAULT_CONFIGURATION setting or
+    ``register_defaults`` if you want to set defaults at runtime.
+
+    :param namespace: (string) prefix to search default configurations with if a configuration is missing
+    :param private: (list) keys that are considered as private
+    :param config_defaults: (dict) should hold default configurations as items
+    :param args: additional TextField arguments
+    :param kwargs: additional TextField keyword arguments
     """
+
     form_class = ConfigurationFormField
 
-    def __init__(self, config_defaults=None, namespace="", private=tuple(), *args, **kwargs):
+    def __init__(self, namespace="global", private=("_private", "_namespace", "_defaults",),
+                 config_defaults=None, *args, **kwargs):
         """
         Stores its arguments for later use by contribute_to_class.
-        Assertions are done by the ConfigurationType class, upon contribute_to_class.
-
-        :param config_defaults: (dict) that should hold default configurations as items
-        :param namespace: (string) prefix to search default configurations with
-        :param private: (list) keys that are considered as private
-        :param args: additional field arguments
-        :param kwargs: additional field keyword arguments
-        :return:
+        The arguments are passed directly to the ConfigurationType class by the  contribute_to_class method.
+        Except when ``CONFIG_DEFAULTS``, ``CONFIG_NAMESPACE`` or ``CONFIG_PRIVATE`` are set on the owner class.
+        In that case these values get passed on to the ConfigurationType.
         """
         super(ConfigurationField, self).__init__(*args, **kwargs)
-        self._defaults = config_defaults
         self._namespace = namespace
         self._private = private
+        self._defaults = config_defaults
 
     def contribute_to_class(self, cls, name, private_only=False, **kwargs):
-
         configuration_property = ConfigurationProperty(
             storage_attribute=name,
             defaults=getattr(cls, 'CONFIG_DEFAULTS', self._defaults),
@@ -64,9 +74,6 @@ class ConfigurationField(fields.TextField):
             try:
                 return json.loads(value)
             except ValueError:
-                # due to legacy some fixtures may contain stringyfied dicts instead of JSON objects
-                # uncomment below and comment the raise statement to fix this during fixture load
-                # value = dict(eval(value))
                 raise ValidationError("Enter valid JSON: " + value)
         return value
 

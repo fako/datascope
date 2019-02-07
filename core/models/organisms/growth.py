@@ -15,7 +15,7 @@ from core.exceptions import DSProcessError, DSNoContent
 from core.models.organisms import Individual, Collective
 
 
-log = logging.getLogger("datascope")
+log = logging.getLogger("datagrowth.command")
 
 
 class GrowthState(object):

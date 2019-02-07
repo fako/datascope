@@ -8,7 +8,7 @@ from copy import deepcopy
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
-from core.exceptions import DSHttpError50X, DSHttpError40X
+from datagrowth.exceptions import DGHttpError50X, DGHttpError40X
 from core.models.resources.http import HttpResource
 from core.tests.mocks.data import MOCK_DATA
 from core.tests.mocks.http import HttpResourceMock
@@ -163,6 +163,9 @@ class HttpResourceTestMixin(TestCase):
         except AssertionError:
             pass
 
+    def test_send_request_connection_error(self):
+        self.skipTest("not tested")
+
     def test_create_request_post(self):
         request = self.instance._create_request("post", "en", "test", query="test")
         self.assertEqual(request["data"], {"test": "test"})
@@ -187,7 +190,7 @@ class HttpResourceTestMixin(TestCase):
             try:
                 self.instance._handle_errors()
                 self.fail("Handle error doesn't handle status {}".format(status))
-            except DSHttpError50X as exc:
+            except DGHttpError50X as exc:
                 self.assertIsInstance(exc.resource, HttpResource)
                 self.assertEqual(exc.resource.status, status)
             except Exception as exception:
@@ -197,7 +200,7 @@ class HttpResourceTestMixin(TestCase):
             try:
                 self.instance._handle_errors()
                 self.fail("Handle error doesn't handle status {}".format(status))
-            except DSHttpError40X as exc:
+            except DGHttpError40X as exc:
                 self.assertIsInstance(exc.resource, HttpResource)
                 self.assertEqual(exc.resource.status, status)
             except Exception as exception:
@@ -230,6 +233,9 @@ class HttpResourceTestMixin(TestCase):
         self.assertEqual(self.instance.head, {})
         self.assertEqual(self.instance.body, "")
         self.assertEqual(self.instance.status, 0)
+
+    def test_close(self):
+        self.skipTest("not tested")
 
 
 class ConfigurationFieldTestMixin(TestCase):
@@ -495,6 +501,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertIn("key=oehhh", request["url"])
         self.assertNotIn("key=oehhh", self.instance.request["url"], "request_with_auth should not alter existing request")
         self.assertEqual(request["data"], self.test_post_request["data"])
+        self.skipTest("test the auth with headers")
 
     def test_request_without_auth(self):
         self.instance.request = deepcopy(self.test_post_request)
@@ -505,6 +512,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertNotIn("key=oehhh", request["url"])
         self.assertIn("key=ahhh", self.instance.request["url"], "request_without_auth should not alter existing request")
         self.assertEqual(request["data"], self.test_post_request["data"])
+        self.skipTest("test the auth with headers")
 
     def test_create_next_request(self):
         # Test with get
@@ -644,4 +652,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assert_agent_header(preq, "DataScope (custom)")
 
     def test_get_data_key(self):
+        self.skipTest("not tested")
+
+    def test_parse_content_type(self):
         self.skipTest("not tested")

@@ -1,7 +1,8 @@
 import json
 
 from core.utils.helpers import override_dict
-from core.exceptions import DSInvalidResource, DSHttpError40X
+from core.exceptions import DSInvalidResource
+from datagrowth.exceptions import DGHttpError40X
 from sources.models.wikipedia.base import WikipediaAPI
 
 
@@ -39,11 +40,11 @@ class WikipediaQuery(WikipediaAPI):
         # TODO: parse the dictionary and possibly return partial content
         if isinstance(response, dict) and "-1" in response and "missing" in response["-1"]:
             self.status = 404
-            raise DSHttpError40X(self.ERROR_MESSAGE, resource=self)
+            raise DGHttpError40X(self.ERROR_MESSAGE, resource=self)
         # When making lists a list is returned
         elif isinstance(response, list) and not response:
             self.status = 404
-            raise DSHttpError40X(self.ERROR_MESSAGE, resource=self)
+            raise DGHttpError40X(self.ERROR_MESSAGE, resource=self)
 
     @property
     def content(self):
@@ -78,7 +79,7 @@ class WikipediaGenerator(WikipediaQuery):
             # This indicates the generator didn't find anything under the 'query' key in body
             # In practise it means the searched for title does not exist.
             self.status = 404
-            raise DSHttpError40X(self.ERROR_MESSAGE, resource=self)
+            raise DGHttpError40X(self.ERROR_MESSAGE, resource=self)
 
     class Meta:
         abstract = True

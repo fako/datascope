@@ -1,12 +1,10 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
 from copy import deepcopy
 
 from core.models.organisms import Individual
-from core.processors.rank import RankProcessor
+from core.processors.rank import LegacyRankProcessor
 
 
-class ComparisonProcessor(RankProcessor):
+class ComparisonProcessor(LegacyRankProcessor):
 
     def __init__(self, config):
         super(ComparisonProcessor, self).__init__(config)

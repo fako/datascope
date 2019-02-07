@@ -3,6 +3,8 @@ from collections import OrderedDict
 
 from django.core.exceptions import ValidationError
 
+from datagrowth import settings as datagrowth_settings
+from datagrowth.utils import get_model_path, get_media_path
 from core.models.organisms import Community
 from core.utils.files import SemanticDirectoryScan
 from future_fashion.colors import (extract_dominant_colors, create_colors_data, remove_white_image_background,
@@ -53,14 +55,16 @@ class ClothingInventoryCommunity(Community):
         collective = self.create_organism("Collective", schema={}, identifier="path")
         scanner = SemanticDirectoryScan(file_pattern="*f.jpg", progress_bar=True)
         content = []
-        target_directory = os.path.join("future_fashion", "data", "media", "future_fashion", args[0])
+        target_directory = get_media_path(self._meta.app_label, args[0])
+        relative_media_directory = target_directory.replace(datagrowth_settings.DATAGROWTH_DATA_DIR, "").lstrip("/")
         if not os.path.exists(target_directory):
             raise ValidationError("Directory {} does not exist".format(target_directory))
-        brighten = self.config.get("brighten", 0)
+        brighten = int(self.config.get("brighten", 0))
         remove_background = self.config.get("remove_background", False)
-        for file_data in scanner(target_directory):
+        for file_data in scanner(target_directory, path_prefix=relative_media_directory + os.sep):
             color_data = {}
-            img = remove_white_image_background(file_data["path"]) if remove_background else file_data["path"]
+            file_path = os.path.join(datagrowth_settings.DATAGROWTH_DATA_DIR, file_data["path"])
+            img = remove_white_image_background(file_path) if remove_background else file_path
             for num_colors in [2, 3, 6]:
                 colors, balance = extract_dominant_colors(img, num=num_colors)
                 if brighten:
@@ -79,9 +83,13 @@ class ClothingInventoryCommunity(Community):
 
     def set_kernel(self):
         self.kernel = self.get_growth("types").output
+        super().set_kernel()
 
     def get_clothing_frame_file(self):
-        return os.path.join(self._meta.app_label, "data", "clothing_frames", self.signature + ".pkl")
+        return os.path.join(
+            get_model_path(self._meta.app_label , "clothing_frames"),
+            self.signature + ".pkl"
+        )
 
     def before_color_and_type_match_manifestation(self, manifestation_part):
         manifestation_part["config"]["clothing_frame_path"] = self.get_clothing_frame_file()

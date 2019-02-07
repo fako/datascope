@@ -120,7 +120,7 @@ wiv = DiscourseConfiguration(
                 "In de WIV met de bijnaam \"sleepwet\" slaat de balans teveel uit naar veiligheid volgens sommigen. "
                 "Volgens anderen is de wet noodzakelijk.",
     language="nl",
-    topics=["wet"],
+    topics=["privacy", "veiligheid"],
     singular_subjects=SINGULAR_SUBJECTS,
     plural_subjects=PLURAL_SUBJECTS,
     descriptive_adjectives=DESCRIPTIVE_ADJECTIVES

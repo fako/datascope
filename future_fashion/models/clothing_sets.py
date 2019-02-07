@@ -1,3 +1,5 @@
+import os
+
 from django.db import models
 from rest_framework import serializers
 
@@ -17,7 +19,7 @@ class ColorClothingSet(models.Model):
 
     def top_item_image(self):
         return u'<img width="100px" src="{}" /><div>{}</div'.format(
-            self.top_item["path"].replace("future_fashion/data", ""),
+            os.sep + self.top_item["path"],
             self.top_item["name"]
         )
     top_item_image.short_description = 'Top item'
@@ -25,7 +27,7 @@ class ColorClothingSet(models.Model):
 
     def bottom_item_image(self):
         return u'<img width="100px" src="{}" /><div>{}</div>'.format(
-            self.bottom_item["path"].replace("future_fashion/data", ""),
+            os.sep + self.bottom_item["path"],
             self.bottom_item["name"]
         )
     bottom_item_image.short_description = 'Bottom item'

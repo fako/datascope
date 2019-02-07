@@ -1,20 +1,4 @@
-class DSResourceException(Exception):
-
-    def __init__(self, message, resource):
-        super(DSResourceException, self).__init__(message)
-        self.resource = resource
-
-
-class DSHttpError50X(DSResourceException):
-    pass
-
-
-class DSHttpError40X(DSResourceException):
-    pass
-
-
-class DSHttpError403LimitExceeded(DSResourceException):
-    pass
+from datagrowth.exceptions import DGResourceException as DSResourceException
 
 
 class DSHttpError400NoToken(DSResourceException):
@@ -25,15 +9,7 @@ class DSHttpWarning300(DSResourceException):
     pass
 
 
-class DSHttpWarning204(DSResourceException):
-    pass
-
-
 class DSInvalidResource(DSResourceException):
-    pass
-
-
-class DSShellError(DSResourceException):
     pass
 
 

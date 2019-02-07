@@ -7,7 +7,7 @@ from core.utils.helpers import get_any_model
 from core.utils.configuration import DecodeConfigAction
 
 
-log = logging.getLogger("datascope")
+log = logging.getLogger("datagrowth.command")
 
 
 class CommunityCommand(BaseCommand):

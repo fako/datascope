@@ -36,7 +36,7 @@ class GoogleTranslate(BrowserResource):
         if not words:
             try:
                 words = [
-                    next(word for word in soup.find_all("span") if word.parent.get("id") == "result_box")
+                    word for word in soup.find_all(class_="tlid-translation")
                 ]
             except StopIteration:
                 log.error("No fallback for: {}".format(self.uri))

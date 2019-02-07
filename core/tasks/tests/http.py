@@ -222,8 +222,10 @@ class TestSendSerieTaskGet(TestHTTPTasksBase):
         # TODO: very similar to TestSendMassTaskGet, refactor?
         self.skipTest("not tested")
 
-
     def test_send_inserted_session_provider(self):
+        self.skipTest("not tested")
+
+    def test_send_serie_intervals(self):
         self.skipTest("not tested")
 
 

@@ -211,3 +211,6 @@ class TestCollective(TransactionTestCase):
         )
         individual = Individual.objects.last()
         self.assertEqual(individual.index, 2)
+
+    def test_to_file(self):
+        self.skipTest("not tested")

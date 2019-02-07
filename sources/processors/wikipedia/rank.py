@@ -1,7 +1,7 @@
 import dateutil.parser
 import datetime
 
-from core.processors.rank import RankProcessor
+from core.processors.rank import LegacyRankProcessor
 
 
 def users_watch(users, page_data):
@@ -39,7 +39,7 @@ def categories_watch(categories, page_data):
 def claim_watch(property, item, wikidata):
     """
     For tracking wikidata claims of articles
-    
+
     :param property: the WikiData property code to watch
     :param item: the WikiData item code the property should match
     :param wikidata: wikidata data passed into characteristic function
@@ -71,7 +71,7 @@ def get_quantity(property, wikidata):
 
     :param property: the WikiData property code to watch (should have a quantity as data)
     :param wikidata: wikidata data passed into characteristic function
-    :return: Float that is the value of the quantity of the specified property 
+    :return: Float that is the value of the quantity of the specified property
     """
     return next(
         (float(claim["value"]["amount"]) for claim in wikidata.get("claims", [])
@@ -93,7 +93,7 @@ def get_time(property, wikidata):
     , 0.0)
 
 
-class WikipediaRankProcessor(RankProcessor):
+class WikipediaRankProcessor(LegacyRankProcessor):
     def get_hook_arguments(self, individual):
         individual_argument = super(WikipediaRankProcessor, self).get_hook_arguments(individual)[0]
         wikidata_argument = individual_argument.get("wikidata", {})
@@ -184,7 +184,7 @@ class WikipediaRankProcessor(RankProcessor):
             wikidata=wikidata
         )
         return is_superhero_film * box_office
-    
+
     @staticmethod
     def football_stadia_by_size(page, wikidata):
         is_stadium = claim_watch("P31",        # instance of
@@ -201,7 +201,7 @@ class WikipediaRankProcessor(RankProcessor):
         event_date = get_time("P585",          # point in time
                               wikidata=wikidata)
         day_diff = (event_date - datetime.date.today()).days
-        
+
         if day_diff <= 0:
             return 0
         else:

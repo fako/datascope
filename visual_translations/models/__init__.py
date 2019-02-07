@@ -1,2 +1,3 @@
 from visual_translations.models.eu import VisualTranslationsEUCommunity
 from visual_translations.models.bric import VisualTranslationsBRICCommunity
+from .sources.files import WebImageDownload

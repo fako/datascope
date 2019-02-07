@@ -1,5 +1,12 @@
+import os
 import logging
+
+
 log = logging.getLogger(__name__)
+
+
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 #######################################################
@@ -39,14 +46,9 @@ except ImportError:
 
 DEBUG = False
 DEBUG_TOOLBAR = False
-REQUESTS_PROXIES = None
-REQUESTS_VERIFY = True
-REQUESTS_PROXIES_ENABLED = {
-    "http": "localhost:8888"
-}
 
 MAX_BATCH_SIZE = 1000
-PATH_TO_LOGS = PATH_TO_PROJECT + "system/logs/"
+PATH_TO_LOGS = PATH_TO_PROJECT + "datascope/logs/"
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -66,6 +68,7 @@ INSTALLED_APPS = (
     # Main app
     'datascope',
     # Framework apps
+    'datagrowth',
     'core',
     'sources',
     # Algorithms
@@ -165,7 +168,7 @@ SEGMENTS_TO_SERVICE = SEGMENTS_BEFORE_PROJECT_ROOT + 3  # /data/v1/<service-name
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = PATH_TO_PROJECT + 'system/files/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'data', 'media', '')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
@@ -265,7 +268,14 @@ LOGGING = {
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler'
-        }
+        },
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': PATH_TO_LOGS + 'datascope.log',
+            'when': 'midnight',
+            'backupCount': 10,
+        },
     },
     'loggers': {
         'django.request': {
@@ -274,7 +284,12 @@ LOGGING = {
             'propagate': True,
         },
         'datascope': {
-            'handlers': ['console', 'sentry'],
+            'handlers': ['file', 'sentry'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'datagrowth.command': {
+            'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
         }
@@ -317,9 +332,3 @@ if USE_WEBSOCKETS:
     WSGI_APPLICATION = 'ws4redis.django_runserver.application'
     WS4REDIS_EXPIRE = 0
     WS4REDIS_HEARTBEAT = '--heartbeat--'
-
-#######################################################
-# DATASCOPE SETTINGS
-#######################################################
-
-DATASCOPE_DATETIME_FORMAT = "%Y%m%d%H%M%S%f"

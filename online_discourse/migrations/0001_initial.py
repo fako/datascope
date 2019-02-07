@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
+import core.processors.mixins
 
 
 class Migration(migrations.Migration):
@@ -14,8 +15,7 @@ class Migration(migrations.Migration):
             options={
                 'verbose_name': 'Discourse search community',
                 'verbose_name_plural': 'Discourse search communities',
-                'proxy': True,
             },
-            bases=('topic_research.crosscombinetermsearchcommunity',),
+            bases=(models.Model, core.processors.mixins.ProcessorMixin),
         ),
     ]

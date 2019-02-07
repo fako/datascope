@@ -19,8 +19,10 @@ MIDDLEWARE_CLASSES += (
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 )
 
-#REQUESTS_PROXIES = REQUESTS_PROXIES_ENABLED
-#REQUESTS_VERIFY = False
+#DATAGROWTH_REQUESTS_PROXIES = {
+#    "http": "localhost:8888"
+#}
+#DATAGROWTH_REQUESTS_VERIFY = False
 
 STATIC_IP = "127.0.0.1"
 ALLOWED_HOSTS = ["*"]

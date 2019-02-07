@@ -5,6 +5,7 @@ from collections import OrderedDict, Iterator
 import logging
 
 from django.db import models
+from django.db.models.query import QuerySet
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, ContentType
 
 from datascope.configuration import DEFAULT_CONFIGURATION
@@ -13,12 +14,13 @@ from core.models.organisms import Growth, Collective, Individual, Organism
 from core.models.organisms.managers.community import CommunityManager
 from core.models.resources.manifestation import Manifestation
 from core.processors.mixins import ProcessorMixin
+from core.processors.base import QuerySetProcessor
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
 from core.exceptions import DSProcessUnfinished, DSProcessError
 
 
-log = logging.getLogger("datascope")
+log = logging.getLogger("datagrowth.command")
 
 
 class Community(models.Model, ProcessorMixin):
@@ -308,14 +310,28 @@ class Community(models.Model, ProcessorMixin):
 
         :return:
         """
-        content = self.kernel.content
+        data = None
         for part in self.COMMUNITY_BODY:
+
             self.call_manifestation_callbacks(part)
+
             processor, method, args_type = self.prepare_process(part["process"], class_config=part.get("config"))
-            content = method(content)
-            assert isinstance(content, Iterator), \
-                "To prevent high memory usage processors should return iterators when manifestating"
-        return content
+            if data is None:
+                if not issubclass(processor.__class__, QuerySetProcessor):
+                    data = self.kernel.content
+                elif isinstance(self.kernel, Collective):
+                    data = self.kernel.individual_set.all()
+                else:
+                    raise AssertionError("Kernel can't be other than Collective when using a QuerySetProcessor")
+
+            assert not issubclass(processor.__class__, QuerySetProcessor) or isinstance(data, QuerySet), \
+                "When using a QuerySetProcessor processor results must be QuerySet but {} found".format(type(data))
+
+            data = method(data)
+            assert isinstance(data, Iterator) or isinstance(data, QuerySet), \
+                "To prevent high memory usage processors should return iterators or query_sets when manifestating"
+
+        return data if not isinstance(data, QuerySet) else data.iterator()
 
     @classmethod
     def get_name(cls):

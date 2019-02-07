@@ -8,8 +8,7 @@ class Command(GrowCommunityCommand):
     community_model = "VisualTranslationsEUCommunity"
 
     def add_arguments(self, parser):
-        parser.add_argument('community', type=str, nargs="?", default=self.community_model)
-        parser.add_argument('-a', '--args', type=str, nargs="*", default="")
+        super().add_arguments(parser)
         parser.add_argument('-d', '--delete', action="store_true")
 
     def get_community(self):

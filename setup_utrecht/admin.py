@@ -1,13 +1,16 @@
 from django.contrib import admin
 
+from datagrowth.admin import HttpResourceAdmin
 from core.admin.organisms import CommunityAdmin
-from core.admin.resources import ResourceAdmin
 
-from setup_utrecht.models import UniformImagesCommunity, RedditList, RedditPermalink, RedditScrapeCommunity
+from setup_utrecht.models import (UniformImagesCommunity, UniformImageDownload, RedditList, RedditPermalink,
+                                  RedditScrapeCommunity, RedditImageDownload)
 
 
-admin.site.register(RedditList, ResourceAdmin)
-admin.site.register(RedditPermalink, ResourceAdmin)
+admin.site.register(RedditList, HttpResourceAdmin)
+admin.site.register(RedditPermalink, HttpResourceAdmin)
+admin.site.register(RedditImageDownload, HttpResourceAdmin)
 admin.site.register(RedditScrapeCommunity, CommunityAdmin)
 
 admin.site.register(UniformImagesCommunity, CommunityAdmin)
+admin.site.register(UniformImageDownload, HttpResourceAdmin)

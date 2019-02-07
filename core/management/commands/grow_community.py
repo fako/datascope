@@ -1,4 +1,9 @@
+import logging
+
 from core.management.commands import CommunityCommand
+
+
+log = logging.getLogger("datagrowth.command")
 
 
 class Command(CommunityCommand):
@@ -10,5 +15,5 @@ class Command(CommunityCommand):
         community.config = {"async": False}
         community.save()
         community.grow(*args)
-        print("Result:", community.kernel)
-        print("Growth:", [growth.id for growth in community.growth_set.all()])
+        log.info("Result: {}".format(community.kernel))
+        log.info("Growth: {}".format([growth.id for growth in community.growth_set.all()]))

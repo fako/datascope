@@ -11,7 +11,7 @@ def load_config(defaults):
     The decorated function will get the configuration as its first argument.
 
     :param defaults: (dict) which should be used as default for inserted configuration.
-    :return:
+    :return: ConfigurationType
     """
 
     def wrap(func):
@@ -40,6 +40,16 @@ class DecodeConfigAction(argparse.Action):
 
 
 def get_standardized_configuration(configuration, as_hash=True):
+    """
+    Given a configuration this function will return a string that represents that configuration.
+    The representation is always the same for the same configuration.
+    Default configurations are not taken into account and neither are protected and private configurations.
+    Optionally this function can hash the representative string.
+
+    :param configuration: (ConfigurationType) the configuration to represent
+    :param as_hash: (bool) will return representation as a sha256 hash if True
+    :return:
+    """
     sorted_by_keys = sorted(configuration.items(), key=lambda item: item[0])
     standardized = "&".join("{}={}".format(key, value) for key, value in sorted_by_keys)
     if not as_hash:

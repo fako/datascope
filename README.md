@@ -22,7 +22,6 @@ Optionally you may also want to install
 
 * Redis (for background processing)
 * PhantomJS (for web scraping)
-* Conda (for environment management)
 
 Installation
 ------------
