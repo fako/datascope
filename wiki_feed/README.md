@@ -47,7 +47,7 @@ cp /data/project/algo-news/secrets.py src/datascope/secrets.py
 cp src/datascope/wsgi.py src/app.py
 cd src
 python manage.py collectstatic --noinput
-cp -r system/files/static ../
+cp -r datascope/statics ../static
 python manage.py migrate  # if required
 ```
 
