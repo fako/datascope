@@ -1,7 +1,7 @@
 version: '2'
 
 services:
-  db:
+  mysql:
     image: mysql:5.7
     environment:
       MYSQL_ROOT_PASSWORD: 33SebQd4Ugkqx4KjqanZDsWRXTR54M6k
@@ -13,6 +13,18 @@ services:
       - ./datascope/mysql/conf.d:/etc/mysql/conf.d
     ports:
       - 3306:3306
+  postgres:
+    image: postgres:11.1
+    environment:
+      POSTGRES_PASSWORD: 33SebQd4Ugkqx4KjqanZDsWRXTR54M6k
+      POSTGRES_USER: root
+      POSTGRES_DB: datascope
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./datascope/postgres/data:/var/lib/postgresql/data/pgdata
+      - ./datascope/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - 5432:5432
   redis:
     image: redis
     command: redis-server /usr/local/etc/redis/redis.conf

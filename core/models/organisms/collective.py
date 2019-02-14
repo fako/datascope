@@ -3,10 +3,10 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 from django.core.urlresolvers import reverse
 
-from datagrowth.datatypes import Collection
+from datagrowth.datatypes import CollectionBase
 
 
-class Collective(Collection):
+class Collective(CollectionBase):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+")

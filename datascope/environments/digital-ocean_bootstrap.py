@@ -4,7 +4,6 @@
 #######################################################
 
 # Required variables needed to complete setup
-PROJECT_NAME = 'datascope'
 PATH_TO_PROJECT = '/srv/artefacts/datascope/{}/src/'.format(DATASCOPE_VERSION)
 URL_TO_PROJECT = '/'
 

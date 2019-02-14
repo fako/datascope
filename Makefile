@@ -19,5 +19,8 @@ start-celery:
 start-mysql:
 	mysql --protocol=tcp -uroot -p
 
+start-postgres:
+	psql -h localhost -U root -d postgres
+
 test:
 	./manage.py test --settings=datascope.settings_test $(filter)

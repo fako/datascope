@@ -5,13 +5,16 @@ from jsonschema.exceptions import ValidationError as SchemaValidationError
 
 from django.db import models
 from django.core.exceptions import ValidationError
+from django.contrib.postgres import fields as postgres_fields
+import json_field
 
-from datagrowth.datatypes.storage.base import DataStorage
-from core.utils.data import reach  # TODO: move
+from datagrowth.datatypes.documents.base import DataStorage
+from datagrowth.utils import reach
 
 
-class Document(DataStorage):
+class DocumentBase(DataStorage):
 
+    collection = models.ForeignKey("Collection", blank=True, null=True)
     identity = models.CharField(max_length=255, blank=True, null=True, db_index=True)
 
     def __getitem__(self, key):
@@ -32,7 +35,7 @@ class Document(DataStorage):
 
         if isinstance(data, dict):
             properties = data
-        elif isinstance(data, Document):
+        elif isinstance(data, DocumentBase):
             properties = data.properties
         else:
             raise ValidationError(
@@ -89,7 +92,7 @@ class Document(DataStorage):
     @staticmethod
     def output_from_content(content, *args):  # TODO: test to unlock
         if len(args) > 1:
-            return map(Document.output_from_content, repeat(content), args)
+            return map(DocumentBase.output_from_content, repeat(content), args)
         frm = args[0]
         if not frm:
             return frm
@@ -97,11 +100,11 @@ class Document(DataStorage):
             return reach(frm, content)
         elif isinstance(frm, list):
             if len(frm) > 1:
-                return Document.output_from_content(content, *frm)
+                return DocumentBase.output_from_content(content, *frm)
             else:
-                return [Document.output_from_content(content, *frm)]
+                return [DocumentBase.output_from_content(content, *frm)]
         elif isinstance(frm, dict):
-            return {key: Document.output_from_content(content, value) for key, value in frm.items()}
+            return {key: DocumentBase.output_from_content(content, value) for key, value in frm.items()}
         else:
             raise AssertionError("Expected a string, list or dict as argument got {} instead".format(type(frm)))
 
@@ -119,7 +122,7 @@ class Document(DataStorage):
         if self.collection:
             self.collection.influence(self)
         # After influence check integrity
-        identity_max_length = Document._meta.get_field('identity').max_length
+        identity_max_length = DocumentBase._meta.get_field('identity').max_length
         if self.identity and isinstance(self.identity, str) and len(self.identity) > identity_max_length:
             self.identity = self.identity[:identity_max_length]
 
@@ -127,3 +130,19 @@ class Document(DataStorage):
         abstract = True
         get_latest_by = "created_at"
         ordering = ["created_at"]
+
+
+class DocumentMysql(models.Model):
+
+    properties = json_field.JSONField(default={})
+
+    class Meta:
+        abstract = True
+
+
+class DocumentPostgres(models.Model):
+
+    properties = postgres_fields.JSONField(default=dict)
+
+    class Meta:
+        abstract = True

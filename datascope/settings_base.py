@@ -17,7 +17,7 @@ PATH_TO_PROJECT = ''
 URL_TO_PROJECT = '/'
 USE_WEBSOCKETS = False
 SECRET_KEY = 'default'
-DATABASE_TYPE = 'mysql'
+DATABASE_TYPE = 'postgres'
 MYSQL_USER = 'root'
 MYSQL_PASSWORD = ''
 USE_MOCKS = False
@@ -38,6 +38,9 @@ try:
     from .secrets import *
 except ImportError:
     log.error("Could not import secret settings. Are they created? Do not run in production!")
+
+DATABASE_USER = MYSQL_USER
+DATABASE_PASSWORD = MYSQL_PASSWORD
 
 
 #######################################################
@@ -82,28 +85,14 @@ INSTALLED_APPS = (
     'setup_utrecht'
 )
 
-DATABASE_TYPES = {
-    'sqlite': {
-        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': PATH_TO_PROJECT + 'datascope.db',  # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    },
-    'mysql': {
-        'ENGINE': 'django.db.backends.mysql',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'datascope',
-        'USER': MYSQL_USER,                    # Not used with sqlite3.
-        'PASSWORD': MYSQL_PASSWORD,            # Not used with sqlite3.
-        'HOST': '127.0.0.1',
-        'OPTIONS': {
-            'charset': 'utf8mb4'
-        }
-    }
-}
 DATABASES = {
-    'default': DATABASE_TYPES[DATABASE_TYPE]
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'datascope',
+        'USER': DATABASE_USER,
+        'PASSWORD': DATABASE_PASSWORD,
+        'HOST': '127.0.0.1'
+    }
 }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False

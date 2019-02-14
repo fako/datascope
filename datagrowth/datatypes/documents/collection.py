@@ -6,11 +6,11 @@ from django.db import models
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 
-from datagrowth.datatypes.storage.base import DataStorage
+from datagrowth.datatypes.documents.base import DataStorage
 from datagrowth.utils import ibatch, reach
 
 
-class Collection(DataStorage):
+class CollectionBase(DataStorage):
 
     identifier = models.CharField(max_length=255, null=True, blank=True)
 
@@ -28,6 +28,7 @@ class Collection(DataStorage):
     def create_document(self, data):
         Document = self.get_document_model()
         return Document(
+            collection=self,
             schema=self.schema,
             properties=data
         )

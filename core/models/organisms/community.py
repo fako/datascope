@@ -4,20 +4,19 @@ from itertools import groupby
 from collections import OrderedDict, Iterator
 import logging
 
+from django.apps import apps
 from django.db import models
 from django.db.models.query import QuerySet
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, ContentType
 
-from datagrowth.datatypes.storage.base import DataStorage
-from datascope.configuration import DEFAULT_CONFIGURATION
+from datagrowth.datatypes.documents.base import DataStorage
+from datagrowth.configuration import ConfigurationField
 from core.models.organisms.states import CommunityState, COMMUNITY_STATE_CHOICES
 from core.models.organisms import Growth, Collective, Individual
 from core.models.organisms.managers.community import CommunityManager
 from core.models.resources.manifestation import Manifestation
 from core.processors.mixins import ProcessorMixin
 from core.processors.base import QuerySetProcessor
-from core.utils.configuration import ConfigurationField
-from core.utils.helpers import get_any_model
 from core.exceptions import DSProcessUnfinished, DSProcessError
 
 
@@ -30,9 +29,7 @@ class Community(models.Model, ProcessorMixin):
     """
 
     signature = models.CharField(max_length=255, db_index=True)
-    config = ConfigurationField(
-        config_defaults=DEFAULT_CONFIGURATION
-    )
+    config = ConfigurationField()
 
     growth_set = GenericRelation(Growth, content_type_field="community_type", object_id_field="community_id")
     collective_set = GenericRelation(Collective, content_type_field="community_type", object_id_field="community_id")
@@ -136,8 +133,14 @@ class Community(models.Model, ProcessorMixin):
         if callback is not None and callable(callback):
             callback(manifestation_part)
 
+    def get_storage_model(self, data_type):
+        if data_type in ["Individual", "Collective"]:
+            return apps.get_model("core.{}".format(data_type))
+        else:
+            return apps.get_model("{}.{}".format(self._meta.app_label, data_type))
+
     def create_organism(self, organism_type, schema, identifier=None):
-        model = get_any_model(organism_type)
+        model = self.get_storage_model(organism_type)
         org = model(community=self, schema=schema)
         if identifier and hasattr(org, "identifier"):
             org.identifier = identifier

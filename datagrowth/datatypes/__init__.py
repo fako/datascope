@@ -1,4 +1,4 @@
 from .datasets.states import DatasetState
 
-from .storage.document import Document
-from .storage.collection import Collection
+from .documents.document import DocumentBase, DocumentMysql, DocumentPostgres
+from .documents.collection import CollectionBase

@@ -4,17 +4,16 @@ from django.core.urlresolvers import reverse
 
 import json_field
 
-from datagrowth.datatypes import Document
+from datagrowth.datatypes import DocumentBase, DocumentMysql
 
 
-class Individual(Document):
+class Individual(DocumentBase, DocumentMysql):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+")
     community_id = models.PositiveIntegerField()
 
     collective = models.ForeignKey('core.Collective', null=True)
-    properties = json_field.JSONField(default={})
 
     @property
     def collection(self):
