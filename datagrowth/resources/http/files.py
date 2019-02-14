@@ -110,7 +110,7 @@ class HttpFileResource(HttpResource):  # TODO: write tests
         file_name = self._save_file(self.request["url"], response.content)
         self.head = dict(response.headers)
         self.status = response.status_code
-        self.body = file_name.replace(datagrowth_settings.DATAGROWTH_MEDIA_ROOT, "").lstrip("/")
+        self.body = file_name.replace(datagrowth_settings.DATAGROWTH_MEDIA_ROOT, "").lstrip(os.sep)
 
     def transform(self, file):
         return file
