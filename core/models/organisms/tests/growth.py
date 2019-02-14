@@ -75,6 +75,7 @@ class TestGrowth(TransactionTestCase, TestProcessorMixin):
         }
 
     def setUp(self):
+        super().setUp()
         self.new = Growth.objects.get(type="test_new")
         self.collective_input = Growth.objects.get(type="test_col_input")
         self.processing = Growth.objects.get(type="test_processing")

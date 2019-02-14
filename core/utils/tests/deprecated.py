@@ -5,6 +5,7 @@ from core.utils.data.deprecated import extractor, expand, interpolate
 class TestPythonExtractor(TestCase):
 
     def setUp(self):
+        super().setUp()
         self.fixture_list = [
             1,
             2,
@@ -110,6 +111,7 @@ class TestPythonExtractor(TestCase):
 class TestPythonExpand(TestCase):
 
     def setUp(self):
+        super().setUp()
         self.test_dict = {
             "dict": {
                 "test": "nested value",

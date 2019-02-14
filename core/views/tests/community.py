@@ -21,6 +21,7 @@ class TestCommunityView(TestCase):
     fixtures = ["test-community"]
 
     def setUp(self):
+        super().setUp()
         self.view = CommunityView()
 
     def check_response(self, response, status_code):
@@ -203,6 +204,7 @@ class TestHtmlCommunityView(TestCase):
     fixtures = ["test-community"]
 
     def setUp(self):
+        super().setUp()
         self.client = Client()
         self.ready_url = "/data/v1/mock/html/test-ready/?setting1=const"
         self.processing_url = "/data/v1/mock/html/test/?setting1=const"

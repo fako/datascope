@@ -11,6 +11,7 @@ class TestManifestationTasks(TestCase):
     fixtures = ["test-manifestation"]
 
     def setUp(self):
+        super().setUp()
         self.config = {
             "community": "CommunityMock",
             "_namespace": "manifestation_test",
