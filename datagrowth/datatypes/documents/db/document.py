@@ -8,8 +8,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.postgres import fields as postgres_fields
 import json_field
 
-from datagrowth.datatypes.documents.base import DataStorage
 from datagrowth.utils import reach
+from .base import DataStorage
 
 
 class DocumentBase(DataStorage):

@@ -9,7 +9,7 @@ from django.db import models
 from django.db.models.query import QuerySet
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, ContentType
 
-from datagrowth.datatypes.documents.base import DataStorage
+from datagrowth.datatypes.documents.db.base import DataStorage
 from datagrowth.configuration import ConfigurationField
 from core.models.organisms.states import CommunityState, COMMUNITY_STATE_CHOICES
 from core.models.organisms import Growth, Collective, Individual

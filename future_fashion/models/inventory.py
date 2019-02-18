@@ -1,6 +1,7 @@
 import os
 from collections import OrderedDict
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 
 from datagrowth import settings as datagrowth_settings
@@ -9,9 +10,21 @@ from core.models.organisms import Community
 from core.utils.files import SemanticDirectoryScan
 from future_fashion.colors import (extract_dominant_colors, create_colors_data, remove_white_image_background,
                                    brighten as colorz_brighten)
+from future_fashion.models.storage import Document, Collection
 
 
 class ClothingInventoryCommunity(Community):
+
+    collection_set = GenericRelation(Collection, content_type_field="community_type", object_id_field="community_id")
+    document_set = GenericRelation(Document, content_type_field="community_type", object_id_field="community_id")
+
+    @property
+    def collections(self):
+        return self.collection_set
+
+    @property
+    def documents(self):
+        return self.document_set
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("types", {
@@ -52,7 +65,7 @@ class ClothingInventoryCommunity(Community):
     ]
 
     def initial_input(self, *args):
-        collective = self.create_organism("Collective", schema={}, identifier="path")
+        collection = self.create_organism("Collection", schema={}, identifier="path")
         scanner = SemanticDirectoryScan(file_pattern="*f.jpg", progress_bar=True)
         content = []
         target_directory = get_media_path(self._meta.app_label, args[0])
@@ -78,8 +91,8 @@ class ClothingInventoryCommunity(Community):
                 "colors": color_data
             })
             content.append(file_data)
-        collective.update(content)
-        return collective
+        collection.add(content)
+        return collection
 
     def set_kernel(self):
         self.kernel = self.get_growth("types").output

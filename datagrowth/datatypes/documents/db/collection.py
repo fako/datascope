@@ -6,8 +6,8 @@ from django.db import models
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 
-from datagrowth.datatypes.documents.base import DataStorage
 from datagrowth.utils import ibatch, reach
+from .base import DataStorage
 
 
 class CollectionBase(DataStorage):
@@ -30,6 +30,7 @@ class CollectionBase(DataStorage):
     def init_document(self, data, collection=None):
         Document = self.get_document_model()
         return Document(
+            collection=collection,
             schema=self.schema,
             properties=data
         )
@@ -181,6 +182,7 @@ class CollectionBase(DataStorage):
         """
         if self.identifier:
             document.identity = reach("$." + self.identifier, document.properties)
+        if self.referee:
             document.reference = reach("$." + self.referee, document.properties)
         return document
 
@@ -190,5 +192,5 @@ class CollectionBase(DataStorage):
 
     class Meta:
         abstract = True
-        get_latest_by = "created_at"
-        ordering = ["created_at"]
+        get_latest_by = "id"
+        ordering = ["id"]
