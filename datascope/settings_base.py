@@ -18,7 +18,7 @@ URL_TO_PROJECT = '/'
 USE_WEBSOCKETS = False
 SECRET_KEY = 'default'
 DATABASE_TYPE = 'postgres'
-MYSQL_USER = 'root'
+MYSQL_USER = 'postgres'
 MYSQL_PASSWORD = ''
 USE_MOCKS = False
 
