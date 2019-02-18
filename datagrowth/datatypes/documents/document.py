@@ -16,6 +16,7 @@ class DocumentBase(DataStorage):
 
     collection = models.ForeignKey("Collection", blank=True, null=True)
     identity = models.CharField(max_length=255, blank=True, null=True, db_index=True)
+    reference = models.CharField(max_length=255, blank=True, null=True, db_index=True)
 
     def __getitem__(self, key):
         return self.properties[key]
@@ -128,8 +129,8 @@ class DocumentBase(DataStorage):
 
     class Meta:
         abstract = True
-        get_latest_by = "created_at"
-        ordering = ["created_at"]
+        get_latest_by = "id"
+        ordering = ["id"]
 
 
 class DocumentMysql(models.Model):

@@ -20,7 +20,7 @@ class Collective(CollectionBase):
     def documents(self):
         return self.individual_set
 
-    def create_document(self, data):
+    def init_document(self, data, collection=None):
         Individual = self.get_document_model()
         return Individual(
             community=self.community,

@@ -12,7 +12,9 @@ from datagrowth.utils import ibatch, reach
 
 class CollectionBase(DataStorage):
 
+    name = models.CharField(max_length=255, null=True, blank=True)
     identifier = models.CharField(max_length=255, null=True, blank=True)
+    referee = models.CharField(max_length=255, null=True, blank=True)
 
     @classmethod
     def get_document_model(cls):
@@ -25,10 +27,9 @@ class CollectionBase(DataStorage):
         Document = self.get_document_model()
         return Document.objects.all()
 
-    def create_document(self, data):
+    def init_document(self, data, collection=None):
         Document = self.get_document_model()
         return Document(
-            collection=self,
             schema=self.schema,
             properties=data
         )
@@ -48,7 +49,7 @@ class CollectionBase(DataStorage):
         for instance in data:
             Document.validate(instance, schema)
 
-    def add(self, data, validate=True, reset=True, batch_size=500):
+    def add(self, data, validate=True, reset=False, batch_size=500, collection=None):
         """
         Update the instance with new data by adding to the Collection
         or by updating Documents that members off the Collection.
@@ -57,6 +58,7 @@ class CollectionBase(DataStorage):
         :param validate: (optional) whether to validate data or not (yes by default)
         :return: A list of updated or created instances.
         """
+        collection = collection or self
         Document = self.get_document_model()
         assert isinstance(data, (Iterator, list, tuple, dict, Document)), \
             "Collection.update expects data to be formatted as iteratable, dict or Document not {}".format(type(data))
@@ -70,13 +72,13 @@ class CollectionBase(DataStorage):
             if isinstance(data, dict):
                 if validate:
                     Document.validate(data, self.schema)
-                document = self.create_document(data)
+                document = self.init_document(data, collection=collection)
                 document.clean()
                 prepared.append(document)
             elif isinstance(data, Document):
                 if validate:
                     Document.validate(data, self.schema)
-                data = self.create_document(data.properties)
+                data = self.init_document(data.properties, collection=collection)
                 data.clean()
                 prepared.append(data)
             else:  # type is list
@@ -84,13 +86,13 @@ class CollectionBase(DataStorage):
                     prepared += prepare_updates(instance)
             return prepared
 
-        update_count = 0
+        count = 0
         for updates in ibatch(data, batch_size=batch_size):
             updates = prepare_updates(updates)
-            update_count += len(updates)
+            count += len(updates)
             Document.objects.bulk_create(updates, batch_size=settings.MAX_BATCH_SIZE)
 
-        return update_count
+        return count
 
     @property
     def content(self):
@@ -179,6 +181,7 @@ class CollectionBase(DataStorage):
         """
         if self.identifier:
             document.identity = reach("$." + self.identifier, document.properties)
+            document.reference = reach("$." + self.referee, document.properties)
         return document
 
     def to_file(self, file_path):

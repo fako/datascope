@@ -38,7 +38,7 @@ class Command(CommunityCommand):
         canvas = pyplot.figure().gca(projection='3d')
 
         clothing_vectors = numpy.array([
-            cast_elements_to_floats(individual["vectors"]) for individual in community.kernel.individual_set.all()
+            cast_elements_to_floats(individual["vectors"]) for individual in community.kernel.documents.all()
         ])
         centroids, labels = kmeans2(clothing_vectors, 10, minit="points")
 

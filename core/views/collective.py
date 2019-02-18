@@ -12,7 +12,7 @@ from core.views.content import ContentView, ContentPagination
 class CollectiveSerializer(serializers.ModelSerializer):
 
     schema = serializers.SerializerMethodField()
-    content = IndividualSerializer(many=True, source="individual_set")
+    content = IndividualSerializer(many=True, source="documents")
 
     def get_schema(self, collective):
         return collective.schema
@@ -56,7 +56,7 @@ class CollectiveContentView(ContentView):
         if request.organism is None:
             raise Http404("Not found")
 
-        page = self.paginate_queryset(request.organism.individual_set.all())
+        page = self.paginate_queryset(request.organism.documents.all())
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)

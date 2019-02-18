@@ -32,9 +32,21 @@ class Community(models.Model, ProcessorMixin):
     config = ConfigurationField()
 
     growth_set = GenericRelation(Growth, content_type_field="community_type", object_id_field="community_id")
+    manifestation_set = GenericRelation(
+        Manifestation,
+        content_type_field="community_type",
+        object_id_field="community_id"
+    )
     collective_set = GenericRelation(Collective, content_type_field="community_type", object_id_field="community_id")
     individual_set = GenericRelation(Individual, content_type_field="community_type", object_id_field="community_id")
-    manifestation_set = GenericRelation(Manifestation, content_type_field="community_type", object_id_field="community_id")
+
+    @property
+    def collections(self):
+        return self.collective_set
+
+    @property
+    def documents(self):
+        return self.individual_set
 
     current_growth = models.ForeignKey('core.Growth', null=True)
     kernel = GenericForeignKey(ct_field="kernel_type", fk_field="kernel_id")
@@ -323,7 +335,7 @@ class Community(models.Model, ProcessorMixin):
                 if not issubclass(processor.__class__, QuerySetProcessor):
                     data = self.kernel.content
                 elif isinstance(self.kernel, Collective):
-                    data = self.kernel.individual_set.all()
+                    data = self.kernel.documents.all()
                 else:
                     raise AssertionError("Kernel can't be other than Collective when using a QuerySetProcessor")
 

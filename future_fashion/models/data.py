@@ -188,14 +188,14 @@ class ClothingDataCommunity(Community):
         if collective.identifier != "brand":
             collective.identifier = "brand"
             collective.save()
-            collective.update(collective.individual_set.iterator(), validate=False, reset=False)
+            collective.update(collective.documents.iterator(), validate=False, reset=False)
         # Calculate which brands are significant to train on
         df = pd.DataFrame.from_records(collective.content)
         brand_counts = df["brand"].value_counts()
         brands = [brand for brand, count in brand_counts.items() if count >= 400 and brand]
         # Split data and sort files by type and brand
         train, validate, test = collective.split(
-            query_set=collective.individual_set.filter(identity__in=brands),
+            query_set=collective.documents.filter(identity__in=brands),
             as_content=True
         )
         for data_type, data_set in [("train", train), ("valid", validate), ("test", test)]:
@@ -211,7 +211,7 @@ class ClothingDataCommunity(Community):
         tops = ["truien-vesten", "blouses-tunieken", "tops-shirts", "overhemden"]
         bottoms = ["broeken-jeans", "rokken"]
         accessoires = ["accessoires", "schoenen", "tassen", "sieraden"]
-        query = collective.individual_set
+        query = collective.documents
         individuals = tqdm(query.iterator(), total=query.count())
         for individual in individuals:
             tags = individual.properties.get("tags", [])
@@ -229,7 +229,7 @@ class ClothingDataCommunity(Community):
             individual.save()
 
     def sort_downloads_by_type(self, collective):
-        query = collective.individual_set \
+        query = collective.documents \
             .filter(properties__contains='target_group": "dames')
         train, validate, test = collective.split(
             query_set=query,
@@ -245,7 +245,7 @@ class ClothingDataCommunity(Community):
             sorter(data_set)
 
     def update_main_colors(self, collective):
-        query = collective.individual_set.filter(properties__contains='missing_file": false')
+        query = collective.documents.filter(properties__contains='missing_file": false')
         individuals = tqdm(query.iterator(), total=query.count())
         for individual in individuals:
             # See if there is a color dict and skip if there is

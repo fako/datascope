@@ -11,7 +11,7 @@ class Command(BaseCommand):
 
     def handle(self, *arguments, **options):
         for inventory in ClothingInventoryCommunity.objects.filter(state=CommunityState.READY):
-            frame = ClothingFrame(inventory.kernel.individual_set.iterator())
+            frame = ClothingFrame(inventory.kernel.documents.iterator())
             frame_file = inventory.get_clothing_frame_file()
             tail, head = os.path.split(frame_file)
             if not os.path.exists(tail):

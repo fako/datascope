@@ -32,7 +32,8 @@ class Resource(models.Model):
 
     class Meta:
         abstract = True
-        get_latest_by = "created_at"
+        get_latest_by = "id"
+        ordering = ("id",)
 
     def retain(self, retainer):
         self.retainer = retainer

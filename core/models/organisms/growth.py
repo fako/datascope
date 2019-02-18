@@ -6,6 +6,7 @@ from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 from django.core.exceptions import ValidationError
 
+from datagrowth.datatypes import DocumentBase, CollectionBase
 from datascope.configuration import PROCESS_CHOICE_LIST, DEFAULT_CONFIGURATION
 from core.processors.base import ArgumentsTypes
 from core.processors.mixins import ProcessorMixin
@@ -84,13 +85,13 @@ class Growth(models.Model, ProcessorMixin):
         self.config = self.community.config.to_dict(protected=True)  # TODO: make this += operation instead
 
         processor, method, args_type = self.prepare_process(self.process, async=self.config.async)
-        assert args_type == ArgumentsTypes.NORMAL and isinstance(self.input, Individual) or \
-            args_type == ArgumentsTypes.BATCH and isinstance(self.input, Collective), \
+        assert args_type == ArgumentsTypes.NORMAL and isinstance(self.input, (Individual, DocumentBase)) or \
+            args_type == ArgumentsTypes.BATCH and isinstance(self.input, (Collective, CollectionBase)), \
             "Unexpected arguments type '{}' for input of class {}".format(args_type, self.input.__class__.__name__)
         args, kwargs = self.input.output(self.config.args, self.config.kwargs)
-        if isinstance(self.input, Individual):
+        if isinstance(self.input, (Individual, DocumentBase)):
             result = method(*args, **kwargs)
-        elif isinstance(self.input, Collective):
+        elif isinstance(self.input, (Collective, CollectionBase)):
             if not self.config.sample_size:
                 result = method(args, kwargs)
             else:
@@ -171,18 +172,20 @@ class Growth(models.Model, ProcessorMixin):
                 success_resource.retain(self)
 
     def append_to_output(self, contributions):
-        assert isinstance(self.output, Collective), "append_to_output expects a Collective as output"
+        assert isinstance(self.output, (Collective, CollectionBase)), \
+            "append_to_output expects a Collective or Collection as output"
         self.output.update(contributions)
 
     def inline_by_key(self, contributions, inline_key):
-        assert isinstance(self.output, Collective), "inline_by_key expects a Collective as output"
+        assert isinstance(self.output, (Collective, CollectionBase)), \
+            "inline_by_key expects a Collective or Collection as output"
         original_identifier = self.output.identifier
         assert original_identifier == inline_key, \
             "Identifier of output '{}' does not match inline key '{}'".format(original_identifier, inline_key)
         self.output.identifier = "{}.{}".format(original_identifier, original_identifier)
         self.output.save()
         for contribution in contributions:
-            affected_individuals = self.output.individual_set.filter(identity=contribution[inline_key])
+            affected_individuals = self.output.documents.filter(identity=contribution[inline_key])
             for individual in affected_individuals.iterator():
                 individual.properties[inline_key] = contribution
                 individual.clean()
@@ -193,7 +196,7 @@ class Growth(models.Model, ProcessorMixin):
             identifier = self.output.identifier
             assert identifier == update_key, \
                 "Identifier of output '{}' does not match update key '{}'".format(identifier, update_key)
-            affected_individuals = self.output.individual_set.filter(identity=contribution[update_key])
+            affected_individuals = self.output.documents.filter(identity=contribution[update_key])
             for individual in affected_individuals.iterator():
                 individual.update(contribution)
                 individual.clean()
@@ -208,12 +211,12 @@ class Growth(models.Model, ProcessorMixin):
             self.output.save()
 
     def update_by_key(self, contributions, update_key):
-        if isinstance(self.output, Collective):
+        if isinstance(self.output, (Collective, CollectionBase)):
             self._update_collection_by_key(contributions, update_key)
-        elif isinstance(self.output, Individual):
+        elif isinstance(self.output, (Individual, DocumentBase)):
             self._update_individual_by_key(contributions, update_key)
         else:
-            raise AssertionError("update_by_key expects a Collective or Individual as output")
+            raise AssertionError("update_by_key expects a Collective/Collection or Individual/Document as output")
 
     def save(self, *args, **kwargs):
         self.is_finished = self.state in [GrowthState.COMPLETE, GrowthState.PARTIAL]
@@ -237,3 +240,7 @@ class Growth(models.Model, ProcessorMixin):
             self.type,
             self.community
         )
+
+    class Meta:
+        get_latest_by = "id"
+        ordering = ("id",)

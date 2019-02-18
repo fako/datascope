@@ -38,5 +38,5 @@ class Command(CommunityCommand):
         with open(file_name, "w") as json_file:
             self.object_to_disk(community, json_file)
             self.queryset_to_disk(community.growth_set, json_file)
-            self.queryset_to_disk(community.collective_set, json_file)
-            self.queryset_to_disk(community.individual_set, json_file)
+            self.queryset_to_disk(community.collections, json_file)
+            self.queryset_to_disk(community.documents, json_file)
