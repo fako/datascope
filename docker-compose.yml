@@ -1,4 +1,4 @@
-version: '2'
+version: '3'
 
 services:
   mysql:
@@ -15,13 +15,15 @@ services:
       - 3306:3306
   postgres:
     image: postgres:11.1
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
     environment:
       POSTGRES_PASSWORD: 33SebQd4Ugkqx4KjqanZDsWRXTR54M6k
-      POSTGRES_USER: root
+      POSTGRES_USER: postgres
       POSTGRES_DB: datascope
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - ./datascope/postgres/data:/var/lib/postgresql/data/pgdata
+      - ./datascope/postgres/conf/postgresql.conf:/etc/postgresql/postgresql.conf
+      - postgres-data:/var/lib/postgresql/data/pgdata
       - ./datascope/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     ports:
       - 5432:5432
@@ -32,3 +34,10 @@ services:
       - ./datascope/redis/redis.conf:/usr/local/etc/redis/redis.conf
     ports:
       - "6379:6379"
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+
+volumes:
+  postgres-data:
