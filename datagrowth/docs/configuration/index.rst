@@ -17,6 +17,6 @@ This is useful for Django models that have a very wide configuration range.
 
 .. include:: fields.rst.inc
 
-.. include:: properties.rst.inc
+.. include:: updating.rst.inc
 
 .. include:: serializers.rst.inc

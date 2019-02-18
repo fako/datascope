@@ -6,8 +6,8 @@ When you need a flexible way of configuration, without creating model fields for
 Then you can consider the Datagrowth ConfigurationField.
 It can act as a bag-of-properties on your model.
 Or a family of models if you use it on an abstract model.
-Here is a basic usage example:
-::
+Here is a basic usage example::
+
     from django.db import models
 
     from datagrowth.configuration import ConfigurationField
@@ -19,11 +19,12 @@ Here is a basic usage example:
         def foo(self):
             print(self.config.bar)
 
-Then somewhere in your code you can initialise this model with a configuration dictionary
-::
+Then somewhere in your code you can initialise this model with a configuration dictionary ::
+
     instance = FooModel(config={"bar": True})
     instance.foo()
     # out: True
+    instance.save()  # stores your model with the configuration and namespace
 
 
 You can set defaults for ConfigurationField through the ``DATAGROWTH_DEFAULT_CONFIGURATION`` setting.
@@ -32,8 +33,8 @@ Or you can pass a dictionary without prefixes to the ``register_defaults`` funct
 with ``foo`` as the namespace argument.
 
 When models inherit from each other it is possible to change the namespace for the child class
-by using ``CONFIG_NAMESPACE``.
-::
+by using ``CONFIG_NAMESPACE``. ::
+
     class BarModel(FooModel)
 
         CONFIG_NAMESPACE = "baz"

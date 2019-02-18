@@ -25,7 +25,7 @@ class ConfigurationType(object):
     _private_defaults = ["_private", "_defaults", "_namespace"]
     _global_prefix = "global"
 
-    def __init__(self, defaults=None, namespace="", private=tuple()):
+    def __init__(self, defaults=None, namespace="global", private=("_private", "_defaults", "_namespace",)):
         """
         Initiates the ConfigurationType by checking arguments and setting logically private attributes
 
@@ -44,7 +44,7 @@ class ConfigurationType(object):
 
         super(ConfigurationType, self).__init__()
         self._defaults = defaults
-        self._namespace = namespace or self._global_prefix
+        self._namespace = namespace
         self._private = copy(self._private_defaults)
         for prv in private:
             if not prv:
@@ -135,7 +135,7 @@ class ConfigurationType(object):
         return dict(self.items(protected=protected, private=private))
 
     @classmethod
-    def from_dict(cls, config, defaults):
+    def from_dict(cls, config, defaults=None):
         """
         Creates a configuration using a dictionary.
         The dictionary should hold the appropriate _private and _namespace values.
@@ -216,7 +216,7 @@ class ConfigurationType(object):
         item = self.clean_key(item)
         return self._get_configuration(item)
 
-    def get(self, item, default=None):
+    def get(self, item, *args, **kwargs):
         """
         Getter for configuration item.
         When the configuration key is not found it raises a ConfigurationNotFoundError unless default is specified.
@@ -227,7 +227,9 @@ class ConfigurationType(object):
         :return: (mixed) the configuration value or the default value
         """
         item = self.clean_key(item)
-        if default:
+
+        if "default" in kwargs or len(args):
+            default = kwargs.get("default", args[0])
             return getattr(self, item, default)
         else:
             return getattr(self, item)
