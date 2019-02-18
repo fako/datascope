@@ -288,20 +288,6 @@
 },
 {
     "fields": {
-        "properties": "{\"context\":\"nested value\",\"value\":\"nested value 1\"}",
-        "collective": 3,
-        "modified_at": "2015-06-02T10:01:47.572",
-        "created_at": "2015-06-02T10:00:20.247",
-        "schema": "{\"additionalProperties\":true,\"required\":[\"context\",\"value\"],\"type\":\"object\",\"properties\":{\"context\":{\"type\":\"string\"},\"value\":{\"type\":\"string\"},\"extra\":{\"type\":\"string\"}}}",
-        "community_type": ["core", "communitymock"],
-        "community_id": 1,
-        "identity": "nested value 1"
-    },
-    "model": "core.individual",
-    "pk": 5
-},
-{
-    "fields": {
         "properties": "{\"context\":\"nested value\",\"value\":\"nested value 2\"}",
         "collective": 3,
         "modified_at": "2015-06-02T10:01:47.572",
