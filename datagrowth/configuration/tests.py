@@ -220,6 +220,8 @@ class TestConfigurationType(TestCase):
         self.assertEqual(self.config.get("test4", None), "variable")
         # Default fallback
         self.assertEqual(self.config.get("test5", "does-not-exist"), "does-not-exist")
+        self.assertEqual(self.config.get("test5", 0), 0)
+        self.assertEqual(self.config.get("test5", None), None)
         # Namespace configuration (with a list default)
         self.assertNotIn("namespace_configuration", self.config.__dict__)
         self.assertEqual(self.config.get("namespace_configuration", None), "namespace configuration")
