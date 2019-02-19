@@ -39,8 +39,8 @@ try:
 except ImportError:
     log.error("Could not import secret settings. Are they created? Do not run in production!")
 
-DATABASE_USER = MYSQL_USER
-DATABASE_PASSWORD = MYSQL_PASSWORD
+DATABASE_USER = os.environ.get('DJANGO_DATABASE_USER', MYSQL_USER)
+DATABASE_PASSWORD = os.environ.get('DJANGO_DATABASE_PASSWORD', MYSQL_PASSWORD)
 
 
 #######################################################
