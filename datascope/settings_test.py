@@ -1,3 +1,5 @@
+import os
+
 from .settings_base import *
 
 
@@ -7,6 +9,9 @@ STATIC_IP = "127.0.0.1"
 USE_MOCKS = True
 
 LOGGING["loggers"] = {}
+
+if os.environ.get('TRAVIS_TEST_DATABASE'):
+    del DATABASES["default"]["PASSWORD"]
 
 MIGRATION_MODULES = {
     'auth': None,
