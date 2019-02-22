@@ -2,6 +2,7 @@ now = $(shell date +"%Y-%m-%d")
 
 clean:
 	find . -type f -name "*.pyc" -delete;
+	find . -type d -name "__pycache__" -delete;
 
 deploy: clean
 	sudo service uwsgi restart
