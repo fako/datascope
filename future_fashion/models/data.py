@@ -149,7 +149,6 @@ class ClothingDataCommunity(Community):
     COMMUNITY_BODY = []
     COMMUNITY_NAME = "fashion_data"
 
-    ASYNC_MANIFEST = False
     INPUT_THROUGH_PATH = False
 
     PUBLIC_CONFIG = {}
