@@ -64,6 +64,8 @@ class ClothingInventoryCommunity(Community):
         }
     ]
 
+    DATAGROWTH = True
+
     def initial_input(self, *args):
         collection = self.create_organism("Collection", schema={}, identifier="path")
         scanner = SemanticDirectoryScan(file_pattern="*f.jpg", progress_bar=True)

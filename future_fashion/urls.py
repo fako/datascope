@@ -7,32 +7,36 @@ from django.conf.urls.static import static
 from datagrowth.utils import get_media_path
 from core.views.community import CommunityView, HtmlCommunityView
 from future_fashion.models import ClothingInventoryCommunity
-from future_fashion.views import swipe_interface_view, CreateColorClothingSet
+from future_fashion import views
 
 
 urlpatterns = [
     url(
-        r'^future-fashion/service/(?P<path>.+)/$',
+        r'^inventory/service/(?P<path>.+)/$',
         CommunityView.as_view(),
         kwargs={"community_class": ClothingInventoryCommunity},
         name=ClothingInventoryCommunity.get_name() + "_service"
     ),
     url(
-        r'^future-fashion/html/(?P<path>.+)/$',
+        r'^inventory/html/(?P<path>.+)/$',
         HtmlCommunityView.as_view(),
         kwargs={"community_class": ClothingInventoryCommunity},
         name=ClothingInventoryCommunity.get_name() + "_html"
     ),
     url(
-        r'^future-fashion/annotate/$',
-        swipe_interface_view,
-        name=ClothingInventoryCommunity.get_name() + "_annotate"
+        r'^paper-doll/$',
+        views.swipe_interface_view,
+        name=ClothingInventoryCommunity.get_name() + "_paper_doll"
     ),
     url(
-        r'^future-fashion/color-clothing-set/$',
-        CreateColorClothingSet.as_view(),
+        r'^color-clothing-set/$',
+        views.CreateColorClothingSet.as_view(),
         name="color_clothing_set"
-    )
+    ),
+    url(r'^data/collection/(?P<pk>\d+)/content/$', views.CollectionContentView.as_view(), name="collection-content"),
+    url(r'^data/collection/(?P<pk>\d+)/$', views.CollectionView.as_view(), name="collection"),
+    url(r'^data/document/(?P<pk>\d+)/content/$', views.DocumentContentView.as_view(), name="document-content"),
+    url(r'^data/document/(?P<pk>\d+)/$', views.DocumentView.as_view(), name="document"),
 ]
 
 mediapatterns = []

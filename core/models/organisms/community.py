@@ -66,6 +66,7 @@ class Community(models.Model, ProcessorMixin):
     INPUT_THROUGH_PATH = True
     PUBLIC_CONFIG = None  # obsolete
     SAMPLE_SIZE = 0
+    DATAGROWTH = False
 
     objects = CommunityManager()
 

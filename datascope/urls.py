@@ -9,9 +9,13 @@ from core import views as core_views
 from wiki_feed.urls import urlpatterns as wiki_feed_patterns
 from visual_translations.urls import urlpatterns as visual_translations_patterns
 from future_fashion.urls import urlpatterns as future_fashion_patterns, mediapatterns
-from wiki_scope.urls import urlpatterns as topic_research_patterns
+from wiki_scope.urls import urlpatterns as wiki_scope_patterns
 from online_discourse.urls import urlpatterns as online_discourse_patterns
 
+
+#############################################
+# LEGACY PATTERNS PREFIXED WITH /data/
+#############################################
 
 legacy_patterns = [
     url(r'^collective/(?P<pk>\d+)/content/$', core_views.CollectiveContentView.as_view(), name="collective-content"),
@@ -20,22 +24,39 @@ legacy_patterns = [
     url(r'^individual/(?P<pk>\d+)/$', core_views.IndividualView.as_view(), name="individual"),
     url(r'^question/$', views.question, name="datascope-question")
 ]
-
 legacy_patterns += wiki_feed_patterns
 legacy_patterns += visual_translations_patterns
-legacy_patterns += future_fashion_patterns
-legacy_patterns += topic_research_patterns
+legacy_patterns += wiki_scope_patterns
 legacy_patterns += online_discourse_patterns
-
 if settings.USE_MOCKS:
     from core.tests.mocks.urls import urlpatterns as mock_patterns
     legacy_patterns += mock_patterns
 
+
+#############################################
+# DATAGROWTH PATTERNS PREFIXED WITH /api/
+#############################################
+
+datagrowth_patterns = [
+    url(r'^future-fashion/', include(future_fashion_patterns)),
+]
+
+
+#############################################
+# PRODUCTION PATTERNS
+#############################################
+
 urlpatterns = [
     url(r'^$', views.index, name="datascope-index"),
     url(r'^data/v1/', include(legacy_patterns, namespace="v1")),
+    url(r'^api/v1/', include(datagrowth_patterns, namespace="api-v1")),
     url(r'^admin/', include(admin.site.urls))
 ]
+
+
+#############################################
+# DEVELOPMENT PATTERNS
+#############################################
 
 if settings.DEBUG:
     urlpatterns += mediapatterns

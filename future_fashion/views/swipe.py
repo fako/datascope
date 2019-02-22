@@ -3,12 +3,12 @@ import re
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import generics
+
 from rest_framework import status
 
 from core.views import CommunityView
 
-from future_fashion.models import ClothingInventoryCommunity, ColorClothingSetSerializer
+from future_fashion.models import ClothingInventoryCommunity
 
 
 hex_color_pattern = re.compile("^[A-Fa-z0-9]{6}$")
@@ -101,7 +101,3 @@ def swipe_interface_view(request):
         ix %= len(ixs)
 
     return Response(format_data(data[ix]), status.HTTP_200_OK)
-
-
-class CreateColorClothingSet(generics.CreateAPIView):
-    serializer_class = ColorClothingSetSerializer
