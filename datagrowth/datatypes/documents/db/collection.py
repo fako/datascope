@@ -5,6 +5,7 @@ from django.apps import apps
 from django.db import models
 from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
+from django.core.urlresolvers import reverse
 
 from datagrowth.utils import ibatch, reach
 from .base import DataStorage
@@ -34,6 +35,13 @@ class CollectionBase(DataStorage):
             schema=self.schema,
             properties=data
         )
+
+    @property
+    def url(self):  # TODO: move to base class
+        if not self.id:
+            raise ValueError("Can't get url for unsaved Collection")
+        view_name = "api-v1:{}:collection-content".format(self._meta.app_label.replace("_", "-"))
+        return reverse(view_name, args=[self.id])  # TODO: make version aware
 
     @classmethod
     def validate(cls, data, schema):

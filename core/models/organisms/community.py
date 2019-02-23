@@ -364,6 +364,10 @@ class Community(models.Model, ProcessorMixin):
                 name += char
         return name
 
+    @classmethod
+    def get_namespace(cls):
+        return cls._meta.app_label.replace("_", "-")
+
     def __str__(self):
         return "{} ({}, {})".format(
             self.signature,

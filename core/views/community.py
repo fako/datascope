@@ -71,7 +71,7 @@ class CommunityView(APIView):
     @staticmethod
     def get_service_view(community_class):
         if community_class.DATAGROWTH:
-            return "api-v1:{}_service".format(community_class.get_name())
+            return "api-v1:{}:{}_service".format(community_class.get_namespace(), community_class.get_name())
         else:
             return "v1:{}_service".format(community_class.get_name())
 

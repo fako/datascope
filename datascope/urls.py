@@ -38,7 +38,7 @@ if settings.USE_MOCKS:
 #############################################
 
 datagrowth_patterns = [
-    url(r'^future-fashion/', include(future_fashion_patterns)),
+    url(r'^future-fashion/', include(future_fashion_patterns, namespace="future-fashion")),
 ]
 
 
