@@ -67,6 +67,7 @@ INSTALLED_APPS = (
     # 3rd party
     'django_celery_results',
     'rest_framework',
+    'rest_framework.authtoken',
     'raven.contrib.django.raven_compat',
     # Main app
     'datascope',
@@ -288,10 +289,19 @@ LOGGING = {
 
 TEST_RUNNER = "core.tests.runner.DataScopeDiscoverRunner"
 
+SESSION_COOKIE_PATH = '/admin/'
+
 REST_FRAMEWORK = {
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
     #'DEFAULT_PAGINATION_CLASS': 'core.views.content.ContentPagination',
     'PAGE_SIZE': 100,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
 }
 
 # Celery settings

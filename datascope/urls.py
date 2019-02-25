@@ -2,7 +2,8 @@ from django.conf.urls import include, url
 from django.conf import settings
 from django.contrib import admin
 from django.views import static
-admin.autodiscover()
+
+from rest_framework.authtoken import views as rest_views
 
 from datascope import views
 from core import views as core_views
@@ -11,6 +12,9 @@ from visual_translations.urls import urlpatterns as visual_translations_patterns
 from future_fashion.urls import urlpatterns as future_fashion_patterns, mediapatterns
 from wiki_scope.urls import urlpatterns as wiki_scope_patterns
 from online_discourse.urls import urlpatterns as online_discourse_patterns
+
+
+admin.autodiscover()
 
 
 #############################################
@@ -49,6 +53,7 @@ datagrowth_patterns = [
 urlpatterns = [
     url(r'^$', views.index, name="datascope-index"),
     url(r'^data/v1/', include(legacy_patterns, namespace="v1")),
+    url(r'^api/v1/auth/token/?$', rest_views.obtain_auth_token),
     url(r'^api/v1/', include(datagrowth_patterns, namespace="api-v1")),
     url(r'^admin/', include(admin.site.urls))
 ]
