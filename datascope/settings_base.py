@@ -68,6 +68,7 @@ INSTALLED_APPS = (
     'django_celery_results',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     'raven.contrib.django.raven_compat',
     # Main app
     'datascope',
@@ -112,6 +113,23 @@ ALLOWED_HOSTS = [
     'ec2-34-251-167-142.eu-west-1.compute.amazonaws.com',
     '.2ndhandstylist.com',
 ]
+CORS_ORIGIN_WHITELIST = [
+    'localhost:9000',
+    '127.0.0.1:9000',
+    '10.0.2.2:9000',
+    'localhost:8080',
+    '127.0.0.1:8080',
+    '10.0.2.2:8080',
+    'data-scope.com',
+    'www.data-scope.com',
+    'globe-scope.com',
+    'www.globe-scope.com',
+    'debatkijker.nl',
+    'www.debatkijker.nl',
+    '2ndhandstylist.com',
+    'www.2ndhandstylist.com',
+]
+
 
 APPEND_SLASH = False
 
@@ -216,6 +234,7 @@ TEMPLATES = [
 ]
 
 MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',

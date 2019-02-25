@@ -26,28 +26,6 @@ DATAGROWTH_REQUESTS_VERIFY = getattr(settings, "DATAGROWTH_REQUESTS_VERIFY", Tru
 
 
 DATAGROWTH_DEFAULT_CONFIGURATION = getattr(settings, "DATAGROWTH_DEFAULT_CONFIGURATION", {
-    "global_allowed_origins": [
-        'http://localhost:9000',
-        'http://127.0.0.1:9000',
-        'http://10.0.2.2:9000',
-        'http://localhost:8080',
-        'http://127.0.0.1:8080',
-        'http://10.0.2.2:8080',
-        'http://data-scope.com',
-        'http://www.data-scope.com',
-        'https://data-scope.com',
-        'https://www.data-scope.com',
-        'http://globe-scope.com',
-        'http://www.globe-scope.com',
-        'http://debatkijker.nl',
-        'http://www.debatkijker.nl',
-        'https://debatkijker.nl',
-        'https://www.debatkijker.nl',
-        'http://2ndhandstylist.com',
-        'http://www.2ndhandstylist.com',
-        'https://2ndhandstylist.com',
-        'https://www.2ndhandstylist.com',
-    ],
     "global_async": True,  # by default offload to celery where possible
     "global_user_agent": "DataScope (v{})".format(settings.DATASCOPE_VERSION),
     "global_token": "",
