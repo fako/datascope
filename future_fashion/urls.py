@@ -10,31 +10,36 @@ from future_fashion import views
 
 urlpatterns = [
     url(
-        r'^inventory/service/(?P<path>.+)/$',
+        r'^inventory/service/(?P<path>.+)/?$',
         CommunityView.as_view(),
         kwargs={"community_class": ClothingInventoryCommunity},
         name=ClothingInventoryCommunity.get_name() + "_service"
     ),
     url(
-        r'^inventory/html/(?P<path>.+)/$',
+        r'^inventory/html/(?P<path>.+)/?$',
         HtmlCommunityView.as_view(),
         kwargs={"community_class": ClothingInventoryCommunity},
         name=ClothingInventoryCommunity.get_name() + "_html"
     ),
     url(
-        r'^paper-doll/$',
+        r'^inventory/datasets/?$',
+        views.ClothingInventoryDatasetView.as_view(),
+        name=ClothingInventoryCommunity.get_name() + "_datasets"
+    ),
+    url(
+        r'^paper-doll/?$',
         views.swipe_interface_view,
         name=ClothingInventoryCommunity.get_name() + "_paper_doll"
     ),
     url(
-        r'^color-clothing-set/$',
+        r'^color-clothing-set/?$',
         views.CreateColorClothingSet.as_view(),
         name="color_clothing_set"
     ),
-    url(r'^data/collection/(?P<pk>\d+)/content/$', views.CollectionContentView.as_view(), name="collection-content"),
-    url(r'^data/collection/(?P<pk>\d+)/$', views.CollectionView.as_view(), name="collection"),
-    url(r'^data/document/(?P<pk>\d+)/content/$', views.DocumentContentView.as_view(), name="document-content"),
-    url(r'^data/document/(?P<pk>\d+)/$', views.DocumentView.as_view(), name="document"),
+    url(r'^data/collection/(?P<pk>\d+)/content/?$', views.CollectionContentView.as_view(), name="collection-content"),
+    url(r'^data/collection/(?P<pk>\d+)/?$', views.CollectionView.as_view(), name="collection"),
+    url(r'^data/document/(?P<pk>\d+)/content/?$', views.DocumentContentView.as_view(), name="document-content"),
+    url(r'^data/document/(?P<pk>\d+)/?$', views.DocumentView.as_view(), name="document"),
 ]
 
 mediapatterns = []
