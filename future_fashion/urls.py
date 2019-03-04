@@ -40,6 +40,11 @@ urlpatterns = [
     url(r'^data/collection/(?P<pk>\d+)/?$', views.CollectionView.as_view(), name="collection"),
     url(r'^data/document/(?P<pk>\d+)/content/?$', views.DocumentContentView.as_view(), name="document-content"),
     url(r'^data/document/(?P<pk>\d+)/?$', views.DocumentView.as_view(), name="document"),
+    url(
+        r'^data/collection/(?P<pk>\d+)/annotate/(?P<annotation_name>[A-Za-z0-9\-_]+)/$',
+        views.AnnotationView.as_view(),
+        name="collection-annotation"
+    ),
 ]
 
 mediapatterns = []
