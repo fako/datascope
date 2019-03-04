@@ -1,4 +1,8 @@
+from django.core.urlresolvers import reverse
+
 from rest_framework import serializers
+
+from datagrowth.datatypes.datasets import DatasetState
 
 
 class DatasetBaseSerializer(serializers.ModelSerializer):
@@ -12,4 +16,15 @@ class DatasetBaseSerializer(serializers.ModelSerializer):
         return dataset.kernel.url
 
     def get_annotations(self, dataset):
-        return dataset.ANNOTATIONS
+        if dataset.state != DatasetState.READY or not dataset.ANNOTATIONS:
+            return {
+                "resource": None,
+                "definitions": dataset.ANNOTATIONS
+            }
+        return {
+            "resource": reverse(
+                "api-v1:{}:annotate".format(dataset.get_namespace()),
+                args=(dataset.kernel.id, dataset.ANNOTATIONS[0]["name"],)
+            ),
+            "definitions": dataset.ANNOTATIONS
+        }

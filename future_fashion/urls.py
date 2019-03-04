@@ -43,7 +43,7 @@ urlpatterns = [
     url(
         r'^data/collection/(?P<pk>\d+)/annotate/(?P<annotation_name>[A-Za-z0-9\-_]+)/$',
         views.AnnotationView.as_view(),
-        name="collection-annotation"
+        name="annotate"
     ),
 ]
 

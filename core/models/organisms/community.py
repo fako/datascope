@@ -67,6 +67,7 @@ class Community(models.Model, ProcessorMixin):
     PUBLIC_CONFIG = None  # obsolete
     SAMPLE_SIZE = 0
     DATAGROWTH = False
+    ANNOTATIONS = []
 
     objects = CommunityManager()
 
