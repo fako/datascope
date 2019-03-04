@@ -28,6 +28,11 @@ class CollectionBase(DataStorage):
         Document = self.get_document_model()
         return Document.objects.all()
 
+    @property
+    def annotations(self):
+        Annotation = apps.get_model("{}.Annotation".format(self._meta.app_label))
+        return Annotation.objects.filter(reference__in=self.documents.values("reference"))
+
     def init_document(self, data, collection=None):
         Document = self.get_document_model()
         return Document(
@@ -202,3 +207,10 @@ class CollectionBase(DataStorage):
         abstract = True
         get_latest_by = "id"
         ordering = ["id"]
+
+
+class DocumentCollectionMixin(object):
+
+    @property
+    def documents(self):
+        return self.document_set
