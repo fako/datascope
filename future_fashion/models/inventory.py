@@ -66,6 +66,36 @@ class ClothingInventoryCommunity(Community):
 
     DATAGROWTH = True
 
+    ANNOTATIONS = [
+        {
+            "name": "clothing_type",
+            "type": "enum",
+            "symbols": [
+                "t_shirt",
+                "top",
+                "shorts",
+                "trousers",
+                "jeans",
+                "skirt",
+                "dress",
+                "summer_jacket",
+                "coat",
+                "suit",
+                "waistcoat",
+                "sweater",
+                "cardigan",
+                "shirt",
+                "leggings",
+                "shoes",
+                "hat",
+                "bag",
+                "glasses",
+                "shawl",
+                "necklace"
+            ]
+        }
+    ]
+
     def initial_input(self, *args):
         collection = self.create_organism("Collection", schema={}, identifier="path")
         scanner = SemanticDirectoryScan(file_pattern="*f.jpg", progress_bar=True)
