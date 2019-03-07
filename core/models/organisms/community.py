@@ -153,13 +153,15 @@ class Community(models.Model, ProcessorMixin):
         else:
             return apps.get_model("{}.{}".format(self._meta.app_label, data_type))
 
-    def create_organism(self, organism_type, schema, identifier=None):
+    def create_organism(self, organism_type, schema, identifier=None, referee=None):
         model = self.get_storage_model(organism_type)
-        org = model(community=self, schema=schema)
-        if identifier and hasattr(org, "identifier"):
-            org.identifier = identifier
-        org.save()
-        return org
+        instance = model(community=self, schema=schema)
+        if identifier and hasattr(instance, "identifier"):
+            instance.identifier = identifier
+        if referee and hasattr(instance, "referee"):
+            instance.referee = referee
+        instance.save()
+        return instance
 
     def setup_growth(self, *args):
         """
