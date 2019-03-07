@@ -91,7 +91,8 @@ class ClothingInventoryCommunity(Community):
                 "bag",
                 "glasses",
                 "shawl",
-                "necklace"
+                "necklace",
+                "other"
             ]
         }
     ]
