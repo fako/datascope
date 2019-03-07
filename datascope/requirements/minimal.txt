@@ -11,7 +11,7 @@ six==1.11.0
 jsonschema==2.4.0
 html5lib==1.0b8
 beautifulsoup4==4.6.0
-numpy==1.13.1
+numpy==1.16.2
 pandas==0.22.0
 humanize==0.5.1
 scipy==1.1.0
