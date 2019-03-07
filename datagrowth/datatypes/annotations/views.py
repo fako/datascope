@@ -27,15 +27,25 @@ class AnnotationBaseView(views.APIView):
     def get(self, request, pk, annotation_name):
         collection = self.collection_model.objects.get(id=pk)
 
-        annotations = self.annotation_model.objects.filter(name=annotation_name)
+        previous_annotations = self.annotation_model.objects.filter(name=annotation_name)
         documents = collection.documents \
-            .exclude(reference__in=annotations.values("reference")) \
+            .exclude(reference__in=previous_annotations.values("reference")) \
             .order_by("?")
         if not documents.exists():
             return Response([], status=status.HTTP_204_NO_CONTENT)
 
+        # Get results
         serializer = self.document_serializer(documents, many=True)
-        return Response(serializer.data[:self.annotation_page_size], status=status.HTTP_200_OK)
+        results = serializer.data[:self.annotation_page_size]
+
+        # Enrich results with annotations
+        annotations_by_reference = {result["reference"]: [] for result in results}
+        for annotation in self.annotation_model.objects.filter(reference__in=annotations_by_reference.keys()).values():
+            annotations_by_reference[annotation["reference"]].append(annotation)
+        for result in results:
+            result["annotations"] = annotations_by_reference[result["reference"]]
+
+        return Response(results, status=status.HTTP_200_OK)
 
     def post(self, request, pk, annotation_name):
         # Validating
