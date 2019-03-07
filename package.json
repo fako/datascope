@@ -6,8 +6,8 @@
             "data/online_discourse/dumps": "online_discourse/dumps"
         },
         "aws": {
-            "future_fashion/data/dumps": "future_fashion/dumps",
-            "future_fashion/data/media": "media/future_fashion"
+            "data/future_fashion/dumps": "future_fashion/dumps",
+            "data/media/future_fashion": "media/future_fashion"
         }
     },
     "models": {
