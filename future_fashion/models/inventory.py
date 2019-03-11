@@ -102,14 +102,14 @@ class ClothingInventoryCommunity(Community):
         scanner = SemanticDirectoryScan(file_pattern="*f.jpg", progress_bar=True)
         content = []
         target_directory = get_media_path(self._meta.app_label, args[0])
-        relative_media_directory = target_directory.replace(datagrowth_settings.DATAGROWTH_DATA_DIR, "").lstrip("/")
+        relative_media_directory = get_media_path(self._meta.app_label, args[0], absolute=False)
         if not os.path.exists(target_directory):
             raise ValidationError("Directory {} does not exist".format(target_directory))
         brighten = int(self.config.get("brighten", 0))
         remove_background = self.config.get("remove_background", False)
         for file_data in scanner(target_directory, path_prefix=relative_media_directory + os.sep):
             color_data = {}
-            file_path = os.path.join(datagrowth_settings.DATAGROWTH_DATA_DIR, file_data["path"])
+            file_path = os.path.join(datagrowth_settings.DATAGROWTH_MEDIA_ROOT, file_data["path"])
             img = remove_white_image_background(file_path) if remove_background else file_path
             for num_colors in [2, 3, 6]:
                 colors, balance = extract_dominant_colors(img, num=num_colors)
