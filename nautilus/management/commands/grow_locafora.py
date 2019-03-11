@@ -7,8 +7,8 @@ from pandas import DataFrame
 from core.management.commands.grow_community import Command as GrowCommand
 from core.utils.configuration import DecodeConfigAction
 from core.utils.helpers import format_datetime
-
 from datagrowth import settings as datascope_settings
+from datagrowth.utils import get_media_path
 from nautilus.models import LocaforaOrders
 
 
@@ -35,8 +35,8 @@ class Command(GrowCommand):
             log.warning("No orders to process")
             return
         result.sort_values(["product", "customer"], inplace=True)
-        csv_file_name = '{today:%Y-%m-%d}-alfabetische-lijst.csv'.format(today=datetime.today())
-        dst = os.path.join(datascope_settings.DATAGROWTH_DATA_DIR, "nautilus", "locafora")
+        csv_file_name = "alfabetische-lijst.csv"
+        dst = get_media_path("nautilus", "locafora")
         if not os.path.exists(dst):
             os.makedirs(dst)
         result[["customer", "quantity", "product", "unit"]].to_csv(os.path.join(dst, csv_file_name))
