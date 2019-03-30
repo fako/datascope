@@ -6,3 +6,5 @@ from .nl.wiv import wiv
 from .nl.doodstraf import doodstraf
 from .nl.immigranten import immigranten
 from .nl.biomassa import biomassa
+from .nl.koopvaardij_bescherming import koopvaardij_bescherming
+from .nl.diepzee_mijnbouw import diepzee_mijnbouw

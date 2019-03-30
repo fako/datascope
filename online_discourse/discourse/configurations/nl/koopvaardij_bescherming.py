@@ -74,7 +74,7 @@ koopvaardij_bescherming = DiscourseConfiguration(
     description="Deze wetswijziging maakt het mogelijk dat particulieren geweld mogen gebruiken "
                 "om schepen te beschermen tegen piraterij.",
     language="nl",
-    topics=["piraat", "piraterij"],
+    topics=["piraat", "piraterij", "koopvaar"],
     singular_subjects=SINGULAR_SUBJECTS,
     plural_subjects=PLURAL_SUBJECTS,
     descriptive_adjectives=DESCRIPTIVE_ADJECTIVES
