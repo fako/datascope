@@ -4,6 +4,7 @@ class DatasetState(object):
     SYNC = "Synchronous"
     READY = "Ready"
     ABORTED = "Aborted"
+    RETRY = "Retry"
 
 
 DATASET_STATE_CHOICES = [
