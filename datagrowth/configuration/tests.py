@@ -1,4 +1,4 @@
-from mock import patch
+from unittest.mock import patch
 from collections import Iterator
 
 from django.test import TestCase
