@@ -2,7 +2,7 @@
 {
     "fields": {
         "kernel_type": null,
-        "views": 1,
+
         "kernel_id": null,
         "created_at": "2015-06-05T16:17:54.436",
         "modified_at": "2015-06-05T16:17:54.436",

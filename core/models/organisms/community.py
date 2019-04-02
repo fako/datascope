@@ -48,7 +48,6 @@ class Community(models.Model, ProcessorMixin):
     completed_at = models.DateTimeField(null=True, blank=True)
     purge_at = models.DateTimeField(null=True, blank=True)
 
-    views = models.IntegerField(default=0)
     state = models.CharField(max_length=255, choices=COMMUNITY_STATE_CHOICES, default=CommunityState.NEW)
 
     COMMUNITY_SPIRIT = OrderedDict()
