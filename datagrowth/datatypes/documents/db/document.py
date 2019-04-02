@@ -15,7 +15,7 @@ from .base import DataStorage
 
 class DocumentBase(DataStorage):
 
-    collection = models.ForeignKey("Collection", blank=True, null=True)
+    collection = models.ForeignKey("Collection", blank=True, null=True, on_delete=models.CASCADE)
     identity = models.CharField(max_length=255, blank=True, null=True, db_index=True)
     reference = models.CharField(max_length=255, blank=True, null=True, db_index=True)
 
