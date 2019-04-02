@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('future_fashion', '0011_collection_document'),
+        ('future_fashion', '0012_collection_document'),
     ]
 
     operations = [

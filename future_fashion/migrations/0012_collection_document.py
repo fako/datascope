@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('contenttypes', '0002_remove_content_type_name'),
-        ('future_fashion', '0010_auto_20181202_1424'),
+        ('future_fashion', '0011_auto_20190402_0928'),
     ]
 
     operations = [
