@@ -3,10 +3,10 @@ from collections import Iterator, Iterable
 
 from django.apps import apps
 from django.db import models
-from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.urlresolvers import reverse
 
+from datagrowth import settings as datagrowth_settings
 from datagrowth.utils import ibatch, reach
 from .base import DataStorage
 
@@ -104,7 +104,7 @@ class CollectionBase(DataStorage):
         for updates in ibatch(data, batch_size=batch_size):
             updates = prepare_updates(updates)
             count += len(updates)
-            Document.objects.bulk_create(updates, batch_size=settings.MAX_BATCH_SIZE)
+            Document.objects.bulk_create(updates, batch_size=datagrowth_settings.DATAGROWTH_MAX_BATCH_SIZE)
 
         return count
 
