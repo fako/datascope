@@ -40,7 +40,7 @@ class Command(BaseCommand):
             if df is None:
                 df = batch_frame
             else:
-                df = pd.concat([df, batch_frame])  # TODO: add sort=False when upgrading pandas to 0.23
+                df = pd.concat([df, batch_frame], sort=False)
 
         valid = df[df["does_exist"]]
         invalid = df[~df["does_exist"]]

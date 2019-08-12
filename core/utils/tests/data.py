@@ -14,6 +14,7 @@ from core.exceptions import DSFileLoadError
 class TestPythonReach(TestCase):
 
     def setUp(self):
+        super().setUp()
         self.test_dict = {
             "dict": {
                 "test": "nested value",

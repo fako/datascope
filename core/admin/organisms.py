@@ -1,8 +1,7 @@
-import humanize
-
 from django.contrib import admin
 from django.contrib.contenttypes.admin import GenericStackedInline
 
+from datagrowth.admin import DataStorageAdmin
 from core.models import Individual, Growth
 from core.models.resources.manifestation import Manifestation
 
@@ -13,18 +12,11 @@ class IndividualInline(admin.StackedInline):
     extra = 0
 
 
-class OrganismAdmin(admin.ModelAdmin):
-    list_display = ['__str__', 'size', 'created_at', 'modified_at']
-
-    def size(self, organism):
-        return humanize.naturalsize(len(organism.json_content))
-
-
-class IndividualAdmin(OrganismAdmin):
+class IndividualAdmin(DataStorageAdmin):
     search_fields = ["properties"]
 
 
-class CollectiveAdmin(OrganismAdmin):
+class CollectiveAdmin(DataStorageAdmin):
     inlines = [IndividualInline]
 
 

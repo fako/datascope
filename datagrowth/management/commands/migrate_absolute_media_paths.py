@@ -4,7 +4,6 @@ from django.conf import settings
 from django.core.management.base import LabelCommand
 from django.apps import apps
 
-from datagrowth import settings as datagrowth_settings
 from datagrowth.resources import HttpFileResource
 from datagrowth.utils import ibatch
 
@@ -37,5 +36,5 @@ class Command(LabelCommand):
         for batch in ibatch(queryset.iterator(), batch_size, progress_bar=True, total=count):
             for instance in batch:
                 if instance.body and instance.body.startswith(options["path"]):
-                    instance.body = instance.body.replace(datagrowth_settings.DATAGROWTH_MEDIA_ROOT, "", 1)
+                    instance.body = instance.body.replace(options["path"], "", 1)
                     instance.save()

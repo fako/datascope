@@ -23,7 +23,7 @@ After these commands you should be able to call the service under
 Deploy
 ------
 
-Before you import Future Fashion for a deploy make sure to run: ```./manage.py dump_community ClothingInventoryCommunity -c "remove_background=1&brighten=50" -a <unique-name>```.
+Before you import Future Fashion for a deploy make sure to run: ```./manage.py dump_dataset future_fashion.ClothingInventoryCommunity -c "remove_background=1&brighten=50" -a <unique-name>```.
 This ensures that the data will become available on the server.
-After installation but before deploy run ```./manage.py load_community ClothingInventoryCommunity -c "remove_background=1&brighten=50" -a <unique-name>```
+After installation but before deploy run ```./manage.py load_dataset future_fashion.ClothingInventoryCommunity -c "remove_background=1&brighten=50" -a <unique-name>```
 on the server to load the data.

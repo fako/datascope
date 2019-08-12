@@ -28,7 +28,7 @@ class Command(GrowCommand):
         community.signature = format_datetime(datetime.utcnow())
         super(Command, self).handle_community(community, **options)
         result = DataFrame()
-        for customer in community.kernel.individual_set.all():
+        for customer in community.kernel.documents.all():
             customer_frame = DataFrame(customer["order_lines"])
             result = result.append(customer_frame, ignore_index=True)
         if result.empty:

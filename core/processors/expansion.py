@@ -22,6 +22,7 @@ class ExpansionProcessor(Processor):
                         updates[(index, key, match.group("collective_id"),)] = ind
 
         # TODO: make this a true generator and do not traverse the whole list to gather nested collectives?
+        # TODO: update this to work with Collections and Documents
         qs = Collective.objects.prefetch_related("individual_set").filter(pk__in=[int(pk) for index, prop, pk in six.iterkeys(updates)])
         collectives = {
             collective.id: collective

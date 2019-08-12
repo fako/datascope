@@ -11,6 +11,7 @@ class TestCompareProcessor(TestCase):
     fixtures = ["test-organisms"]
 
     def setUp(self):
+        super().setUp()
         self.prc = ComparisonProcessor(config={"reference": "1"})
 
     def test_init(self):

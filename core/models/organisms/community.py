@@ -4,19 +4,19 @@ from itertools import groupby
 from collections import OrderedDict, Iterator
 import logging
 
+from django.apps import apps
 from django.db import models
 from django.db.models.query import QuerySet
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, ContentType
 
-from datascope.configuration import DEFAULT_CONFIGURATION
+from datagrowth.datatypes.documents.db.base import DataStorage
+from datagrowth.configuration import ConfigurationField
 from core.models.organisms.states import CommunityState, COMMUNITY_STATE_CHOICES
-from core.models.organisms import Growth, Collective, Individual, Organism
+from core.models.organisms import Growth, Collective, Individual
 from core.models.organisms.managers.community import CommunityManager
 from core.models.resources.manifestation import Manifestation
 from core.processors.mixins import ProcessorMixin
 from core.processors.base import QuerySetProcessor
-from core.utils.configuration import ConfigurationField
-from core.utils.helpers import get_any_model
 from core.exceptions import DSProcessUnfinished, DSProcessError
 
 
@@ -29,14 +29,24 @@ class Community(models.Model, ProcessorMixin):
     """
 
     signature = models.CharField(max_length=255, db_index=True)
-    config = ConfigurationField(
-        config_defaults=DEFAULT_CONFIGURATION
-    )
+    config = ConfigurationField()
 
     growth_set = GenericRelation(Growth, content_type_field="community_type", object_id_field="community_id")
+    manifestation_set = GenericRelation(
+        Manifestation,
+        content_type_field="community_type",
+        object_id_field="community_id"
+    )
     collective_set = GenericRelation(Collective, content_type_field="community_type", object_id_field="community_id")
     individual_set = GenericRelation(Individual, content_type_field="community_type", object_id_field="community_id")
-    manifestation_set = GenericRelation(Manifestation, content_type_field="community_type", object_id_field="community_id")
+
+    @property
+    def collections(self):
+        return self.collective_set
+
+    @property
+    def documents(self):
+        return self.individual_set
 
     current_growth = models.ForeignKey('core.Growth', null=True)
     kernel = GenericForeignKey(ct_field="kernel_type", fk_field="kernel_id")
@@ -56,6 +66,8 @@ class Community(models.Model, ProcessorMixin):
     INPUT_THROUGH_PATH = True
     PUBLIC_CONFIG = None  # obsolete
     SAMPLE_SIZE = 0
+    DATAGROWTH = False
+    ANNOTATIONS = []
 
     objects = CommunityManager()
 
@@ -135,13 +147,21 @@ class Community(models.Model, ProcessorMixin):
         if callback is not None and callable(callback):
             callback(manifestation_part)
 
-    def create_organism(self, organism_type, schema, identifier=None):
-        model = get_any_model(organism_type)
-        org = model(community=self, schema=schema)
-        if identifier and hasattr(org, "identifier"):
-            org.identifier = identifier
-        org.save()
-        return org
+    def get_storage_model(self, data_type):
+        if data_type in ["Individual", "Collective"]:
+            return apps.get_model("core.{}".format(data_type))
+        else:
+            return apps.get_model("{}.{}".format(self._meta.app_label, data_type))
+
+    def create_organism(self, organism_type, schema, identifier=None, referee=None):
+        model = self.get_storage_model(organism_type)
+        instance = model(community=self, schema=schema)
+        if identifier and hasattr(instance, "identifier"):
+            instance.identifier = identifier
+        if referee and hasattr(instance, "referee"):
+            instance.referee = referee
+        instance.save()
+        return instance
 
     def setup_growth(self, *args):
         """
@@ -233,7 +253,7 @@ class Community(models.Model, ProcessorMixin):
         assert self.kernel is not None, \
             "Community.set_kernel expected the kernel to be set. " \
             "The overriding method is failing, is not implemented or is calling its parent before the kernel is set."
-        assert issubclass(self.kernel.__class__, Organism), \
+        assert issubclass(self.kernel.__class__, DataStorage), \
             "The kernel should be an Organism."
 
     def initial_input(self, *args):
@@ -319,7 +339,7 @@ class Community(models.Model, ProcessorMixin):
                 if not issubclass(processor.__class__, QuerySetProcessor):
                     data = self.kernel.content
                 elif isinstance(self.kernel, Collective):
-                    data = self.kernel.individual_set.all()
+                    data = self.kernel.documents.all()
                 else:
                     raise AssertionError("Kernel can't be other than Collective when using a QuerySetProcessor")
 
@@ -346,6 +366,10 @@ class Community(models.Model, ProcessorMixin):
             else:
                 name += char
         return name
+
+    @classmethod
+    def get_namespace(cls):
+        return cls._meta.app_label.replace("_", "-")
 
     def __str__(self):
         return "{} ({}, {})".format(

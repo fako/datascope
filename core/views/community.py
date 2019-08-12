@@ -68,11 +68,18 @@ class CommunityView(APIView):
             return configuration, (None, None,)
         return configuration, (created_at_parameter, parse_datetime_string(created_at_parameter),)
 
+    @staticmethod
+    def get_service_view(community_class):
+        if community_class.DATAGROWTH:
+            return "api-v1:{}:{}_service".format(community_class.get_namespace(), community_class.get_name())
+        else:
+            return "v1:{}_service".format(community_class.get_name())
+
     @classmethod
     def get_full_path(cls, community_class, query_path, configuration=None, created_at=None):
         warnings.warn("CommunityView.get_full_path is deprecated in favor of get_uri", DeprecationWarning)
         configuration = configuration or {}
-        service_view_name = "v1:{}_service".format(community_class.get_name())
+        service_view_name = cls.get_service_view(community_class)
         service_view_url = reverse(service_view_name, kwargs={"path": query_path})
         if created_at:
             configuration["t"] = format_datetime(created_at)
@@ -84,7 +91,7 @@ class CommunityView(APIView):
         simple_configuration = {
             key: value for key, value in configuration.items() if isinstance(value, (int, float, str, bool))
         }
-        service_view_name = "v1:{}_service".format(community_class.get_name())
+        service_view_name = cls.get_service_view(community_class)
         service_view_url = reverse(service_view_name, kwargs={"path": query_path})
         if created_at:
             configuration["t"] = format_datetime(created_at)

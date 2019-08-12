@@ -33,5 +33,5 @@ class Command(DatasetCommand):
         with open(file_name, "w") as json_file:
             self.object_to_disk(dataset, json_file)
             self.queryset_to_disk(dataset.growth_set, json_file)
-            self.queryset_to_disk(dataset.collective_set, json_file)
-            self.queryset_to_disk(dataset.individual_set, json_file)
+            self.queryset_to_disk(dataset.collections, json_file)
+            self.queryset_to_disk(dataset.documents, json_file)

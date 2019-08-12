@@ -1,4 +1,4 @@
-from mock import patch
+from unittest.mock import patch
 from collections import Iterator
 
 from django.test import TestCase
@@ -11,6 +11,7 @@ from datagrowth.configuration import (ConfigurationType, ConfigurationNotFoundEr
 class TestConfigurationType(TestCase):
 
     def setUp(self):
+        super().setUp()
         self.config = ConfigurationType(namespace="name", private=["_test3"], defaults=MOCK_CONFIGURATION)
         self.config.update({
             "test": "public",
@@ -291,6 +292,7 @@ class TestConfigurationProperty(TestCase):
 class TestLoadConfigDecorator(TestCase):
 
     def setUp(self):
+        super().setUp()
         self.config = ConfigurationType(namespace="name", private=["_test3"], defaults=MOCK_CONFIGURATION)
         self.config.update({
             "test": "public",
@@ -344,6 +346,7 @@ class TestLoadConfigDecorator(TestCase):
 class TestGetStandardizedConfiguration(TestCase):
 
     def setUp(self):
+        super().setUp()
         self.config = ConfigurationType(namespace="name", private=["_test3"], defaults=MOCK_CONFIGURATION)
         self.config.update({
             "test": "public",

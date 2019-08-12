@@ -1,7 +1,11 @@
 import os
 
+from django.conf import settings
 from django.db import models
+from django.utils.html import format_html
 from rest_framework import serializers
+
+from .storage import Document
 
 
 class ColorClothingSet(models.Model):
@@ -14,16 +18,15 @@ class ColorClothingSet(models.Model):
     bottom_color = models.CharField(max_length=6)
     match_style = models.CharField(max_length=20, null=True, blank=True)
 
-    top_item = models.ForeignKey("core.Individual", related_name="+", on_delete=models.DO_NOTHING)
-    bottom_item = models.ForeignKey("core.Individual", related_name="+", on_delete=models.DO_NOTHING)
+    top_item = models.ForeignKey(Document, related_name="+", on_delete=models.DO_NOTHING)
+    bottom_item = models.ForeignKey(Document, related_name="+", on_delete=models.DO_NOTHING)
 
     def top_item_image(self):
-        return u'<img width="100px" src="{}" /><div>{}</div'.format(
-            os.sep + self.top_item["path"],
+        return format_html('<img width="100px" src="{}" /><div>{}</div',
+            os.path.join(settings.MEDIA_URL, self.top_item["path"]),
             self.top_item["name"]
         )
     top_item_image.short_description = 'Top item'
-    top_item_image.allow_tags = True
 
     def bottom_item_image(self):
         return u'<img width="100px" src="{}" /><div>{}</div>'.format(

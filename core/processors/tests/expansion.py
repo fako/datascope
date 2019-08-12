@@ -9,6 +9,7 @@ class TestExpansionProcessor(TestCase):
     fixtures = ["test-organisms"]
 
     def setUp(self):
+        super().setUp()
         self.individual_content = {
             "individual": "content",
             "expand": "/data/v1/collective/1/content/"

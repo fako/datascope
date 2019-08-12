@@ -84,13 +84,13 @@ class NumericFeaturesFrame(object):
                 missing = series.index.difference(self.data[column].index)
                 new[series.name] = series.loc[list(missing.get_values())]
                 update[series.name] = series.loc[list(intersection.get_values())]
-        self.data = self.data.append(new)  # TODO: when updating pandas this should use sort=False
+        self.data = self.data.append(new, sort=False)
         self.data.update(update)
 
     @staticmethod
     def get_content_hash(content):
         content_json = json.dumps(content, cls=JSONEncoder) if not hasattr(content, "properties") else \
-            content.json_content
+            json.dumps(content.properties)
         hasher = hashlib.sha1()
         hasher.update(bytes(content_json, encoding="utf-8"))
         return hasher.digest()

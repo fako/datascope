@@ -1,6 +1,7 @@
 import os
 from collections import OrderedDict
 
+from django.contrib.contenttypes.fields import GenericRelation
 from django.core.exceptions import ValidationError
 
 from datagrowth import settings as datagrowth_settings
@@ -9,9 +10,21 @@ from core.models.organisms import Community
 from core.utils.files import SemanticDirectoryScan
 from future_fashion.colors import (extract_dominant_colors, create_colors_data, remove_white_image_background,
                                    brighten as colorz_brighten)
+from future_fashion.models.storage import Document, Collection
 
 
 class ClothingInventoryCommunity(Community):
+
+    collection_set = GenericRelation(Collection, content_type_field="community_type", object_id_field="community_id")
+    document_set = GenericRelation(Document, content_type_field="community_type", object_id_field="community_id")
+
+    @property
+    def collections(self):
+        return self.collection_set
+
+    @property
+    def documents(self):
+        return self.document_set
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("types", {
@@ -51,19 +64,52 @@ class ClothingInventoryCommunity(Community):
         }
     ]
 
+    DATAGROWTH = True
+
+    ANNOTATIONS = [
+        {
+            "name": "clothing_type",
+            "type": "enum",
+            "symbols": [
+                "t_shirt",
+                "top",
+                "shorts",
+                "trousers",
+                "jeans",
+                "skirt",
+                "dress",
+                "summer_jacket",
+                "coat",
+                "suit",
+                "waistcoat",
+                "sweater",
+                "cardigan",
+                "shirt",
+                "leggings",
+                "shoes",
+                "hat",
+                "bag",
+                "glasses",
+                "shawl",
+                "necklace",
+                "other"
+            ]
+        }
+    ]
+
     def initial_input(self, *args):
-        collective = self.create_organism("Collective", schema={}, identifier="path")
+        collection = self.create_organism("Collection", schema={}, identifier="path", referee="rid")
         scanner = SemanticDirectoryScan(file_pattern="*f.jpg", progress_bar=True)
         content = []
         target_directory = get_media_path(self._meta.app_label, args[0])
-        relative_media_directory = target_directory.replace(datagrowth_settings.DATAGROWTH_DATA_DIR, "").lstrip("/")
+        relative_media_directory = get_media_path(self._meta.app_label, args[0], absolute=False)
         if not os.path.exists(target_directory):
             raise ValidationError("Directory {} does not exist".format(target_directory))
         brighten = int(self.config.get("brighten", 0))
         remove_background = self.config.get("remove_background", False)
         for file_data in scanner(target_directory, path_prefix=relative_media_directory + os.sep):
             color_data = {}
-            file_path = os.path.join(datagrowth_settings.DATAGROWTH_DATA_DIR, file_data["path"])
+            file_path = os.path.join(datagrowth_settings.DATAGROWTH_MEDIA_ROOT, file_data["path"])
             img = remove_white_image_background(file_path) if remove_background else file_path
             for num_colors in [2, 3, 6]:
                 colors, balance = extract_dominant_colors(img, num=num_colors)
@@ -74,12 +120,12 @@ class ClothingInventoryCommunity(Community):
             file_data.update({
                 "store": store,
                 "year": int(year),
-                "rid": int(id_),
+                "rid": "_".join([store, year, id_]),
                 "colors": color_data
             })
             content.append(file_data)
-        collective.update(content)
-        return collective
+        collection.add(content)
+        return collection
 
     def set_kernel(self):
         self.kernel = self.get_growth("types").output

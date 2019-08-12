@@ -108,9 +108,9 @@ class Command(CommunityCommand):
         base_dest = os.path.join(default_storage.location, community.get_name(), "palette", title)
         is_data = community.get_name() == "fashion_data"
         if is_data:
-            women_individuals = community.kernel.individual_set.filter(properties__contains='target_group": "dames')
+            women_individuals = community.kernel.documents.filter(properties__contains='target_group": "dames')
         else:
-            women_individuals = community.kernel.individual_set
+            women_individuals = community.kernel.documents
 
         # Get color matches per clothing type
         for clothing_type in palette.keys():

@@ -8,6 +8,8 @@ from django.conf import settings
 ######################################
 
 
+DATAGROWTH_VERSION = "0.0.1"
+
 DATAGROWTH_DATETIME_FORMAT = getattr(settings, "DATAGROWTH_DATETIME_FORMAT", "%Y%m%d%H%M%S%f")
 
 DATAGROWTH_DATA_DIR = getattr(settings, "DATAGROWTH_DATA_DIR", os.path.join(settings.BASE_DIR, "data"))
@@ -19,6 +21,8 @@ DATAGROWTH_BIN_DIR = getattr(settings, "DATAGROWTH_BIN_DIR",
 DATAGROWTH_REQUESTS_PROXIES = getattr(settings, "DATAGROWTH_REQUESTS_PROXIES", None)
 DATAGROWTH_REQUESTS_VERIFY = getattr(settings, "DATAGROWTH_REQUESTS_VERIFY", True)
 
+DATAGROWTH_MAX_BATCH_SIZE = getattr(settings, "DATAGROWTH_MAX_BATCH_SIZE", 500)
+
 
 ######################################
 # DEFAULT CONFIGURATION SETTINGS
@@ -26,30 +30,8 @@ DATAGROWTH_REQUESTS_VERIFY = getattr(settings, "DATAGROWTH_REQUESTS_VERIFY", Tru
 
 
 DATAGROWTH_DEFAULT_CONFIGURATION = getattr(settings, "DATAGROWTH_DEFAULT_CONFIGURATION", {
-    "global_allowed_origins": [
-        'http://localhost:9000',
-        'http://127.0.0.1:9000',
-        'http://10.0.2.2:9000',
-        'http://localhost:8080',
-        'http://127.0.0.1:8080',
-        'http://10.0.2.2:8080',
-        'http://data-scope.com',
-        'http://www.data-scope.com',
-        'https://data-scope.com',
-        'https://www.data-scope.com',
-        'http://globe-scope.com',
-        'http://www.globe-scope.com',
-        'http://debatkijker.nl',
-        'http://www.debatkijker.nl',
-        'https://debatkijker.nl',
-        'https://www.debatkijker.nl',
-        'http://2ndhandstylist.com',
-        'http://www.2ndhandstylist.com',
-        'https://2ndhandstylist.com',
-        'https://www.2ndhandstylist.com',
-    ],
     "global_async": True,  # by default offload to celery where possible
-    "global_user_agent": "DataScope (v{})".format(settings.DATASCOPE_VERSION),
+    "global_user_agent": "DataGrowth (v{})".format(DATAGROWTH_VERSION),
     "global_token": "",
     "global_purge_immediately": False,  # by default keep resources around
     "global_sample_size": 0,
@@ -95,7 +77,7 @@ DATAGROWTH_MOCK_CONFIGURATION = {
     # testing basic functionality
     "name_namespace_configuration": "namespace configuration",
     "global_global_configuration": "global configuration",
-    "global_user_agent": "DataScope (test)",
+    "global_user_agent": "DataGrowth (test)",
     "global_token": "",
     "global_purge_immediately": False,
     "global_sample_size": 0,

@@ -1,18 +1,20 @@
-version: '2'
+version: '3'
 
 services:
-  db:
-    image: mysql:5.7
+  postgres:
+    image: postgres:11.1
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
     environment:
-      MYSQL_ROOT_PASSWORD: 33SebQd4Ugkqx4KjqanZDsWRXTR54M6k
-      MYSQL_USER: django
-      MYSQL_PASSWORD: ZV35A5x89pbHuiYSrvqroPHKDnng7dRF
-      MYSQL_DATABASE: datascope
+      POSTGRES_PASSWORD: 33SebQd4Ugkqx4KjqanZDsWRXTR54M6k
+      POSTGRES_USER: postgres
+      POSTGRES_DB: datascope
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - ./datascope/mysql/data:/var/lib/mysql
-      - ./datascope/mysql/conf.d:/etc/mysql/conf.d
+      - ./datascope/postgres/conf/postgresql.conf:/etc/postgresql/postgresql.conf
+      - postgres-data:/var/lib/postgresql/data/pgdata
+      - ./datascope/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     ports:
-      - 3306:3306
+      - 5432:5432
   redis:
     image: redis
     command: redis-server /usr/local/etc/redis/redis.conf
@@ -20,3 +22,10 @@ services:
       - ./datascope/redis/redis.conf:/usr/local/etc/redis/redis.conf
     ports:
       - "6379:6379"
+  adminer:
+    image: adminer
+    ports:
+      - 8081:8080
+
+volumes:
+  postgres-data:

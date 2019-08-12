@@ -28,4 +28,4 @@ RAVEN_CONFIG = {
     "site": "tools.wmflabs.org"
 }
 
-# TODO: add STATIC_IP
+STATIC_IP = '127.0.0.1'

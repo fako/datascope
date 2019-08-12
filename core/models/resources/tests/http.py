@@ -314,7 +314,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertIn("auth=1", preq.url)
         self.assertIn("param=1", preq.url)
         self.assertEqual(len(expected_url), len(preq.url))
-        self.assert_agent_header(preq, "DataScope (test)")
+        self.assert_agent_header(preq, "DataGrowth (test)")
         self.assertEqual(preq.headers, {
             "Connection": "keep-alive",
             "Accept": "application/json",
@@ -333,7 +333,7 @@ class TestHttpResourceMock(HttpResourceTestMixin, ConfigurationFieldTestMixin):
         self.assertIn("auth=1", preq.url)
         self.assertIn("param=1", preq.url)
         self.assertEqual(len(expected_url), len(preq.url))
-        self.assert_agent_header(preq, "DataScope (test)")
+        self.assert_agent_header(preq, "DataGrowth (test)")
         self.assertEqual(preq.headers, {
             "Content-Length": str(expected_length),
             "Content-Type": "application/x-www-form-urlencoded",

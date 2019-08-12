@@ -275,7 +275,7 @@ class HttpResource(Resource):
             return None, None
         files = {}
         for file_key in self.FILE_DATA_KEYS:
-            file_path = os.path.join(datagrowth_settings.DATAGROWTH_DATA_DIR, data.pop(file_key))
+            file_path = os.path.join(datagrowth_settings.DATAGROWTH_MEDIA_ROOT, data.pop(file_key))
             files[file_key] = open(file_path, "rb")
         return data, files if files else None
 

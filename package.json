@@ -1,13 +1,13 @@
 {
     "name": "datascope",
-    "version": "0.11.0",
+    "version": "0.12.0",
     "data": {
         "digital-ocean": {
             "data/online_discourse/dumps": "online_discourse/dumps"
         },
         "aws": {
-            "future_fashion/data/dumps": "future_fashion/dumps",
-            "future_fashion/data/media": "media/future_fashion"
+            "data/future_fashion/dumps": "future_fashion/dumps",
+            "data/media/future_fashion": "media/future_fashion"
         }
     },
     "models": {

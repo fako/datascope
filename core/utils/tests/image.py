@@ -26,6 +26,7 @@ class TestImageGrid(TestCase):
     maxDiff = None
 
     def setUp(self):
+        super().setUp()
         self.image_grid = ImageGrid(4, 3, 16, 9)
         self.fit = monkey_patch_mock_image(MagicMock(Image.Image, size=(16, 9)))
         self.landscape = monkey_patch_mock_image(MagicMock(Image.Image, size=(20, 12)))
@@ -69,7 +70,7 @@ class TestImageGrid(TestCase):
             self.fail("Grid didn't reject too narrow and too short image")
         except ImageRejected:
             pass
-    
+
     def test_get_image_info(self):
         is_landscape, is_panorama, is_portrait = self.image_grid.get_image_info(self.landscape)
         self.assertTrue(is_landscape)

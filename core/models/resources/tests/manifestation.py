@@ -13,6 +13,7 @@ class TestManifestationResource(TestCase):
     fixtures = ["test-manifestation"]
 
     def setUp(self):
+        super().setUp()
         self.instance = Manifestation.objects.get(id=1)
 
     def test_get_data_sync(self):

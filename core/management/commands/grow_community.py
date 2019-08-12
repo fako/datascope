@@ -8,7 +8,7 @@ log = logging.getLogger("datagrowth.command")
 
 class Command(CommunityCommand):
     """
-    Continuously polls a Community until it's completely grown.
+    Grows a Community synchronously
     """
 
     def handle_community(self, community, *args, **options):

@@ -17,8 +17,8 @@ PATH_TO_PROJECT = ''
 URL_TO_PROJECT = '/'
 USE_WEBSOCKETS = False
 SECRET_KEY = 'default'
-DATABASE_TYPE = 'mysql'
-MYSQL_USER = 'root'
+DATABASE_TYPE = 'postgres'
+MYSQL_USER = 'postgres'
 MYSQL_PASSWORD = ''
 USE_MOCKS = False
 
@@ -38,6 +38,9 @@ try:
     from .secrets import *
 except ImportError:
     log.error("Could not import secret settings. Are they created? Do not run in production!")
+
+DATABASE_USER = os.environ.get('DJANGO_DATABASE_USER', MYSQL_USER)
+DATABASE_PASSWORD = os.environ.get('DJANGO_DATABASE_PASSWORD', MYSQL_PASSWORD)
 
 
 #######################################################
@@ -64,6 +67,8 @@ INSTALLED_APPS = (
     # 3rd party
     'django_celery_results',
     'rest_framework',
+    'rest_framework.authtoken',
+    'corsheaders',
     'raven.contrib.django.raven_compat',
     # Main app
     'datascope',
@@ -82,28 +87,15 @@ INSTALLED_APPS = (
     'setup_utrecht'
 )
 
-DATABASE_TYPES = {
-    'sqlite': {
-        'ENGINE': 'django.db.backends.sqlite3',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': PATH_TO_PROJECT + 'datascope.db',  # Or path to database file if using sqlite3.
-        'USER': '',                      # Not used with sqlite3.
-        'PASSWORD': '',                  # Not used with sqlite3.
-        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
-        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-    },
-    'mysql': {
-        'ENGINE': 'django.db.backends.mysql',  # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'datascope',
-        'USER': MYSQL_USER,                    # Not used with sqlite3.
-        'PASSWORD': MYSQL_PASSWORD,            # Not used with sqlite3.
-        'HOST': '127.0.0.1',
-        'OPTIONS': {
-            'charset': 'utf8mb4'
-        }
-    }
-}
 DATABASES = {
-    'default': DATABASE_TYPES[DATABASE_TYPE]
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'datascope',
+        'USER': DATABASE_USER,
+        'PASSWORD': DATABASE_PASSWORD,
+        'HOST': '127.0.0.1',
+        'PORT': os.environ.get('PGPORT', '5432')
+    }
 }
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
@@ -121,6 +113,23 @@ ALLOWED_HOSTS = [
     'ec2-34-251-167-142.eu-west-1.compute.amazonaws.com',
     '.2ndhandstylist.com',
 ]
+CORS_ORIGIN_WHITELIST = [
+    'localhost:9000',
+    '127.0.0.1:9000',
+    '10.0.2.2:9000',
+    'localhost:8080',
+    '127.0.0.1:8080',
+    '10.0.2.2:8080',
+    'data-scope.com',
+    'www.data-scope.com',
+    'globe-scope.com',
+    'www.globe-scope.com',
+    'debatkijker.nl',
+    'www.debatkijker.nl',
+    '2ndhandstylist.com',
+    'www.2ndhandstylist.com',
+]
+
 
 APPEND_SLASH = False
 
@@ -179,7 +188,7 @@ MEDIA_URL = URL_TO_PROJECT + 'media/'
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = PATH_TO_PROJECT + 'system/files/static/'
+STATIC_ROOT = PATH_TO_PROJECT + 'datascope/statics/'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -225,17 +234,14 @@ TEMPLATES = [
 ]
 
 MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
-
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # Datascope middleware
-    'core.middleware.origin.AllowOriginMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
 ROOT_URLCONF = 'datascope.urls'
@@ -298,10 +304,16 @@ LOGGING = {
 
 TEST_RUNNER = "core.tests.runner.DataScopeDiscoverRunner"
 
+SESSION_COOKIE_PATH = '/admin/'
+
 REST_FRAMEWORK = {
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
     #'DEFAULT_PAGINATION_CLASS': 'core.views.content.ContentPagination',
     'PAGE_SIZE': 100,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    )
 }
 
 # Celery settings

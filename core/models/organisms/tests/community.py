@@ -4,7 +4,8 @@ from django.test import TestCase
 
 from mock import Mock, patch
 
-from core.models.organisms import Individual, Collective, Growth, Community, Organism
+from datagrowth.datatypes.documents.db.base import DataStorage
+from core.models.organisms import Individual, Collective, Growth, Community
 from core.models.organisms.community import CommunityState
 from core.models.organisms.growth import GrowthState
 from core.tests.mocks.community import CommunityMock
@@ -18,7 +19,7 @@ class CommunityTestMixin(TestCase):
         if not issubclass(self.instance.__class__, Community):
             self.skipTest('CommunityTestMixin expected an self.instance that is a Community subclass')
         initial_input = self.instance.initial_input()
-        self.assertIsInstance(initial_input, Organism)
+        self.assertIsInstance(initial_input, DataStorage)
 
 
 class TestCommunityMock(CommunityTestMixin):

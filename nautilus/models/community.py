@@ -43,7 +43,7 @@ class LocaforaOrderOverviewCommunity(Community):
     COMMUNITY_BODY = []
 
     def finish_orders(self, out, err):
-        for customer in out.individual_set.all():
+        for customer in out.documents.all():
             clean_order_lines = []
             for order_line in customer.properties["orders"].values():
                 quantity = int(ceil(float(order_line["quantity"])))

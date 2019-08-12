@@ -15,12 +15,10 @@ Prerequisites
 
 This is the environment that you should have on your machine before installing Data Scope.
 
-* Python 3
-* MySQL
+* Docker
 
 Optionally you may also want to install
 
-* Redis (for background processing)
 * PhantomJS (for web scraping)
 
 Installation
@@ -43,12 +41,18 @@ for an installation in the Digital Ocean or Wikipedia cloud respectively.
 Then edit the ```datascope/bootstrap.py```, ```datascope/settings.py``` and ```datascope/secrets.py``` 
 to correct the setup of the machine/cloud.
 
-After this you need to setup the database correctly. Run the following commands. 
-You may need to specify the user and password flags in the MySQL command.
+After this you need to setup the services used by Datascope through Docker. You can run:
 
 ```bash
-mysql -e "CREATE DATABASE datascope CHARSET utf8mb4;"
-./manage.py migrate
+docker volume create --name postgres-data
+docker-compose up --build
+```
+
+When the services are created by Docker for the first time
+you can run the following docker-compose command to restart services.
+
+```bash
+docker-compose up
 ```
 
 
