@@ -145,16 +145,6 @@ class TestCollective(TransactionTestCase):
         results = self.instance.output({})
         self.assertEqual(results, [{}, {}, {}])
 
-    def test_json_content(self):
-        with patch('json.loads', return_value=[]) as json_loads:
-            json_content = self.instance.json_content
-            json_loads.assert_not_called()
-        content = loads(json_content)
-        self.assertEqual(
-            content, self.expected_content,
-            "JSON content did not meet expectation. Is get_json inside json_field.fields patched properly??"
-        )
-
     def test_split_content(self):
         self.skipTest("not tested")
 

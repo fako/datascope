@@ -126,11 +126,6 @@ class CollectionBase(DataStorage):
         """
         return self.documents.exists()
 
-    @property
-    def json_content(self):
-        json_content = [ind.json_content for ind in self.documents.all()]
-        return "[{}]".format(",".join(json_content))
-
     def split(self, train=0.8, validate=0.1, test=0.1, query_set=None, as_content=False):  # TODO: test to unlock
         assert train + validate + test == 1.0, "Expected sum of train, validate and test to be 1"
         assert train > 0, "Expected train set to be bigger than 0"

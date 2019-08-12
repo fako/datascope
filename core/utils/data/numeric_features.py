@@ -90,7 +90,7 @@ class NumericFeaturesFrame(object):
     @staticmethod
     def get_content_hash(content):
         content_json = json.dumps(content, cls=JSONEncoder) if not hasattr(content, "properties") else \
-            content.json_content
+            json.dumps(content.properties)
         hasher = hashlib.sha1()
         hasher.update(bytes(content_json, encoding="utf-8"))
         return hasher.digest()

@@ -91,10 +91,6 @@ class DocumentBase(DataStorage):
             _id=self.id
         )
 
-    @property
-    def json_content(self):
-        return self.get_properties_json()
-
     def output(self, *args):
         return self.output_from_content(self.content, *args)
 
