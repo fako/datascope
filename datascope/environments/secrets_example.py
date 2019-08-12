@@ -8,12 +8,12 @@
 SECRET_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 
 #######################################################
-# MYSQL
+# DATABASE
 #######################################################
-# Set these secrets when using MySQL database
+# Set these secrets when using a database
 
-MYSQL_USER = ''  # use 'django' for development
-MYSQL_PASSWORD = ''  # use 'ZV35A5x89pbHuiYSrvqroPHKDnng7dRF' for development
+DATABASE_USER = ''  # use 'django' for development
+DATABASE_PASSWORD = ''  # use 'ubjJYxrEzLmDDKmqVNsFbJSr8wjMU5BV' for development
 
 #######################################################
 # OPTIONAL
@@ -24,9 +24,6 @@ MYSQL_PASSWORD = ''  # use 'ZV35A5x89pbHuiYSrvqroPHKDnng7dRF' for development
 GOOGLE_API_KEY = ''
 INDICO_API_KEY = ''
 WIZENOZE_API_KEY = ''
-
-# Sentry error handling
-RAVEN_DSN = ''
 
 # Django email settings
 # Documentation: https://docs.djangoproject.com/en/1.11/ref/settings/#std:setting-EMAIL_HOST

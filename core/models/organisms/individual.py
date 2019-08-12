@@ -6,7 +6,7 @@ from django.core.urlresolvers import reverse
 from datagrowth.datatypes import DocumentBase, DocumentMysql
 
 
-class Individual(DocumentBase, DocumentMysql):
+class Individual(DocumentMysql, DocumentBase):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+")

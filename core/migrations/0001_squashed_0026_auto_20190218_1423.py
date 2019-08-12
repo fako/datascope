@@ -164,7 +164,7 @@ class Migration(migrations.Migration):
                 ('completed_at', models.DateTimeField(blank=True, null=True)),
                 ('community_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='+', to='contenttypes.ContentType')),
                 ('config', datagrowth.configuration.fields.ConfigurationField()),
-                ('modified_at', models.DateTimeField(auto_now=True, default=datetime.datetime(2017, 3, 15, 16, 39, 32, 564893))),
+                ('modified_at', models.DateTimeField(auto_now=True)),
                 ('purge_at', models.DateTimeField(blank=True, null=True)),
                 ('retainer_id', models.PositiveIntegerField(blank=True, null=True)),
                 ('retainer_type', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='contenttypes.ContentType')),

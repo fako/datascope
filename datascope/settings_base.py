@@ -18,8 +18,8 @@ URL_TO_PROJECT = '/'
 USE_WEBSOCKETS = False
 SECRET_KEY = 'default'
 DATABASE_TYPE = 'postgres'
-MYSQL_USER = 'postgres'
-MYSQL_PASSWORD = ''
+DATABASE_USER = 'postgres'
+DATABASE_PASSWORD = ''
 USE_MOCKS = False
 
 from PIL import ImageFile
@@ -39,8 +39,8 @@ try:
 except ImportError:
     log.error("Could not import secret settings. Are they created? Do not run in production!")
 
-DATABASE_USER = os.environ.get('DJANGO_DATABASE_USER', MYSQL_USER)
-DATABASE_PASSWORD = os.environ.get('DJANGO_DATABASE_PASSWORD', MYSQL_PASSWORD)
+DATABASE_USER = os.environ.get('DJANGO_DATABASE_USER', DATABASE_USER)
+DATABASE_PASSWORD = os.environ.get('DJANGO_DATABASE_PASSWORD', DATABASE_PASSWORD)
 
 
 #######################################################
@@ -69,7 +69,6 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    'raven.contrib.django.raven_compat',
     # Main app
     'datascope',
     # Framework apps
@@ -267,10 +266,6 @@ LOGGING = {
         },
     },
     'handlers': {
-        'sentry': {
-            'level': 'WARNING',
-            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler'
-        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler'
@@ -285,12 +280,12 @@ LOGGING = {
     },
     'loggers': {
         'django.request': {
-            'handlers': ['console', 'sentry'],
+            'handlers': ['console'],
             'level': 'ERROR',
             'propagate': True,
         },
         'datascope': {
-            'handlers': ['file', 'sentry'],
+            'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': False,
         },
@@ -308,7 +303,7 @@ SESSION_COOKIE_PATH = '/admin/'
 
 REST_FRAMEWORK = {
     'DEFAULT_VERSIONING_CLASS': 'rest_framework.versioning.NamespaceVersioning',
-    #'DEFAULT_PAGINATION_CLASS': 'core.views.content.ContentPagination',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',

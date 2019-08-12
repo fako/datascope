@@ -5,7 +5,7 @@ from datascope.settings_base import *
 DATABASES["default"]["ENGINE"] = "django.db.backends.mysql"
 DATABASES["default"]["NAME"] = "s52573__datascope"
 DATABASES["default"]["USER"] = "s52573"
-DATABASES["default"]["PASSWORD"] = MYSQL_PASSWORD
+DATABASES["default"]["PASSWORD"] = DATABASE_PASSWORD
 DATABASES["default"]["HOST"] = "tools-db"
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -21,11 +21,5 @@ CELERY_BROKER_URL = "redis://tools-redis:6379/0"
 # }
 
 MAX_BATCH_SIZE = 100
-
-RAVEN_CONFIG = {
-    "dsn": RAVEN_DSN,
-    "release": DATASCOPE_VERSION,
-    "site": "tools.wmflabs.org"
-}
 
 STATIC_IP = '127.0.0.1'

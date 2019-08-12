@@ -42,3 +42,7 @@ class Resource(models.Model):
     @property
     def content(self):
         raise NotImplementedError("Missing implementation for content property on {}".format(self.__class__.__name__))
+
+    @classmethod
+    def get_name(cls):
+        return cls._meta.model_name
