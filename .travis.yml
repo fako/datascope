@@ -1,6 +1,5 @@
 language: python
 python:
-  - "3.4"
   - "3.5"
   - "3.6"
 # command to install dependencies
@@ -22,4 +21,4 @@ addons:
     - postgresql-client-10
 env:
   global:
-  - PGPORT=5433
+  - PGPORT=5432
