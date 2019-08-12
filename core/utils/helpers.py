@@ -7,7 +7,7 @@ from functools import reduce
 
 from django.apps import apps as django_apps
 
-from datagrowth.utils import parse_datetime_string, format_datetime
+from datagrowth.utils import parse_datetime_string, format_datetime, override_dict
 
 
 
@@ -20,12 +20,6 @@ def get_any_model(name):  # TODO: test to unlock
     except StopIteration:
         raise LookupError("Could not find {} in any app_labels".format(name))
     return django_apps.get_model(app_label, name)
-
-
-def override_dict(parent, child):  # TODO: test to unlock
-    assert isinstance(parent, dict), "The parent is not a dictionary."
-    assert isinstance(child, dict), "The child is not a dictionary"
-    return dict(parent.copy(), **child)
 
 
 def merge_iter(*iterables, **kwargs):  # TODO: test to unlock, works bad with empty iterables (don't flush RankProcessor.score at end for instance)

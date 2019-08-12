@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 from unittest import TestCase
 
-from datagrowth.utils import parse_datetime_string, format_datetime
+from datagrowth.utils import parse_datetime_string, format_datetime, override_dict
 
 
 class TestDatetimeUtils(TestCase):
@@ -33,3 +33,55 @@ class TestIteratorUtils(TestCase):
 
     def test_ibatch(self):
         self.skipTest("not tested")
+
+
+class TestOverrideDict(TestCase):
+
+    def setUp(self):
+        self.parent = {
+            "test": "test",
+            "test1": "parent"
+        }
+        self.child = {
+            "test1": "child",
+            "test2": "child2"
+        }
+
+    def test_override_dict(self):
+        new_dict = override_dict(self.parent, self.child)
+        self.assertEqual(new_dict, {"test": "test", "test1": "child", "test2": "child2"})
+        new_dict = override_dict({}, self.child)
+        self.assertEqual(new_dict, self.child)
+        new_dict = override_dict(self.parent, {})
+        self.assertEqual(new_dict, self.parent)
+
+    def test_invalid_input(self):
+        try:
+            override_dict(self.parent, "child")
+            self.fail("override_dict did not fail when receiving other type than dict as child")
+        except AssertionError:
+            pass
+        try:
+            override_dict(["parent"], self.child)
+            self.fail("override_dict did not fail when receiving other type than dict as parent")
+        except AssertionError:
+            pass
+
+    def test_override_dict_deep(self):
+        self.parent["deep"] = {
+            "constant": True,
+            "variable": False
+        }
+        self.child["deep"] = {
+            "variable": True
+        }
+        new_dict = override_dict(self.parent, self.child)
+        self.assertEqual(new_dict, {
+            "test": "test",
+            "test1": "child",
+            "test2": "child2",
+            "deep": {
+                # NB: deletes the constant key from parent!!
+                "variable": True
+            }
+        })

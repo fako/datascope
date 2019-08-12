@@ -47,3 +47,9 @@ def reach(path, data):
     # We try the path as key/index or return None.
     path = int(path) if path.isdigit() else path
     return root[path] if path in root else None
+
+
+def override_dict(parent, child):
+    assert isinstance(parent, dict), "The parent is not a dictionary."
+    assert isinstance(child, dict), "The child is not a dictionary"
+    return dict(parent.copy(), **child)
