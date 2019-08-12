@@ -144,7 +144,7 @@ class Migration(migrations.Migration):
                 ('match_style', models.CharField(blank=True, max_length=20, null=True)),
                 ('bottom_item', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='future_fashion.Document')),
                 ('top_item', models.ForeignKey(on_delete=django.db.models.deletion.DO_NOTHING, related_name='+', to='future_fashion.Document')),
-                ('created_at', models.DateTimeField(auto_now_add=True, default=django.utils.timezone.now)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
             ],
         ),
         migrations.CreateModel(
