@@ -96,10 +96,10 @@ class DocumentBase(DataStorage):
         return self.get_properties_json()
 
     def output(self, *args):
-        return self.output_from_content(self.properties, *args)
+        return self.output_from_content(self.content, *args)
 
     @staticmethod
-    def output_from_content(content, *args):  # TODO: test to unlock
+    def output_from_content(content, *args):
         if len(args) > 1:
             return map(DocumentBase.output_from_content, repeat(content), args)
         frm = args[0]

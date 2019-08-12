@@ -34,24 +34,31 @@ class TestIndividual(TestCase):
         except ValueError:
             pass
 
-    def test_output(self):
-        results = self.instance.output("$.value")
+    @patch("datagrowth.datatypes.DocumentBase.output_from_content")
+    def test_output(self, output_from_content):
+        # Method is pending deprecation. We check whether replacement function is getting called correctly
+        self.instance.output("$.value")
+        output_from_content.assert_called_once_with(self.instance.content, "$.value")
+
+    def test_output_from_content(self):
+        results = self.instance.output_from_content(self.instance.content, "$._id")
+        self.assertEqual(results, self.instance.id)
+        results = self.instance.output_from_content(self.instance.content, "$.value")
         self.assertEqual(results, self.value_outcome)
-        results = self.instance.output("$.value", "$.value")
+        results = self.instance.output_from_content(self.instance.content, "$.value", "$.value")
         self.assertEqual(list(results), [self.value_outcome, self.value_outcome])
-        results = self.instance.output(["$.value"])
+        results = self.instance.output_from_content(self.instance.content, ["$.value"])
         self.assertEqual(results, [self.value_outcome])
-        results = self.instance.output(["$.value", "$.value"])
+        results = self.instance.output_from_content(self.instance.content, ["$.value", "$.value"])
         self.assertEqual(list(results), [self.value_outcome, self.value_outcome])
-        results = self.instance.output([])
+        results = self.instance.output_from_content(self.instance.content, [])
         self.assertEqual(results, [])
-        results = self.instance.output({"value": "$.value"})
+        results = self.instance.output_from_content(self.instance.content, {"value": "$.value"})
         self.assertEqual(results, self.dict_outcome)
-        results = self.instance.output([{"value": "$.value"}, {"value": "$.value"}])
+        results = self.instance.output_from_content(self.instance.content, [{"value": "$.value"}, {"value": "$.value"}])
         self.assertEqual(list(results), [self.dict_outcome, self.dict_outcome])
-        results = self.instance.output({})
+        results = self.instance.output_from_content(self.instance.content, {})
         self.assertEqual(results, {})
-        self.skipTest("Refactor to output_from_content")
 
     def test_update(self):
         self.skipTest("not tested")
