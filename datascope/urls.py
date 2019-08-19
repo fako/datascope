@@ -31,7 +31,6 @@ legacy_patterns = [
 legacy_patterns += wiki_feed_patterns
 legacy_patterns += visual_translations_patterns
 legacy_patterns += wiki_scope_patterns
-legacy_patterns += online_discourse_patterns
 if settings.USE_MOCKS:
     from core.tests.mocks.urls import urlpatterns as mock_patterns
     legacy_patterns += mock_patterns
@@ -43,6 +42,7 @@ if settings.USE_MOCKS:
 
 datagrowth_patterns = [
     url(r'^future-fashion/', include(future_fashion_patterns, namespace="future-fashion")),
+    url(r'^discourse-search/', include(online_discourse_patterns, namespace="online-discourse")),
 ]
 
 
