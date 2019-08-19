@@ -381,3 +381,22 @@ class Community(models.Model, ProcessorMixin):
     class Meta:
         abstract = True
         get_latest_by = "created_at"
+
+
+class CommunityCollectionDocumentMixin(models.Model):
+
+    collection_set = GenericRelation("Collection", content_type_field="community_type", object_id_field="community_id")
+    document_set = GenericRelation("Document", content_type_field="community_type", object_id_field="community_id")
+    collective_set = None
+    individual_set = None
+
+    @property
+    def collections(self):
+        return self.collection_set
+
+    @property
+    def documents(self):
+        return self.document_set
+
+    class Meta:
+        abstract = True

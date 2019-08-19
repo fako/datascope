@@ -24,9 +24,7 @@ class CollectionBase(DataStorage):
 
     @property
     def documents(self):
-        # This method should be smart about returning the correct document_set
-        Document = self.get_document_model()
-        return Document.objects.all()
+        raise NotImplementedError("CollectionBase needs to implement the documents property to work correctly")
 
     @property
     def annotations(self):

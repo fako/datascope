@@ -147,6 +147,8 @@ class DocumentMysql(models.Model):
 
     class Meta:
         abstract = True
+        get_latest_by = "id"
+        ordering = ["id"]
 
 
 class DocumentPostgres(models.Model):
@@ -155,3 +157,5 @@ class DocumentPostgres(models.Model):
 
     class Meta:
         abstract = True
+        get_latest_by = "id"
+        ordering = ["id"]
