@@ -1,6 +1,7 @@
 import logging
 import os
 from tqdm import tqdm
+import json
 
 from django.apps import apps
 from django.core.serializers import deserialize
@@ -44,8 +45,11 @@ class Command(DatasetCommand):
             if isinstance(obj, self.Individual):
                 model = self.Document
                 for obj in objects:
+                    collection_id = obj.collective_id if obj.collective_id else None
                     obj.__class__ = model
-                    obj.collection = obj.collective if isinstance(obj, self.Individual) else None
+                    obj.collection_id = collection_id
+                    if isinstance(obj.properties, str):
+                        obj.properties = json.loads(obj.properties)
             elif isinstance(obj, self.Collective):
                 model = self.Collection
                 for obj in objects:
