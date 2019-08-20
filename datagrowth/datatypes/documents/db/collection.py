@@ -63,11 +63,13 @@ class CollectionBase(DataStorage):
 
     def add(self, data, validate=True, reset=False, batch_size=500, collection=None):
         """
-        Update the instance with new data by adding to the Collection
-        or by updating Documents that members off the Collection.
+        Add new data to the Collection in batches, possibly deleting all data before adding.
 
         :param data: The data to use for the update
         :param validate: (optional) whether to validate data or not (yes by default)
+        :param reset: (optional) whether to delete existing data or not (no by default)
+        :param batch_size: (optional) how many instances to add in a single batch (default: 500)
+        :param collection: (optional) a collection instance to add the data to (default: self)
         :return: A list of updated or created instances.
         """
         collection = collection or self

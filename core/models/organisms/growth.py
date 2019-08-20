@@ -174,7 +174,7 @@ class Growth(models.Model, ProcessorMixin):
     def append_to_output(self, contributions):
         assert isinstance(self.output, (Collective, CollectionBase)), \
             "append_to_output expects a Collective or Collection as output"
-        self.output.update(contributions)
+        self.output.add(contributions)
 
     def inline_by_key(self, contributions, inline_key):
         assert isinstance(self.output, (Collective, CollectionBase)), \
@@ -185,24 +185,24 @@ class Growth(models.Model, ProcessorMixin):
         self.output.identifier = "{}.{}".format(original_identifier, original_identifier)
         self.output.save()
         for contribution in contributions:
-            affected_individuals = self.output.documents.filter(identity=contribution[inline_key])
-            for individual in affected_individuals.iterator():
-                individual.properties[inline_key] = contribution
-                individual.clean()
-                individual.save()
+            affected_documents = self.output.documents.filter(identity=contribution[inline_key])
+            for document in affected_documents.iterator():
+                document.properties[inline_key] = contribution
+                document.clean()
+                document.save()
 
     def _update_collection_by_key(self, contributions, update_key):
         for contribution in contributions:
             identifier = self.output.identifier
             assert identifier == update_key, \
                 "Identifier of output '{}' does not match update key '{}'".format(identifier, update_key)
-            affected_individuals = self.output.documents.filter(identity=contribution[update_key])
-            for individual in affected_individuals.iterator():
-                individual.update(contribution)
-                individual.clean()
-                individual.save()
+            affected_documents = self.output.documents.filter(identity=contribution[update_key])
+            for document in affected_documents.iterator():
+                document.update(contribution)
+                document.clean()
+                document.save()
 
-    def _update_individual_by_key(self, contributions, update_key):
+    def _update_document_by_key(self, contributions, update_key):
         for contribution in contributions:
             assert update_key in self.output.properties, \
                 "Output does not contain update key '{}'".format(update_key)
@@ -214,7 +214,7 @@ class Growth(models.Model, ProcessorMixin):
         if isinstance(self.output, (Collective, CollectionBase)):
             self._update_collection_by_key(contributions, update_key)
         elif isinstance(self.output, (Individual, DocumentBase)):
-            self._update_individual_by_key(contributions, update_key)
+            self._update_document_by_key(contributions, update_key)
         else:
             raise AssertionError("update_by_key expects a Collective/Collection or Individual/Document as output")
 
