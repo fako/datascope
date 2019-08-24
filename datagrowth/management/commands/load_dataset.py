@@ -2,6 +2,7 @@ import logging
 import os
 from tqdm import tqdm
 import json
+import re
 
 from django.apps import apps
 from django.core.serializers import deserialize
@@ -32,7 +33,10 @@ class Command(DatasetCommand):
         for entry in os.scandir(get_dumps_path(self.model)):
             if entry.is_file() and not entry.name.startswith("."):
                 instance = self.model()
-                instance.signature = entry.name[:-5]
+                file_match = re.search("(?P<signature>.+?)\.?(?P<pk>\d+)?\.json$", entry.name)
+                file_info = file_match.groupdict()
+                instance.signature = file_info["signature"]
+                instance.file_path = entry.path  # this property gets added especially for the command
                 datasets.append(instance)
         return datasets
 
@@ -78,12 +82,10 @@ class Command(DatasetCommand):
             self.Individual = apps.get_model("core", "Individual")
             self.Collection = apps.get_model(dataset._meta.app_label, "Collection")
             self.Collective = apps.get_model("core", "Collective")
-        source = get_dumps_path(dataset)
-        file_name = os.path.join(source, "{}.json".format(dataset.signature))
-        if not os.path.exists(file_name):
+        if not os.path.exists(dataset.file_path):
             log.error("Dump with signature {} does not exist".format(dataset.signature))
             exit(1)
-        with open(file_name, "r") as dump_file:
+        with open(dataset.file_path, "r") as dump_file:
             batch_count = 0
             for _ in dump_file.readlines():
                 batch_count += 1

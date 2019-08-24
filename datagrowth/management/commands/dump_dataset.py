@@ -29,7 +29,7 @@ class Command(DatasetCommand):
         destination = get_dumps_path(dataset)
         if not os.path.exists(destination):
             os.makedirs(destination)
-        file_name = os.path.join(destination, "{}.json".format(dataset.signature))
+        file_name = os.path.join(destination, "{}.{}.json".format(dataset.signature, dataset.id))
         with open(file_name, "w") as json_file:
             self.object_to_disk(dataset, json_file)
             self.queryset_to_disk(dataset.growth_set, json_file)
