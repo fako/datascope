@@ -18,8 +18,8 @@ URL_TO_PROJECT = '/'
 USE_WEBSOCKETS = False
 SECRET_KEY = 'default'
 DATABASE_TYPE = 'postgres'
-MYSQL_USER = 'postgres'
-MYSQL_PASSWORD = ''
+DATABASE_USER = 'postgres'
+DATABASE_PASSWORD = ''
 USE_MOCKS = False
 
 from PIL import ImageFile
@@ -39,8 +39,8 @@ try:
 except ImportError:
     log.error("Could not import secret settings. Are they created? Do not run in production!")
 
-DATABASE_USER = os.environ.get('DJANGO_DATABASE_USER', MYSQL_USER)
-DATABASE_PASSWORD = os.environ.get('DJANGO_DATABASE_PASSWORD', MYSQL_PASSWORD)
+DATABASE_USER = os.environ.get('DJANGO_DATABASE_USER', DATABASE_USER)
+DATABASE_PASSWORD = os.environ.get('DJANGO_DATABASE_PASSWORD', DATABASE_PASSWORD)
 
 
 #######################################################

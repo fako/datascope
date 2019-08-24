@@ -12,8 +12,8 @@ SECRET_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 #######################################################
 # Set these secrets when using MySQL database
 
-MYSQL_USER = ''  # use 'django' for development
-MYSQL_PASSWORD = ''  # use 'ZV35A5x89pbHuiYSrvqroPHKDnng7dRF' for development
+DATABASE_USER = ''  # use 'django' for development
+DATABASE_PASSWORD = ''  # use 'ZV35A5x89pbHuiYSrvqroPHKDnng7dRF' for development
 
 #######################################################
 # OPTIONAL
