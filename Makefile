@@ -11,6 +11,9 @@ deploy: clean
 backup-db:
 	pg_dump -h localhost -U postgres datascope > data/datascope.postgres.sql
 
+import-db:
+	cat $(backup) | psql -h localhost -U postgres datascope
+
 backup-data:
 	# Syncing local data to a harddrive
 	# -z means use compression

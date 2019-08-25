@@ -13,7 +13,7 @@ SECRET_KEY = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 # Set these secrets when using a database
 
 DATABASE_USER = ''  # use 'django' for development
-DATABASE_PASSWORD = ''  # use 'ZV35A5x89pbHuiYSrvqroPHKDnng7dRF' for development
+DATABASE_PASSWORD = ''  # use 'ubjJYxrEzLmDDKmqVNsFbJSr8wjMU5BV' for development
 
 #######################################################
 # OPTIONAL
