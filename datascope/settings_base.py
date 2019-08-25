@@ -69,7 +69,6 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    'raven.contrib.django.raven_compat',
     # Main app
     'datascope',
     # Framework apps
@@ -267,10 +266,6 @@ LOGGING = {
         },
     },
     'handlers': {
-        'sentry': {
-            'level': 'WARNING',
-            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler'
-        },
         'console': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler'
@@ -285,12 +280,12 @@ LOGGING = {
     },
     'loggers': {
         'django.request': {
-            'handlers': ['console', 'sentry'],
+            'handlers': ['console'],
             'level': 'ERROR',
             'propagate': True,
         },
         'datascope': {
-            'handlers': ['file', 'sentry'],
+            'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': False,
         },

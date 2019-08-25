@@ -25,9 +25,6 @@ GOOGLE_API_KEY = ''
 INDICO_API_KEY = ''
 WIZENOZE_API_KEY = ''
 
-# Sentry error handling
-RAVEN_DSN = ''
-
 # Django email settings
 # Documentation: https://docs.djangoproject.com/en/1.11/ref/settings/#std:setting-EMAIL_HOST
 EMAIL_HOST_USER = ''

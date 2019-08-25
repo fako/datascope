@@ -1,3 +1,6 @@
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 from datascope.settings_base import *
 
 DATABASES["default"]["NAME"] = 'datascope'
@@ -6,11 +9,13 @@ DATABASES["default"]["PASSWORD"] = DATABASE_PASSWORD
 
 STATIC_IP = "34.251.167.142"
 
-RAVEN_CONFIG = {
-    'dsn': RAVEN_DSN,
-    'release': DATASCOPE_VERSION,
-    'site': '34.251.167.142'
-}
+# Sentry error reporting
+sentry_sdk.init(
+    dsn="https://8402764df7cc487b93b15cf2163c456f@sentry.io/1277824",
+    integrations=[DjangoIntegration()],
+    release=DATASCOPE_VERSION,
+    server_name='data-scope.com'
+)
 
 # This disables sessions for other than admin
 # CSRF problems with rest_framework need to be solved

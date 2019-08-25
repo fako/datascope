@@ -22,10 +22,4 @@ CELERY_BROKER_URL = "redis://tools-redis:6379/0"
 
 MAX_BATCH_SIZE = 100
 
-RAVEN_CONFIG = {
-    "dsn": RAVEN_DSN,
-    "release": DATASCOPE_VERSION,
-    "site": "tools.wmflabs.org"
-}
-
 STATIC_IP = '127.0.0.1'
