@@ -9,17 +9,22 @@ deploy: clean
 	sudo service celeryd restart
 
 backup-db:
-	mysqldump -uroot -p --databases datascope > data/datascope.mysql.sql
 	pg_dump -h localhost -U postgres datascope > data/datascope.postgres.sql
 
+import-db:
+	cat $(backup) | psql -h localhost -U postgres datascope
+
 backup-data:
+	# Syncing local data to a harddrive
+	# -z means use compression
+	# -r means recursive
+	# -t means preserve creation and modification times
+	# -h means human readable output
+	# -v means verbose
 	rsync -zrthv --progress data /Volumes/Leo65/data/datascope
 
 start-celery:
 	celery -A datascope worker --loglevel=info -B
-
-start-mysql:
-	mysql --protocol=tcp -uroot -p
 
 start-postgres:
 	psql -h localhost -U postgres -d postgres

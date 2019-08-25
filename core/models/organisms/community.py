@@ -10,6 +10,7 @@ from django.db.models.query import QuerySet
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, ContentType
 
 from datagrowth.datatypes.documents.db.base import DataStorage
+from datagrowth.datatypes import CollectionBase
 from datagrowth.configuration import ConfigurationField
 from core.models.organisms.states import CommunityState, COMMUNITY_STATE_CHOICES
 from core.models.organisms import Growth, Collective, Individual
@@ -189,14 +190,14 @@ class Community(models.Model, ProcessorMixin):
                 inp = grw.output
             elif inp is None:
                 inp = self.initial_input(*args)
-            elif inp.startswith("Collective"):
+            elif inp.startswith("Collective") or inp.startswith("Collection"):
                 if "#" in inp:
                     inp, identifier = inp.split("#")
                 else:
                     identifier = None
                 inp = self.create_organism(inp, sch, identifier)
                 inp.identifier = identifier
-            elif inp == "Individual":
+            elif inp == "Individual" or inp == "Document":
                 inp = self.create_organism(inp, sch)
 
             out = growth_config["output"]
@@ -212,14 +213,14 @@ class Community(models.Model, ProcessorMixin):
                 out = grw.output
             elif out == "&input":
                 out = inp
-            elif out.startswith("Collective"):
+            elif out.startswith("Collective") or out.startswith("Collection"):
                 if "#" in out:
                     out, identifier = out.split("#")
                 else:
                     identifier = None
                 out = self.create_organism(out, sch, identifier)
                 out.identifier = identifier
-            elif out == "Individual":
+            elif out == "Individual" or out == "Document":
                 out = self.create_organism(out, sch)
             else:
                 raise AssertionError("Invalid value for output: {}".format(out))
@@ -338,7 +339,7 @@ class Community(models.Model, ProcessorMixin):
             if data is None:
                 if not issubclass(processor.__class__, QuerySetProcessor):
                     data = self.kernel.content
-                elif isinstance(self.kernel, Collective):
+                elif isinstance(self.kernel, (Collective, CollectionBase,)):
                     data = self.kernel.documents.all()
                 else:
                     raise AssertionError("Kernel can't be other than Collective when using a QuerySetProcessor")
@@ -381,3 +382,22 @@ class Community(models.Model, ProcessorMixin):
     class Meta:
         abstract = True
         get_latest_by = "created_at"
+
+
+class CommunityCollectionDocumentMixin(models.Model):
+
+    collection_set = GenericRelation("Collection", content_type_field="community_type", object_id_field="community_id")
+    document_set = GenericRelation("Document", content_type_field="community_type", object_id_field="community_id")
+    collective_set = None
+    individual_set = None
+
+    @property
+    def collections(self):
+        return self.collection_set
+
+    @property
+    def documents(self):
+        return self.document_set
+
+    class Meta:
+        abstract = True

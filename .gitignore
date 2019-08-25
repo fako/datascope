@@ -14,7 +14,6 @@ datagrowth/docs/_build/
 datascope/settings.py
 datascope/bootstrap.py
 datascope/secrets.py
-datascope/mysql/data/
 datascope/logs/
 datascope/statics/
 

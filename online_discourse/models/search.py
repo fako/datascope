@@ -20,14 +20,15 @@ import json_field
 
 from datagrowth.utils import get_model_path
 from datagrowth.resources import HttpResource
-from core.models.organisms import Community, Collective, Individual
+from core.models.organisms import Community, CommunityCollectionDocumentMixin
 from core.models.organisms.states import CommunityState
 from core.utils.helpers import cross_combine
+from online_discourse.models import Collection, Document
 from online_discourse.discourse import configurations
 from online_discourse.processors import TopicDetector, EntityDetector, OnlineDiscourseRankProcessor
 
 
-class DiscourseSearchCommunity(Community):
+class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
 
     aggregates = json_field.JSONField(default={}, blank=True)
 
@@ -36,7 +37,7 @@ class DiscourseSearchCommunity(Community):
             "process": "HttpResourceProcessor.fetch_mass",
             "input": None,
             "contribute": "Append:ExtractProcessor.extract_from_resource",
-            "output": "Collective#url",
+            "output": "Collection#url",
             "config": {
                 "_args": ["$.query", "$.quantity"],
                 "_kwargs": {},
@@ -134,6 +135,8 @@ class DiscourseSearchCommunity(Community):
         }
     ]
 
+    DATAGROWTH = True
+
     SPACY_PACKAGES = {
         "en": "en_core_web_lg",
         "nl": "nl_core_news_sm"
@@ -153,11 +156,11 @@ class DiscourseSearchCommunity(Community):
             configuration.singular_subjects + configuration.plural_subjects,
             configuration.descriptive_adjectives
         )
-        collective = Collective.objects.create(community=self, schema={})
+        collection = Collection.objects.create(community=self, schema={})
         for terms in combinations:
-            Individual.objects.create(
+            Document.objects.create(
                 community=self,
-                collective=collective,
+                collection=collection,
                 properties={
                     "terms": "+".join(terms),
                     "query": " AND ".join(
@@ -169,48 +172,48 @@ class DiscourseSearchCommunity(Community):
                     "quantity": 10
                 }
             )
-        return collective
+        return collection
 
-    def _set_source_data(self, individual):
-        url = URLObject(individual.properties["url"])
+    def _set_source_data(self, document):
+        url = URLObject(document.properties["url"])
         source = url.hostname
         if source.startswith("www."):
             source = source.replace("www.", "", 1)
-        individual.properties["source"] = source
-        individual.properties["home"] = "{}://{}".format(url.scheme, url.hostname)
-        return individual
+        document.properties["source"] = source
+        document.properties["home"] = "{}://{}".format(url.scheme, url.hostname)
+        return document
 
-    def _set_main_content(self, individual):
+    def _set_main_content(self, document):
 
         # Loading data
-        data = individual.properties.get("tika", {}) or {}
+        data = document.properties.get("tika", {}) or {}
         content_type = data.get("content_type", "text/html")
         mime_type, encoding = HttpResource.parse_content_type(content_type)
         if not mime_type.startswith("text/html"):
-            individual["content"] = data.get("content", "") or ""  # prevents None
-            individual["content"] = individual["content"].split("\n")
-            return individual
+            document["content"] = data.get("content", "") or ""  # prevents None
+            document["content"] = document["content"].split("\n")
+            return document
         try:
             with open(data["resourcePath"], encoding=encoding) as fp:
                 article = BeautifulSoup(fp, "html5lib")
-            with open(individual.properties["home_resource"], encoding=encoding) as fp:
+            with open(document.properties["home_resource"], encoding=encoding) as fp:
                 home = BeautifulSoup(fp, "html5lib")
         except FileNotFoundError:
-            log.warning("Missing a file for individual: {}".format(individual.id))
-            individual["content"] = []
-            return individual
+            log.warning("Missing a file for document: {}".format(document.id))
+            document["content"] = []
+            return document
         except UnicodeDecodeError:
-            log.warning("Encoding error with file for individual: {}".format(individual.id))
-            individual["content"] = []
-            return individual
+            log.warning("Encoding error with file for document: {}".format(document.id))
+            document["content"] = []
+            return document
         except KeyError:
-            log.warning("Key error with file for individual when setting main content: {}".format(individual.id))
-            individual["content"] = []
-            return individual
+            log.warning("Key error with file for document when setting main content: {}".format(document.id))
+            document["content"] = []
+            return document
         except LookupError:
-            log.warning("Lookup error with file encoding for individual when setting main content: {}".format(individual.id))
-            individual["content"] = []
-            return individual
+            log.warning("Lookup error with file encoding for document when setting main content: {}".format(document.id))
+            document["content"] = []
+            return document
 
         # Calculate text diff between home, article and Tika
         raw_content = data.get("content", "")  # prevents None with empty content
@@ -233,12 +236,12 @@ class DiscourseSearchCommunity(Community):
                 else:
                     junk_contents += text.split("\n")
 
-        individual.properties["junk"] = junk_contents
-        individual.properties["content"] = article_contents
-        return individual
+        document.properties["junk"] = junk_contents
+        document.properties["content"] = article_contents
+        return document
 
-    def _set_author(self, individual):
-        data = individual.properties.get("tika", {})
+    def _set_author(self, document):
+        data = document.properties.get("tika", {})
         author = data.get("author", None)
         if author and isinstance(author, str):
             pass
@@ -246,23 +249,23 @@ class DiscourseSearchCommunity(Community):
             author = author[0]  # TODO: we take the primary author now, but should also consider other authors
         else:
             author = None
-        individual.properties["author"] = author
-        return individual
+        document.properties["author"] = author
+        return document
 
     def finish_search(self, out, err):
         log.info("Filter duplicates, save source and delete invalid")
-        total = out.individual_set.count()
+        total = out.documents.count()
         current_entry = None
         deletes = []
         # Filter out duplicates, but keep track of terms where pages were found
         # It also sets the source and home page URL for each result
-        for entry in tqdm(out.individual_set.order_by("identity").iterator(), total=total):
+        for entry in tqdm(out.documents.order_by("identity").iterator(), total=total):
             if current_entry is None or current_entry.identity != entry.identity:
                 if current_entry is not None:
                     current_entry = self._set_source_data(current_entry)
                     current_entry.save()
                 if len(deletes):
-                    out.individual_set.filter(id__in=deletes).delete()
+                    out.documents.filter(id__in=deletes).delete()
                 current_entry = entry
                 deletes = []
                 if isinstance(current_entry.properties["term"], str):
@@ -271,19 +274,19 @@ class DiscourseSearchCommunity(Community):
                 current_entry.properties["term"].append(entry.properties["term"])
                 deletes.append(entry.id)
         # Removing invalid entries
-        deletes = out.individual_set.filter(identity__isnull=True).delete()
+        deletes = out.documents.filter(identity__isnull=True).delete()
         log.info("Deletes: {}".format(deletes))
 
     def begin_download_home(self, out):
         log.info("Resetting identifier to 'home' and delete invalid")
         out.identifier = "home"
         out.save()
-        total = out.individual_set.count()
-        for entry in tqdm(out.individual_set.iterator(), total=total):
+        total = out.documents.count()
+        for entry in tqdm(out.documents.iterator(), total=total):
             entry.clean()
             entry.save()
         # Removing invalid entries
-        deletes = out.individual_set.filter(identity__isnull=True).delete()
+        deletes = out.documents.filter(identity__isnull=True).delete()
         log.info("Deletes: {}".format(deletes))
 
     def begin_content(self, out):
@@ -291,11 +294,11 @@ class DiscourseSearchCommunity(Community):
         log.info("Resetting identifier to 'resourcePath' and deleting non-content entries")
         out.identifier = "resourcePath"
         out.save()
-        total = out.individual_set.count()
-        for entry in tqdm(out.individual_set.iterator(), total=total):
+        total = out.documents.count()
+        for entry in tqdm(out.documents.iterator(), total=total):
             entry.clean()
             entry.save()
-        deletes = out.individual_set.filter(identity__isnull=True).delete()
+        deletes = out.documents.filter(identity__isnull=True).delete()
         log.info("Deletes: {}".format(deletes))
 
     def finish_content(self, out, err):
@@ -305,7 +308,7 @@ class DiscourseSearchCommunity(Community):
         query_filter = Q()
         for topic in configuration.topics:
             query_filter |= Q(properties__icontains=topic)
-        deletes = out.individual_set.exclude(query_filter).delete()
+        deletes = out.documents.exclude(query_filter).delete()
         log.info("Deletes: {}".format(deletes))
 
         log.info("Resetting identifier to 'url', cleaning output and deleting invalids")
@@ -313,37 +316,37 @@ class DiscourseSearchCommunity(Community):
         # Resetting to source URL
         out.identifier = "url"
         out.save()
-        total = out.individual_set.count()
+        total = out.documents.count()
         invalids = []
-        for individual in tqdm(out.individual_set.iterator(), total=total):
+        for document in tqdm(out.documents.iterator(), total=total):
             # Skip reset when it has already been done
-            if individual.properties.get("tika", None):
+            if document.properties.get("tika", None):
                 continue
             # Checking if there is any content data to work with.
             # Then undoing a weird hack where content data gets stored under resourcePath
             # It happens because inline_key and identifier need to match
             # TODO: allow inline_key to be different from identifier
-            data = individual.properties.get("resourcePath", {})
+            data = document.properties.get("resourcePath", {})
             if isinstance(data, str):
-                log.warning("resourcePath not replaced by dict: {}".format(individual.id))
+                log.warning("resourcePath not replaced by dict: {}".format(document.id))
                 continue
-            individual.properties["tika"] = data
+            document.properties["tika"] = data
             content = data.get("content", "")
             # We're only keeping the content that actually holds topics of interest.
             if not data or not content:
-                invalids.append(individual.id)
+                invalids.append(document.id)
                 continue
             for topic in configuration.topics:
                 if topic in content:
                     break
             else:
-                invalids.append(individual.id)
+                invalids.append(document.id)
                 continue
 
-            del individual.properties["resourcePath"]
-            individual.clean()
-            individual.save()
-        deletes = out.individual_set.filter(id__in=invalids).delete()
+            del document.properties["resourcePath"]
+            document.clean()
+            document.save()
+        deletes = out.documents.filter(id__in=invalids).delete()
         log.info("Deletes: {}".format(deletes))
 
         #################################################################################
@@ -360,26 +363,26 @@ class DiscourseSearchCommunity(Community):
                 spacy_parsers[language] = nlp
         # Actual content extraction
         off_topics = []
-        for individual in tqdm(out.individual_set.iterator(), total=total):
+        for document in tqdm(out.documents.iterator(), total=total):
 
             # We're skipping any entries that have already been processed at some point
-            if individual.properties.get("argument_score", None) is not None:
+            if document.properties.get("argument_score", None) is not None:
                 continue
 
-            # Now we turn raw content into something consistent set on the individual
-            individual = self._set_author(individual)
-            individual = self._set_main_content(individual)
+            # Now we turn raw content into something consistent set on the document
+            document = self._set_author(document)
+            document = self._set_main_content(document)
 
             # Lots of code still depends on a property named "paragraph_groups".
             # This was used in an early version of text extraction
             # We mimick it here to keep backwards compatability
             # TODO: migrate code away from paragraph_groups
-            content = individual.properties.get("content")
+            content = document.properties.get("content")
             if not len(content):
-                individual.clean()
-                individual.save()
+                document.clean()
+                document.save()
                 continue
-            individual.properties["paragraph_groups"] = [content]
+            document.properties["paragraph_groups"] = [content]
 
             nlp = spacy_parsers[self.config.language]
             argument_count = 0
@@ -389,10 +392,10 @@ class DiscourseSearchCommunity(Community):
                 argument_spans = list(doc._.arguments.get_argument_spans())
                 argument_count += len(argument_spans)
             if sents_count:
-                individual.properties["argument_score"] = argument_count / sents_count
+                document.properties["argument_score"] = argument_count / sents_count
 
-            individual.clean()
-            individual.save()
+            document.clean()
+            document.save()
 
         #################################################################################
         # Handling aggregations which is not supported by the framework at this time
@@ -418,9 +421,9 @@ class DiscourseSearchCommunity(Community):
     def get_source_and_author_aggregates(self, collection):
         sources = set()
         authors = set()
-        for individual in collection.individual_set.iterator():
-            sources.add(individual.properties.get("source", None))
-            author = individual.properties.get("author", None)
+        for document in collection.documents.iterator():
+            sources.add(document.properties.get("source", None))
+            author = document.properties.get("author", None)
             if author:
                 authors.add(author)
         return {

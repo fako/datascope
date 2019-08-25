@@ -19,6 +19,10 @@ class DocumentBase(DataStorage):
     identity = models.CharField(max_length=255, blank=True, null=True, db_index=True)
     reference = models.CharField(max_length=255, blank=True, null=True, db_index=True)
 
+    @property
+    def properties(self):
+        raise NotImplementedError("DocumentBase does not implement properties, use DocumentPostgres or DocumentMysql")
+
     def __getitem__(self, key):
         return self.properties[key]
 
@@ -143,6 +147,8 @@ class DocumentMysql(models.Model):
 
     class Meta:
         abstract = True
+        get_latest_by = "id"
+        ordering = ["id"]
 
 
 class DocumentPostgres(models.Model):
@@ -151,3 +157,5 @@ class DocumentPostgres(models.Model):
 
     class Meta:
         abstract = True
+        get_latest_by = "id"
+        ordering = ["id"]
