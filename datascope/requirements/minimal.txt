@@ -20,7 +20,7 @@ tqdm==4.19.8
 # Celery plugins
 django-celery-results==1.0.1
 anyjson==0.3.3
-redis==3.2.1
+redis==2.10.6
 
 # Advanced features
 selenium==2.47.1
