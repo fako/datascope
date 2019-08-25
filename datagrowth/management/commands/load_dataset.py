@@ -1,15 +1,13 @@
 import logging
 import os
-from tqdm import tqdm
 import json
 import re
 
 from django.apps import apps
-from django.core.serializers import deserialize
 from django.contrib.contenttypes.models import ContentType
 
 from datagrowth.management.base import DatasetCommand
-from datagrowth.utils import get_dumps_path
+from datagrowth.utils import get_dumps_path, objects_from_disk
 
 
 log = logging.getLogger("datagrowth.command")
@@ -24,9 +22,11 @@ class Command(DatasetCommand):
         super().add_arguments(parser)
         parser.add_argument('-t', '--transform-community', action="store_true")
 
-    def get_dataset(self):  # patches the model to act like a proper dataset
-        self.model.signature = self.signature
-        return self.model
+    def get_dataset(self):  # picks the correct dataset from all available datasets based on signature
+        for dataset in self.get_datasets():
+            if self.signature == dataset.signature:
+                self.model = dataset
+                return self.model
 
     def get_datasets(self):
         datasets = []
@@ -86,10 +86,5 @@ class Command(DatasetCommand):
             log.error("Dump with signature {} does not exist".format(dataset.signature))
             exit(1)
         with open(dataset.file_path, "r") as dump_file:
-            batch_count = 0
-            for _ in dump_file.readlines():
-                batch_count += 1
-            dump_file.seek(0)
-            for line in tqdm(dump_file, total=batch_count):
-                objects = [wrapper.object for wrapper in deserialize("json", line)]
+            for objects in objects_from_disk(dump_file):
                 self.bulk_create_objects(objects, transform_community)
