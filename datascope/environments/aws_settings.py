@@ -2,7 +2,7 @@ from datascope.settings_base import *
 
 DATABASES["default"]["NAME"] = 'datascope'
 DATABASES["default"]["USER"] = 'django'
-DATABASES["default"]["PASSWORD"] = MYSQL_PASSWORD
+DATABASES["default"]["PASSWORD"] = DATABASE_PASSWORD
 
 STATIC_IP = "34.251.167.142"
 

@@ -9,7 +9,6 @@ deploy: clean
 	sudo service celeryd restart
 
 backup-db:
-	mysqldump -uroot -p --databases datascope > data/datascope.mysql.sql
 	pg_dump -h localhost -U postgres datascope > data/datascope.postgres.sql
 
 backup-data:
@@ -17,9 +16,6 @@ backup-data:
 
 start-celery:
 	celery -A datascope worker --loglevel=info -B
-
-start-mysql:
-	mysql --protocol=tcp -uroot -p
 
 start-postgres:
 	psql -h localhost -U postgres -d postgres
