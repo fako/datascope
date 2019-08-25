@@ -12,6 +12,12 @@ backup-db:
 	pg_dump -h localhost -U postgres datascope > data/datascope.postgres.sql
 
 backup-data:
+	# Syncing local data to a harddrive
+	# -z means use compression
+	# -r means recursive
+	# -t means preserve creation and modification times
+	# -h means human readable output
+	# -v means verbose
 	rsync -zrthv --progress data /Volumes/Leo65/data/datascope
 
 start-celery:
