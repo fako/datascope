@@ -4,7 +4,6 @@ from core.utils.tests.helpers import TestUtilHelpers
 from core.utils.tests.files import TestFileSorter, TestFileBalancer, TestSemanticDirectoryScan
 
 from core.processors.tests.resources import TestHttpResourceProcessor
-from core.processors.tests.extraction import TestExtractProcessor
 from core.processors.tests.rank import TestRankProcessor, TestRankProcessorLegacy
 from core.processors.tests.expansion import TestExpansionProcessor
 from core.processors.tests.compare import TestCompareProcessor
