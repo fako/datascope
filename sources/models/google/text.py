@@ -1,4 +1,4 @@
-from core.exceptions import DSInvalidResource
+from datagrowth.exceptions import DGInvalidResource
 from sources.models.google.query import GoogleQuery
 
 
@@ -43,7 +43,7 @@ class GoogleText(GoogleQuery):
             if data is not None:
                 data["queries"]["request"][0]["searchTerms"] = data["queries"]["request"][0]["searchTerms"][1:-1]
         except (KeyError, IndexError):
-            raise DSInvalidResource("Google Image resource does not specify searchTerms", self)
+            raise DGInvalidResource("Google Image resource does not specify searchTerms", self)
         return content_type, data
 
     def next_parameters(self):

@@ -7,12 +7,13 @@ from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 from django.core.exceptions import ValidationError
 
 from datagrowth.datatypes import DocumentBase, CollectionBase
+from datagrowth.exceptions import DGNoContent
 from datascope.configuration import PROCESS_CHOICE_LIST, DEFAULT_CONFIGURATION
 from core.processors.base import ArgumentsTypes
 from core.processors.mixins import ProcessorMixin
 from core.utils.configuration import ConfigurationField
 from core.utils.helpers import get_any_model
-from core.exceptions import DSProcessError, DSNoContent
+from core.exceptions import DSProcessError
 from core.models.organisms import Individual, Collective
 
 
@@ -163,7 +164,7 @@ class Growth(models.Model, ProcessorMixin):
                 elif isinstance(contribution, Iterator):
                     for contrib in contribution:
                         yield contrib
-            except DSNoContent as exc:
+            except DGNoContent as exc:
                 log.debug("No content for {} with id {}: {}".format(
                     success_resource.__class__.__name__,
                     success_resource.id,

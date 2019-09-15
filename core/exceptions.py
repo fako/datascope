@@ -9,14 +9,6 @@ class DSHttpWarning300(DSResourceException):
     pass
 
 
-class DSInvalidResource(DSResourceException):
-    pass
-
-
-class DSNoContent(Exception):
-    pass
-
-
 class DSProcessException(Exception):
     pass
 

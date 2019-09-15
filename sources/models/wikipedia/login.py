@@ -1,5 +1,6 @@
-from core.exceptions import DSInvalidResource, DSHttpError400NoToken
+from datagrowth.exceptions import DGInvalidResource
 
+from core.exceptions import DSHttpError400NoToken
 from sources.models.wikipedia.query import WikipediaAPI
 
 
@@ -57,10 +58,10 @@ class WikipediaToken(WikipediaAPI):
         # Check general response
         content_type, data = self.content
         if "query" not in data:
-            raise DSInvalidResource('Wrongly formatted Wikipedia response, missing "query"', resource=self)
+            raise DGInvalidResource('Wrongly formatted Wikipedia response, missing "query"', resource=self)
         response = data['query']["tokens"]  # Wiki has response hidden under single keyed dicts :(
         if not response:
-            raise DSInvalidResource('Wikipedia response is empty', resource=self)
+            raise DGInvalidResource('Wikipedia response is empty', resource=self)
 
     def get(self, *args, **kwargs):
         raise NotImplementedError("GET is not implemented for this resource")

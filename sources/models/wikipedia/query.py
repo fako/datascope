@@ -1,8 +1,8 @@
 import json
 
-from core.utils.helpers import override_dict
-from core.exceptions import DSInvalidResource
-from datagrowth.exceptions import DGHttpError40X
+from datagrowth.utils import override_dict
+from datagrowth.exceptions import DGHttpError40X, DGInvalidResource
+
 from sources.models.wikipedia.base import WikipediaAPI
 
 
@@ -33,7 +33,7 @@ class WikipediaQuery(WikipediaAPI):
         # Check general response
         content_type, data = self.content
         if "query" not in data:
-            raise DSInvalidResource('Wrongly formatted Wikipedia response, missing "query"', resource=self)
+            raise DGInvalidResource('Wrongly formatted Wikipedia response, missing "query"', resource=self)
         response = data['query'][self.WIKI_RESULTS_KEY]  # Wiki has response hidden under single keyed dicts :(
 
         # When searching for pages a dictionary gets returned
@@ -75,7 +75,7 @@ class WikipediaGenerator(WikipediaQuery):
         """
         try:
             super(WikipediaGenerator, self)._handle_errors()
-        except DSInvalidResource:
+        except DGInvalidResource:
             # This indicates the generator didn't find anything under the 'query' key in body
             # In practise it means the searched for title does not exist.
             self.status = 404
@@ -99,7 +99,7 @@ class WikipediaPage(WikipediaQuery):
         try:
             page = next(iter(data["query"]["pages"].values()))
         except (KeyError, StopIteration, TypeError):
-            raise DSInvalidResource(
+            raise DGInvalidResource(
                 "{} resource did not contain 'query', 'pages' or a first page".format(self.__class__.__name__),
                 resource=self
             )
