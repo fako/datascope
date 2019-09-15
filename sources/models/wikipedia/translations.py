@@ -12,15 +12,18 @@ class WikipediaTranslate(WikipediaPage):
         'iwprop': 'url',
     })
 
+    def variables(self, *args):
+        args = args or self.request.get("args")
+        return {
+            "term": args[2],
+            "language": args[3]
+        }
+
     def _handle_errors(self):
         super(WikipediaTranslate, self)._handle_errors()
         if not "iwlinks" in self.body:
             self.status = 404
-            raise DGHttpError40X("No translations found for {} in {}".format(*self.meta), resource=self)
-
-    @property
-    def meta(self):
-        try:
-            return self.request["args"][2], self.request["args"][3]
-        except (KeyError, IndexError, TypeError):
-            return None, None
+            raise DGHttpError40X(
+                "No translations found for {term} in {language}".format(**self.variables()),
+                resource=self
+            )
