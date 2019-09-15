@@ -3,7 +3,7 @@ import six
 
 from copy import copy
 
-from core.utils.helpers import override_dict
+from datagrowth.utils import override_dict
 from core.exceptions import DSHttpWarning300
 
 from sources.models.wikipedia.query import WikipediaQuery

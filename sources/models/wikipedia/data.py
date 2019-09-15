@@ -1,4 +1,4 @@
-from core.utils.helpers import override_dict
+from datagrowth.utils import override_dict
 from sources.models.wikipedia.base import WikipediaAPI
 
 
