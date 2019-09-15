@@ -1,5 +1,3 @@
-from datagrowth.processors import ExtractProcessor
-
 from .resources import HttpResourceProcessor, ManifestProcessor, ShellResourceProcessor
 from .authentication import HttpPrivateResourceProcessor
 from .rank import RankProcessor, LegacyRankProcessor
