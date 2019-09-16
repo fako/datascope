@@ -5,7 +5,7 @@ from celery import current_app as app
 from datascope.configuration import DEFAULT_CONFIGURATION
 from core.utils.configuration import load_config
 from core.utils.helpers import get_any_model
-from core.exceptions import DSResourceException
+from datagrowth.exceptions import DGResourceException
 
 
 log = logging.getLogger("datascope")
@@ -25,7 +25,7 @@ def run(config, *args, **kwargs):
         cmd.clean()
         cmd.save()
         success.append(cmd.id)
-    except DSResourceException as exc:
+    except DGResourceException as exc:
         log.debug(exc)
         cmd = exc.resource
         cmd.clean()

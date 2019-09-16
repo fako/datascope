@@ -7,7 +7,7 @@ from datascope.configuration import DEFAULT_CONFIGURATION
 from core.processors.base import Processor
 from core.utils.configuration import ConfigurationType, load_config
 from core.utils.helpers import get_any_model
-from core.exceptions import DSResourceException
+from datagrowth.exceptions import DGResourceException
 
 
 log = logging.getLogger("datascope")
@@ -77,7 +77,7 @@ def send(config, *args, **kwargs):
             link = link.send(method, *args, **kwargs)
             link.close()
             success.append(link.id)
-        except DSResourceException as exc:
+        except DGResourceException as exc:
             log.debug(exc)
             link = exc.resource
             link.clean()

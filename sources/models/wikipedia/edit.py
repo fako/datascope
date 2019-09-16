@@ -1,4 +1,4 @@
-from core.exceptions import DSHttpError400NoToken
+from datagrowth.exceptions import DGHttpError400NoToken
 
 from sources.models.wikipedia.query import WikipediaAPI
 
@@ -50,7 +50,7 @@ class WikipediaEdit(WikipediaAPI):
     def data(self, **kwargs):
         data = super(WikipediaEdit, self).data(**kwargs)
         if not self.token:
-            raise DSHttpError400NoToken(
+            raise DGHttpError400NoToken(
                 "No edit token specified for WikipediaEdit. Use WikipediaToken to fetch one",
                 resource=self
             )

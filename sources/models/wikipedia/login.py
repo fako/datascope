@@ -1,6 +1,5 @@
-from datagrowth.exceptions import DGInvalidResource
+from datagrowth.exceptions import DGInvalidResource, DGHttpError400NoToken
 
-from core.exceptions import DSHttpError400NoToken
 from sources.models.wikipedia.query import WikipediaAPI
 
 
@@ -115,7 +114,7 @@ class WikipediaLogin(WikipediaAPI):
     def data(self, **kwargs):
         data = super(WikipediaLogin, self).data(**kwargs)
         if not self.token:
-            raise DSHttpError400NoToken(
+            raise DGHttpError400NoToken(
                 "No login token specified for WikipediaLogin. Use WikipediaToken to fetch one",
                 resource=self
             )

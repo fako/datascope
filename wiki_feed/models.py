@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from core.models.organisms.states import CommunityState
 from core.models.organisms import Community, Individual
 from core.views import CommunityView
-from core.exceptions import DSResourceException
+from datagrowth.exceptions import DGResourceException
 from sources.models.wikipedia.categories import WikipediaCategories
 
 
@@ -200,7 +200,7 @@ class WikiFeedCommunity(Community):
             config = {"wiki_country": "commons"}
             titles = "|".join(image_titles)
             image_categories = WikipediaCategories(config=config).get(titles)
-        except DSResourceException as exc:
+        except DGResourceException as exc:
             image_categories = exc.resource
         return [
             image["title"].replace(" ", "_")
@@ -216,7 +216,7 @@ class WikiFeedCommunity(Community):
             config = {"wiki_show_categories": "hidden"}
             titles = "|".join(image_titles)
             image_categories = WikipediaCategories(config=config).get(titles)
-        except DSResourceException as exc:
+        except DGResourceException as exc:
             image_categories = exc.resource
         non_free_images = set()
         for page_id, page_content in image_categories.get_wikipedia_json().items():
