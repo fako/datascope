@@ -4,7 +4,6 @@ from types import GeneratorType
 from django.test import TestCase
 from django.db.models import QuerySet
 
-from datascope.configuration import MOCK_CONFIGURATION
 from core.processors import ManifestProcessor
 from core.utils.configuration import ConfigurationType
 from core.tests.mocks.celery import (MockTask, MockAsyncResultSuccess, MockAsyncResultPartial, MockAsyncResultError,
@@ -23,7 +22,7 @@ class TestManifestProcessor(TestCase):
         self.config = ConfigurationType(
             namespace="manifest_processor",
             private=[],
-            defaults=MOCK_CONFIGURATION
+            defaults=None
         )
         self.config.update({
             "_community": "CommunityMock",

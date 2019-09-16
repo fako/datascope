@@ -6,7 +6,6 @@ import requests
 from django.test import TestCase
 from django.utils import six
 
-from datascope.configuration import MOCK_CONFIGURATION
 from core.tasks.http import send, send_serie, send_mass, get_resource_link, load_session
 from core.utils.configuration import ConfigurationType
 from core.tests.mocks.requests import MockRequestsWithAgent, MockRequests
@@ -23,7 +22,7 @@ class TestHTTPTasksBase(TestCase):
         self.config = ConfigurationType(
             namespace="http_resource",
             private=["_resource", "_continuation_limit"],
-            defaults=MOCK_CONFIGURATION
+            defaults=None
         )
         self.config.update({
             "resource": "HttpResourceMock",

@@ -1,5 +1,4 @@
 from core.utils.configuration import ConfigurationProperty
-from datascope.configuration import MOCK_CONFIGURATION
 from core.processors.base import Processor
 from core.processors import RankProcessor, LegacyRankProcessor
 
@@ -8,7 +7,7 @@ class MockProcessor(Processor):
 
     config = ConfigurationProperty(
         storage_attribute="_config",
-        defaults=MOCK_CONFIGURATION,
+        defaults=None,
         namespace="mock_processor",
         private=[]
     )
