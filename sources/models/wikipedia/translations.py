@@ -14,10 +14,12 @@ class WikipediaTranslate(WikipediaPage):
 
     def variables(self, *args):
         args = args or self.request.get("args")
-        return {
+        variables = super().variables(*args)
+        variables.update({
             "term": args[2],
             "language": args[3]
-        }
+        })
+        return variables
 
     def _handle_errors(self):
         super(WikipediaTranslate, self)._handle_errors()
