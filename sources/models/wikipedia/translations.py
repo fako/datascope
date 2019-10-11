@@ -20,8 +20,8 @@ class WikipediaTranslate(WikipediaPage):
             "language": args[3]
         }
 
-    def _handle_errors(self):
-        super(WikipediaTranslate, self)._handle_errors()
+    def handle_errors(self):
+        super(WikipediaTranslate, self).handle_errors()
         if not "iwlinks" in self.body:
             self.status = 404
             raise DGHttpError40X(

@@ -27,8 +27,8 @@ class WikipediaQuery(WikipediaAPI):
         args = (self.config.wiki_country, self.WIKI_QUERY_PARAM,) + args
         return super(WikipediaQuery, self).send(method, *args, **kwargs)
 
-    def _handle_errors(self):
-        super(WikipediaQuery, self)._handle_errors()
+    def handle_errors(self):
+        super(WikipediaQuery, self).handle_errors()
 
         # Check general response
         content_type, data = self.content
@@ -68,13 +68,13 @@ class WikipediaQuery(WikipediaAPI):
 
 class WikipediaGenerator(WikipediaQuery):
 
-    def _handle_errors(self):
+    def handle_errors(self):
         """
         Generators have a habit of leaving out the query parameter if the query returns nothing :(
         :return:
         """
         try:
-            super(WikipediaGenerator, self)._handle_errors()
+            super(WikipediaGenerator, self).handle_errors()
         except DGInvalidResource:
             # This indicates the generator didn't find anything under the 'query' key in body
             # In practise it means the searched for title does not exist.

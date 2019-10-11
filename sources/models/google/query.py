@@ -11,9 +11,9 @@ class GoogleQuery(HttpResource):
             "key": self.config.api_key
         }
 
-    def _handle_errors(self):
+    def handle_errors(self):
         try:
-            no_errors = super(GoogleQuery, self)._handle_errors()
+            no_errors = super(GoogleQuery, self).handle_errors()
         except DGHttpError40X as exception:
             if self.status == 403:
                 raise DGHttpError403LimitExceeded(exception, resource=self)

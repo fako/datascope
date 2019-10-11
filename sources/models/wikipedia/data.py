@@ -89,12 +89,12 @@ class WikiDataItems(WikipediaAPI):
         item["references"] = list(references)
         return item
 
-    def _handle_errors(self):
+    def handle_errors(self):
         content_type, data = super(WikiDataItems, self).content
         if data is not None and "error" in data:
             error_code = data["error"]["code"]
             self.set_error(self.ERROR_CODE_TO_STATUS[error_code])
-        super(WikiDataItems, self)._handle_errors()
+        super(WikiDataItems, self).handle_errors()
 
     @property
     def content(self):

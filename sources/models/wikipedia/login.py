@@ -51,8 +51,8 @@ class WikipediaToken(WikipediaAPI):
         content_type, data = self.content
         return data["query"]["tokens"].get(self.request["data"]["type"] + "token")
 
-    def _handle_errors(self):
-        super(WikipediaAPI, self)._handle_errors()
+    def handle_errors(self):
+        super(WikipediaAPI, self).handle_errors()
 
         # Check general response
         content_type, data = self.content

@@ -31,11 +31,11 @@ class WikipediaSearch(WikipediaQuery, WikipediaImagesMixin):
         parameters["exintro"] = int(not self.config.wiki_full_extracts)
         return parameters
 
-    def _handle_errors(self):
+    def handle_errors(self):
         """
         Handle ambiguity errors
         """
-        response = super(WikipediaSearch, self)._handle_errors()
+        response = super(WikipediaSearch, self).handle_errors()
         if isinstance(response, dict):
             for page_id, page in response.items():
                 try:
