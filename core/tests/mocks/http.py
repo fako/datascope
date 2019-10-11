@@ -2,7 +2,7 @@ from mock import Mock
 
 from django.db.models import QuerySet
 
-from core.models.resources.http import HttpResource
+from datagrowth.resources import HttpResource
 from core.tests.mocks.requests import MockRequests
 
 
