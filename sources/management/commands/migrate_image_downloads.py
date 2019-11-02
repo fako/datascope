@@ -1,6 +1,5 @@
 import os
 import logging
-from tqdm import tqdm
 from datetime import datetime, timedelta
 import shutil
 
@@ -8,7 +7,7 @@ from django.core.management.base import BaseCommand
 from django.apps import apps
 
 from datagrowth import settings as datagrowth_settings
-from core.utils.helpers import ibatch, batchize
+from datagrowth.utils import ibatch
 from sources.models import ImageDownload
 
 
@@ -84,9 +83,6 @@ class Command(BaseCommand):
             return
 
         count = queryset.all().count()
-        batch_iterator = ibatch(queryset.iterator(), batch_size=batch_size)
-        if count >= batch_size * 5:
-            batches, rest = batchize(count, batch_size)
-            batch_iterator = tqdm(batch_iterator, total=batches)
+        batch_iterator = ibatch(queryset.iterator(), batch_size=batch_size, progress_bar=True, total=count)
         for batch in batch_iterator:
             self._handle_batch(batch, options["new_model"], media_dir)

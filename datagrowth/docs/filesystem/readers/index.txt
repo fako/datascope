@@ -1,4 +1,0 @@
-semantic
-local
-remote
-dumps

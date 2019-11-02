@@ -1,14 +1,10 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
 import operator
-import math
 from itertools import islice, cycle
 from functools import reduce
 
 from django.apps import apps as django_apps
 
 from datagrowth.utils import parse_datetime_string, format_datetime, override_dict
-
 
 
 def get_any_model(name):  # TODO: test to unlock
@@ -45,15 +41,6 @@ def merge_iter(*iterables, **kwargs):  # TODO: test to unlock, works bad with em
                 raise
 
 
-def ibatch(iterable, batch_size):  # TODO: test to unlock, should be deprecated in favour of datagrowth.utils.ibatch
-    it = iter(iterable)
-    while True:
-        batch = list(islice(it, batch_size))
-        if not batch:
-            return
-        yield batch
-
-
 def iroundrobin(*iterables):  # TODO: test to unlock
     "iroundrobin('ABC', 'D', 'EF') --> A D E B F C"
     # Recipe credited to George Sakkis
@@ -85,11 +72,3 @@ def cross_combine_2(*args):  # NB: beta
                 yield (primary, secondary)
 
     return reduce(dual_combine, args)
-
-
-def batchize(elements, batch_size):  # TODO: test to unlock, should be deprecated in favour of datagrowth.utils.ibatch
-    batches = int(math.floor(elements / batch_size))
-    rest = elements % batch_size
-    if rest:
-        batches += 1
-    return batches, rest

@@ -3,11 +3,11 @@ from time import sleep
 
 from celery import current_app as app
 
-from datascope.configuration import DEFAULT_CONFIGURATION
-from core.processors.base import Processor
-from core.utils.configuration import ConfigurationType, load_config
+from datagrowth.configuration import ConfigurationType, load_config
+from datagrowth.processors.base import Processor
+from datagrowth.exceptions import DGResourceException
+
 from core.utils.helpers import get_any_model
-from core.exceptions import DSResourceException
 
 
 log = logging.getLogger("datascope")
@@ -56,7 +56,7 @@ def get_resource_link(config, session=None):
 
 
 @app.task(name="core.send")
-@load_config(defaults=DEFAULT_CONFIGURATION)
+@load_config()
 @load_session()
 def send(config, *args, **kwargs):
     # Set vars
@@ -77,7 +77,7 @@ def send(config, *args, **kwargs):
             link = link.send(method, *args, **kwargs)
             link.close()
             success.append(link.id)
-        except DSResourceException as exc:
+        except DGResourceException as exc:
             log.debug(exc)
             link = exc.resource
             link.clean()
@@ -95,7 +95,7 @@ def send(config, *args, **kwargs):
 
 
 @app.task(name="core.send_serie")
-@load_config(defaults=DEFAULT_CONFIGURATION)
+@load_config()
 @load_session()
 def send_serie(config, args_list, kwargs_list, session=None, method=None):  # TODO: test to unlock
     success = []
@@ -113,7 +113,7 @@ def send_serie(config, args_list, kwargs_list, session=None, method=None):  # TO
 
 
 @app.task(name="core.send_mass")
-@load_config(defaults=DEFAULT_CONFIGURATION)
+@load_config()
 @load_session()
 def send_mass(config, args_list, kwargs_list, session=None, method=None):
     # FEATURE: chain "batches" of send_mass if configured through batch_size

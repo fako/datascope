@@ -6,8 +6,7 @@ from tqdm import tqdm
 from django.core.management.base import BaseCommand
 from django.apps import apps
 
-from core.utils.helpers import ibatch, batchize
-from sources.models import ImageDownload
+from datagrowth.utils import ibatch
 
 
 log = logging.getLogger("datascope")
@@ -26,10 +25,7 @@ class Command(BaseCommand):
         columns = ["created_at", "body", "uri"]
         queryset = Model.objects.values(*columns)
         count = queryset.all().count()
-        batch_iterator = ibatch(queryset.iterator(), batch_size=batch_size)
-        if count >= batch_size * 5:
-            batches, rest = batchize(count, batch_size)
-            batch_iterator = tqdm(batch_iterator, total=batches)
+        batch_iterator = ibatch(queryset.iterator(), batch_size=batch_size, progress_bar=True, total=count)
         df = None
         for records in batch_iterator:
             batch_frame = pd.DataFrame.from_records(records, index=["created_at"])

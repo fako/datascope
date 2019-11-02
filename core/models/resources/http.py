@@ -30,9 +30,9 @@ class BrowserResource(HttpResource):  # TODO: write tests
         url = self.request.get("url")
         browser.get(url)
 
-        self._update_from_response(browser)
+        self._update_from_results(browser)
 
-    def _update_from_response(self, response):
+    def _update_from_results(self, response):
         self.head = dict()
         self.status = 1
         self.body = response.page_source

@@ -46,9 +46,9 @@ class ImageFeatures(HttpResource):
             log.exception(exc)
             self.set_error(-1, connection_error=True)
 
-        self._update_from_response(response)
+        self._update_from_results(response)
 
-    def _update_from_response(self, response):
+    def _update_from_results(self, response):
         vars = self.variables()
         self.head = {}
         self.status = 1

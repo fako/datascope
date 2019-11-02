@@ -1,10 +1,7 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-import six
-
 from copy import copy
 
-from core.utils.helpers import override_dict
-from core.exceptions import DSHttpWarning300
+from datagrowth.utils import override_dict
+from datagrowth.exceptions import DGHttpWarning300
 
 from sources.models.wikipedia.query import WikipediaQuery
 from sources.models.wikipedia.mixins import WikipediaImagesMixin
@@ -34,17 +31,17 @@ class WikipediaSearch(WikipediaQuery, WikipediaImagesMixin):
         parameters["exintro"] = int(not self.config.wiki_full_extracts)
         return parameters
 
-    def _handle_errors(self):
+    def handle_errors(self):
         """
         Handle ambiguity errors
         """
-        response = super(WikipediaSearch, self)._handle_errors()
+        response = super(WikipediaSearch, self).handle_errors()
         if isinstance(response, dict):
-            for page_id, page in six.iteritems(response):
+            for page_id, page in response.items():
                 try:
                     if "disambiguation" in page['pageprops']:
                         self.status = 300
-                        raise DSHttpWarning300("The search is ambiguous.", resource=self)
+                        raise DGHttpWarning300("The search is ambiguous.", resource=self)
                 except KeyError:
                     pass
 

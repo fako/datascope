@@ -1,10 +1,9 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
 import logging
 from itertools import zip_longest, starmap
 
+from datagrowth.exceptions import DGNoContent
+
 from core.models.resources.http import BrowserResource
-from core.exceptions import DSNoContent
 
 
 log = logging.getLogger("datascope")
@@ -25,7 +24,7 @@ class GoogleTranslate(BrowserResource):
 
         def process_info(word, meaning, confidence):
             if word is None:
-                raise DSNoContent("GoogleTranslate could not find any content for: {}".format(self.uri))
+                raise DGNoContent("GoogleTranslate could not find any content for: {}".format(self.uri))
             word = word.text
             if meaning is not None:
                 meaning = meaning.text

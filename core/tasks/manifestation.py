@@ -2,10 +2,9 @@ import logging
 
 from celery import current_app as app
 
-from datascope.configuration import DEFAULT_CONFIGURATION
+from datagrowth.configuration import load_config
 from core.models.resources.manifestation import Manifestation
 from core.views import CommunityView
-from core.utils.configuration import load_config
 from core.utils.helpers import get_any_model
 
 
@@ -21,7 +20,7 @@ def get_manifestation_data(manifestation_id):
 
 
 @app.task(name="core.manifest")
-@load_config(defaults=DEFAULT_CONFIGURATION)
+@load_config()
 def manifest(config, *args, **kwargs):
     success = []
     errors = []
@@ -61,7 +60,7 @@ def manifest(config, *args, **kwargs):
 
 
 @app.task(name="core.manifest_serie")
-@load_config(defaults=DEFAULT_CONFIGURATION)
+@load_config()
 def manifest_serie(config, args_list, kwargs_list):
     success = []
     errors = []

@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from datagrowth.configuration import DEFAULT_CONFIGURATION, MOCK_CONFIGURATION
+from datagrowth.configuration import DEFAULT_CONFIGURATION
 
 
 PROCESS_CHOICE_LIST = [

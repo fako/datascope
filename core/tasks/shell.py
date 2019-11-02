@@ -2,17 +2,17 @@ import logging
 
 from celery import current_app as app
 
-from datascope.configuration import DEFAULT_CONFIGURATION
-from core.utils.configuration import load_config
+from datagrowth.configuration import load_config
+from datagrowth.exceptions import DGResourceException
+
 from core.utils.helpers import get_any_model
-from core.exceptions import DSResourceException
 
 
 log = logging.getLogger("datascope")
 
 
 @app.task(name="core.run")
-@load_config(defaults=DEFAULT_CONFIGURATION)
+@load_config()
 def run(config, *args, **kwargs):
     # Set vars
     success = []
@@ -25,7 +25,7 @@ def run(config, *args, **kwargs):
         cmd.clean()
         cmd.save()
         success.append(cmd.id)
-    except DSResourceException as exc:
+    except DGResourceException as exc:
         log.debug(exc)
         cmd = exc.resource
         cmd.clean()
@@ -37,7 +37,7 @@ def run(config, *args, **kwargs):
 
 
 @app.task(name="core.run_serie")
-@load_config(defaults=DEFAULT_CONFIGURATION)
+@load_config()
 def run_serie(config, args_list, kwargs_list):
     success = []
     errors = []

@@ -25,7 +25,7 @@ class WikipediaAPI(HttpResource):
     class Meta:
         abstract = True
 
-    def _handle_errors(self):
+    def handle_errors(self):
         """
         You can only handle error messages by parsing the body :(
         Include more error codes to translate between Wikipedia and the REST(oftheworld)
@@ -40,4 +40,4 @@ class WikipediaAPI(HttpResource):
             maxlag_interval = int(self.head.get("Retry-After", 5))
             sleep(maxlag_interval)
         # HttpResource will now raise exceptions
-        super(WikipediaAPI, self)._handle_errors()
+        super(WikipediaAPI, self).handle_errors()

@@ -1,5 +1,5 @@
 from datagrowth.resources import HttpResource
-from datagrowth.exceptions import DGHttpError40X, DSHttpError403LimitExceeded, DGHttpWarning204
+from datagrowth.exceptions import DGHttpError40X, DGHttpError403LimitExceeded, DGHttpWarning204
 
 
 class GoogleQuery(HttpResource):
@@ -11,12 +11,12 @@ class GoogleQuery(HttpResource):
             "key": self.config.api_key
         }
 
-    def _handle_errors(self):
+    def handle_errors(self):
         try:
-            no_errors = super(GoogleQuery, self)._handle_errors()
+            no_errors = super(GoogleQuery, self).handle_errors()
         except DGHttpError40X as exception:
             if self.status == 403:
-                raise DSHttpError403LimitExceeded(exception, resource=self)
+                raise DGHttpError403LimitExceeded(exception, resource=self)
             else:
                 raise exception
         content_type, data = self.content

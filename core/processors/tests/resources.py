@@ -3,7 +3,6 @@ from mock import patch
 from django.test import TestCase
 from django.db.models import QuerySet
 
-from datascope.configuration import MOCK_CONFIGURATION
 from core.processors.resources import HttpResourceProcessor
 from core.utils.configuration import ConfigurationType
 from core.tests.mocks.requests import MockRequests
@@ -22,7 +21,7 @@ class TestHttpResourceProcessor(TestCase):
         self.config = ConfigurationType(
             namespace="http_resource",
             private=["_resource", "_continuation_limit"],
-            defaults=MOCK_CONFIGURATION
+            defaults=None
         )
         self.config.update({
             "resource": "HttpResourceMock",
