@@ -24,7 +24,7 @@ redis==3.3.8
 
 # Advanced features
 selenium==2.47.1
-Pillow==6.2.0
+Pillow==6.2.1
 colorz==1.0.3
 
 # Debug and test
