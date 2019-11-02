@@ -5,5 +5,5 @@ spacy==2.0.18
 spacy-arguing-lexicon==0.0.3
 IndicoIo==0.15.4
 
-# TODO: publish datagrowth to pypi
-git+https://github.com/fako/datagrowth.git
+# Datagrowth
+datagrowth==0.15.2
