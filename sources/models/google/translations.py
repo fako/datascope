@@ -18,7 +18,7 @@ class GoogleTranslate(BrowserResource):
 
         :return:
         """
-        confidences = soup.find_all(class_="gt-baf-cts")
+        confidences = soup.find_all(class_="gt-baf-entry-score")
         words = soup.find_all(class_="gt-baf-word-clickable")
         meanings = soup.find_all(class_="gt-baf-translations")
 
@@ -29,7 +29,7 @@ class GoogleTranslate(BrowserResource):
             if meaning is not None:
                 meaning = meaning.text
             if confidence is not None:
-                confidence = int(confidence["style"].split(" ")[1][:-3])  # confidence expressed like: "width: 24px;"
+                confidence = len(confidence.find_all(class_="filled"))  # confidence expressed with filled and empty div
             return word, meaning, confidence
 
         if not words:
