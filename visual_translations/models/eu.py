@@ -1,6 +1,3 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-import six
-
 from collections import OrderedDict
 from itertools import groupby
 from copy import copy
@@ -184,7 +181,7 @@ class VisualTranslationsEUCommunity(Community):
                         properties["images_quantity"] = grid["columns"] * grid["rows"]
                         new.append(properties)
         if new:
-            out.update(new)
+            out.add(new)
 
     def finish_images(self, out, err):
         translations = self.growth_set.filter(type="translations").last()
@@ -202,7 +199,7 @@ class VisualTranslationsEUCommunity(Community):
                 community=self,
                 schema=out.schema
             )
-            col.update(images)
+            col.add(images)
             ind.properties["images"] = col.url
             ind.save()
 
@@ -215,7 +212,7 @@ class VisualTranslationsEUCommunity(Community):
         grouped_translations = translation_growth.output.group_by("locale")
         directory = "visual_translations/grids/{}/{}".format(query, format_datetime(self.created_at))
         os.makedirs(os.path.join(settings.MEDIA_ROOT, directory), 0o0755, True)
-        for locale, translations in six.iteritems(grouped_translations):
+        for locale, translations in grouped_translations.items():
             expansion_processor = ExpansionProcessor(self.config.to_dict())
             translations = expansion_processor.collective_content(
                 [translation.properties for translation in translations]
@@ -242,7 +239,7 @@ class VisualTranslationsEUCommunity(Community):
                 if len(downloads) >= (grid["rows"] * grid["columns"] + 10):
                     break
 
-            for size, factor in six.iteritems(self.zoom_levels):
+            for size, factor in self.zoom_levels.items():
                 grid, xlarge_factor = grids[locale]
                 factor = factor if size != "XL" else xlarge_factor
                 grid_specs = copy(grid)

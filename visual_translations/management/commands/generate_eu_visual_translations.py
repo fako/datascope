@@ -1,17 +1,17 @@
-from core.management.commands.grow_community import Command as GrowCommunityCommand
+from datagrowth.management.commands.grow_dataset import Command as GrowDatasetCommand
 
 from sources.models import GoogleImage, GoogleTranslate
 
 
-class Command(GrowCommunityCommand):
+class Command(GrowDatasetCommand):
 
-    community_model = "VisualTranslationsEUCommunity"
+    dataset_model = "VisualTranslationsEUCommunity"
 
     def add_arguments(self, parser):
         super().add_arguments(parser)
         parser.add_argument('-d', '--delete', action="store_true")
 
-    def get_community(self):
+    def get_dataset(self):
         return self.model.objects.create_by_signature(self.signature, **self.config)
 
     def handle(self, *args, **options):
