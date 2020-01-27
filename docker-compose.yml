@@ -1,6 +1,28 @@
 version: '3'
 
 services:
+
+#  service:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    image: future_fashion
+#    command: uwsgi --ini /usr/src/app/uwsgi.ini --py-autoreload=3 --honour-stdin
+#    volumes:
+#      - .:/usr/src/app
+#      - ./deploy/environments:/usr/etc/datascope
+#      - ${FF_DATA_DIR}:/usr/src/data
+#      - ../datagrowth:/usr/src/datagrowth
+#    ports:
+#      - "8000:8000"
+#    depends_on:
+#      - "postgres"
+#    environment:
+#      - PYTHONUNBUFFERED=1
+#      - POSTGRES_HOST=postgres
+#      - DJANGO_MODE=${DJANGO_MODE}
+#      - INVOKE_DJANGO_DEBUG=${INVOKE_DJANGO_DEBUG}
+
   postgres:
     image: postgres:10.10
     command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
@@ -10,18 +32,45 @@ services:
       POSTGRES_DB: datascope
       PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
-      - ./datascope/postgres/conf/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./postgres/conf/postgresql.conf:/etc/postgresql/postgresql.conf
       - postgres-data:/var/lib/postgresql/data/pgdata
-      - ./datascope/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     ports:
       - 5432:5432
+
   redis:
     image: redis
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
-      - ./datascope/redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
     ports:
       - "6379:6379"
+
+#  elastic:
+#    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.3
+#    environment:
+#      - node.name=elastic
+#      - discovery.type=single-node
+#      - cluster.name=elastic
+#      - xpack.security.enabled=true
+#      #- xpack.security.transport.ssl.enabled=true
+#      - xpack.security.audit.enabled=true
+#      - bootstrap.memory_lock=true
+#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+#      - network.host=0.0.0.0
+##      - http.cors.enabled=true
+##      - http.cors.allow-origin=https://surfpol.nl
+##      - http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
+##      - http.cors.allow-credentials=true
+#    ulimits:
+#      memlock:
+#        soft: -1
+#        hard: -1
+#    volumes:
+#      - elastic-data:/usr/share/elasticsearch/data
+#    ports:
+#      - 127.0.0.1:9200:9200
+
   adminer:
     image: adminer
     ports:
@@ -29,3 +78,4 @@ services:
 
 volumes:
   postgres-data:
+#  elastic-data:

@@ -9,12 +9,10 @@ db-dump.*.json
 *.sql
 *.pkl
 
-datagrowth/docs/_build/
+src/datascope/settings.py
+src/datascope/bootstrap.py
+src/datascope/secrets.py
+src/datascope/logs/
+src/datascope/statics/
 
-datascope/settings.py
-datascope/bootstrap.py
-datascope/secrets.py
-datascope/logs/
-datascope/statics/
-
-data/
+/data
