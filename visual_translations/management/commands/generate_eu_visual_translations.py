@@ -5,7 +5,7 @@ from sources.models import GoogleImage, GoogleTranslate
 
 class Command(GrowDatasetCommand):
 
-    dataset_model = "VisualTranslationsEUCommunity"
+    dataset_model = "visual_translations.VisualTranslationsEUCommunity"
 
     def add_arguments(self, parser):
         super().add_arguments(parser)

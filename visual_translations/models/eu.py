@@ -24,7 +24,7 @@ class VisualTranslationsEUCommunity(Community):
             "contribute": "Append:ExtractProcessor.extract_from_resource",
             "output": "Collective",
             "config": {
-                "_args": ["translate_from", "$.translate_to", "$.query"],
+                "_args": ["$.translate_from", "$.translate_to", "$.query"],
                 "_kwargs": {},
                 "_resource": "GoogleTranslate",
                 "_objective": {
@@ -181,7 +181,7 @@ class VisualTranslationsEUCommunity(Community):
                         properties["images_quantity"] = grid["columns"] * grid["rows"]
                         new.append(properties)
         if new:
-            out.add(new)
+            out.add(new, reset=True)
 
     def finish_images(self, out, err):
         translations = self.growth_set.filter(type="translations").last()
@@ -199,7 +199,7 @@ class VisualTranslationsEUCommunity(Community):
                 community=self,
                 schema=out.schema
             )
-            col.add(images)
+            col.add(images, reset=True)
             ind.properties["images"] = col.url
             ind.save()
 
