@@ -9,6 +9,8 @@ db-dump.*.json
 *.sql
 *.pkl
 
+venv/
+
 src/datascope/settings.py
 src/datascope/bootstrap.py
 src/datascope/secrets.py

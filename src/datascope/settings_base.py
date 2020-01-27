@@ -61,6 +61,7 @@ DATAGROWTH_DATA_DIR = os.environ.get('DATAGROWTH_DATA_DIR', os.path.join("..", "
 SECRET_KEY = environment.django.secret_key
 
 DEBUG = environment.django.debug
+DEBUG_TOOLBAR = DEBUG
 
 MAX_BATCH_SIZE = 1000
 PATH_TO_LOGS = os.path.join(BASE_DIR, "datascope", "logs")
@@ -324,7 +325,7 @@ if USE_WEBSOCKETS:
 # Debug toolbar
 # https://django-debug-toolbar.readthedocs.io/en/latest/index.html
 
-if DEBUG:
+if DEBUG_TOOLBAR:
     # Activation
     INSTALLED_APPS += (
         'debug_toolbar',

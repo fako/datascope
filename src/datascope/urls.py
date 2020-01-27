@@ -71,6 +71,7 @@ if settings.DEBUG:
         url(r'^static/(?P<path>.*)$', static.serve,
             {'document_root': settings.STATIC_ROOT })
     ]
+if settings.DEBUG_TOOLBAR:
     import debug_toolbar
     urlpatterns = [
         url(r'^__debug__/', include(debug_toolbar.urls)),
