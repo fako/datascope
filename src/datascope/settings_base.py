@@ -1,64 +1,69 @@
 import os
 import logging
 
+from datascope.configuration import environment
+from datascope.version import get_project_version
+
 
 log = logging.getLogger(__name__)
-
-
-# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
 #######################################################
 # DEFAULT BOOTSTRAP
 #######################################################
 
-PATH_TO_PROJECT = ''
-URL_TO_PROJECT = '/'
+# Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+# The version of the entire project (frontend and backend)
+DATASCOPE_VERSION = get_project_version(os.path.join(BASE_DIR, "package.json"))
+
+URL_TO_PROJECT = '/'  # Wikipedia specific probably
 USE_WEBSOCKETS = False
-SECRET_KEY = 'default'
-DATABASE_TYPE = 'postgres'
-DATABASE_USER = 'postgres'
-DATABASE_PASSWORD = ''
+STATIC_IP = ""
 USE_MOCKS = False
 
+# Wikipedia specific hack to fix prefixes of paths
+# Probably couldn't use SCRIPT_NAME properly in that environment
+# But can't remember exactly ...
+SEGMENTS_BEFORE_PROJECT_ROOT = len([segment for segment in URL_TO_PROJECT.split('/') if segment])
+SEGMENTS_TO_SERVICE = SEGMENTS_BEFORE_PROJECT_ROOT + 3  # /data/v1/<service-name>/
+
+# Makes Pillow work more reliable with images from the web
 from PIL import ImageFile
 ImageFile.LOAD_TRUNCATED_IMAGES = True
+
+
+#######################################################
+# INTEGRATION BOOTSTRAP
+#######################################################
+
+GOOGLE_CX = environment.datascope.google_cx
+GOOGLE_API_KEY = environment.datascope.google_api_key
+
+WIKI_USER = environment.datascope.wiki_user
+WIKI_PASSWORD = environment.datascope.wiki_password
 
 
 #######################################################
 # DATAGROWTH BOOTSTRAP
 #######################################################
 
-GOOGLE_CX = os.environ.get("GOOGLE_CX", "004613812033868156538:5pcwbuudj1m")
-
-
-#######################################################
-# LOAD ENVIRONMENT
-#######################################################
-
-try:
-    from .bootstrap import *
-except ImportError:
-    log.warning("Could not import bootstrap settings. Are they created?")
-try:
-    from .secrets import *
-except ImportError:
-    log.error("Could not import secret settings. Are they created? Do not run in production!")
-
-DATABASE_USER = os.environ.get('DJANGO_DATABASE_USER', DATABASE_USER)
-DATABASE_PASSWORD = os.environ.get('DJANGO_DATABASE_PASSWORD', DATABASE_PASSWORD)
+DATAGROWTH_DATA_DIR = os.environ.get('DATAGROWTH_DATA_DIR', os.path.join("..", "data"))
 
 
 #######################################################
 # DJANGO SETTINGS
 #######################################################
 
-DEBUG = False
-DEBUG_TOOLBAR = False
+# Django SECRET_KEY
+# Documentation: https://docs.djangoproject.com/en/1.11/ref/settings/#std:setting-SECRET_KEY
+SECRET_KEY = environment.django.secret_key
+
+DEBUG = environment.django.debug
 
 MAX_BATCH_SIZE = 1000
-PATH_TO_LOGS = PATH_TO_PROJECT + "datascope/logs/"
+PATH_TO_LOGS = os.path.join(BASE_DIR, "datascope", "logs")
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -97,10 +102,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'datascope',
-        'USER': DATABASE_USER,
-        'PASSWORD': DATABASE_PASSWORD,
-        'HOST': '127.0.0.1',
-        'PORT': os.environ.get('PGPORT', '5432')
+        'USER': environment.django.database_user,
+        'PASSWORD': environment.django.database_password,
+        'HOST': environment.postgres.host,
+        #'PORT': os.environ.get('PGPORT', '5432')
     }
 }
 
@@ -136,7 +141,8 @@ CORS_ORIGIN_WHITELIST = [
     'www.2ndhandstylist.com',
 ]
 
-
+# Do not redirect when slashes at the end are missing
+# Can probably be enabled again if we rewrite paths when upgrading to Django 2.2
 APPEND_SLASH = False
 
 # Local time zone for this installation. Choices can be found here:
@@ -163,56 +169,21 @@ DATETIME_FORMAT = 'd-m-y H:i:s/u'  # default would get overridden by L18N
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = False
 
-# Available languages for all projects
-ugettext = lambda s: s  # a dummy ugettext to prevent circular import
-LANGUAGES = (
-    ('en', ugettext('English')),
-    ('pt', ugettext('Portuguese')),
-    ('nl', ugettext('Dutch')),
-    ('de', ugettext('German')),
-    ('es', ugettext('Spanish')),
-    ('fr', ugettext('French')),
-)
 
-LOCALE_PATHS = (
-    PATH_TO_PROJECT + 'src/locale/',
-)
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-SEGMENTS_BEFORE_PROJECT_ROOT = len([segment for segment in URL_TO_PROJECT.split('/') if segment])
-SEGMENTS_TO_SERVICE = SEGMENTS_BEFORE_PROJECT_ROOT + 3  # /data/v1/<service-name>/
-
-# Absolute filesystem path to the directory that will hold user-uploaded files.
-# Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, 'data', 'media', '')
-
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash.
-# Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = URL_TO_PROJECT + 'media/'
-
-# Absolute path to the directory static files should be collected to.
-# Don't put anything in this directory yourself; store your static files
-# in apps' "static/" subdirectories and in STATICFILES_DIRS.
-# Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = PATH_TO_PROJECT + 'datascope/statics/'
-
-# URL prefix for static files.
-# Example: "http://media.lawrence.com/static/"
 STATIC_URL = URL_TO_PROJECT + 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'datascope', 'statics')
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+WHITENOISE_INDEX_FILE = 'index.html'
+MEDIA_URL = URL_TO_PROJECT + 'media/'
+MEDIA_ROOT = os.path.join(DATAGROWTH_DATA_DIR, "media")
 
-# Additional locations of static files
-STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
-)
+if DEBUG:
+    WHITENOISE_USE_FINDERS = True
+    WHITENOISE_AUTOREFRESH = True
 
-# List of finder classes that know how to find static files in
-# various locations.
-STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-)
 
 TEMPLATES = [
     {
@@ -239,8 +210,10 @@ TEMPLATES = [
     },
 ]
 
-MIDDLEWARE_CLASSES = (
-    'corsheaders.middleware.CorsMiddleware',
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',  # Added for CORS policy (Cross Origin Resource Security)
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Added for serving static files
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -248,7 +221,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-)
+]
 
 ROOT_URLCONF = 'datascope.urls'
 
@@ -256,7 +229,7 @@ ROOT_URLCONF = 'datascope.urls'
 WSGI_APPLICATION = 'datascope.wsgi.application'
 
 FIXTURE_DIRS = (
-    PATH_TO_PROJECT + 'core/tests/fixtures/',
+    os.path.join(BASE_DIR, 'core', 'tests', 'fixtures'),
 )
 
 LOGGING = {
@@ -280,7 +253,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.handlers.TimedRotatingFileHandler',
-            'filename': PATH_TO_LOGS + 'datascope.log',
+            'filename': os.path.join(PATH_TO_LOGS, 'datascope.log'),
             'when': 'midnight',
             'backupCount': 10,
         },
@@ -346,3 +319,23 @@ if USE_WEBSOCKETS:
     WSGI_APPLICATION = 'ws4redis.django_runserver.application'
     WS4REDIS_EXPIRE = 0
     WS4REDIS_HEARTBEAT = '--heartbeat--'
+
+
+# Debug toolbar
+# https://django-debug-toolbar.readthedocs.io/en/latest/index.html
+
+if DEBUG:
+    # Activation
+    INSTALLED_APPS += (
+        'debug_toolbar',
+    )
+    MIDDLEWARE = MIDDLEWARE[0:3] + ['debug_toolbar.middleware.DebugToolbarMiddleware'] + MIDDLEWARE[3:]
+
+    # Configuration
+    INTERNAL_IPS = [
+        '127.0.0.1',
+        'localhost:8000',
+    ]
+    DEBUG_TOOLBAR_CONFIG = {
+        "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG
+    }

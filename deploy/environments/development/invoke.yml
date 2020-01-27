@@ -1,0 +1,10 @@
+django:
+  debug: 1
+  database_name: datascope
+  database_user: django
+datascope:
+  google_cx: "004613812033868156538:5pcwbuudj1m"
+  data_dir: ./data
+postgres:
+  credentials:
+  host: postgres

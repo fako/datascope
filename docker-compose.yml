@@ -2,26 +2,24 @@ version: '3'
 
 services:
 
-#  service:
-#    build:
-#      context: .
-#      dockerfile: Dockerfile
-#    image: future_fashion
-#    command: uwsgi --ini /usr/src/app/uwsgi.ini --py-autoreload=3 --honour-stdin
-#    volumes:
-#      - .:/usr/src/app
-#      - ./deploy/environments:/usr/etc/datascope
-#      - ${FF_DATA_DIR}:/usr/src/data
-#      - ../datagrowth:/usr/src/datagrowth
-#    ports:
-#      - "8000:8000"
-#    depends_on:
-#      - "postgres"
-#    environment:
-#      - PYTHONUNBUFFERED=1
-#      - POSTGRES_HOST=postgres
-#      - DJANGO_MODE=${DJANGO_MODE}
-#      - INVOKE_DJANGO_DEBUG=${INVOKE_DJANGO_DEBUG}
+  datascope:
+    build: .
+    image: datascope
+    command: uwsgi --ini /usr/src/app/uwsgi.ini --py-autoreload=3 --honour-stdin
+    volumes:
+      - ./src:/usr/src/app
+      - ./deploy/environments:/usr/etc/datascope
+      - ${DS_DATA_DIR}:/usr/src/data
+      - ../datagrowth:/usr/src/datagrowth
+    ports:
+      - "8000:8000"
+    depends_on:
+      - "postgres"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - POSTGRES_HOST=postgres
+      - DJANGO_MODE=${DJANGO_MODE}
+      - INVOKE_DJANGO_DEBUG=${INVOKE_DJANGO_DEBUG}
 
   postgres:
     image: postgres:10.10

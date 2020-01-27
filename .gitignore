@@ -16,3 +16,4 @@ src/datascope/logs/
 src/datascope/statics/
 
 /data
+secrets.bk.py

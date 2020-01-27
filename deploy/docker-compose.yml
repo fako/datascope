@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+
+  service:
+    image: eu.gcr.io/good-fashion-friend/future_fashion:${RELEASE_VERSION}
+    ports:
+      - "0.0.0.0:80:8000"
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: "1"
+          memory: 3.5G
+      restart_policy:
+        condition: any
+    healthcheck:
+      test: curl -sS http://localhost:8000/health/?docker=1 || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 3
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DJANGO_MODE=${DJANGO_MODE}
+      - INVOKE_DJANGO_DEBUG=${INVOKE_DJANGO_DEBUG}
+      - INVOKE_POSTGRES_CREDENTIALS=${INVOKE_POSTGRES_CREDENTIALS}
