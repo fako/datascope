@@ -8,7 +8,6 @@ from django.core.exceptions import ValidationError
 
 from datagrowth.datatypes import DocumentBase, CollectionBase
 from datagrowth.exceptions import DGNoContent
-from datascope.configuration import PROCESS_CHOICE_LIST, DEFAULT_CONFIGURATION
 from core.processors.base import ArgumentsTypes
 from core.processors.mixins import ProcessorMixin
 from core.utils.configuration import ConfigurationField
@@ -44,6 +43,14 @@ CONTRIBUTE_TYPE_CHOICES = [
 ]
 
 
+PROCESS_CHOICE_LIST = [
+    ("HttpResourceProcessor.fetch", "Fetch content from HTTP resource"),
+    ("HttpResourceProcessor.fetch_mass", "Fetch content from multiple HTTP resources"),
+    ("ExtractProcessor.extract_from_resource", "Extract content from one or more resources"),
+    ("ExtractProcessor.pass_resource_through", "Take content 'as is' from one or more resources"),
+]
+
+
 class Growth(models.Model, ProcessorMixin):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
@@ -52,7 +59,6 @@ class Growth(models.Model, ProcessorMixin):
 
     type = models.CharField(max_length=255)
     config = ConfigurationField(
-        config_defaults=DEFAULT_CONFIGURATION,
         namespace="growth",
         private=["args", "kwargs", "async"]
     )

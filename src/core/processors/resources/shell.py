@@ -1,6 +1,4 @@
-import requests
-
-from datascope.configuration import DEFAULT_CONFIGURATION
+from datagrowth.configuration import DEFAULT_CONFIGURATION
 from core.processors.resources.base import ResourceProcessor
 from core.tasks.shell import run, run_serie
 from core.utils.configuration import ConfigurationProperty

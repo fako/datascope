@@ -1,6 +1,6 @@
 import logging
 
-from datascope.configuration import DEFAULT_CONFIGURATION
+from datagrowth.configuration import DEFAULT_CONFIGURATION
 from core.models.organisms.individual import Individual
 from core.tasks import manifest, manifest_serie
 from core.processors.resources.base import ResourceProcessor

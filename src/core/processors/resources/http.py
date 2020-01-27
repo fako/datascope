@@ -1,6 +1,6 @@
 import requests
 
-from datascope.configuration import DEFAULT_CONFIGURATION
+from datagrowth.configuration import DEFAULT_CONFIGURATION
 from core.processors.resources.base import ResourceProcessor
 from core.tasks.http import send, send_mass
 from core.utils.configuration import ConfigurationProperty

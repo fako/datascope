@@ -7,11 +7,9 @@ from six.moves import reduce
 import six
 
 import warnings
-from collections import OrderedDict
-from itertools import islice
 from copy import deepcopy
 
-from datascope.configuration import DEFAULT_CONFIGURATION
+from datagrowth.configuration import DEFAULT_CONFIGURATION
 from core.utils.helpers import merge_iter
 from core.processors.base import Processor
 from core.utils.configuration import ConfigurationProperty
@@ -106,7 +104,7 @@ class LegacyRankProcessor(Processor):
 
 from itertools import islice
 
-from datascope.configuration import DEFAULT_CONFIGURATION
+from datagrowth.configuration import DEFAULT_CONFIGURATION
 from core.processors.base import QuerySetProcessor
 from core.utils.data import NumericFeaturesFrame, TextFeaturesFrame
 from core.utils.configuration import ConfigurationProperty
