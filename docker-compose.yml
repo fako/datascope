@@ -44,30 +44,30 @@ services:
     ports:
       - "6379:6379"
 
-#  elastic:
-#    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.3
-#    environment:
-#      - node.name=elastic
-#      - discovery.type=single-node
-#      - cluster.name=elastic
-#      - xpack.security.enabled=true
-#      #- xpack.security.transport.ssl.enabled=true
-#      - xpack.security.audit.enabled=true
-#      - bootstrap.memory_lock=true
-#      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-#      - network.host=0.0.0.0
-##      - http.cors.enabled=true
-##      - http.cors.allow-origin=https://surfpol.nl
-##      - http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
-##      - http.cors.allow-credentials=true
-#    ulimits:
-#      memlock:
-#        soft: -1
-#        hard: -1
-#    volumes:
-#      - elastic-data:/usr/share/elasticsearch/data
-#    ports:
-#      - 127.0.0.1:9200:9200
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.3
+    environment:
+      - node.name=elastic
+      - discovery.type=single-node
+      - cluster.name=elastic
+      #- xpack.security.enabled=true
+      #- xpack.security.transport.ssl.enabled=true
+      #- xpack.security.audit.enabled=true
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - network.host=0.0.0.0
+#      - http.cors.enabled=true
+#      - http.cors.allow-origin=https://surfpol.nl
+#      - http.cors.allow-headers=X-Requested-With,X-Auth-Token,Content-Type,Content-Length,Authorization
+#      - http.cors.allow-credentials=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elastic-data:/usr/share/elasticsearch/data
+    #ports:
+    #  - 127.0.0.1:9200:9200
 
   adminer:
     image: adminer
@@ -76,4 +76,4 @@ services:
 
 volumes:
   postgres-data:
-#  elastic-data:
+  elastic-data:

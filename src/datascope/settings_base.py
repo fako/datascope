@@ -340,3 +340,12 @@ if DEBUG_TOOLBAR:
     DEBUG_TOOLBAR_CONFIG = {
         "SHOW_TOOLBAR_CALLBACK": lambda request: DEBUG
     }
+
+
+# Elastic Search
+# https://elasticsearch-py.readthedocs.io/en/master/
+
+ELASTIC_SEARCH_ANALYSERS = {
+    'en': 'english',
+    'nl': 'dutch'
+}

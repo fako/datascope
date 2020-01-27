@@ -25,3 +25,17 @@ class Document(DocumentPostgres, DocumentBase):
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+")
     community_id = models.PositiveIntegerField()
+
+    def to_search(self):
+        content = " ".join(partial for partial in self.properties["content"] if partial)
+        return {
+            "_id": self.id,
+            "title": self.properties["title"],
+            "title_plain": self.properties["title"],
+            "argument_score": self.properties.get("argument_score", 0),
+            "url": self.properties["url"],
+            "author": self.properties["author"],
+            "source": self.properties["source"],
+            "content": content,
+            "content_plain": content
+        }

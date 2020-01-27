@@ -26,6 +26,7 @@ redis==3.3.8
 selenium==2.47.1
 Pillow==6.2.0
 colorz==1.0.3
+elasticsearch==6.0.0
 
 # Debug and test
 invoke==1.4.0
