@@ -32,7 +32,7 @@ class Document(DocumentPostgres, DocumentBase):
             "_id": self.id,
             "title": self.properties["title"],
             "title_plain": self.properties["title"],
-            "argument_score": self.properties.get("argument_score", 0),
+            "argument_score": float(self.properties.get("argument_score", 0.0001)),
             "url": self.properties["url"],
             "author": self.properties["author"],
             "source": self.properties["source"],

@@ -14,6 +14,12 @@ urlpatterns = [
         name=DiscourseSearchCommunity.get_name() + "_service"
     ),
     url(
+        r'^search/(?P<path>.+)/$',
+        views.DiscourseSearchView.as_view(),
+        kwargs={"community_class": DiscourseSearchCommunity},
+        name=DiscourseSearchCommunity.get_name() + "_search"
+    ),
+    url(
         r'^order/?$',
         views.CreateDiscourseOrder.as_view(),
         name=DiscourseSearchCommunity.get_name() + "_order"

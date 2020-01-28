@@ -48,6 +48,9 @@ def get_index_config(lang):
                     },
                     'source': {
                         'type': 'keyword'
+                    },
+                    'argument_score': {
+                        'type': 'float'
                     }
                 }
             }
