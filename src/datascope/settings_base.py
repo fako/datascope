@@ -1,6 +1,9 @@
 import os
 import logging
 
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
+
 from datascope.configuration import environment
 from datascope.version import get_project_version
 
@@ -349,3 +352,15 @@ ELASTIC_SEARCH_ANALYSERS = {
     'en': 'english',
     'nl': 'dutch'
 }
+
+
+# Sentry error reporting
+# https://sentry.io
+
+if not DEBUG:
+    sentry_sdk.init(
+        dsn="https://407d0ac6dc4542c9a60fb299e32e464d@sentry.io/241870",
+        integrations=[DjangoIntegration()],
+        release=DATASCOPE_VERSION,
+        server_name='data-scope.com'
+    )

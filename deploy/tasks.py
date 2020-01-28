@@ -15,7 +15,7 @@ REPOSITORY = "eu.gcr.io/good-fashion-friend"
 @task()
 def pull(ctx, version):
     ctx.run(
-        f"docker pull {REPOSITORY}/future_fashion:{version}",
+        f"docker pull {REPOSITORY}/datascope:{version}",
         echo=True,
         pty=True
     )

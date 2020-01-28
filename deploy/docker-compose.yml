@@ -5,13 +5,13 @@ services:
   service:
     image: eu.gcr.io/good-fashion-friend/future_fashion:${RELEASE_VERSION}
     ports:
-      - "0.0.0.0:80:8000"
+      - "127.0.0.1:8000:8000"
     deploy:
       replicas: 2
       resources:
         limits:
           cpus: "1"
-          memory: 3.5G
+          memory: 2G
       restart_policy:
         condition: any
     healthcheck:
