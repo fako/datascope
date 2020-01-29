@@ -9,7 +9,7 @@ except ImportError:
     from invoke import task
 
 
-REPOSITORY = "eu.gcr.io/good-fashion-friend"
+REPOSITORY = "eu.gcr.io/datascope-266618"
 
 
 @task()
@@ -45,7 +45,7 @@ def migrate(ctx, version):
 
 @task()
 def publish_scripts(ctx):
-    ctx.run("gsutil rsync -rd -J deploy gs://gff-deploy/")
+    ctx.run("gsutil rsync -rd -J deploy gs://ds-deploy/")
 
 
 @task()
