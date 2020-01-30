@@ -63,7 +63,7 @@ DESCRIPTIVE_ADJECTIVES = [
     "Verbod",
 ]
 
-biomassa = DiscourseConfiguration(
+drugs_legalisatie = DiscourseConfiguration(
     title="Drugs legalisatie",
     description="Nederland kent al heel lang een gedoog beleid waarbij de verkoop van softdrugs is toegestaan, "
                 "maar de inkoop niet. Men spreekt al een tijd over het geheel legaliseren van softdrugs, "

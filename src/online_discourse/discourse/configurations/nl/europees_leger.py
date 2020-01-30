@@ -68,7 +68,7 @@ DESCRIPTIVE_ADJECTIVES = [
     "cohesie",
 ]
 
-biomassa = DiscourseConfiguration(
+europees_leger = DiscourseConfiguration(
     title="Europees leger",
     description="Er is veel kritiek op de Europese Unie. "
                 "Toch zijn er ook geluiden, die aangeven dat we meer zouden moeten samenwerken op Europees niveau. "

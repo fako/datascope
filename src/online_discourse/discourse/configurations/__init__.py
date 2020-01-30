@@ -8,3 +8,5 @@ from .nl.immigranten import immigranten
 from .nl.biomassa import biomassa
 from .nl.koopvaardij_bescherming import koopvaardij_bescherming
 from .nl.diepzee_mijnbouw import diepzee_mijnbouw
+from .nl.europees_leger import europees_leger
+from .nl.drugs_legalisatie import drugs_legalisatie
