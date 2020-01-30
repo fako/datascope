@@ -22,3 +22,4 @@ addons:
 env:
   global:
   - PGPORT=5432
+  - DJANGO_CONTEXT=host
