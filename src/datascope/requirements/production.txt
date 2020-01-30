@@ -7,4 +7,4 @@ spacy-arguing-lexicon==0.0.3
 IndicoIo==0.15.4
 
 # Datagrowth
-datagrowth==0.15.4
+datagrowth==0.15.5
