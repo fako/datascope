@@ -11,11 +11,11 @@ log = logging.getLogger("datascope")
 
 class Command(GrowCommand):
 
-    community_model = "DiscourseSearchCommunity"
+    dataset_model = "online_discourse.DiscourseSearchCommunity"
 
     def add_arguments(self, parser):
         parser.add_argument('topic', type=str)
-        parser.add_argument('--community', type=str, nargs="?", default=self.community_model)
+        parser.add_argument('--dataset', type=str, nargs="?", default=self.dataset_model)
         parser.add_argument('-c', '--config', type=str, action=DecodeConfigAction, nargs="?", default={})
 
     def handle(self, *args, **kwargs):
