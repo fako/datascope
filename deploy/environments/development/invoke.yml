@@ -2,9 +2,21 @@ django:
   debug: 1
   database_name: datascope
   database_user: django
+  secret_key: "secret-key"
+  database_password: "secret"
+  administrator:
+    name: "Anonymous"
+    email: "email"
+  manager:
+    name: "Anonymous"
+    email: "email"
 datascope:
   google_cx: "004613812033868156538:5pcwbuudj1m"
   data_dir: ./data
+  google_api_key: "secret"
+  locafora_password: "secret"
+  wiki_user: "Wiki Feed Bot"
+  wiki_password: "secret"
 postgres:
   credentials:
   host: postgres
