@@ -29,10 +29,11 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_DB: datascope
       PGDATA: /var/lib/postgresql/data/pgdata
+      DJANGO_POSTGRES_PASSWORD: ZV35A5x89pbHuiYSrvqroPHKDnng7dRF
     volumes:
-      - ./postgres/conf/postgresql.conf:/etc/postgresql/postgresql.conf
+      - ./deploy/postgres/conf/postgresql.conf:/etc/postgresql/postgresql.conf
       - postgres-data:/var/lib/postgresql/data/pgdata
-      - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - ./deploy/postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     ports:
       - 5432:5432
 
@@ -40,7 +41,7 @@ services:
     image: redis
     command: redis-server /usr/local/etc/redis/redis.conf
     volumes:
-      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./deploy/redis/redis.conf:/usr/local/etc/redis/redis.conf
     ports:
       - "6379:6379"
 

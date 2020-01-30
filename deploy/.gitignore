@@ -1,2 +1,4 @@
 **/secrets/invoke.*
 **/secrets/gcloud.json
+production/secrets/.env
+.env

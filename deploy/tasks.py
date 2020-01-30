@@ -13,6 +13,11 @@ REPOSITORY = "eu.gcr.io/datascope-266618"
 
 
 @task()
+def init(ctx, mode):
+    ctx.run(f"cp environments/{mode}/secrets/.env .env")
+
+
+@task()
 def pull(ctx, version):
     ctx.run(
         f"docker pull {REPOSITORY}/datascope:{version}",
@@ -27,7 +32,7 @@ def deploy(ctx, version, debug=False):
         ("export INVOKE_DJANGO_DEBUG=1 && " if debug else "") +
         f"export RELEASE_VERSION={version} && "
         "docker-compose -f docker-compose.yml config 2>/dev/null | "  # compiles configuration
-        "docker stack deploy -c - --with-registry-auth --prune service",  # deploys latest "service"
+        "docker stack deploy -c - --with-registry-auth --prune datascope",  # deploys latest "datascope" service
         echo=True,
     )
 
@@ -45,6 +50,7 @@ def migrate(ctx, version):
 
 @task()
 def publish_scripts(ctx):
+    ctx.run("rm -f deploy/.env")
     ctx.run("gsutil rsync -rd -J deploy gs://ds-deploy/")
 
 

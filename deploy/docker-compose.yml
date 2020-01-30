@@ -2,7 +2,7 @@ version: '3'
 
 services:
 
-  service:
+  datascope:
     image: eu.gcr.io/datascope-266618/datascope:${RELEASE_VERSION}
     ports:
       - "127.0.0.1:8000:8000"
@@ -11,7 +11,7 @@ services:
       resources:
         limits:
           cpus: "1"
-          memory: 2G
+          memory: 0.5G
       restart_policy:
         condition: any
     healthcheck:
@@ -24,3 +24,71 @@ services:
       - DJANGO_MODE=${DJANGO_MODE}
       - INVOKE_DJANGO_DEBUG=${INVOKE_DJANGO_DEBUG}
       - INVOKE_POSTGRES_CREDENTIALS=${INVOKE_POSTGRES_CREDENTIALS}
+
+  postgres:
+    image: postgres:10.10
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1G
+      restart_policy:
+        condition: any
+    command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: postgres
+      POSTGRES_DB: datascope
+      PGDATA: /var/lib/postgresql/data/pgdata
+      DJANGO_POSTGRES_PASSWORD: ${DJANGO_POSTGRES_PASSWORD}
+    volumes:
+      - ./postgres/conf/postgresql.conf:/etc/postgresql/postgresql.conf
+      - postgres-data:/var/lib/postgresql/data/pgdata
+      - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+    ports:
+      - 127.0.0.1:5432:5432
+
+  redis:
+    image: redis
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 0.25G
+      restart_policy:
+        condition: any
+    command: redis-server /usr/local/etc/redis/redis.conf
+    volumes:
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    ports:
+      - "127.0.0.1:6379:6379"
+
+  elastic:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.3
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 1.75G
+      restart_policy:
+        condition: any
+    environment:
+      - node.name=elastic
+      - discovery.type=single-node
+      - cluster.name=elastic
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - network.host=0.0.0.0
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elastic-data:/usr/share/elasticsearch/data
+
+volumes:
+  postgres-data:
+  elastic-data:
