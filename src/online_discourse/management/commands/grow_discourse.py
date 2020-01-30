@@ -1,6 +1,6 @@
 import logging
 
-from core.management.commands.grow_community import Command as GrowCommand
+from datagrowth.management.commands.grow_dataset import Command as GrowCommand
 from core.utils.configuration import DecodeConfigAction
 
 from online_discourse.discourse import configurations
