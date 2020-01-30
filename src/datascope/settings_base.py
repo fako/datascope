@@ -308,6 +308,12 @@ EMAIL_HOST = "smtp.gmail.com"
 EMAIL_PORT = 587
 EMAIL_SUBJECT_PREFIX = "[datascope] "
 SERVER_EMAIL = "no-reply@fakoberkers.nl"
+ADMINS = (
+    (environment.django.administrator.name, environment.django.administrator.email),
+)
+MANAGERS = (
+    (environment.django.manager.name, environment.django.manager.email),
+)
 
 #######################################################
 # PLUGIN SETTINGS

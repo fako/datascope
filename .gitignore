@@ -3,17 +3,11 @@ datascope.iml
 .DS_store
 
 *.pyc
-*.db
-*.csv
-db-dump.*.json
-*.sql
 *.pkl
+celerybeat-schedule.db
 
 venv/
 
-src/datascope/settings.py
-src/datascope/bootstrap.py
-src/datascope/secrets.py
 src/datascope/logs/
 src/datascope/statics/
 
