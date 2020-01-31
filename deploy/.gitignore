@@ -1,4 +1,5 @@
 **/secrets/invoke.*
 **/secrets/gcloud.json
-production/secrets/.env
-.env
+environments/production/secrets/.env
+/.env
+/docker-compose.yml

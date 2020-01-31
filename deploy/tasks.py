@@ -14,8 +14,10 @@ REPOSITORY = "eu.gcr.io/datascope-266618"
 
 
 @task()
-def init(ctx, mode):
+def init(ctx, mode, role):
+    assert role in ["worker", "web", f"Only 'web' and 'worker' are valid roles not {role}"]
     ctx.run(f"cp environments/{mode}/secrets/.env .env")
+    ctx.run(f"cp docker-compose.{role}.yml docker-compose.yml")
 
 
 @task()
