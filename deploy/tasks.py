@@ -47,7 +47,15 @@ def migrate(ctx, version):
     ctx.run(
         f"export RELEASE_VERSION={version} && "
         f"export INVOKE_POSTGRES_CREDENTIALS=postgres:{postgres_password} && "
-        "docker-compose -f docker-compose.yml run --rm service python manage.py migrate"
+        "docker-compose -f docker-compose.yml run --rm datascope python manage.py migrate"
+    )
+
+
+@task()
+def run(ctx, version):
+    ctx.run(
+        f"export RELEASE_VERSION={version} && "
+        "docker-compose -f docker-compose.yml run --rm datascope bash"
     )
 
 

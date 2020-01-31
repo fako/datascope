@@ -1,14 +1,6 @@
-now = $(shell date +"%Y-%m-%d")
-
 clean:
 	find . -type f -name "*.pyc" -delete;
 	find . -type d -name "__pycache__" -delete;
-
-backup-db:
-	pg_dump -h localhost -U postgres datascope > data/datascope.postgres.sql
-
-import-db:
-	cat $(backup) | psql -h localhost -U postgres datascope
 
 backup-data:
 	# Syncing local data to a harddrive
