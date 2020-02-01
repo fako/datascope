@@ -22,7 +22,7 @@ class WebContentDownload(HttpFileResource):
             return content_type, file
         variables = self.variables()
         return content_type, {
-            self.config.url_key: variables["url"],
+            self.config.url_key: variables["url"][0],
             self.config.resource_key: os.path.join(default_storage.location, self.body)
         }
 

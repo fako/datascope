@@ -30,6 +30,8 @@ from online_discourse.processors import TopicDetector, EntityDetector, OnlineDis
 
 class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
 
+    USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Safari/537.36"
+
     aggregates = json_field.JSONField(default={}, blank=True)
 
     COMMUNITY_SPIRIT = OrderedDict([
@@ -66,7 +68,8 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
                 "_update_key": "url",
                 "$language": "en",  # TODO: think of a way to include language as a parameter without using config
                 # Keys below are used by WebContentDownload to format its output
-                "resource_key": "resourcePath"
+                "resource_key": "resourcePath",
+                "user_agent": USER_AGENT
             },
             "schema": {},
             "errors": {},
@@ -83,7 +86,8 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
                 "_update_key": "home",
                 # Keys below are used by WebContentDownload to format its output
                 "url_key": "home",
-                "resource_key": "home_resource"
+                "resource_key": "home_resource",
+                "user_agent": USER_AGENT
             },
             "schema": {},
             "errors": {},
