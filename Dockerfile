@@ -1,7 +1,7 @@
 FROM python:3.6
 
 RUN apt-get update && \
-    apt-get install -y vim binutils libproj-dev gdal-bin gettext
+    apt-get install -y vim binutils libproj-dev gdal-bin gettext default-jdk
 
 # Setup directories, 3rd party models and users
 RUN mkdir -p /usr/etc/datascope
