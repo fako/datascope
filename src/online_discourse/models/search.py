@@ -298,6 +298,8 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
         for entry in tqdm(out.documents.iterator(), total=total):
             entry.clean()
             entry.save()
+        assert total != out.documents.filter(identity__isnull=True).count(), \
+            "At begin_content there are no documents with any content. Aborting"
         deletes = out.documents.filter(identity__isnull=True).delete()
         log.info("Deletes: {}".format(deletes))
 

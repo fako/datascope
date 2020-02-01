@@ -55,7 +55,8 @@ def migrate(ctx, version):
 
 @task()
 def run(ctx, version):
-    ctx.run(
+    print("Please run the following directly to access a container directly")
+    print(
         f"export RELEASE_VERSION={version} && "
         "docker-compose -f docker-compose.yml run --rm datascope bash"
     )
