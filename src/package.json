@@ -1,0 +1,26 @@
+{
+    "name": "datascope",
+    "version": "0.16.6",
+    "data": {
+        "digital-ocean": {
+            "data/online_discourse/dumps": "online_discourse/dumps"
+        },
+        "aws": {
+            "data/future_fashion/dumps": "future_fashion/dumps",
+            "data/media/future_fashion": "media/future_fashion"
+        }
+    },
+    "models": {
+        "digital-ocean": {
+            "data/online_discourse/feature_frames": "online_discourse/feature_frames",
+            "data/online_discourse/text_frames": "online_discourse/text_frames"
+        },
+        "aws": {
+            "data/future_fashion/clothing_frames": "future_fashion/clothing_frames"
+        },
+        "spacy": {
+            "en_core_web_lg": "2.0.0",
+            "nl_core_news_sm": "2.0.0"
+        }
+    }
+}

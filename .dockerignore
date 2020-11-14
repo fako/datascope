@@ -1,0 +1,4 @@
+data/
+postgres/
+redis/
+venv/

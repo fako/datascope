@@ -1,6 +1,5 @@
 language: python
 python:
-  - "3.5"
   - "3.6"
 # command to install dependencies
 before_install:
@@ -8,8 +7,9 @@ before_install:
   - sudo sed -i -e '/local.*peer/s/postgres/all/' -e 's/peer\|md5/trust/g' /etc/postgresql/*/main/pg_hba.conf
   - sudo service postgresql restart
   - sleep 1
-install: "pip install -r datascope/requirements/production.txt"
+install: "pip install -r src/datascope/requirements/production.txt"
 # command to run tests
+before_script: cd src && python manage.py collectstatic --noinput
 script: python manage.py test --settings=datascope.settings_test
 services:
   - postgresql
@@ -22,3 +22,6 @@ addons:
 env:
   global:
   - PGPORT=5432
+  - DJANGO_CONTEXT=host
+  - INVOKE_POSTGRES_HOST=127.0.0.1
+  - INVOKE_DJANGO_DATABASE_USER=postgres
