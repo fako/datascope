@@ -90,7 +90,7 @@ def db_load(ctx, dump_file):
     ctx.run(f"cat {dump_file} | psql -h localhost -U postgres datascope")
     # Now we need to reset sequences to make sure that autoid fields act normally
     # For this we store the output of reset.sql into a tmp file
-    ctx.run("psql -h localhost -U postgres -Atq -f reset.sql -o tmp.sql datascope")
+    ctx.run("psql -h localhost -U postgres -Atq -f deploy/reset.sql -o tmp.sql datascope")
     # And then we execute that output
     ctx.run("psql -h localhost -U postgres -f tmp.sql datascope")
     ctx.run("rm tmp.sql")
