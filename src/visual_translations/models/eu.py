@@ -26,7 +26,7 @@ class VisualTranslationsEUCommunity(Community):
             "config": {
                 "_args": ["$.translate_from", "$.translate_to", "$.query"],
                 "_kwargs": {},
-                "_resource": "GoogleTranslate",
+                "_resource": "sources.GoogleTranslate",
                 "_objective": {
                     "@": "$",
                     "language": "$.language",
@@ -47,7 +47,7 @@ class VisualTranslationsEUCommunity(Community):
             "config": {
                 "_args": ["$.word", "$.country", "$.images_quantity"],
                 "_kwargs": {},
-                "_resource": "GoogleImage",
+                "_resource": "sources.GoogleImage",
                 "_objective": {
                     "@": "$.items",
                     "#word": "$.queries.request.0.searchTerms",
@@ -71,7 +71,7 @@ class VisualTranslationsEUCommunity(Community):
             "config": {
                 "_args": ["$.url"],
                 "_kwargs": {},
-                "_resource": "WebImageDownload"
+                "_resource": "visual_translations.WebImageDownload"
             },
             "schema": {},
             "errors": None,

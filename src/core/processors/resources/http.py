@@ -1,9 +1,7 @@
-import requests
-
 from datagrowth.configuration import DEFAULT_CONFIGURATION
+from datagrowth.resources.http.tasks import send, send_mass
+from datagrowth.configuration import ConfigurationProperty
 from core.processors.resources.base import ResourceProcessor
-from core.tasks.http import send, send_mass
-from core.utils.configuration import ConfigurationProperty
 
 
 class HttpResourceProcessor(ResourceProcessor):
@@ -18,14 +16,6 @@ class HttpResourceProcessor(ResourceProcessor):
     )
 
     #######################################################
-    # Getters
-    #######################################################
-
-    @classmethod
-    def get_session(cls, config):
-        return requests.Session()
-
-    #######################################################
     # TASKS
     #######################################################
     # Wrappers that act as an interface
@@ -35,30 +25,26 @@ class HttpResourceProcessor(ResourceProcessor):
     def fetch(self):
         return send.s(
             method="get",
-            config=self.config.to_dict(private=True, protected=True),
-            session=self.__class__.__name__
+            config=self.config.to_dict(private=True, protected=True)
         )
 
     @property
     def fetch_mass(self):
         return send_mass.s(
             method="get",
-            config=self.config.to_dict(private=True, protected=True),
-            session=self.__class__.__name__
+            config=self.config.to_dict(private=True, protected=True)
         )
 
     @property
     def submit(self):
         return send.s(
             method="post",
-            config=self.config.to_dict(private=True, protected=True),
-            session=self.__class__.__name__
+            config=self.config.to_dict(private=True, protected=True)
         )
 
     @property
     def submit_mass(self):
         return send_mass.s(
             method="post",
-            config=self.config.to_dict(private=True, protected=True),
-            session=self.__class__.__name__
+            config=self.config.to_dict(private=True, protected=True)
         )

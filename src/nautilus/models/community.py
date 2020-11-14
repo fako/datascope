@@ -20,7 +20,7 @@ class LocaforaOrderOverviewCommunity(Community):
             "config": {
                 "_args": [],
                 "_kwargs": {},
-                "_resource": "LocaforaOrders",
+                "_resource": "nautilus.LocaforaOrders",
                 "_objective": {
                     "@": "$.data",
                     "first_name": "$.payer_first_name",
@@ -28,7 +28,7 @@ class LocaforaOrderOverviewCommunity(Community):
                     "orders": "$.order_shop_products"
                 },
                 "_auth": {
-                    "resource": "LocaforaLogin",
+                    "resource": "nautilus.LocaforaLogin",
                     "credentials": {
                         "email": "email@fakoberkers.nl",
                         "password": getattr(settings, 'LOCAFORA_PASSWORD', '')

@@ -31,7 +31,7 @@
             "process": "HttpResourceProcessor.fetch_mass",
             "type": "wikidata",
             "state": "Complete",
-            "config": "{\"user_agent\": \"WikiFeedBot (DataScope v0.4.0)\", \"_inline_key\": \"wikidata\", \"end_time\": 1509667200.0, \"_continuation_limit\": 1000, \"start_time\": 1509580800.0, \"_objective\": {\"@\": \"$\", \"wikidata\": \"$.id\", \"claims\": \"$.claims\", \"references\": \"$.references\", \"description\": \"$.description\"}, \"_resource\": \"WikiDataItems\", \"_concat_args_size\": 50}",
+            "config": "{\"user_agent\": \"WikiFeedBot (DataScope v0.4.0)\", \"_inline_key\": \"wikidata\", \"end_time\": 1509667200.0, \"_continuation_limit\": 1000, \"start_time\": 1509580800.0, \"_objective\": {\"@\": \"$\", \"wikidata\": \"$.id\", \"claims\": \"$.claims\", \"references\": \"$.references\", \"description\": \"$.description\"}, \"_resource\": \"sources.WikiDataItems\", \"_concat_args_size\": 50}",
             "output_type": [
                 "core",
                 "collective"

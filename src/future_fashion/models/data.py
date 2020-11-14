@@ -123,7 +123,7 @@ class ClothingDataCommunity(Community):
                     "product": "el.find(class_='title').get_text() if el.find(class_='title') else ''",
                     "brand": "el.find(class_='brand').get_text() if el.find(class_='brand') else ''",
                 },
-                "_resource": "KledingListing",
+                "_resource": "sources.KledingListing",
                 "_continuation_limit": 100,
                 "_interval_duration": 1000
             },
@@ -138,7 +138,7 @@ class ClothingDataCommunity(Community):
             "config": {
                 "_args": ["$.image"],
                 "_kwargs": {},
-                "_resource": "ClothingImageDownload",
+                "_resource": "future_fashion.ClothingImageDownload",
                 "_interval_duration": 100
             },
             "schema": {},

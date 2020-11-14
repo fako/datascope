@@ -35,7 +35,7 @@ class ClothingInventoryCommunity(Community):
             "config": {
                 "_args": [],
                 "_kwargs": {"image": "$.path"},
-                "_resource": "ClothingTypeRecognitionService",
+                "_resource": "future_fashion.ClothingTypeRecognitionService",
                 "_objective": {
                     "@": "$",
                     "path": "$.path",

@@ -24,7 +24,7 @@ class TestHttpResourceProcessor(TestCase):
             defaults=None
         )
         self.config.update({
-            "resource": "HttpResourceMock",
+            "resource": "core.HttpResourceMock",
         })
         self.prc = HttpResourceProcessor(config=self.config.to_dict(protected=True, private=True))
         self.prc._send = MockTask

@@ -30,7 +30,7 @@ class ComplexityAnalysis(HttpResource):
                 "url": "$.url",
                 "languageCode": "en"
             },
-            "_resource": "ComplexityAnalysis",
+            "_resource": "online_discourse.ComplexityAnalysis",
             "_objective": {
                 "@": "$",
                 "url": "$.metadata.url",

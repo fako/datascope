@@ -25,7 +25,7 @@ class TestHTTPTasksBase(TestCase):
             defaults=None
         )
         self.config.update({
-            "resource": "HttpResourceMock",
+            "resource": "core.HttpResourceMock",
         })
         self.session = MockRequests
 
