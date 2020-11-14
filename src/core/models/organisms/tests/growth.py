@@ -101,7 +101,7 @@ class TestGrowth(TransactionTestCase, TestProcessorMixin):
         self.assertFalse(self.new.is_finished)
 
     def test_begin_with_individual_input_sync(self):
-        self.new.config = {"async": False}
+        self.new.config = {"asynchronous": False}
         with patch('core.tasks.http.send.s', return_value=MockTask) as send_s:
             self.new.begin()
         MockTask.delay.assert_called_once_with(1024, 768, name="modest")
@@ -121,7 +121,7 @@ class TestGrowth(TransactionTestCase, TestProcessorMixin):
         self.assertFalse(self.collective_input.is_finished)
 
     def test_begin_with_collective_input_sync(self):
-        self.collective_input.config = {"async": False}
+        self.collective_input.config = {"asynchronous": False}
         with patch('core.tasks.http.send_mass.s', return_value=MockTask) as send_mass_s:
             self.collective_input.begin()
         MockTask.delay.assert_called_once_with(

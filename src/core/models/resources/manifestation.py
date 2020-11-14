@@ -34,7 +34,7 @@ class Manifestation(Resource):
         config = {key: value for key, value in kwargs.items() if key in allowed_config}
         return config
 
-    def get_data(self, async=False):
+    def get_data(self, asynchronous=False):
         from core.tasks import get_manifestation_data
         if self.data:
             return self.data
@@ -49,7 +49,7 @@ class Manifestation(Resource):
             else:
                 raise AssertionError("get_data is not handling AsyncResult with status: {}".format(result.status))
             self.status = celery_status_code(result.status)
-        elif async:
+        elif asynchronous:
             self.task = get_manifestation_data.delay(self.id)
             self.status = celery_status_code(PENDING)
             self.save()

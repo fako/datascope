@@ -9,13 +9,13 @@ from core.processors.base import ArgumentsTypes
 class TestProcessorMixin(object):
 
     def test_prepare_process_async(self):
-        process, method, args_type = self.instance.prepare_process(self.instance.process, async=True)
+        process, method, args_type = self.instance.prepare_process(self.instance.process, asynchronous=True)
         self.assertIsInstance(process, HttpResourceProcessor)
         self.assertTrue(callable(method))
         self.assertIsInstance(method, MethodType)  # 'delay' method of the Signature class
 
     def test_prepare_process_sync(self):
-        process, method, args_type = self.instance.prepare_process(self.instance.process, async=False)
+        process, method, args_type = self.instance.prepare_process(self.instance.process, asynchronous=False)
         self.assertIsInstance(process, HttpResourceProcessor)
         self.assertTrue(callable(method))
         self.assertIsInstance(method, Signature)  # the callable 'Signature' is a sync version of a task
@@ -24,7 +24,7 @@ class TestProcessorMixin(object):
         for batch_method in self.processor.ARGS_BATCH_METHODS:
             process, method, args_type = self.instance.prepare_process(
                 "{}.{}".format(self.processor.__name__, batch_method),
-                async=False
+                asynchronous=False
             )
             self.assertEqual(args_type, ArgumentsTypes.BATCH)
 
@@ -33,11 +33,11 @@ class TestProcessorMixin(object):
             print(normal_method)
             process, method, args_type = self.instance.prepare_process(
                 "{}.{}".format(self.processor.__name__, normal_method),
-                async=True
+                asynchronous=True
             )
             self.assertEqual(args_type, ArgumentsTypes.NORMAL)
 
     def test_config(self):
         self.instance.config = {"test": "config"}
-        process, method, args_type = self.instance.prepare_process(self.instance.process, async=True)
+        process, method, args_type = self.instance.prepare_process(self.instance.process, asynchronous=True)
         self.assertEqual(process.config.test, "config")

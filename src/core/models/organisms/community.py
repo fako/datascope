@@ -282,7 +282,7 @@ class Community(models.Model, ProcessorMixin):
         result = None
         if self.state in [CommunityState.NEW]:
             log.info("Preparing community")
-            self.state = CommunityState.ASYNC if self.config.async else CommunityState.SYNC
+            self.state = CommunityState.ASYNC if self.config.asynchronous else CommunityState.SYNC
             self.setup_growth(*args)
             self.current_growth = self.next_growth()
             self.save()  # in between save because next operations may take long and community needs to be claimed.

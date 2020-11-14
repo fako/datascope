@@ -35,7 +35,7 @@ class CommunityView(APIView):
     @classmethod
     def _get_response_from_manifestation(cls, manifestation):
         response_data = copy(cls.RESPONSE_DATA)
-        manifestation_data = manifestation.get_data(async=manifestation.community.ASYNC_MANIFEST)
+        manifestation_data = manifestation.get_data(asynchronous=manifestation.community.ASYNC_MANIFEST)
         if not manifestation_data:
             return Response(None, HTTP_204_NO_CONTENT)
         results_key = "results" if isinstance(manifestation_data, list) else "result"
