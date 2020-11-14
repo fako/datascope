@@ -17,7 +17,7 @@ services:
       - "postgres"
     environment:
       - PYTHONUNBUFFERED=1
-      - POSTGRES_HOST=postgres
+      - INVOKE_POSTGRES_HOST=postgres
       - DJANGO_MODE=${DJANGO_MODE}
       - INVOKE_DJANGO_DEBUG=${INVOKE_DJANGO_DEBUG}
 
