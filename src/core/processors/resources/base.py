@@ -1,7 +1,7 @@
+from django.apps import apps
 from celery.result import AsyncResult, states as TaskStates
 
-from core.processors.base import Processor
-from core.utils.helpers import get_any_model
+from datagrowth.processors.base import Processor
 from core.exceptions import DSProcessUnfinished, DSProcessError
 
 
@@ -48,5 +48,5 @@ class ResourceProcessor(Processor):
     @property
     def resource(self):
         if not self._resource:
-            self._resource = get_any_model(self.config.resource)
+            self._resource = apps.get_model(self.config.resource)
         return self._resource
