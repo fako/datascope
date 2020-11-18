@@ -35,7 +35,7 @@
             "collective"
         ],
         "is_finished": false,
-        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\", \"args\": [\"$.width\", \"$.height\"], \"kwargs\": {\"name\": \"$.name\"}}",
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"core.HttpResourceMock\", \"args\": [\"$.width\", \"$.height\"], \"kwargs\": {\"name\": \"$.name\"}}",
         "community_type": ["core", "communitymock"],
         "community_id": 1
     },
@@ -61,7 +61,7 @@
             "collective"
         ],
         "is_finished": false,
-        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"core.HttpResourceMock\"}",
         "community_type": ["core", "communitymock"],
         "community_id": 1
     },
@@ -87,7 +87,7 @@
             "collective"
         ],
         "is_finished": true,
-        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"core.HttpResourceMock\"}",
         "community_type": ["core", "communitymock"],
         "community_id": 1
     },
@@ -113,7 +113,7 @@
             "collective"
         ],
         "is_finished": false,
-        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"core.HttpResourceMock\"}",
         "community_type": ["core", "communitymock"],
         "community_id": 1
     },
@@ -139,7 +139,7 @@
             "collective"
         ],
         "is_finished": false,
-        "config": "{\"objective\": {\"@\": \"$\", \"value\":\"$.value\", \"extra\":\"$.extra\"}, \"resource\": \"HttpResourceMock\", \"args\": [\"$.value\"], \"kwargs\": {\"context\": \"$.context\"}}",
+        "config": "{\"objective\": {\"@\": \"$\", \"value\":\"$.value\", \"extra\":\"$.extra\"}, \"resource\": \"core.HttpResourceMock\", \"args\": [\"$.value\"], \"kwargs\": {\"context\": \"$.context\"}}",
         "community_type": ["core", "communitymock"],
         "community_id": 1
     },
@@ -165,7 +165,7 @@
             "collective"
         ],
         "is_finished": false,
-        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"core.HttpResourceMock\"}",
         "community_type": ["core", "communitymock"],
         "community_id": 1
     },
@@ -191,7 +191,7 @@
             "individual"
         ],
         "is_finished": false,
-        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"core.HttpResourceMock\"}",
         "community_type": ["core", "communitymock"],
         "community_id": 1
     },

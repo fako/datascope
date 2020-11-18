@@ -9,7 +9,7 @@
         "completed_at": "2016-06-05T16:17:54.000",
         "state": "Ready",
         "current_growth": null,
-        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\", \"include_odd\": true, \"include_even\": false}",
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"core.HttpResourceMock\", \"include_odd\": true, \"include_even\": false}",
         "purge_at": null,
         "signature": "setting1=const&test-ready"
     },

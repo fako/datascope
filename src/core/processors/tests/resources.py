@@ -32,7 +32,7 @@ class TestHttpResourceProcessor(TestCase):
         self.session = MockRequests
         MockTask.reset_mock()
 
-    @patch("core.tasks.http.send.s")
+    @patch("datagrowth.resources.http.tasks.send.s")
     def test_fetch(self, send_s):
         null = self.prc.fetch
         self.assertTrue(send_s.called)
@@ -41,7 +41,7 @@ class TestHttpResourceProcessor(TestCase):
         self.assertIsInstance(kwargs["config"], dict)
         self.assertTrue(kwargs["config"].get("_resource"))
 
-    @patch("core.tasks.http.send_mass.s")
+    @patch("datagrowth.resources.http.tasks.send_mass.s")
     def test_fetch_mass(self, send_mass_s):
         null = self.prc.fetch_mass
         self.assertTrue(send_mass_s.called)
@@ -50,7 +50,7 @@ class TestHttpResourceProcessor(TestCase):
         self.assertIsInstance(kwargs["config"], dict)
         self.assertTrue(kwargs["config"].get("_resource"))
 
-    @patch("core.tasks.http.send.s")
+    @patch("datagrowth.resources.http.tasks.send.s")
     def test_submit(self, send_s):
         null = self.prc.submit
         self.assertTrue(send_s.called)
@@ -59,7 +59,7 @@ class TestHttpResourceProcessor(TestCase):
         self.assertIsInstance(kwargs["config"], dict)
         self.assertTrue(kwargs["config"].get("_resource"))
 
-    @patch("core.tasks.http.send_mass.s")
+    @patch("datagrowth.resources.http.tasks.send_mass.s")
     def test_submit_mass(self, send_mass_s):
         null = self.prc.submit_mass
         self.assertTrue(send_mass_s.called)

@@ -93,7 +93,7 @@ class TestGrowth(TransactionTestCase, TestProcessorMixin):
         self.processor = HttpResourceProcessor
 
     def test_begin_with_individual_input_async(self):
-        with patch('core.tasks.http.send.s', return_value=MockTask) as send_s:
+        with patch('datagrowth.resources.http.tasks.send.s', return_value=MockTask) as send_s:
             self.new.begin()
         MockTask.delay.assert_called_once_with(1024, 768, name="modest")
         self.assertEqual(self.new.result_id, "result-id")
@@ -102,7 +102,7 @@ class TestGrowth(TransactionTestCase, TestProcessorMixin):
 
     def test_begin_with_individual_input_sync(self):
         self.new.config = {"asynchronous": False}
-        with patch('core.tasks.http.send.s', return_value=MockTask) as send_s:
+        with patch('datagrowth.resources.http.tasks.send.s', return_value=MockTask) as send_s:
             self.new.begin()
         MockTask.delay.assert_called_once_with(1024, 768, name="modest")
         self.assertEqual(self.new.result_id, None)
@@ -110,7 +110,7 @@ class TestGrowth(TransactionTestCase, TestProcessorMixin):
         self.assertFalse(self.new.is_finished)
 
     def test_begin_with_collective_input_async(self):
-        with patch('core.tasks.http.send_mass.s', return_value=MockTask) as send_mass_s:
+        with patch('datagrowth.resources.http.tasks.send_mass.s', return_value=MockTask) as send_mass_s:
             self.collective_input.begin()
         MockTask.delay.assert_called_once_with(
             [["nested value 0"], ["nested value 1"], ["nested value 2"]],
@@ -122,7 +122,7 @@ class TestGrowth(TransactionTestCase, TestProcessorMixin):
 
     def test_begin_with_collective_input_sync(self):
         self.collective_input.config = {"asynchronous": False}
-        with patch('core.tasks.http.send_mass.s', return_value=MockTask) as send_mass_s:
+        with patch('datagrowth.resources.http.tasks.send_mass.s', return_value=MockTask) as send_mass_s:
             self.collective_input.begin()
         MockTask.delay.assert_called_once_with(
             [["nested value 0"], ["nested value 1"], ["nested value 2"]],

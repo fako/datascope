@@ -16,8 +16,6 @@ from core.models.organisms.tests.collective import TestCollective
 from core.models.organisms.tests.individual import TestIndividual
 from core.models.resources.tests.manifestation import TestManifestationResource
 
-from core.tasks.tests.http import (TestSendMassTaskGet, TestSendMassTaskPost, TestSendTaskGet, TestSendTaskPost,
-                                   TestSendSerieTaskGet, TestSendSerieTaskPost, TestGetResourceLink, TestLoadSession)
 from core.tasks.tests.manifestation import TestManifestationTasks
 
 from core.views.tests.collective import TestCollectiveView, TestCollectiveContentView
