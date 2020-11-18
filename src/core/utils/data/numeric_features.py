@@ -82,8 +82,8 @@ class NumericFeaturesFrame(object):
                 # the column partially exists
                 # we add what is new and update existing rows
                 missing = series.index.difference(self.data[column].index)
-                new[series.name] = series.loc[list(missing.get_values())]
-                update[series.name] = series.loc[list(intersection.get_values())]
+                new[series.name] = series.loc[list(missing.values)]
+                update[series.name] = series.loc[list(intersection.values)]
         self.data = self.data.append(new, sort=False)
         self.data.update(update)
 
