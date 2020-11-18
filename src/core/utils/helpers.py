@@ -38,7 +38,7 @@ def merge_iter(*iterables, **kwargs):  # TODO: test to unlock, works bad with em
         except StopIteration:
             del iterables[i]
             if not iterables:
-                raise
+                return
 
 
 def iroundrobin(*iterables):  # TODO: test to unlock
