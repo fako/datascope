@@ -143,7 +143,7 @@ class TestNumericFeaturesFrame(TestCase):
 
     def test_init(self):
         sorted_feature_names = ["is_dutch", "is_english", "value_number"]
-        self.assertEquals(
+        self.assertEqual(
             sorted(self.frame.features.keys()),
             sorted_feature_names
         )
@@ -206,7 +206,7 @@ class TestNumericFeaturesFrame(TestCase):
                 file_path="test/path/to/frame.pkl"
             )
             sorted_feature_names = ["is_dutch", "is_english", "value_number"]
-            self.assertEquals(
+            self.assertEqual(
                 sorted(frame.features.keys()),
                 sorted_feature_names
             )
@@ -264,7 +264,7 @@ class TestNumericFeaturesFrame(TestCase):
         ])
         assert_frame_equal(frame.data, self.test_frame, check_like=True)
         sorted_feature_names = ["is_dutch", "is_english", "value_number"]
-        self.assertEquals(
+        self.assertEqual(
             sorted(self.frame.features.keys()),
             sorted_feature_names
         )
@@ -308,7 +308,7 @@ class TestNumericFeaturesFrame(TestCase):
         self.test_frame_extra = self.test_frame_extra.drop(labels="is_dutch", axis=1)
         assert_frame_equal(frame.data, self.test_frame_extra, check_like=True)
         sorted_feature_names = ["is_english", "value_number"]
-        self.assertEquals(
+        self.assertEqual(
             sorted(frame.features.keys()),
             sorted_feature_names
         )
@@ -329,7 +329,7 @@ class TestNumericFeaturesFrame(TestCase):
         self.test_frame = self.test_frame.drop(labels="is_dutch", axis=1)
         assert_frame_equal(frame.data, self.test_frame, check_like=True)
         sorted_feature_names = ["is_english", "value_number"]
-        self.assertEquals(
+        self.assertEqual(
             sorted(frame.features.keys()),
             sorted_feature_names
         )
@@ -349,7 +349,7 @@ class TestNumericFeaturesFrame(TestCase):
         self.test_frame = self.test_frame.drop(labels="is_dutch", axis=1)
         assert_frame_equal(frame.data, self.test_frame[0:0], check_like=True)
         sorted_feature_names = ["is_english", "value_number"]
-        self.assertEquals(
+        self.assertEqual(
             sorted(frame.features.keys()),
             sorted_feature_names
         )
@@ -377,7 +377,7 @@ class TestNumericFeaturesFrame(TestCase):
         for function in [str, int, float]:
             test_params["is_dutch"] = function(test_params["is_dutch"])
             cleaned_params = self.frame.clean_params(test_params)
-            self.assertEquals(cleaned_params, {"is_dutch": 1.0, "value_number": 2.0})
+            self.assertEqual(cleaned_params, {"is_dutch": 1.0, "value_number": 2.0})
 
         test_error_params = {
             "is_dutch": "1",
@@ -391,9 +391,9 @@ class TestNumericFeaturesFrame(TestCase):
 
     def test_rank_by_params(self):
         ranking = self.frame.rank_by_params({"is_dutch": 1, "value_number": 1})
-        self.assertEquals(ranking, [5, 8, 6, 4, 7])
+        self.assertEqual(ranking, [5, 8, 6, 4, 7])
         ranking = self.frame.rank_by_params({"is_dutch": 0.5, "value_number": -1, "is_english": 2, "is_french": 100})
-        self.assertEquals(ranking, [7, 8, 6, 4, 5])
+        self.assertEqual(ranking, [7, 8, 6, 4, 5])
 
     def test_get_content_hash(self):
         self.skipTest("not tested")
