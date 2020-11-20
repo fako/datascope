@@ -113,7 +113,7 @@ class NumericFeaturesFrame(object):
 
     def get_feature_series(self, feature_name, feature_callable, content_callable=None, context=None):
         contents = content_callable() if content_callable else self.content()
-        series = pd.Series(name=feature_name)
+        series = pd.Series(name=feature_name, dtype="float64")
         for content in contents:
             content_hash = self.get_content_hash(content)
             identifier = self.get_identifier(content)
@@ -138,7 +138,7 @@ class NumericFeaturesFrame(object):
         self.features.update(features)
         feature_names = features.keys()
         for column in feature_names:
-            self.data[column] = pd.Series()
+            self.data[column] = pd.Series(dtype="float64")
         if self.content is not None:
             self.load_content(feature_names=feature_names)
 
@@ -162,7 +162,7 @@ class NumericFeaturesFrame(object):
             self.load_features(features)
         elif self.features is not None and content is not None:
             for column in self.features.keys():
-                self.data[column] = pd.Series()
+                self.data[column] = pd.Series(dtype="float64")
             self.load_content(content)
 
     def rank_by_params(self, params, limit=20):
