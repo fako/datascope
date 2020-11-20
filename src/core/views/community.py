@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.shortcuts import Http404
 from django.template.response import TemplateResponse
 from django.views.generic import View
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from rest_framework.views import APIView
 from rest_framework.response import Response

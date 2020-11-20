@@ -6,6 +6,7 @@ from online_discourse.models import DiscourseSearchCommunity
 from online_discourse import views
 
 
+app_name = "online-discourse"
 urlpatterns = [
     url(
         r'^service/(?P<path>.+)/$',
@@ -35,6 +36,6 @@ router = routers.SimpleRouter()
 router.register(
     'discourses',
     views.DiscourseViewSet,
-    base_name=DiscourseSearchCommunity.get_name()
+    basename=DiscourseSearchCommunity.get_name()
 )
 urlpatterns += router.urls

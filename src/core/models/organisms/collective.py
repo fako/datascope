@@ -1,7 +1,7 @@
 from django.apps import apps
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from datagrowth.datatypes import CollectionBase
 
