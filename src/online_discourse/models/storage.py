@@ -7,7 +7,7 @@ from datagrowth.datatypes import CollectionBase, DocumentCollectionMixin, Docume
 class Collection(DocumentCollectionMixin, CollectionBase):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
-    community_type = models.ForeignKey(ContentType, related_name="+")
+    community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)
     community_id = models.PositiveIntegerField()
 
     def init_document(self, data, collection=None):
@@ -23,7 +23,7 @@ class Collection(DocumentCollectionMixin, CollectionBase):
 class Document(DocumentPostgres, DocumentBase):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
-    community_type = models.ForeignKey(ContentType, related_name="+")
+    community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)
     community_id = models.PositiveIntegerField()
 
     def to_search(self):

@@ -21,7 +21,7 @@ class Manifestation(Resource):
     data = JSONField(null=True)
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
-    community_type = models.ForeignKey(ContentType, related_name="+")
+    community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)
     community_id = models.PositiveIntegerField()
 
     task = models.CharField(max_length=255, null=True, blank=True)

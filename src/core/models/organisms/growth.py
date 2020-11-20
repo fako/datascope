@@ -55,7 +55,7 @@ PROCESS_CHOICE_LIST = [
 class Growth(models.Model, ProcessorMixin):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
-    community_type = models.ForeignKey(ContentType, related_name="+")
+    community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)
     community_id = models.PositiveIntegerField()
 
     type = models.CharField(max_length=255)
@@ -69,10 +69,10 @@ class Growth(models.Model, ProcessorMixin):
     contribute_type = models.CharField(max_length=255, choices=CONTRIBUTE_TYPE_CHOICES, null=True, blank=True)
 
     input = GenericForeignKey(ct_field="input_type", fk_field="input_id")
-    input_type = models.ForeignKey(ContentType, related_name="+", null=True, blank=True)
+    input_type = models.ForeignKey(ContentType, related_name="+", null=True, blank=True, on_delete=models.PROTECT)
     input_id = models.PositiveIntegerField(null=True, blank=True)
     output = GenericForeignKey(ct_field="output_type", fk_field="output_id")
-    output_type = models.ForeignKey(ContentType, related_name="+", null=True, blank=True)
+    output_type = models.ForeignKey(ContentType, related_name="+", null=True, blank=True, on_delete=models.PROTECT)
     output_id = models.PositiveIntegerField(null=True, blank=True)
 
     result_id = models.CharField(max_length=255, null=True, blank=True)

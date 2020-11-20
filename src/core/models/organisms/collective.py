@@ -9,7 +9,7 @@ from datagrowth.datatypes import CollectionBase
 class Collective(CollectionBase):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
-    community_type = models.ForeignKey(ContentType, related_name="+")
+    community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)
     community_id = models.PositiveIntegerField()
 
     @classmethod
