@@ -3,6 +3,7 @@ whitenoise==5.1.0
 sqlparse==0.2.0  # raw sql queries
 URLObject==2.4.0
 celery==4.4.0
+kombu==4.6.10
 git+https://github.com/fako/django-json-field.git
 djangorestframework==3.11.0
 django-cors-headers==3.4.0
