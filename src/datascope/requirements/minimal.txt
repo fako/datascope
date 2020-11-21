@@ -33,5 +33,5 @@ elasticsearch==6.0.0
 invoke==1.4.0
 sentry-sdk==0.16.2
 ipdb==0.8
-ipython==7.19.0
+ipython==7.12.0
 django-debug-toolbar==1.9.1
