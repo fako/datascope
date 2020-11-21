@@ -56,7 +56,7 @@ urlpatterns = [
     url(r'^data/v1/', include((legacy_patterns, "v1",))),
     url(r'^api/v1/auth/token/?$', rest_views.obtain_auth_token),
     url(r'^api/v1/', include((datagrowth_patterns, "api-v1",))),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^admin/', admin.site.urls),
     url(r'^health/?$', views.health_check),
 ]
 
