@@ -9,7 +9,7 @@
         "completed_at": null,
         "state": "New",
         "current_growth": null,
-        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"core.HttpResourceMock\"}",
         "purge_at": null
     },
     "model": "core.CommunityMock",
@@ -75,7 +75,7 @@
         "completed_at": null,
         "state": "New",
         "current_growth": null,
-        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"HttpResourceMock\"}",
+        "config": "{\"objective\": {\"@\": \"$.dict.list\", \"value\":\"$\", \"#context\":\"$.dict.test\"}, \"resource\": \"core.HttpResourceMock\"}",
         "purge_at": null
     },
     "model": "core.CommunityMock",

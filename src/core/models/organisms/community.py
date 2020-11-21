@@ -49,9 +49,9 @@ class Community(models.Model, ProcessorMixin):
     def documents(self):
         return self.individual_set
 
-    current_growth = models.ForeignKey('core.Growth', null=True)
+    current_growth = models.ForeignKey('core.Growth', null=True, on_delete=models.SET_NULL)
     kernel = GenericForeignKey(ct_field="kernel_type", fk_field="kernel_id")
-    kernel_type = models.ForeignKey(ContentType, null=True, blank=True)
+    kernel_type = models.ForeignKey(ContentType, null=True, blank=True, on_delete=models.PROTECT)
     kernel_id = models.PositiveIntegerField(null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -282,7 +282,7 @@ class Community(models.Model, ProcessorMixin):
         result = None
         if self.state in [CommunityState.NEW]:
             log.info("Preparing community")
-            self.state = CommunityState.ASYNC if self.config.async else CommunityState.SYNC
+            self.state = CommunityState.ASYNC if self.config.asynchronous else CommunityState.SYNC
             self.setup_growth(*args)
             self.current_growth = self.next_growth()
             self.save()  # in between save because next operations may take long and community needs to be claimed.

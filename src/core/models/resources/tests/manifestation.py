@@ -36,8 +36,8 @@ class TestManifestationResource(TestCase):
     def test_get_data_async(self, task_delay):
         # Test processing
         try:
-            self.instance.get_data(async=True)
-            self.fail("Expected get_data to raise DSProcessUnfinished when manifesting async")
+            self.instance.get_data(asynchronous=True)
+            self.fail("Expected get_data to raise DSProcessUnfinished when manifesting asynchronously")
         except DSProcessUnfinished:
             pass
         self.assertEqual(self.instance.status, 8)

@@ -11,7 +11,7 @@ class CommunityMock(Community):
             "config": {
                 "_args": ["$.test"],
                 "_kwargs": {},
-                "_resource": "HttpResourceMock",
+                "_resource": "core.HttpResourceMock",
                 "_objective": {
                     "@": "$.dict.list",
                     "value": "$",
@@ -42,7 +42,7 @@ class CommunityMock(Community):
             "config": {
                 "_args": ["$.value"],
                 "_kwargs": {},
-                "_resource": "HttpResourceMock",
+                "_resource": "core.HttpResourceMock",
                 "_objective": {
                     "@": "$.dict.list",
                     "value": "$",
@@ -68,7 +68,7 @@ class CommunityMock(Community):
             "config": {
                 "_args": ["$.value"],
                 "_kwargs": {},
-                "_resource": "HttpResourceMock",
+                "_resource": "core.HttpResourceMock",
             },
             "input": "@phase2",
             "contribute": None,

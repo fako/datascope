@@ -17,7 +17,7 @@ class ElasticIndex(models.Model):
 
     signature = models.CharField(max_length=255)
     language = models.CharField(max_length=5, choices=settings.ELASTIC_SEARCH_ANALYSERS.items())
-    dataset = models.ForeignKey(DiscourseSearchCommunity, related_name="indices")
+    dataset = models.ForeignKey(DiscourseSearchCommunity, related_name="indices", on_delete=models.CASCADE)
     configuration = JSONField(blank=True)
     error_count = models.IntegerField(default=0)
 

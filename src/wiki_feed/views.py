@@ -1,6 +1,6 @@
 from django.shortcuts import redirect
 from django.template.response import SimpleTemplateResponse
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.conf import settings
 
 from rest_framework import status

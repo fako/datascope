@@ -9,7 +9,7 @@ class CityCelebrities(object):
         ("radius", {
             "process": "HttpResourceProcessor.fetch",
             "config": {
-                "_resource": "WikiGeoLocation",
+                "_resource": "sources.WikiGeoLocation",
                 "_objective": {}
             },
             "success": "ExtractProcessor.extract_resource",
@@ -21,7 +21,7 @@ class CityCelebrities(object):
         ("backlinks", {
             "process": "HttpResourceProcessor.fetch_mass",
             "config": {
-                "_resource": "WikiBacklinks",
+                "_resource": "sources.WikiBacklinks",
                 "_objective": {}
             },
             "success": "ExtractProcessor.extract_resource",
@@ -33,7 +33,7 @@ class CityCelebrities(object):
         ("people_filter", {
             "process": "HttpResourceProcessor.submit_mass",
             "config": {
-                "_resource": "WikiDataFilter",
+                "_resource": "sources.WikiDataFilter",
                 "concat_args_with": ",",
                 "wdq_template": "ITEMS[{}] AND CLAIM[31:5] AND NOCLAIM[570]"
             },
@@ -46,7 +46,7 @@ class CityCelebrities(object):
         ("people_text", {
             "process": "HttpResourceProcessor.fetch_mass",
             "config": {
-                "_resource": "WikiSearch",
+                "_resource": "sources.WikiSearch",
                 "concat_args_with": ",",
                 "_objective": {}
             },
@@ -60,7 +60,7 @@ class CityCelebrities(object):
         ("location_text", {
             "process": "HttpResourceProcessor.fetch_mass",
             "config": {
-                "_resource": "WikiSearch",
+                "_resource": "sources.WikiSearch",
                 "concat_with": ",",
                 "_objective": {}
             },

@@ -28,7 +28,7 @@ class WikiFeedCommunity(Community):
             "config": {
                 "_args": [],
                 "_kwargs": {},
-                "_resource": "WikipediaRecentChanges",
+                "_resource": "sources.WikipediaRecentChanges",
                 "_objective": {
                     "@": "$.query.recentchanges",
                     "pageid": "$.pageid",
@@ -51,7 +51,7 @@ class WikiFeedCommunity(Community):
             "config": {
                 "_args": ["$.pageid"],
                 "_kwargs": {},
-                "_resource": "WikipediaListPages",
+                "_resource": "sources.WikipediaListPages",
                 "_objective": {
                     "@": "$.query.pages",
                     "pageid": "$.pageid",
@@ -76,7 +76,7 @@ class WikiFeedCommunity(Community):
             "config": {
                 "_args": ["$.wikidata"],
                 "_kwargs": {},
-                "_resource": "WikiDataItems",
+                "_resource": "sources.WikiDataItems",
                 "_objective": {
                     "@": "$",
                     "wikidata": "$.id",
@@ -100,7 +100,7 @@ class WikiFeedCommunity(Community):
         #     "config": {
         #         "_args": ["$.title"],
         #         "_kwargs": {},
-        #         "_resource": "WikipediaPageviewDetails",
+        #         "_resource": "sources.WikipediaPageviewDetails",
         #         "_objective": {
         #             "@": "$.items",
         #             "title": "$.article",
@@ -274,7 +274,7 @@ class WikiFeedPublishCommunity(Community):
             "config": {
                 "_args": ["$.feed_page"],
                 "_kwargs": {},
-                "_resource": "WikipediaTransclusions",
+                "_resource": "sources.WikipediaTransclusions",
                 "_objective": {
                     "@": "$.query.pages",
                     "title": "$.title"
@@ -294,7 +294,7 @@ class WikiFeedPublishCommunity(Community):
             "config": {
                 "_args": ["$.title"],
                 "_kwargs": {},
-                "_resource": "WikipediaRevisions",
+                "_resource": "sources.WikipediaRevisions",
                 "_objective": {
                     "@": "$.page.revisions",
                     "#namespace": "$.page.ns",
@@ -320,7 +320,7 @@ class WikiFeedPublishCommunity(Community):
                 "_kwargs": "$.feed.modules",
                 "_community": "WikiFeedCommunity",
                 "_update_key": "service",
-                "_resource": "Manifestation"
+                "_resource": "core.Manifestation"
             },
             "schema": {},
             "errors": {},
@@ -336,7 +336,7 @@ class WikiFeedPublishCommunity(Community):
                     "title": "$.title",
                     "text": "$.text"
                 },
-                "_resource": "WikipediaEdit",
+                "_resource": "sources.WikipediaEdit",
                 "_username": getattr(settings, 'WIKI_USER', ''),
                 "_password": getattr(settings, 'WIKI_PASSWORD', '')
             },

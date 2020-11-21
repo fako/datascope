@@ -2,6 +2,7 @@ import logging
 from operator import xor
 from collections import Iterator
 
+from django.apps import apps
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 from django.core.exceptions import ValidationError
@@ -54,13 +55,13 @@ PROCESS_CHOICE_LIST = [
 class Growth(models.Model, ProcessorMixin):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
-    community_type = models.ForeignKey(ContentType, related_name="+")
+    community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)
     community_id = models.PositiveIntegerField()
 
     type = models.CharField(max_length=255)
     config = ConfigurationField(
         namespace="growth",
-        private=["args", "kwargs", "async"]
+        private=["args", "kwargs", "asynchronous"]
     )
 
     process = models.CharField(max_length=255, choices=PROCESS_CHOICE_LIST)
@@ -68,10 +69,10 @@ class Growth(models.Model, ProcessorMixin):
     contribute_type = models.CharField(max_length=255, choices=CONTRIBUTE_TYPE_CHOICES, null=True, blank=True)
 
     input = GenericForeignKey(ct_field="input_type", fk_field="input_id")
-    input_type = models.ForeignKey(ContentType, related_name="+", null=True, blank=True)
+    input_type = models.ForeignKey(ContentType, related_name="+", null=True, blank=True, on_delete=models.PROTECT)
     input_id = models.PositiveIntegerField(null=True, blank=True)
     output = GenericForeignKey(ct_field="output_type", fk_field="output_id")
-    output_type = models.ForeignKey(ContentType, related_name="+", null=True, blank=True)
+    output_type = models.ForeignKey(ContentType, related_name="+", null=True, blank=True, on_delete=models.PROTECT)
     output_id = models.PositiveIntegerField(null=True, blank=True)
 
     result_id = models.CharField(max_length=255, null=True, blank=True)
@@ -91,7 +92,7 @@ class Growth(models.Model, ProcessorMixin):
 
         self.config = self.community.config.to_dict(protected=True)  # TODO: make this += operation instead
 
-        processor, method, args_type = self.prepare_process(self.process, async=self.config.async)
+        processor, method, args_type = self.prepare_process(self.process, asynchronous=self.config.asynchronous)
         assert args_type == ArgumentsTypes.NORMAL and isinstance(self.input, (Individual, DocumentBase)) or \
             args_type == ArgumentsTypes.BATCH and isinstance(self.input, (Collective, CollectionBase)), \
             "Unexpected arguments type '{}' for input of class {}".format(args_type, self.input.__class__.__name__)
@@ -106,7 +107,7 @@ class Growth(models.Model, ProcessorMixin):
         else:
             raise AssertionError("Growth.input is of unexpected type {}".format(type(self.input)))
 
-        if not self.config.async:
+        if not self.config.asynchronous:
             self.state = GrowthState.CONTRIBUTE
         else:
             self.state = GrowthState.PROCESSING
@@ -123,7 +124,7 @@ class Growth(models.Model, ProcessorMixin):
             GrowthState.PROCESSING, GrowthState.COMPLETE, GrowthState.PARTIAL, GrowthState.CONTRIBUTE
         ], "Can't finish a growth that is in state {}".format(self.state)
 
-        processor, method, args_type = self.prepare_process(self.process, async=self.config.async)
+        processor, method, args_type = self.prepare_process(self.process, asynchronous=self.config.asynchronous)
 
         if self.state == GrowthState.PROCESSING:
             try:
@@ -238,7 +239,7 @@ class Growth(models.Model, ProcessorMixin):
 
     @property
     def resources(self):
-        Resource = get_any_model(self.config.resource)
+        Resource = apps.get_model(self.config.resource)
         Type = ContentType.objects.get_for_model(self)
         return Resource.objects.filter(retainer_type__pk=Type.id, retainer_id=self.id)
 

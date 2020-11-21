@@ -14,7 +14,7 @@ class RedditScrapeCommunity(Community):
             "config": {
                 "_args": ["$.subreddit"],
                 "_kwargs": {},
-                "_resource": "RedditList",
+                "_resource": "setup_utrecht.RedditList",
                 "_objective": {
                     "@": "soup.find_all(id=lambda el_id: el_id and el_id.startswith('thing_'))",
                     "id": "el.get('id').split('_')[-1]",
@@ -38,7 +38,7 @@ class RedditScrapeCommunity(Community):
             "config": {
                 "_args": ["$.details_link"],
                 "_kwargs": {},
-                "_resource": "RedditPermalink",
+                "_resource": "setup_utrecht.RedditPermalink",
                 "_objective": {
                     "@": "soup.find_all(id=lambda el_id: el_id and el_id.startswith('media-preview-'))",
                     "id": "el.get('id').split('-')[-1]",
@@ -58,7 +58,7 @@ class RedditScrapeCommunity(Community):
             "config": {
                 "_args": ["$.details_link"],
                 "_kwargs": {},
-                "_resource": "RedditPermalink",
+                "_resource": "setup_utrecht.RedditPermalink",
                 "_objective": {
                     "@": "soup.find_all(id=lambda el_id: el_id and el_id.startswith('thing_'))[1:]",
                     "id": "el.get('id').split('_')[-1]",
@@ -79,7 +79,7 @@ class RedditScrapeCommunity(Community):
             "config": {
                 "_args": ["$.media_preview"],
                 "_kwargs": {},
-                "_resource": "RedditImageDownload",
+                "_resource": "setup_utrecht.RedditImageDownload",
                 "_interval_duration": 2000,
             },
             "schema": {},

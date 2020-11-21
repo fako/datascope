@@ -19,7 +19,7 @@ class UniformImagesCommunity(Community):
             "config": {
                 "_args": ["$.word", "$.country", "$.image_quantity"],
                 "_kwargs": {},
-                "_resource": "GoogleImage",
+                "_resource": "sources.GoogleImage",
                 "_objective": {
                     "@": "$.items",
                     "#word": "$.queries.request.0.searchTerms",
@@ -42,7 +42,7 @@ class UniformImagesCommunity(Community):
             "config": {
                 "_args": ["$.url", "$.word"],
                 "_kwargs": {},
-                "_resource": "UniformImageDownload"
+                "_resource": "setup_utrecht.UniformImageDownload"
             },
             "schema": {},
             "errors": None,

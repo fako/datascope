@@ -1,4 +1,4 @@
-FROM python:3.6
+FROM python:3.8
 
 RUN apt-get update && \
     apt-get install -y vim binutils libproj-dev gdal-bin gettext default-jdk
@@ -32,8 +32,8 @@ RUN python manage.py collectstatic --noinput
 # We're switching user to a non-priviliged user
 # The Python packages directory and datagrowth package needs to belong to that user
 # for dynamic packaging (see entrypoint)
-RUN chown app:app /usr/local/lib/python3.6/site-packages
-RUN chown -R app:app /usr/local/lib/python3.6/site-packages/datagrowth*
+RUN chown app:app /usr/local/lib/python3.8/site-packages
+RUN chown -R app:app /usr/local/lib/python3.8/site-packages/datagrowth*
 USER app:app
 
 # Compiling translations

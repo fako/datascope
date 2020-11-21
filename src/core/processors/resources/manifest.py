@@ -23,7 +23,7 @@ class ManifestProcessor(ResourceProcessor):
 
     def __init__(self, config):
         config.update({
-            "_resource": "Manifestation"
+            "_resource": "core.Manifestation"
         })
         super(ManifestProcessor, self).__init__(config)
         assert "_community" in config or "community" in config, \

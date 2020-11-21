@@ -43,7 +43,7 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
             "config": {
                 "_args": ["$.query", "$.quantity"],
                 "_kwargs": {},
-                "_resource": "GoogleText",
+                "_resource": "sources.GoogleText",
                 "_objective": {
                     "@": "$.items",
                     "#term": "$.queries.request.0.searchTerms",
@@ -64,7 +64,7 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
             "config": {
                 "_args": ["$.url"],
                 "_kwargs": {},
-                "_resource": "WebContentDownload",
+                "_resource": "sources.WebContentDownload",
                 "_update_key": "url",
                 "$language": "en",  # TODO: think of a way to include language as a parameter without using config
                 # Keys below are used by WebContentDownload to format its output
@@ -82,7 +82,7 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
             "config": {
                 "_args": ["$.home"],
                 "_kwargs": {},
-                "_resource": "WebContentDownload",
+                "_resource": "sources.WebContentDownload",
                 "_update_key": "home",
                 # Keys below are used by WebContentDownload to format its output
                 "url_key": "home",
@@ -100,7 +100,7 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
             "config": {
                 "_args": ["$.resourcePath"],
                 "_kwargs": {},
-                "_resource": "WebTextTikaResource",
+                "_resource": "online_discourse.WebTextTikaResource",
                 "_objective": {
                     "#resourcePath": "$.resourcePath",
                     "#title": "$.title",

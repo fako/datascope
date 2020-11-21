@@ -17,7 +17,7 @@ class WikipediaCategorySimilarityCommunity(Community):
             "config": {
                 "_args": ["$.title"],
                 "_kwargs": {},
-                "_resource": "WikipediaSearch",
+                "_resource": "sources.WikipediaSearch",
                 "_objective": {
                     "@": "$.query.pages",
                     "pageid": "$.pageid",
@@ -42,7 +42,7 @@ class WikipediaCategorySimilarityCommunity(Community):
             "config": {
                 "_args": ["$.title"],
                 "_kwargs": {},
-                "_resource": "WikipediaCategories",
+                "_resource": "sources.WikipediaCategories",
                 "_objective": {
                     "@": "$.query.pages",
                     "pageid": "$.pageid",
@@ -62,7 +62,7 @@ class WikipediaCategorySimilarityCommunity(Community):
             "config": {
                 "_args": ["$.title"],
                 "_kwargs": {},
-                "_resource": "WikipediaCategoryMembers",
+                "_resource": "sources.WikipediaCategoryMembers",
                 "_objective": {
                     "@": "$.query.pages",
                     "pageid": "$.pageid",

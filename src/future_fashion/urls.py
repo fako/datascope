@@ -8,6 +8,7 @@ from future_fashion.models import ClothingInventoryCommunity
 from future_fashion import views
 
 
+app_name = "future-fashion"
 urlpatterns = [
     url(
         r'^inventory/service/(?P<path>.+)/?$',

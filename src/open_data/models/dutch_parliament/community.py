@@ -15,7 +15,7 @@ class DutchParliamentarySeatingTranscriptsCommunity(Community):
             "config": {
                 "_args": ["$.start_date", "$.end_date"],
                 "_kwargs": {},
-                "_resource": "OfficialAnnouncementsNetherlands",
+                "_resource": "open_data.OfficialAnnouncementsNetherlands",
                 "_objective": {
                     "@": "soup.select('.lijst a')",
                     "link": "el.get('href')",
@@ -35,7 +35,7 @@ class DutchParliamentarySeatingTranscriptsCommunity(Community):
             "config": {
                 "_args": ["$.link"],
                 "_kwargs": {},
-                "_resource": "OfficialAnnouncementsDocumentNetherlands",
+                "_resource": "open_data.OfficialAnnouncementsDocumentNetherlands",
                 "_objective": {
                     "@": "soup.find_all(class_='spreekbeurt')",
                     "#seating": "{key: value for key, value in zip(['year', 'number', 'date', 'published_at'], soup.find(class_='nummer').stripped_strings)}",

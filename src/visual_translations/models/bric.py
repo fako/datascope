@@ -22,7 +22,7 @@ class VisualTranslationsBRICCommunity(Community):
             "config": {
                 "_args": ["$.query", "$.translate_to"],
                 "_kwargs": {},
-                "_resource": "WikipediaTranslate",
+                "_resource": "sources.WikipediaTranslate",
                 "_objective": {
                     "@": "$.page.iwlinks",
                     "language": "$.prefix",
@@ -43,7 +43,7 @@ class VisualTranslationsBRICCommunity(Community):
             "config": {
                 "_args": ["$.word", "$.country"],
                 "_kwargs": {},
-                "_resource": "GoogleImage",
+                "_resource": "sources.GoogleImage",
                 "_objective": {
                     "@": "$.items",
                     "#word": "$.queries.request.0.searchTerms",

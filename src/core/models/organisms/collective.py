@@ -1,7 +1,7 @@
 from django.apps import apps
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from datagrowth.datatypes import CollectionBase
 
@@ -9,7 +9,7 @@ from datagrowth.datatypes import CollectionBase
 class Collective(CollectionBase):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
-    community_type = models.ForeignKey(ContentType, related_name="+")
+    community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)
     community_id = models.PositiveIntegerField()
 
     @classmethod
