@@ -67,8 +67,8 @@ services:
         hard: -1
     volumes:
       - elastic-data:/usr/share/elasticsearch/data
-    #ports:
-    #  - 127.0.0.1:9200:9200
+    ports:
+      - 9200:9200
 
   adminer:
     image: adminer

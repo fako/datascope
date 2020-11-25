@@ -20,3 +20,5 @@ datascope:
 postgres:
   credentials:
   host: "127.0.0.1"
+elastic_search:
+  host: "127.0.0.1"

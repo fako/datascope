@@ -349,6 +349,7 @@ ELASTIC_SEARCH_ANALYSERS = {
     'en': 'english',
     'nl': 'dutch'
 }
+ELASTIC_SEARCH_HOST = environment.elastic_search.host
 
 
 # Sentry error reporting
