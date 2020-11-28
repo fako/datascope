@@ -70,6 +70,17 @@ services:
     ports:
       - 9200:9200
 
+  nginx:
+    image: nginx
+    volumes:
+      - ./deploy/server/nginx/localhost.conf:/etc/nginx/conf.d/default.conf
+      - ./deploy/server/nginx/uwsgi-pass.conf:/etc/nginx/uwsgi-pass.conf
+    depends_on:
+      - "postgres"
+      - "datascope"
+    ports:
+      - "8888:80"
+
   adminer:
     image: adminer
     ports:

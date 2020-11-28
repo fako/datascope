@@ -1,0 +1,31 @@
+upstream dsdata {
+    server datascope:8000;
+}
+
+
+#server {
+#    server_name          ~^(www\.)?data-scope(\..+)?$;
+#    listen               80;
+#    return               301 https://data-scope.com$request_uri;
+#}
+
+
+server {
+    server_name             ~^(www\.)?data-scope(\..+)?$;
+    listen                  80;
+    #listen                  443 ssl;
+    #ssl_certificate         /srv/certificates/data-scope.crt;
+    #ssl_certificate_key     /srv/certificates/data-scope.key;
+
+    # DJANGO
+    location /api {
+        include /etc/nginx/uwsgi-pass.conf;
+    }
+    location /admin {
+        include /etc/nginx/uwsgi-pass.conf;
+    }
+    location /static {
+        include /etc/nginx/uwsgi-pass.conf;
+    }
+
+}
