@@ -32,6 +32,7 @@ gcloud auth configure-docker -q
 cd /srv
 gsutil rsync -r -J gs://ds-deploy/ .
 cp server/datascope-cron /etc/cron.d/
+mkdir -p data
 invoke pull
 invoke init production web
 invoke deploy
