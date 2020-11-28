@@ -7,7 +7,7 @@ def get_es_client(silent=False):
     """
     Returns the elasticsearch client which uses the configuration file
     """
-    es_client = Elasticsearch(["elastic"],
+    es_client = Elasticsearch([settings.ELASTIC_SEARCH_HOST],
                               scheme='http',
                               port=9200,
                               http_compress=True)
