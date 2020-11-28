@@ -19,6 +19,6 @@ datascope:
   wiki_password: "secret"
 postgres:
   credentials:
-  host: "127.0.0.1"
+  host: "postgres"
 elastic_search:
-  host: "127.0.0.1"
+  host: "elastic"
