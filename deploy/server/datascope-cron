@@ -1,0 +1,5 @@
+SHELL=/bin/bash
+HOME=/srv
+PATH=/usr/bin:/bin:/usr/local/bin
+MAILTO=""
+@reboot root sleep 60 && invoke deploy
