@@ -26,13 +26,21 @@ gcloud auth configure-docker -q
 
 
 ############################
-# Start project
+# Setup project
 ############################
 
 cd /srv
 gsutil rsync -r -J gs://ds-deploy/ .
-cp server/datascope-cron /etc/cron.d/
 mkdir -p data
+cp server/datascope-cron /etc/cron.d/
+
+gcloud secrets versions access 1 --secret=datascope-certificate-key > server/nginx/certificates/data-scope.key
+
+
+############################
+# Start project
+############################
+
 invoke pull
 invoke init production web
 invoke deploy

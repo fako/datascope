@@ -3,19 +3,18 @@ upstream dsdata {
 }
 
 
-#server {
-#    server_name          ~^(www\.)?data-scope(\..+)?$;
-#    listen               80;
-#    return               301 https://data-scope.com$request_uri;
-#}
+server {
+    server_name          ~^(www\.)?data-scope(\..+)?$;
+    listen               80;
+    return               301 https://data-scope.com$request_uri;
+}
 
 
 server {
     server_name             ~^(www\.)?data-scope(\..+)?$;
-    listen                  80;
-    #listen                  443 ssl;
-    #ssl_certificate         /srv/certificates/data-scope.crt;
-    #ssl_certificate_key     /srv/certificates/data-scope.key;
+    listen                  443 ssl;
+    ssl_certificate         /etc/nginx/certificates/data-scope.crt;
+    ssl_certificate_key     /etc/nginx/certificates/data-scope.key;
 
     # DJANGO
     location /api {

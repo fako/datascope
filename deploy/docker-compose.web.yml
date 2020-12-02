@@ -131,12 +131,14 @@ services:
         condition: any
     volumes:
       - ./server/nginx/templates:/etc/nginx/templates
+      - ./server/nginx/certificates:/etc/nginx/certificates
       - ./server/nginx/uwsgi-pass.conf:/etc/nginx/uwsgi-pass.conf
     depends_on:
       - "postgres"
       - "datascope"
     ports:
       - "80:80"
+      - "443:443"
 
 volumes:
   postgres-data:
