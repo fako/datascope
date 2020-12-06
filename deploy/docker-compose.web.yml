@@ -132,7 +132,9 @@ services:
     volumes:
       - ./server/nginx/templates:/etc/nginx/templates
       - ./server/nginx/certificates:/etc/nginx/certificates
+      - ./server/nginx/www:/var/www
       - ./server/nginx/uwsgi-pass.conf:/etc/nginx/uwsgi-pass.conf
+      - ./server/nginx/server-www.conf:/etc/nginx/server-www.conf
     depends_on:
       - "postgres"
       - "datascope"

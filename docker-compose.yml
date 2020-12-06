@@ -73,8 +73,10 @@ services:
   nginx:
     image: nginx
     volumes:
+      - ./deploy/server/nginx/www:/var/www
       - ./deploy/server/nginx/localhost.conf:/etc/nginx/conf.d/default.conf
       - ./deploy/server/nginx/uwsgi-pass.conf:/etc/nginx/uwsgi-pass.conf
+      - ./deploy/server/nginx/server-www.conf:/etc/nginx/server-www.conf
     depends_on:
       - "postgres"
       - "datascope"
