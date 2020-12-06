@@ -21,7 +21,7 @@ html, body {
     background: #F4EDED;
     color: #000054;
     overflow-x: hidden;
-    overflow-y: scroll;
+    /*overflow-y: scroll;*/
     -webkit-overflow-scrolling: touch;
 }
 
