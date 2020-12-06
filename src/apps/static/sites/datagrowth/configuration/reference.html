@@ -1,0 +1,594 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Configuration &mdash; Data Growth 0.16.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Data Growth 0.16.0 documentation" href="../index.html"/>
+        <link rel="up" title="Reference" href="../reference.html"/>
+        <link rel="next" title="Utils" href="../utils/reference.html"/>
+        <link rel="prev" title="Resources" href="../resources/reference.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> Data Growth
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../resources/index.html">Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../resources/index.html#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../resources/index.html#http-resource">Http Resource</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#basic-usage">Basic usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#downloading-files">Downloading files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#customize-requests">Customize requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#continuation-requests">Continuation requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#authenticating-requests">Authenticating requests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../resources/index.html#shell-resource">Shell Resource</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#specify-command">Specify command</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#cleaning-output">Cleaning output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#working-directory">Working directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#environment">Environment</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Configurations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#django-fields">Django fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#updating">Updating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#serializers">Serializers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../processors/index.html">Processors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../processors/index.html#getting-started">Getting started</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/index.html">Utils</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../reference.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../resources/reference.html">Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../resources/reference.html#module-datagrowth.resources.base">Resource (base class)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/reference.html#module-datagrowth.resources.http">Http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/reference.html#module-datagrowth.resources.shell">Shell</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-datagrowth.configuration.types">Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-datagrowth.configuration.fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-datagrowth.configuration.serializers">Serializers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../utils/reference.html">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.iterators">Iterators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.datetime">Datetime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.io">Input/Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.data">Data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Data Growth</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../reference.html">Reference</a> &raquo;</li>
+      
+    <li>Configuration</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/configuration/reference.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="configuration">
+<h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-datagrowth.configuration.types">
+<span id="types"></span><h2>Types<a class="headerlink" href="#module-datagrowth.configuration.types" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="datagrowth.configuration.types.create_config">
+<code class="sig-prename descclassname">datagrowth.configuration.types.</code><code class="sig-name descname">create_config</code><span class="sig-paren">(</span><em class="sig-param">namespace</em>, <em class="sig-param">configuration</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.types.create_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>Use this function to quickly create a configuration.
+You need to specify under which namespace the configuration should search for defaults.
+The configuration names and their values need to be supplied as well as a simple dictionary.</p>
+<p>Apart from that the configuration needs no setup and the most common use cases will be supported.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>namespace</strong> – (str) the namespace under which missing configurations should be searched when defaulting</p></li>
+<li><p><strong>values</strong> – (dict) the configuration keys and values that should be set on the configuration instance</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ConfigurationType</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="datagrowth.configuration.types.register_defaults">
+<code class="sig-prename descclassname">datagrowth.configuration.types.</code><code class="sig-name descname">register_defaults</code><span class="sig-paren">(</span><em class="sig-param">namespace</em>, <em class="sig-param">configuration</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.types.register_defaults" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function updates a global configuration defaults object with your own defaults.
+That way an application can set defaults at runtime during a configure stage like the Django apps ready hook.</p>
+<p>You need to specify under which namespace the configuration should become available.
+This should be the same as the namespace you create configurations with.
+You can provide the default configuration for that namespace as a simple dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>namespace</strong> – (str) the namespace under which the defaults will be registered.</p></li>
+<li><p><strong>configuration</strong> – (dict) the configuration keys and values that should be set as defaults</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="datagrowth.configuration.types.ConfigurationProperty">
+<em class="property">class </em><code class="sig-prename descclassname">datagrowth.configuration.types.</code><code class="sig-name descname">ConfigurationProperty</code><span class="sig-paren">(</span><em class="sig-param">storage_attribute</em>, <em class="sig-param">defaults</em>, <em class="sig-param">namespace</em>, <em class="sig-param">private</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.types.ConfigurationProperty" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize this class to place a configuration property upon another class.
+The property will be of the ConfigurationType described below. Upon initialization you can specify defaults.
+The defaults get returned when configurations are not explicitly set.
+There are two types of defaults:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Any configuration with a prefixes of <cite>global</cite> will be a default for all configuration properties</p></li>
+<li><p>Any configuration with a prefix equal to namespace will be a default for configuration properties that share the namespace</p></li>
+</ul>
+</div></blockquote>
+<p>If you for example add <cite>my_scoped_config</cite>. Then configuration properties with the namespace set to <cite>my</cite> will
+return the <cite>my_scoped_config</cite> value if <cite>scoped_config</cite> is not set.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>storage_attribute</strong> – (string) name of the attribute used to store configurations on the owner class</p></li>
+<li><p><strong>defaults</strong> – (dict) should hold default configurations as items
+or None to load defaults from settings at runtime</p></li>
+<li><p><strong>namespace</strong> – (string) prefix to search default configurations with</p></li>
+<li><p><strong>private</strong> – (list) keys that are considered as private for this property</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ConfigurationType</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="class">
+<dt id="datagrowth.configuration.types.ConfigurationType">
+<em class="property">class </em><code class="sig-prename descclassname">datagrowth.configuration.types.</code><code class="sig-name descname">ConfigurationType</code><span class="sig-paren">(</span><em class="sig-param">defaults=None</em>, <em class="sig-param">namespace='global'</em>, <em class="sig-param">private=('_private'</em>, <em class="sig-param">'_defaults'</em>, <em class="sig-param">'_namespace')</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.types.ConfigurationType" title="Permalink to this definition">¶</a></dt>
+<dd><p>This type is the interface to configurations. Configurations are accessible as attributes.
+So a configuration named <cite>my_config</cite> will be accessible with <cite>config.my_config</cite>.</p>
+<p>You can check if a configuration exists by using the <cite>in</cite> operator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>defaults</strong> – (dict) that should hold default configurations as items
+or None to load defaults from settings at runtime</p></li>
+<li><p><strong>namespace</strong> – (string) prefix to search default configurations with</p></li>
+<li><p><strong>private</strong> – (list) keys that are considered as private</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ConfigurationType</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="datagrowth.configuration.types.ConfigurationType.clean_key">
+<em class="property">static </em><code class="sig-name descname">clean_key</code><span class="sig-paren">(</span><em class="sig-param">key</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.types.ConfigurationType.clean_key" title="Permalink to this definition">¶</a></dt>
+<dd><p>Strips characters from the input key that have a special meaning to the configuration type.
+Namely ‘$’ and ‘_’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>key</strong> – (string) the key to strip special characters from</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(string) the original or stripped key</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="datagrowth.configuration.types.ConfigurationType.from_dict">
+<em class="property">classmethod </em><code class="sig-name descname">from_dict</code><span class="sig-paren">(</span><em class="sig-param">config</em>, <em class="sig-param">defaults=None</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.types.ConfigurationType.from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a configuration using a dictionary.
+The dictionary should hold the appropriate _private and _namespace values.
+The _private value specifies which configurations should not be passed on
+to configuration that use this configuration as a base.
+The _namespace value specifies which prefix should be used to search default configurations,
+when a key can not be found in the configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>config</strong> – (dict) the configuration keys and values to create a configuration with</p></li>
+<li><p><strong>defaults</strong> – (dict) the configuration keys and values that act as a fallback
+or None to load defaults from settings at runtime</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a configuration instance</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="datagrowth.configuration.types.ConfigurationType.get">
+<code class="sig-name descname">get</code><span class="sig-paren">(</span><em class="sig-param">item</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.types.ConfigurationType.get" title="Permalink to this definition">¶</a></dt>
+<dd><p>Getter for configuration item.
+When the configuration key is not found it raises a ConfigurationNotFoundError unless default is specified.
+If this is the case it returns the default instead.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>item</strong> – (string) key to get a configuration value for</p></li>
+<li><p><strong>default</strong> – (mixed) value to return if configuration does not exist</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(mixed) the configuration value or the default value</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="datagrowth.configuration.types.ConfigurationType.items">
+<code class="sig-name descname">items</code><span class="sig-paren">(</span><em class="sig-param">protected=False</em>, <em class="sig-param">private=False</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.types.ConfigurationType.items" title="Permalink to this definition">¶</a></dt>
+<dd><p>Iterates over all configurations in a (key, value,) manner.
+It allows to skip over protected and private configurations, which happens by default.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protected</strong> – (boolean) flag to include protected configurations</p></li>
+<li><p><strong>private</strong> – (boolean) flag to include private configurations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="datagrowth.configuration.types.ConfigurationType.supplement">
+<code class="sig-name descname">supplement</code><span class="sig-paren">(</span><em class="sig-param">other</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.types.ConfigurationType.supplement" title="Permalink to this definition">¶</a></dt>
+<dd><p>This method updates the configuration with keys from other
+if the configuration key does not exist in the configuration already.
+This allows configurations to update with only new values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>other</strong> – (dict) the configuration keys and values to possibly update the configuration with</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="datagrowth.configuration.types.ConfigurationType.to_dict">
+<code class="sig-name descname">to_dict</code><span class="sig-paren">(</span><em class="sig-param">protected=False</em>, <em class="sig-param">private=False</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.types.ConfigurationType.to_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will return the current configuration in dict form.
+By default it will return all attributes except those that are considered protected or private.
+Any configuration whose name starts with an _ is considered protected.
+Configurations are considered private when they start with _
+and are listed as private during initialisation of the configuration property.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>protected</strong> – (boolean) flag to include protected configurations</p></li>
+<li><p><strong>private</strong> – (boolean) flag to include private configurations</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>(dict) current configuration other than default</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="datagrowth.configuration.types.ConfigurationType.update">
+<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param">new</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.types.ConfigurationType.update" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will update any configurations given through new.
+This method sets attributes on itself named after the configurations.
+Therefore be careful with using _private, _namespace, _defaults and _global_prefix as configurations.
+They will override attributes that the ConfigurationType needs internally.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>new</strong> – (dictionary) to update attributes on self with</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datagrowth.configuration.fields">
+<span id="fields"></span><h2>Fields<a class="headerlink" href="#module-datagrowth.configuration.fields" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="datagrowth.configuration.fields.ConfigurationField">
+<em class="property">class </em><code class="sig-prename descclassname">datagrowth.configuration.fields.</code><code class="sig-name descname">ConfigurationField</code><span class="sig-paren">(</span><em class="sig-param">namespace='global'</em>, <em class="sig-param">private=('_private'</em>, <em class="sig-param">'_namespace'</em>, <em class="sig-param">'_defaults')</em>, <em class="sig-param">config_defaults=None</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.fields.ConfigurationField" title="Permalink to this definition">¶</a></dt>
+<dd><p>This field creates a property of ConfigurationType on Django models.
+All values will be saved in the database upon save of a model.</p>
+<p>All initialization parameters are optional and act as defaults.
+By setting <code class="docutils literal notranslate"><span class="pre">CONFIG_NAMESPACE</span></code>, <code class="docutils literal notranslate"><span class="pre">CONFIG_PRIVATE</span></code> or <code class="docutils literal notranslate"><span class="pre">CONFIG_DEFAULTS</span></code> on inheriting classes
+these defaults get overridden.</p>
+<p>The use of <code class="docutils literal notranslate"><span class="pre">config_defaults</span></code> or <code class="docutils literal notranslate"><span class="pre">CONFIG_DEFAULTS</span></code> is discouraged.
+Because setting this value makes it impossible to change the defaults at runtime.
+If you want to set defaults for a field it’s recommended to use the DATAGROWTH_DEFAULT_CONFIGURATION setting or
+<code class="docutils literal notranslate"><span class="pre">register_defaults</span></code> if you want to set defaults at runtime.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>namespace</strong> – (string) prefix to search default configurations with if a configuration is missing</p></li>
+<li><p><strong>private</strong> – (list) keys that are considered as private</p></li>
+<li><p><strong>config_defaults</strong> – (dict) should hold default configurations as items</p></li>
+<li><p><strong>args</strong> – additional TextField arguments</p></li>
+<li><p><strong>kwargs</strong> – additional TextField keyword arguments</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="method">
+<dt id="datagrowth.configuration.fields.ConfigurationField.contribute_to_class">
+<code class="sig-name descname">contribute_to_class</code><span class="sig-paren">(</span><em class="sig-param">cls</em>, <em class="sig-param">name</em>, <em class="sig-param">private_only=False</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.fields.ConfigurationField.contribute_to_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>Register the field with the model class it belongs to.</p>
+<p>If private_only is True, a separate instance of this field will be
+created for every subclass of cls, even if cls is not an abstract
+model.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="datagrowth.configuration.fields.ConfigurationField.form_class">
+<code class="sig-name descname">form_class</code><a class="headerlink" href="#datagrowth.configuration.fields.ConfigurationField.form_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>alias of <a class="reference internal" href="#datagrowth.configuration.fields.ConfigurationFormField" title="datagrowth.configuration.fields.ConfigurationFormField"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConfigurationFormField</span></code></a></p>
+</dd></dl>
+
+<dl class="method">
+<dt id="datagrowth.configuration.fields.ConfigurationField.formfield">
+<code class="sig-name descname">formfield</code><span class="sig-paren">(</span><em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.fields.ConfigurationField.formfield" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a django.forms.Field instance for this database Field.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="datagrowth.configuration.fields.ConfigurationField.get_prep_value">
+<code class="sig-name descname">get_prep_value</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.fields.ConfigurationField.get_prep_value" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform preliminary non-db specific value checks and conversions.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="datagrowth.configuration.fields.ConfigurationField.to_python">
+<code class="sig-name descname">to_python</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.fields.ConfigurationField.to_python" title="Permalink to this definition">¶</a></dt>
+<dd><p>Converts the input value into the expected Python data type, raising
+django.core.exceptions.ValidationError if the data can’t be converted.
+Returns the converted value. Subclasses should override this.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="datagrowth.configuration.fields.ConfigurationField.value_from_object">
+<code class="sig-name descname">value_from_object</code><span class="sig-paren">(</span><em class="sig-param">obj</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.fields.ConfigurationField.value_from_object" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the value of this field in the given model instance.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="datagrowth.configuration.fields.ConfigurationFormField">
+<em class="property">class </em><code class="sig-prename descclassname">datagrowth.configuration.fields.</code><code class="sig-name descname">ConfigurationFormField</code><span class="sig-paren">(</span><em class="sig-param">max_length=None</em>, <em class="sig-param">min_length=None</em>, <em class="sig-param">strip=True</em>, <em class="sig-param">empty_value=''</em>, <em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.fields.ConfigurationFormField" title="Permalink to this definition">¶</a></dt>
+<dd><p>This form field correctly serializes the configuration inside of text area’s when saving an (admin) form.</p>
+<dl class="method">
+<dt id="datagrowth.configuration.fields.ConfigurationFormField.to_python">
+<code class="sig-name descname">to_python</code><span class="sig-paren">(</span><em class="sig-param">value</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.fields.ConfigurationFormField.to_python" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a Unicode object.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-datagrowth.configuration.serializers">
+<span id="serializers"></span><h2>Serializers<a class="headerlink" href="#module-datagrowth.configuration.serializers" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="datagrowth.configuration.serializers.DecodeConfigAction">
+<em class="property">class </em><code class="sig-prename descclassname">datagrowth.configuration.serializers.</code><code class="sig-name descname">DecodeConfigAction</code><span class="sig-paren">(</span><em class="sig-param">option_strings</em>, <em class="sig-param">dest</em>, <em class="sig-param">nargs=None</em>, <em class="sig-param">const=None</em>, <em class="sig-param">default=None</em>, <em class="sig-param">type=None</em>, <em class="sig-param">choices=None</em>, <em class="sig-param">required=False</em>, <em class="sig-param">help=None</em>, <em class="sig-param">metavar=None</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.serializers.DecodeConfigAction" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class can be used as action for any argsparse command line option (like Django management command options).
+It will parse a URL like parameter string into a dictionary. This dictionary can then be used to initialize
+a configuration.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="datagrowth.configuration.serializers.get_standardized_configuration">
+<code class="sig-prename descclassname">datagrowth.configuration.serializers.</code><code class="sig-name descname">get_standardized_configuration</code><span class="sig-paren">(</span><em class="sig-param">configuration</em>, <em class="sig-param">as_hash=True</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.serializers.get_standardized_configuration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Given a configuration this function will return a string that represents that configuration.
+The representation is always the same for the same configuration.
+Default configurations are not taken into account and neither are protected and private configurations.
+Optionally this function can hash the representative string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>configuration</strong> – (ConfigurationType) the configuration to represent</p></li>
+<li><p><strong>as_hash</strong> – (bool) will return representation as a sha256 hash if True</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="datagrowth.configuration.serializers.load_config">
+<code class="sig-prename descclassname">datagrowth.configuration.serializers.</code><code class="sig-name descname">load_config</code><span class="sig-paren">(</span><em class="sig-param">defaults=None</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.configuration.serializers.load_config" title="Permalink to this definition">¶</a></dt>
+<dd><p>This decorator will turn the value of any keyword arguments named “config” into a ConfigurationType.
+The decorated function will get the configuration as its first argument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>defaults</strong> – (dict) which should be used as default for inserted configuration.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>ConfigurationType</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../utils/reference.html" class="btn btn-neutral float-right" title="Utils" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../resources/reference.html" class="btn btn-neutral" title="Resources" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Fako Berkers.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.16.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
