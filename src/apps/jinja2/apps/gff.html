@@ -58,8 +58,7 @@
             <div class="collapse navbar-collapse" id="navbar-collapse-main">
 
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="/app/treasures/">{% trans %}Go to app{% endtrans %}</a></li>
-                    <li><a href="#about">{% trans %}Newsletter{% endtrans %}</a></li>
+                    <li><a href="#about">{% trans %}Handbook{% endtrans %}</a></li>
                     <li><a href="#team">{% trans %}Team{% endtrans %}</a></li>
                     <li><a href="#information">{% trans %}Partners{% endtrans %}</a></li>
                     <li><a href="#contact">{% trans %}Contact{% endtrans %}</a></li>
@@ -76,12 +75,8 @@
     </nav>
 
     <!-- first section - Home -->
-    <div id="home" class="home">
-        <div class="home-text">
-            <h1>{{ app.title }}</h1>
-            <h3>{% trans %}find astonishing vintage treasures with the app, in your size and in your neighborhood{% endtrans %}</h3>
-        </div>
-    </div>
+    <div id="home" class="home"></div>
+
     <!-- /first section -->
     <!-- second section - About -->
     <div id="about" class="pad-section">
@@ -105,49 +100,8 @@
                         <br/><br/>
                         {% trans %}Subscribe to our mailing list to be the first one to pick when we put new clothes online{% endtrans %}
                     </p>
-                    <div id="subscribe">
-                        <div class="container">
-                            <div class="row">
-                                <div class="col-sm-6 text-center">
-                                    <div>
-                                        <form id="subscribe-form" action="https://goodfashionfriend.us20.list-manage.com/subscribe/post?u=c9d27a6d9fbeeffd000a989f9&amp;id=c2e59f58eb" method="post" name="mc-embedded-subscribe-form" class="validate" target="_blank">
-                                            <div class="form-group">
-                                                <label for="mce-EMAIL">{% trans %}E-mail{% endtrans %}</label>
-                                                <input type="email" value="" name="EMAIL" class="email form-control" id="mce-EMAIL" placeholder="E-mail address" required>
-                                            </div>
-                                            <div class="mc-field-group form-group">
-                                                <label for="mce-CITY">{% trans %}City{% endtrans %}</label>
-                                                <select name="CITY" class="form-control" id="mce-CITY" required>
-                                                    <option value="" disabled selected>{% trans %}Select a city{% endtrans %}</option>
-                                                    <option value="Amsterdam">{% trans %}Amsterdam{% endtrans %}</option>
-                                                    <option value="Den Haag">{% trans %}Den Haag{% endtrans %}</option>
-                                                    <option value="Eindhoven">{% trans %}Eindhoven{% endtrans %}</option>
-                                                    <option value="Rotterdam">{% trans %}Rotterdam{% endtrans %}</option>
-                                                    <option value="Utrecht">{% trans %}Utrecht{% endtrans %}</option>
-                                                    <option value="Anders">{% trans %}Other{% endtrans %}</option>
-                                                </select>
-                                                <span class="caret"></span>
-                                            </div>
-                                            <div class="form-group">
-                                                <div class="">
-                                                    <input type="checkbox" id="gdpr_33785" name="gdpr[33785]" value="Y" class="av-checkbox form-control" required>
-                                                    <label for="gdpr_33785">
-                                                        {% trans %}
-                                                            You are subscribing to the GOOD FASHION FRIEND newsletter for your city and for general news.
-                                                            Unsubscribe at any moment by clicking the link in our e-mail.
-                                                        {% endtrans %}
-                                                    </label>
-                                                </div>
-                                            </div>
-                                            <div class="form-group form-submit text-center">
-                                                <input type="hidden" value="{{ app.language }}" name="LANGUAGE" id="mce-LANGUAGE">
-                                                <input type="submit" name="submit" value="Subscribe" class="btn btn-primary subscribe" required>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="form-group form-submit text-center">
+                        <input type="button" name="download" value="Download" class="btn btn-primary subscribe" required>
                     </div>
                 </div>
             </div>
@@ -163,25 +117,32 @@
     <div id="team-members" class="pad-section">
         <div class="container">
             <div class="row text-center team-pictures">
-                <div class="col-sm-4 col-xs-6">
+                <div class="col-sm-3 col-xs-6">
                     <a href="https://linkedin.com/in/gaspardbos/" target="_blank" class="team-member">
                     <i class="glyphicon cdo"> </i>
                     <h4>Gaspard Bos</h4>
                     <p>Chief Design Officer</p>
                     </a>
                 </div>
-                <div class="col-sm-4 col-xs-6">
+                <div class="col-sm-3 col-xs-6">
                     <a href="https://www.linkedin.com/in/fako-berkers-64222913/" target="_blank" class="team-member">
                     <i class="glyphicon cto"> </i>
                     <h4>Fako Berkers</h4>
                     <p>Chief Technical Officer</p>
                     </a>
                 </div>
-                <div class="col-sm-4 col-xs-6">
+                <div class="col-sm-3 col-xs-6">
                     <a href="https://www.linkedin.com/in/fransje-christiaans-44a4a6151/" target="_blank" class="team-member">
                         <i class="glyphicon cfo"> </i>
                         <h4>Fransje Christiaans</h4>
                         <p>Chief Fashion Officer</p>
+                    </a>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <a target="_blank" class="team-member">
+                        <i class="glyphicon ccc"> </i>
+                        <h4>Hans</h4>
+                        <p>Chief Customer Care</p>
                     </a>
                 </div>
             </div>
@@ -240,7 +201,6 @@
                 <div class="social col-sm-12 text-center">
                     <p><a href="https://www.instagram.com/goodfashionfriend/"><i class="fa fa-instagram fa-4x"></i></a></p>
                     <p><a href="https://www.facebook.com/goodfashionfriend"><i class="fa fa-facebook-square fa-4x"></i></a></p>
-                    <p><a href="mailto:fuckoffATgoodfashionfriendDOTcom" onclick="this.href=this.href.replace(/AT/,'&#64;').replace(/DOT/,'&#46;').replace(/fuckoff/,'info')"><i class="fa fa-envelope-square fa-4x"></i></a></p>
                 </div>
             </div>
         </div>

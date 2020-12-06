@@ -3,15 +3,12 @@
 ******************************/
 
 @font-face {
-    font-family: 'ostrich_sansmedium';
-    src: url('../fonts/ostrich-regular.eot');
-    src: url('../fonts/ostrichsans-medium-webfont.woff2') format('woff2'),
-    url('../fonts/ostrichsans-medium-webfont.woff') format('woff');
-    url('../fonts/ostrich-regular.ttf') format('truetype'),
-    url('../fonts/ostrich-regular.svg') format('svg');
-    font-weight: normal;
+    font-family: 'lato';
     font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/lato.woff2') format('woff2');
 }
+
 
 /******************************
 * GENERIC
@@ -21,7 +18,8 @@ html, body {
     font-family: Verdana, Arial, sans-serif;
     height: 100%;
     width: 100%;
-    background: #F8F8F1;
+    background: #F4EDED;
+    color: #000054;
     overflow-x: hidden;
     overflow-y: scroll;
     -webkit-overflow-scrolling: touch;
@@ -32,7 +30,7 @@ footer {
 }
 
 h2 {
-    color: #ff5050
+    color: #0000FF
 }
 
 /******************************
@@ -40,24 +38,24 @@ h2 {
 ******************************/
 
 .navbar-default {
-    background: #f8f8f1;
+    background: #F4EDED;
 }
 .navbar-default .navbar-brand {
-    font-family: ostrich_sansmedium, verdana, serif;
+    font-family: lato, verdana, serif;
     font-size: 34px;
-    color:  #333
+    color:  #000054
 }
 .navbar-default .navbar-brand:hover {
-    color: #ff5050;
+    color: #0000FF;
 }
 .navbar-default .navbar-nav>li>a {
-    color: #333
+    color: #000054
 }
 .navbar-default .navbar-nav>li>a:hover,  .navbar-default .navbar-nav>li>a:focus {
-    color: #ff5050;
+    color: #0000FF;
 }
 .navbar-default .navbar-toggle .icon-bar {
-    background-color: #333;
+    background-color: #000054;
 }
 
 .pad-section {
@@ -68,7 +66,7 @@ h2 {
 }
 
 .btn-primary {
-    background-color: #ff5050;
+    background-color: #0000FF;
     line-height: 40px;
     font-size: 20px;
     color: white
@@ -78,7 +76,7 @@ h2 {
 }
 
 .btn-primary:hover {
-    background-color: #ff5050;
+    background-color: #0000FF;
 }
 .btn-primary.subscribe {
     margin-top: 10px;
@@ -153,7 +151,7 @@ h2 {
 }
 
 #home h1 {
-    font-family: ostrich_sansmedium, verdana, serif;
+    font-family: lato, verdana, serif;
     font-size: 7em;
 
     margin: 0;
@@ -167,10 +165,10 @@ h2 {
     font-weight: bold;
     font-size: 30px;
     text-shadow:
-            -1px -1px 0 #333,
-            1px -1px 0 #333,
-            -1px 1px 0 #333,
-            1px 1px 0 #333;
+            -1px -1px 0 #000054,
+            1px -1px 0 #000054,
+            -1px 1px 0 #000054,
+            1px 1px 0 #000054;
 }
 
 #home .home-text {
@@ -201,29 +199,32 @@ h2 {
 
 #team h2 {
     margin-top: 0;
-    color: #333;
+    color: #000054;
     text-align: center;
 }
 
 #team-members {
-    background : linear-gradient(90deg, rgba(255, 255, 255, 1) 0%, rgba(123, 206, 211, 1) 21.22%, rgba(102, 182, 214, 1) 34.41%, rgba(84, 162, 217, 1) 48.19%, rgba(65, 104, 178, 1) 69.3%, rgba(103, 109, 169, 1) 76.83%, rgba(162, 116, 155, 1) 87.52%, rgba(167, 121, 158, 1) 89.71%, rgba(181, 136, 168, 1) 92.41%, rgba(203, 161, 183, 1) 95.38%, rgba(235, 196, 204, 1) 98.52%, rgba(252, 215, 216, 1) 100%);
+    background : #F4EDED;
 }
 
 #team-members a {
     display: block;
     width: 100%;
     height: 100%;
-    color: white;
+    color: #000054;
 }
 #team-members a:visited {
-    color: white;
+    color: #000054;
 }
 #team-members a:hover {
     text-decoration: none;
 }
+#team-members h4 {
+    color: #0000FF;
+}
 
 #team-members .glyphicon {
-    border: 2px solid #F8F8F1;
+    border: 2px solid #000054;
     border-radius: 50%;
     display: inline-block;
     font-size: 60px;
@@ -235,13 +236,16 @@ h2 {
 }
 
 .cfo {
-    background: url(../images/fransje.png) no-repeat center center
+    background: url(../images/fransje.jpg) no-repeat center center
 }
 .cdo {
-    background: url(../images/gaspard.png) no-repeat center center
+    background: url(../images/gaspard.jpg) no-repeat center center
 }
 .cto {
-    background: url(../images/fako.png) no-repeat center center
+    background: url(../images/fako.jpg) no-repeat center center
+}
+.ccc {
+    background: url(../images/hans.jpg) no-repeat center center
 }
 
 /* retina screens */
@@ -254,13 +258,16 @@ only screen and (                min-resolution: 192dpi),
 only screen and (                min-resolution: 2dppx) {
 
     .cfo {
-        background: url(../images/fransje.png) no-repeat center center;
+        background: url(../images/fransje.jpg) no-repeat center center;
     }
     .cdo {
-        background: url(../images/gaspard.png) no-repeat center center
+        background: url(../images/gaspard.jpg) no-repeat center center
     }
     .cto {
-        background: url(../images/fako.png) no-repeat center center
+        background: url(../images/fako.jpg) no-repeat center center
+    }
+    .ccc {
+        background: url(../images/hans.jpg) no-repeat center center
     }
 
     .glyphicon {
@@ -269,16 +276,6 @@ only screen and (                min-resolution: 2dppx) {
 
 }
 
-@media (max-width:767px) {
-
-    .team-pictures div:last-child {
-        clear: both;
-        float: none;
-        margin: 0 auto;
-        padding-top: 20px;
-    }
-
-}
 
 /******************************
 * INFORMATION
@@ -296,7 +293,11 @@ only screen and (                min-resolution: 2dppx) {
     background-size: cover;
 }
 #information .panel {
+    color: #C77818;
     opacity: 0.85;
+}
+#information .panel-title {
+    color: #C77818;
 }
 
 @media (max-width:767px) {
@@ -313,12 +314,12 @@ only screen and (                min-resolution: 2dppx) {
 ******************************/
 
 #contact {
-    background-color: #f8f8f1;
-    color: #333;
+    background-color: #F4EDED;
+    color: #000054;
 }
 
 #contact-icons {
-    background : linear-gradient(90deg, rgba(255, 255, 255, 1) 0%, rgba(123, 206, 211, 1) 21.22%, rgba(102, 182, 214, 1) 34.41%, rgba(84, 162, 217, 1) 48.19%, rgba(65, 104, 178, 1) 69.3%, rgba(103, 109, 169, 1) 76.83%, rgba(162, 116, 155, 1) 87.52%, rgba(167, 121, 158, 1) 89.71%, rgba(181, 136, 168, 1) 92.41%, rgba(203, 161, 183, 1) 95.38%, rgba(235, 196, 204, 1) 98.52%, rgba(252, 215, 216, 1) 100%);
+    background : linear-gradient(90deg, #0000FF 0%, #C77818 25%, #D5B0FF 75%, pink 100%);
 }
 
 #contact-icons .social {
@@ -329,46 +330,8 @@ only screen and (                min-resolution: 2dppx) {
     margin-right: 15px;
 }
 #contact-icons .social a {
-    color: #F8F8F1;
+    color: #F4EDED;
 }
 #contact-icons .social a:visited {
-    color: #F8F8F1;
-}
-
-/******************************
-* SUBSCRIBE
-******************************/
-
-#subscribe-form .caret {
-    position: relative;
-    z-index: 10;
-    float: right;
-    margin-right: 5px;
-    margin-top: -27px;
-}
-
-#subscribe-form select {
-    -webkit-appearance: none;
-}
-
-form {
-    color: #333;
-    font-weight: 300;
-}
-
-#gdpr_33785, label[for=gdpr_33785] {
-    display: block;
-    float: left;
-}
-#gdpr_33785 {
-    max-width: 5%;
-    margin: 2%;
-    box-shadow: none;
-}
-label[for=gdpr_33785] {
-    max-width: 90%;
-}
-
-.av-checkbox.form-control {
-    height: 20px;
+    color: #F4EDED;
 }
