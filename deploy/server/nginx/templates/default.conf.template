@@ -17,6 +17,9 @@ server {
     ssl_certificate_key     /etc/nginx/certificates/data-scope.key;
 
     # DJANGO
+    location / {
+        include /etc/nginx/uwsgi-pass.conf;
+    }
     location /api {
         include /etc/nginx/uwsgi-pass.conf;
     }
