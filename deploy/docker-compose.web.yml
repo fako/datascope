@@ -36,7 +36,7 @@ services:
       resources:
         limits:
           cpus: "1"
-          memory: 0.5G
+          memory: 4G
       restart_policy:
         condition: any
     command: celery -A datascope worker --loglevel=info
@@ -60,7 +60,7 @@ services:
       resources:
         limits:
           cpus: "1"
-          memory: 1G
+          memory: 2G
       restart_policy:
         condition: any
     command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
@@ -102,7 +102,7 @@ services:
       resources:
         limits:
           cpus: "1"
-          memory: 1.75G
+          memory: 3G
       restart_policy:
         condition: any
     environment:
