@@ -1,12 +1,15 @@
 from django.conf.urls import include, url
+from django.urls import path
 from django.conf import settings
 from django.contrib import admin
 from django.views import static
+from django.conf.urls.i18n import i18n_patterns
 
 from rest_framework.authtoken import views as rest_views
 
 from datascope import views
 from core import views as core_views
+from apps.views import webapp
 from wiki_feed.urls import urlpatterns as wiki_feed_patterns
 from visual_translations.urls import urlpatterns as visual_translations_patterns
 from future_fashion import urls as future_fashion_urls
@@ -59,6 +62,10 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^health/?$', views.health_check),
 ]
+
+urlpatterns += i18n_patterns(
+    path("gff/", webapp, {"path": ""}, name='gff'),
+)
 
 
 #############################################

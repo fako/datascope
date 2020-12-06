@@ -6,6 +6,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 
 from datascope.configuration import environment
 from datascope.version import get_project_version
+from apps.utils import load_webpack_configurations
 
 
 log = logging.getLogger(__name__)
@@ -92,6 +93,7 @@ INSTALLED_APPS = (
     'datagrowth',
     'core',
     'sources',
+    'apps',
     # Algorithms
     'wiki_feed',
     'visual_translations',
@@ -152,15 +154,25 @@ TIME_ZONE = 'Europe/Amsterdam'
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
 
-SITE_ID = 1
+gettext = lambda s: s  # a dummy gettext to prevent circular import
+LANGUAGES = (
+    ('en', gettext('English')),
+    ('nl', gettext('Dutch')),
+)
+
+# Django settings can contain a site id which will force get_current_site to that site.
+# When this is not set it will use get_host to determine which site is being used.
+# See: https://docs.djangoproject.com/en/2.2/ref/contrib/sites/
+# We're expecting at the moment that checking host headers will have better results.
+# SITE_ID = 1
 
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
-USE_I18N = False
+USE_I18N = True
 
 # If you set this to False, Django will not format dates, numbers and
 # calendars according to the current locale.
-USE_L10N = False
+USE_L10N = True
 DATETIME_FORMAT = 'd-m-y H:i:s/u'  # default would get overridden by L18N
 
 # If you set this to False, Django will not use timezone-aware datetimes.
@@ -183,6 +195,16 @@ if DEBUG:
 
 
 TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.jinja2.Jinja2",
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "environment": "datascope.jinja2.environment",
+            "extensions": [
+                "webpack_loader.contrib.jinja2ext.WebpackExtension",
+            ],
+        }
+    },
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
@@ -287,6 +309,13 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.SessionAuthentication',
     )
 }
+
+
+# Django Webpack loader
+# https://github.com/owais/django-webpack-loader
+
+WEBPACK_LOADER = load_webpack_configurations(BASE_DIR, DEBUG)
+
 
 # Celery settings
 CELERY_BROKER_URL = environment.redis.broker_url
