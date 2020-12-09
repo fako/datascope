@@ -47,6 +47,8 @@ class Webapp(TimestampMixin, SiteMixin):
             return "builds/{}/{}/".format(self.package, self.version)
 
     def static_image_absolute_uri(self):
+        if not self.static_image:
+            return ""
         static_path = app_static(self, self.static_image)
         return "//{}{}".format(self.site.domain, static_path)
 
