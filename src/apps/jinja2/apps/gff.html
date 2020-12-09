@@ -101,7 +101,11 @@
                         {% trans %}Subscribe to our mailing list to be the first one to pick when we put new clothes online{% endtrans %}
                     </p>
                     <div class="form-group form-submit text-center">
-                        <input type="button" name="download" value="Download" class="btn btn-primary subscribe" required>
+
+                        <a class="btn btn-primary" target="_blank" href="{{ app.get_app_static('handbook.pdf') }}">
+                            {% trans %}Download{% endtrans %}
+                        </a>
+
                     </div>
                 </div>
             </div>
