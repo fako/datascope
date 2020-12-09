@@ -10,22 +10,5 @@ server {
     listen                  443 ssl;
     ssl_certificate         /etc/nginx/certificates/goodfashionfriend-nl.crt;
     ssl_certificate_key     /etc/nginx/certificates/goodfashionfriend-nl.key;
-
-    # DJANGO
-    location =/ {
-        rewrite ^ /nl/gff$uri break;
-        include /etc/nginx/uwsgi-pass.conf;
-    }
-    location /api {
-        include /etc/nginx/uwsgi-pass.conf;
-    }
-    location /admin {
-        include /etc/nginx/uwsgi-pass.conf;
-    }
-    location /static {
-        include /etc/nginx/uwsgi-pass.conf;
-    }
-
-    include                 /etc/nginx/server-www.conf;
-
+    return                  302 https://goodfashionfriend.com$request_uri;
 }
