@@ -22,3 +22,5 @@ postgres:
   host: "127.0.0.1"
 elastic_search:
   host: "elastic"
+redis:
+  broker_url: "redis://redis:6379/0"
