@@ -1,5 +1,6 @@
 version: '3.3'
 
+
 services:
 
   datascope:
@@ -15,7 +16,6 @@ services:
     depends_on:
       - "postgres"
       - "redis"
-    network_mode: host
     healthcheck:
       test: curl -sS http://localhost:8000/health/?docker=1 || exit 1
       interval: 5s
@@ -43,7 +43,6 @@ services:
     depends_on:
       - "postgres"
       - "redis"
-    network_mode: host
     labels:
       nl.surfpol.tasks: "tasks"
     environment:
@@ -77,7 +76,6 @@ services:
       - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     ports:
       - 5432:5432
-    network_mode: host
     labels:
       nl.surfpol.db: "postgres"
 
@@ -96,7 +94,6 @@ services:
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
     ports:
       - "6379:6379"
-    network_mode: host
 
   elastic:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.8.3
@@ -115,13 +112,33 @@ services:
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - network.host=0.0.0.0
-    network_mode: host
     ulimits:
       memlock:
         soft: -1
         hard: -1
     volumes:
       - elastic-data:/usr/share/elasticsearch/data
+
+  nginx:
+    image: nginx
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 0.25G
+      restart_policy:
+        condition: any
+    volumes:
+      - ./server/nginx/templates:/etc/nginx/templates
+      - ./server/nginx/certificates:/etc/nginx/certificates
+      - ./server/nginx/uwsgi-pass.conf:/etc/nginx/uwsgi-pass.conf
+    depends_on:
+      - "postgres"
+      - "datascope"
+    ports:
+      - "80:80"
+      - "443:443"
 
 volumes:
   postgres-data:

@@ -120,6 +120,8 @@ ALLOWED_HOSTS = [
     '.localhost',
     '.globe-scope.com',
     '.data-scope.com',
+    '.gff.shopping',
+    '.goodfashionfriend.com',
 ]
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:9000',
