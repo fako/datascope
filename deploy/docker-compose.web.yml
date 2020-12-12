@@ -44,7 +44,7 @@ services:
       - "postgres"
       - "redis"
     labels:
-      nl.surfpol.tasks: "tasks"
+      com.data-scope.tasks: "tasks"
     environment:
       - PYTHONUNBUFFERED=1
       - DJANGO_MODE=${DJANGO_MODE}

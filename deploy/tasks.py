@@ -2,6 +2,7 @@
 A file with tasks that can be executed on nodes
 This file needs to be compatible with invoke 0.11.0
 """
+import os
 from datetime import datetime
 from pprint import pprint
 from getpass import getpass
@@ -133,26 +134,30 @@ def deploy(ctx):
 
 
 @task()
-def migrate(ctx, mode):
+def migrate(ctx):
     versions = get_versions_by_mode(ctx)
     postgres_password = getpass("Postgres password:")
     print("Running migration with root database user through docker-compose run ...")
-    # docker exec $(docker ps -q -f name=service_datascope) python manage.py migrate
     ctx.run(
         f"RELEASE_VERSION={versions['prd']} "
         f"INVOKE_POSTGRES_CREDENTIALS=postgres:{postgres_password} "
-        f"docker-compose -f docker-compose.yml run --rm {mode} python manage.py migrate"
+        f"docker exec -it $(docker ps -q -f name=service_tasks) python manage.py migrate",
+        pty=True,
+        echo=True
     )
 
 
 @task()
-def run(ctx, mode):
+def run(ctx):
     versions = get_versions_by_mode(ctx)
-    print(f"Starting a bash shell in a {mode} container through docker-compose run ...")
+    print(f"Starting a bash shell in a tasks container through docker-compose run ...")
     ctx.run(
         f"RELEASE_VERSION={versions['prd']} "
-        f"docker-compose -f docker-compose.yml run --rm {mode} bash"
+        f"docker exec -it $(docker ps -q -f name=service_tasks) bash",
+        pty=True,
+        echo=True
     )
+
 
 
 @task()
@@ -190,7 +195,8 @@ def db_load(ctx, dump_file):
     ctx.run(f"cat {dump_file} | psql -h localhost -U postgres datascope")
     # Now we need to reset sequences to make sure that autoid fields act normally
     # For this we store the output of reset.sql into a tmp file
-    ctx.run("psql -h localhost -U postgres -Atq -f deploy/reset.sql -o tmp.sql datascope")
+    reset_file_path = os.path.join(os.path.dirname(__file__), "reset.sql")
+    ctx.run(f"psql -h localhost -U postgres -Atq -f {reset_file_path} -o tmp.sql datascope")
     # And then we execute that output
     ctx.run("psql -h localhost -U postgres -f tmp.sql datascope")
     ctx.run("rm tmp.sql")
