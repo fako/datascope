@@ -3,6 +3,7 @@ import logging
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.logging import LoggingIntegration, ignore_logger
 
 from datascope.configuration import environment
 from datascope.version import get_project_version
@@ -387,9 +388,15 @@ ELASTIC_SEARCH_HOST = environment.elastic_search.host
 # https://sentry.io
 
 if not DEBUG:
+    sentry_logging = LoggingIntegration(
+        level=logging.INFO,
+        event_level=logging.WARNING
+    )
     sentry_sdk.init(
         dsn="https://407d0ac6dc4542c9a60fb299e32e464d@sentry.io/241870",
-        integrations=[DjangoIntegration()],
+        integrations=[DjangoIntegration(), sentry_logging],
         release=DATASCOPE_VERSION,
         server_name='data-scope.com'
     )
+    # We kill all DisallowedHost logging, because it happens so frequently on GCloud that we can't do much about it
+    ignore_logger('django.security.DisallowedHost')

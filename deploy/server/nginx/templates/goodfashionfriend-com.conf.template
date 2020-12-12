@@ -13,7 +13,11 @@ server {
 
     # DJANGO
     location =/ {
-        rewrite ^ /nl/gff$uri break;
+        rewrite ^/nl/gff$uri break;
+        include /etc/nginx/uwsgi-pass.conf;
+    }
+    location ~ ^/(en/|nl/)?app {
+        rewrite ^/nl/gff/ break;
         include /etc/nginx/uwsgi-pass.conf;
     }
     location / {
