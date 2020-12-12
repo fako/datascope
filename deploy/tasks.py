@@ -36,7 +36,7 @@ def get_versions_by_mode(ctx):
 def get_new_versions(ctx):
     # Get the lastest local version of an image
     local_images = ctx.run("docker image ls", hide=True)
-    last_local_image = local_images.stdout.split("\n")[1]
+    last_local_image = next(image for image in local_images.stdout.split("\n") if image.startswith(REPOSITORY))
     last_local_version_columns = last_local_image.split()
     last_local_version = last_local_version_columns[1] if len(last_local_version_columns) else None
     # List all versions of the images from the remote
@@ -137,6 +137,7 @@ def migrate(ctx, mode):
     versions = get_versions_by_mode(ctx)
     postgres_password = getpass("Postgres password:")
     print("Running migration with root database user through docker-compose run ...")
+    # docker exec $(docker ps -q -f name=service_datascope) python manage.py migrate
     ctx.run(
         f"RELEASE_VERSION={versions['prd']} "
         f"INVOKE_POSTGRES_CREDENTIALS=postgres:{postgres_password} "
