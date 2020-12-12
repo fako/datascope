@@ -1,0 +1,242 @@
+<!DOCTYPE HTML>
+<html lang="{{ app.language }}">
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <title>{{ app.title }}</title>
+    <meta name="description" content="{{ app.description }}"/>
+
+    <link rel=icon href="{{ app.get_app_static('favicon.ico') }}">
+    <link href="{{ app.get_app_static('styles/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ app.get_app_static('styles/font-awesome.min.css') }}" rel="stylesheet">
+    <link href="{{ app.get_app_static('styles/style.css') }}" rel="stylesheet" />
+
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="{{ app.title }}">
+    <meta name="twitter:description" content="{{ app.description }}">
+    <meta name="twitter:url" content="{{ app.build_absolute_uri() }}">
+    <meta name="twitter:image" content="{{ app.static_image_absolute_uri() }}">
+    <meta property="og:title" content="{{ app.title }}"/>
+    <meta property="og:description" content="{{ app.description }}"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="{{ app.build_absolute_uri() }}}"/>
+    <meta property="og:image" content="{{ app.static_image_absolute_uri() }}">
+    <meta property="og:locale" content="{{ app.locale }}"/>
+    {% for locale, link in language_links %}
+        <meta property="og:locale:alternate" content="{{ locale }}"/>
+    {% endfor %}
+
+    {% for locale, link in language_links %}
+        <link rel="alternate" href="{{ link }}" hreflang="{{ locale[:2] }}"/>
+    {% endfor %}
+
+</head>
+<body class="{{ app.language }}">
+    <!-- navigation panel -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-main">
+                    <span class="sr-only">{% trans %}Toggle navigation{% endtrans %}</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                {% for locale, link in language_links %}
+                    {% if app.language not in locale %}
+                        <a class="mobile language-switch" href="{{ link }}"></a>
+                    {% endif %}
+                {% endfor %}
+
+                <a class="navbar-brand" href="#home">GFF</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbar-collapse-main">
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#about">{% trans %}Handbook{% endtrans %}</a></li>
+                    <li><a href="#team">{% trans %}Team{% endtrans %}</a></li>
+                    <li><a href="#information">{% trans %}Partners{% endtrans %}</a></li>
+                    <li><a href="#contact">{% trans %}Contact{% endtrans %}</a></li>
+                    {% for locale, link in language_links %}
+                        {% if app.language not in locale %}
+                            <li class="language-switch desktop"><a href="{{ link }}"></a></li>
+                        {% endif %}
+                    {% endfor %}
+
+                </ul>
+
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+
+    <!-- first section - Home -->
+    <div id="home" class="home"></div>
+
+    <!-- /first section -->
+    <!-- second section - About -->
+    <div id="about" class="pad-section">
+        <div class="container">
+            <div class="row">
+                <div id="example-questions-wrapper" class="col-sm-6">
+                    <img src="{{ app.get_app_static('images/good-fashion-friend.jpg') }}" alt="{% trans %}The Good Fashion Friend app shows you vintage treasures in your size and in your neighborhood{% endtrans %}" />
+                    <p><em>{% trans %}The Good Fashion Friend app shows you vintage treasures in your size and in your neighborhood{% endtrans %}</em></p>
+                </div>
+                <div class="col-sm-6 text-center">
+                    <h2>{% trans %}Your Good Fashion Friend{% endtrans %}</h2>
+                    <p class="lead">
+                        {% trans %}
+                            Would you like to have a more sustainable and circular
+                            wardrobe? The best place to start is by buying pre-owned
+                            and pre-loved items so clothes don’t have to be newly
+                            produced.
+                            The Good Fashion Friend app helps you to find secondhand
+                            items &amp; vintage that suits you perfectly.
+                        {% endtrans %}
+                        <br/><br/>
+                        {% trans %}Subscribe to our mailing list to be the first one to pick when we put new clothes online{% endtrans %}
+                    </p>
+                    <div class="form-group form-submit text-center">
+
+                        <a class="btn btn-primary" target="_blank" href="{{ app.get_app_static('handbook.pdf') }}">
+                            {% trans %}Download{% endtrans %}
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /second section -->
+    <!-- third section - Team -->
+    <div id="team" class="pad-section">
+        <div class="container">
+            <h2 class="team-title">{% trans %}The Good Fashion Friend Team{% endtrans %}</h2>
+        </div>
+    </div>
+    <div id="team-members" class="pad-section">
+        <div class="container">
+            <div class="row text-center team-pictures">
+                <div class="col-sm-3 col-xs-6">
+                    <a href="https://linkedin.com/in/gaspardbos/" target="_blank" class="team-member">
+                    <i class="glyphicon cdo"> </i>
+                    <h4>Gaspard Bos</h4>
+                    <p>Chief Design Officer</p>
+                    </a>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <a href="https://www.linkedin.com/in/fako-berkers-64222913/" target="_blank" class="team-member">
+                    <i class="glyphicon cto"> </i>
+                    <h4>Fako Berkers</h4>
+                    <p>Chief Technical Officer</p>
+                    </a>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <a href="https://www.linkedin.com/in/fransje-christiaans-44a4a6151/" target="_blank" class="team-member">
+                        <i class="glyphicon cfo"> </i>
+                        <h4>Fransje Christiaans</h4>
+                        <p>Chief Fashion Officer</p>
+                    </a>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <a target="_blank" class="team-member">
+                        <i class="glyphicon ccc"> </i>
+                        <h4>Hans</h4>
+                        <p>Chief Customer Care</p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /third section -->
+    <!-- fourth section - Information -->
+    <div id="information" class="pad-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">{% trans %}For the customer{% endtrans %}</h2>
+                        </div>
+                        <div class="panel-body lead">
+                            {% trans %}
+                                We make the photographs, create filters and offer styling and transport services
+                                to make vintage shopping easy, fun and fast.
+                                Our goal is to support every shop in every major city and create a circular shopping eco-system.
+                            {% endtrans %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">{% trans %}For shops and investors{% endtrans %}</h2>
+                        </div>
+                        <div class="panel-body lead">
+                            {% trans %}
+                                Tried going online with your shop, but found it too much of a hassle without enough benefits?
+                                Or do you want your money to make a positive social impact as an investor?
+                                Contact us.
+                            {% endtrans %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /fourth section -->
+    <!-- fifth section -->
+    <div id="contact">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <h3>{% trans %}Contact us{% endtrans %}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="contact-icons" class="pad-section">
+        <div class="container">
+            <div class="row">
+                <div class="social col-sm-12 text-center">
+                    <p><a href="https://www.instagram.com/goodfashionfriend/"><i class="fa fa-instagram fa-4x"></i></a></p>
+                    <p><a href="https://www.facebook.com/goodfashionfriend"><i class="fa fa-facebook-square fa-4x"></i></a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /fifth section -->
+
+    <!-- footer -->
+    <footer>
+        <div class="container">
+            <p class="text-right">{% trans %}Copyright{% endtrans %} &copy; Good Fashion Friend {{ datetime.now().strftime("%Y") }}</p>
+        </div>
+    </footer>
+    <!-- /footer -->
+
+    <script src="{{ app.get_app_static('scripts/jquery.min.js') }}"></script>
+    <script src="{{ app.get_app_static('scripts/bootstrap.min.js') }}"></script>
+    <!-- Google Analytics -->
+    <script>
+        var hasTracker = {% if app.tracker %}true{% else %}false{% endif %};
+        if(window.location.hostname !== 'localhost' && hasTracker) {
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+                (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+                m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+            ga('create', '{{ app.tracker }}', 'auto');
+            ga('send', 'pageview');
+        } else {
+            ga = function() {}
+        }
+    </script>
+    <!-- End Google Analytics -->
+    <script src="{{ app.get_app_static('scripts/main.js') }}"></script>
+
+</body>
+</html>

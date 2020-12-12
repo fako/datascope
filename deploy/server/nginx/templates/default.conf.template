@@ -17,6 +17,9 @@ server {
     ssl_certificate_key     /etc/nginx/certificates/data-scope.key;
 
     # DJANGO
+    location / {
+        include /etc/nginx/uwsgi-pass.conf;
+    }
     location /api {
         include /etc/nginx/uwsgi-pass.conf;
     }
@@ -27,4 +30,9 @@ server {
         include /etc/nginx/uwsgi-pass.conf;
     }
 
+    include                 /etc/nginx/server-www.conf;
+
 }
+
+error_page              404 /404.html;
+error_page              500 502 503 504 /50x.html;

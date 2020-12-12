@@ -1,0 +1,337 @@
+/******************************
+* FONTS
+******************************/
+
+@font-face {
+    font-family: 'lato';
+    font-style: normal;
+    font-weight: 400;
+    src: url('../fonts/lato.woff2') format('woff2');
+}
+
+
+/******************************
+* GENERIC
+******************************/
+
+html, body {
+    font-family: Verdana, Arial, sans-serif;
+    height: 100%;
+    width: 100%;
+    background: #F4EDED;
+    color: #000054;
+    overflow-x: hidden;
+    /*overflow-y: scroll;*/
+    -webkit-overflow-scrolling: touch;
+}
+
+footer {
+    padding: 20px 0;
+}
+
+h2 {
+    color: #0000FF
+}
+
+/******************************
+* BOOTSTRAP
+******************************/
+
+.navbar-default {
+    background: #F4EDED;
+}
+.navbar-default .navbar-brand {
+    font-family: lato, verdana, serif;
+    font-size: 34px;
+    color:  #000054
+}
+.navbar-default .navbar-brand:hover {
+    color: #0000FF;
+}
+.navbar-default .navbar-nav>li>a {
+    color: #000054
+}
+.navbar-default .navbar-nav>li>a:hover,  .navbar-default .navbar-nav>li>a:focus {
+    color: #0000FF;
+}
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #000054;
+}
+
+.pad-section {
+    padding: 50px 0;
+}
+.pad-section img {
+    width: 100%;
+}
+
+.btn-primary {
+    background-color: #0000FF;
+    line-height: 40px;
+    font-size: 20px;
+    color: white
+}
+.form-control {
+    height: 52px;
+}
+
+.btn-primary:hover {
+    background-color: #0000FF;
+}
+.btn-primary.subscribe {
+    margin-top: 10px;
+}
+
+
+/******************************
+* NAVIGATION
+******************************/
+
+.language-switch {
+    margin: 9px;
+    border: 1px solid #F8F8F1;
+    border-radius: 2px;
+    width: 44px;
+    height: 32px;
+    background-position: 50% 50%;
+    background-size: cover;
+}
+
+.nl .language-switch {
+    background-image: url("../images/en.svg");
+}
+.en .language-switch {
+    background-image: url("../images/nl.svg");
+}
+
+.language-switch.desktop {
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.language-switch.mobile {
+    display: None;
+    float: right;
+    margin-right: 12px;
+}
+
+@media (max-width:767px) {
+
+    .language-switch.mobile {
+        display: block;
+    }
+    .language-switch.desktop {
+        display: none;
+    }
+
+}
+
+
+/******************************
+* HOME
+******************************/
+
+#home {
+    background: url(../images/vintage-1.jpg) no-repeat fixed center center ;
+    display: table;
+    height: 88%;
+    position: relative;
+    width: 100%;
+    text-align: center;
+    background-size: cover;
+}
+
+@media (max-width:767px) {
+
+    #home {
+        background: url(../images/vintage-1-mobile.jpg) no-repeat center center;
+        background-size: cover;
+    }
+
+}
+
+#home h1 {
+    font-family: lato, verdana, serif;
+    font-size: 7em;
+
+    margin: 0;
+    padding: 0;
+    color: #F8F8F1;
+}
+#home h3 {
+    display: none;  /* TODO: needs to be removed */
+
+    color: #F8F8F1;
+    font-weight: bold;
+    font-size: 30px;
+    text-shadow:
+            -1px -1px 0 #000054,
+            1px -1px 0 #000054,
+            -1px 1px 0 #000054,
+            1px 1px 0 #000054;
+}
+
+#home .home-text {
+    padding-top: 150px;
+}
+
+@media (max-width:767px) {
+
+    #home h1 {
+        font-size: 4em;
+    }
+
+}
+
+/******************************
+* ABOUT
+******************************/
+
+@media (min-width:768px) {
+    #about h2 {
+        margin-top: 0;
+    }
+}
+
+/******************************
+* TEAM
+******************************/
+
+#team h2 {
+    margin-top: 0;
+    color: #000054;
+    text-align: center;
+}
+
+#team-members {
+    background : #F4EDED;
+}
+
+#team-members a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    color: #000054;
+}
+#team-members a:visited {
+    color: #000054;
+}
+#team-members a:hover {
+    text-decoration: none;
+}
+#team-members h4 {
+    color: #0000FF;
+}
+
+#team-members .glyphicon {
+    border: 2px solid #000054;
+    border-radius: 50%;
+    display: inline-block;
+    font-size: 60px;
+    height: 140px;
+    line-height: 140px;
+    text-align: center;
+    vertical-align: middle;
+    width: 140px;
+}
+
+.cfo {
+    background: url(../images/fransje.jpg) no-repeat center center
+}
+.cdo {
+    background: url(../images/gaspard.jpg) no-repeat center center
+}
+.cto {
+    background: url(../images/fako.jpg) no-repeat center center
+}
+.ccc {
+    background: url(../images/hans.jpg) no-repeat center center
+}
+
+/* retina screens */
+@media
+only screen and (-webkit-min-device-pixel-ratio: 2),
+only screen and (   min--moz-device-pixel-ratio: 2),
+only screen and (     -o-min-device-pixel-ratio: 2/1),
+only screen and (        min-device-pixel-ratio: 2),
+only screen and (                min-resolution: 192dpi),
+only screen and (                min-resolution: 2dppx) {
+
+    .cfo {
+        background: url(../images/fransje.jpg) no-repeat center center;
+    }
+    .cdo {
+        background: url(../images/gaspard.jpg) no-repeat center center
+    }
+    .cto {
+        background: url(../images/fako.jpg) no-repeat center center
+    }
+    .ccc {
+        background: url(../images/hans.jpg) no-repeat center center
+    }
+
+    .glyphicon {
+        background-size: 140px 140px;
+    }
+
+}
+
+
+/******************************
+* INFORMATION
+******************************/
+
+#information {
+    background: url(../images/vintage-2.jpg) no-repeat fixed center center;
+    display: table;
+    height: 400px;
+    position: relative;
+    width: 100%;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+#information .panel {
+    color: #C77818;
+    opacity: 0.85;
+}
+#information .panel-title {
+    color: #C77818;
+}
+
+@media (max-width:767px) {
+
+    #information {
+        background: url(../images/vintage-2.jpg) no-repeat center center;
+    }
+
+}
+
+
+/******************************
+* CONTACT
+******************************/
+
+#contact {
+    background-color: #F4EDED;
+    color: #000054;
+}
+
+#contact-icons {
+    background : linear-gradient(90deg, #0000FF 0%, #C77818 25%, #D5B0FF 75%, pink 100%);
+}
+
+#contact-icons .social {
+    margin: 10px;
+}
+#contact-icons .social p {
+    display: inline-block;
+    margin-right: 15px;
+}
+#contact-icons .social a {
+    color: #F4EDED;
+}
+#contact-icons .social a:visited {
+    color: #F4EDED;
+}

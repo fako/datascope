@@ -17,6 +17,8 @@ pandas==1.1.4
 scipy==1.5.4
 scikit-learn==0.23.2
 tqdm==4.19.8
+Jinja2==2.11.2
+django-webpack-loader==0.6.0
 
 # Celery plugins
 django-celery-results==1.0.1

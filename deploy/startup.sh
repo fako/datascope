@@ -35,6 +35,9 @@ mkdir -p data
 cp server/datascope-cron /etc/cron.d/
 
 gcloud secrets versions access 1 --secret=datascope-certificate-key > server/nginx/certificates/data-scope.key
+gcloud secrets versions access 1 --secret=debatkijker-certificate-key > server/nginx/certificates/debatkijker.key
+gcloud secrets versions access 1 --secret=goodfashionfriend-com-certificate-key > server/nginx/certificates/goodfashionfriend-com.key
+gcloud secrets versions access 1 --secret=goodfashionfriend-nl-certificate-key > server/nginx/certificates/goodfashionfriend-nl.key
 
 
 ############################

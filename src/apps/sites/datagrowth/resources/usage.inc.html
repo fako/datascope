@@ -1,0 +1,272 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Getting started &mdash; Data Growth 0.16.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Data Growth 0.16.0 documentation" href="../index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> Data Growth
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#http-resource">Http Resource</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="index.html#basic-usage">Basic usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#downloading-files">Downloading files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#customize-requests">Customize requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#continuation-requests">Continuation requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#authenticating-requests">Authenticating requests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#shell-resource">Shell Resource</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="index.html#specify-command">Specify command</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#cleaning-output">Cleaning output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#working-directory">Working directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#environment">Environment</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configurations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#django-fields">Django fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#updating">Updating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#serializers">Serializers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../processors/index.html">Processors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../processors/index.html#getting-started">Getting started</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/index.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html">Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference.html">Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference.html#module-datagrowth.resources.base">Resource (base class)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference.html#module-datagrowth.resources.http">Http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference.html#module-datagrowth.resources.shell">Shell</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/reference.html">Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../configuration/reference.html#module-datagrowth.configuration.types">Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configuration/reference.html#module-datagrowth.configuration.fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configuration/reference.html#module-datagrowth.configuration.serializers">Serializers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../utils/reference.html">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.iterators">Iterators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.datetime">Datetime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.io">Input/Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.data">Data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Data Growth</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Getting started</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/resources/usage.inc.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="getting-started">
+<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>To get started with gathering data through resources you need to pick a <code class="docutils literal notranslate"><span class="pre">Resource</span></code> class
+based on the data source you want to connect to.
+You can choose between <code class="docutils literal notranslate"><span class="pre">HttpResource</span></code> (for API connections and scraping websites)
+or <code class="docutils literal notranslate"><span class="pre">ShellResource</span></code> (for getting data from local commands).
+You’ll at least need to declare some class attributes on your own <code class="docutils literal notranslate"><span class="pre">Resource</span></code> to gather data from a source.
+Before this gets explained in detail we’ll demonstrate how resources are used in general.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">Resource</span></code> model is the base class for all Datagrowth resources.
+What follows is pseudo code to demonstrate how the flow with <code class="docutils literal notranslate"><span class="pre">Resource</span></code> derived classes are used to gather data.
+This pseudo example uses a <code class="docutils literal notranslate"><span class="pre">grow</span></code> method, which currently does not exist.
+Instead you would use <code class="docutils literal notranslate"><span class="pre">get</span></code> and <code class="docutils literal notranslate"><span class="pre">post</span></code> with <code class="docutils literal notranslate"><span class="pre">HttpResource</span></code> and <code class="docutils literal notranslate"><span class="pre">run</span></code> with <code class="docutils literal notranslate"><span class="pre">ShellResource</span></code>.
+These methods kick-off the data collection for their derived classes.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">resource</span> <span class="o">=</span> <span class="n">Resource</span><span class="p">(</span>  <span class="c1"># abstract class, instantiate derived class in real code</span>
+    <span class="n">config</span><span class="o">=</span><span class="n">config</span>  <span class="c1"># resources take a Datagrowth config to handle context</span>
+<span class="p">)</span>
+<span class="c1"># the call below kicks-off data collection through the resource</span>
+<span class="c1"># &quot;grow&quot; is only a pseudo-method for this example</span>
+<span class="c1"># use &quot;get&quot;, &quot;post&quot; or &quot;run&quot; instead of &quot;grow&quot; depending on the data source</span>
+<span class="c1"># input for the data collection can consist of args and kwargs</span>
+<span class="n">resource</span><span class="o">.</span><span class="n">grow</span><span class="p">(</span>
+    <span class="s2">&quot;some&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">,</span>
+    <span class="n">session</span><span class="o">=</span><span class="n">session</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">resource</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+    <span class="c1"># when things go wrong it&#39;s sometimes convenient to save some context</span>
+    <span class="c1"># &quot;retain&quot; stores a generic relation on resource to any other model</span>
+    <span class="n">resource</span><span class="o">.</span><span class="n">retain</span><span class="p">(</span><span class="n">any_django_model</span><span class="p">)</span>
+<span class="n">resource</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># cleans and saves the resource to cache the collected data</span>
+
+<span class="n">content_type</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">content</span>
+<span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="c1"># handle the data ...</span>
+
+<span class="c1"># When making the exact same &quot;grow&quot; call again.</span>
+<span class="c1"># This time the data will come from the database as it has been stored before.</span>
+<span class="n">resource</span><span class="o">.</span><span class="n">grow</span><span class="p">(</span>
+    <span class="s2">&quot;some&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">,</span>
+    <span class="n">session</span><span class="o">=</span><span class="n">session</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Retrieving the data from the database instead of the actual source is very convenient
+when dealing with large data sources.
+It allows for retries without starting over, it keeps resource use low and makes consequent runs much faster.</p>
+</div>
+
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Fako Berkers.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.16.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

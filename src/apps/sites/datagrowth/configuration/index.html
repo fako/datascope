@@ -1,0 +1,429 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Configurations &mdash; Data Growth 0.16.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Data Growth 0.16.0 documentation" href="../index.html"/>
+        <link rel="next" title="Processors" href="../processors/index.html"/>
+        <link rel="prev" title="Resources" href="../resources/index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> Data Growth
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../resources/index.html">Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../resources/index.html#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../resources/index.html#http-resource">Http Resource</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#basic-usage">Basic usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#downloading-files">Downloading files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#customize-requests">Customize requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#continuation-requests">Continuation requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#authenticating-requests">Authenticating requests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../resources/index.html#shell-resource">Shell Resource</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#specify-command">Specify command</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#cleaning-output">Cleaning output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#working-directory">Working directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#environment">Environment</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Configurations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#django-fields">Django fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#updating">Updating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#serializers">Serializers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../processors/index.html">Processors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../processors/index.html#getting-started">Getting started</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/index.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html">Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../resources/reference.html">Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../resources/reference.html#module-datagrowth.resources.base">Resource (base class)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/reference.html#module-datagrowth.resources.http">Http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/reference.html#module-datagrowth.resources.shell">Shell</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html">Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference.html#module-datagrowth.configuration.types">Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference.html#module-datagrowth.configuration.fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference.html#module-datagrowth.configuration.serializers">Serializers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../utils/reference.html">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.iterators">Iterators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.datetime">Datetime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.io">Input/Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.data">Data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Data Growth</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Configurations</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/configuration/index.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="configurations">
+<h1>Configurations<a class="headerlink" href="#configurations" title="Permalink to this headline">¶</a></h1>
+<p>Configurations can be serialized to JSON dicts for storage and transfer (to for instance task servers).
+They can also be passed on to other configuration instances in a parent/child like relationship.
+Configurations have defaults which can be set when Django loads.
+These defaults are namespaced to prevent name clashes across apps.</p>
+<p>Usually a request will set configurations during runtime to configure long running tasks.
+Configurations can also be used as a bag of properties.
+This is useful for Django models that have a very wide configuration range.</p>
+<div class="section" id="getting-started">
+<h2>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h2>
+<p>In your apps using the ready method of the AppConfig you can register default configurations
+using the <code class="docutils literal notranslate"><span class="pre">register_defaults</span></code> function</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.apps</span> <span class="kn">import</span> <span class="n">AppConfig</span>
+
+<span class="kn">from</span> <span class="nn">datagrowth.configuration</span> <span class="kn">import</span> <span class="n">register_defaults</span>
+
+
+<span class="k">class</span> <span class="nc">FooAppConfig</span><span class="p">(</span><span class="n">AppConfig</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;your_app&#39;</span>
+
+    <span class="k">def</span> <span class="nf">ready</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">register_defaults</span><span class="p">(</span><span class="s2">&quot;foo_app&quot;</span><span class="p">,</span> <span class="p">{</span>
+            <span class="s2">&quot;foo&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s2">&quot;bar&quot;</span><span class="p">:</span> <span class="kc">False</span>
+        <span class="p">})</span>
+</pre></div>
+</div>
+<p>Once defaults are specified you can create and use configurations with <code class="docutils literal notranslate"><span class="pre">create_config</span></code> anywhere in your code.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datagrowth.configuration</span> <span class="kn">import</span> <span class="n">create_config</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">create_config</span><span class="p">(</span><span class="s2">&quot;your_app&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s2">&quot;bar&quot;</span><span class="p">:</span> <span class="s2">&quot;definitely!&quot;</span>
+<span class="p">})</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">foo</span><span class="p">)</span>
+<span class="c1"># out: True</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">bar</span><span class="p">)</span>
+
+<span class="c1"># out: &quot;definitely!&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">))</span>
+<span class="c1"># out: &quot;definitely!&quot;</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">baz</span><span class="p">)</span>
+<span class="c1"># raises ConfigurationNotFoundError</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="s2">&quot;absolutely!&quot;</span><span class="p">))</span>
+<span class="c1"># out: &quot;absolutely!&quot;</span>
+</pre></div>
+</div>
+<p>It’s also possible to iterate over all configurations using <code class="docutils literal notranslate"><span class="pre">items</span></code>.
+Please note that default configurations get skipped.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datagrowth.configuration</span> <span class="kn">import</span> <span class="n">create_config</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">create_config</span><span class="p">(</span><span class="s2">&quot;your_app&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s2">&quot;bar&quot;</span><span class="p">:</span> <span class="s2">&quot;definitely!&quot;</span>
+<span class="p">})</span>
+<span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">config</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+<span class="c1"># out: bar definitely!</span>
+</pre></div>
+</div>
+<p>This is the simplest way to use Datagrowth configurations.
+Things get a little bit more interesting when you use Django field configurations.</p>
+</div>
+<div class="section" id="django-fields">
+<h2>Django fields<a class="headerlink" href="#django-fields" title="Permalink to this headline">¶</a></h2>
+<p>When you need a flexible way of configuration, without creating model fields for every option.
+Then you can consider the Datagrowth ConfigurationField.
+It can act as a bag-of-properties on your model.
+Or a family of models if you use it on an abstract model.
+Here is a basic usage example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+
+<span class="kn">from</span> <span class="nn">datagrowth.configuration</span> <span class="kn">import</span> <span class="n">ConfigurationField</span>
+
+
+<span class="k">class</span> <span class="nc">FooModel</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">ConfigurationField</span><span class="p">(</span><span class="n">namespace</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">foo</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">bar</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Then somewhere in your code you can initialise this model with a configuration dictionary</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">instance</span> <span class="o">=</span> <span class="n">FooModel</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;bar&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">})</span>
+<span class="n">instance</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>
+<span class="c1"># out: True</span>
+<span class="n">instance</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>  <span class="c1"># stores your model with the configuration and namespace</span>
+</pre></div>
+</div>
+<p>You can set defaults for ConfigurationField through the <code class="docutils literal notranslate"><span class="pre">DATAGROWTH_DEFAULT_CONFIGURATION</span></code> setting.
+Any keys in that dictionary need to get prefixed with <code class="docutils literal notranslate"><span class="pre">foo_</span></code>.
+Or you can pass a dictionary without prefixes to the <code class="docutils literal notranslate"><span class="pre">register_defaults</span></code> function
+with <code class="docutils literal notranslate"><span class="pre">foo</span></code> as the namespace argument.</p>
+<p>When models inherit from each other it is possible to change the namespace for the child class
+by using <code class="docutils literal notranslate"><span class="pre">CONFIG_NAMESPACE</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">BarModel</span><span class="p">(</span><span class="n">FooModel</span><span class="p">)</span>
+
+    <span class="n">CONFIG_NAMESPACE</span> <span class="o">=</span> <span class="s2">&quot;baz&quot;</span>
+
+<span class="n">instance</span> <span class="o">=</span> <span class="n">BarModel</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="p">{})</span>
+<span class="n">instance</span><span class="o">.</span><span class="n">foo</span><span class="p">()</span>  <span class="c1"># will look for a configuration named baz_bar in the defaults</span>
+</pre></div>
+</div>
+<p>The above model will look for default configurations prefixed with <code class="docutils literal notranslate"><span class="pre">baz_</span></code>.
+If the configuration is not there and there is no default a <code class="docutils literal notranslate"><span class="pre">ConfigurationNotFoundError</span></code> exception gets raised.</p>
+</div>
+<div class="section" id="updating">
+<h2>Updating<a class="headerlink" href="#updating" title="Permalink to this headline">¶</a></h2>
+<p>You may need to update a configuration stored on a model based on information that comes from a different source.
+For example with information from a request. This is possible using the <code class="docutils literal notranslate"><span class="pre">updates</span></code> method:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">foo_view</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">pk</span><span class="p">):</span>
+    <span class="n">instance</span> <span class="o">=</span> <span class="n">FooModel</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="n">pk</span><span class="p">)</span>
+    <span class="n">request_configuration</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">dict</span><span class="p">()</span>
+    <span class="c1"># Sanitize the user input to make sure no dangerous/unwanted configurations can take place</span>
+    <span class="n">instance</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">request_configuration</span><span class="p">)</span>
+    <span class="c1"># Do something with the instance. It&#39;s configuration will be adjusted to the request.</span>
+</pre></div>
+</div>
+<p>Alternatively you can use the <code class="docutils literal notranslate"><span class="pre">supplement</span></code> method in the above example.
+This method acts exactly like <code class="docutils literal notranslate"><span class="pre">update</span></code>, but it skips any configurations that are already in existance.
+You can use <code class="docutils literal notranslate"><span class="pre">supplement</span></code> if you want to be sure that configurations set by the system are not overwritten by a user.</p>
+</div>
+<div class="section" id="serializers">
+<h2>Serializers<a class="headerlink" href="#serializers" title="Permalink to this headline">¶</a></h2>
+<p>Once you use and store configurations there is a good change you want to transfer them to for instance a task server.
+Or perhaps you’d like to initialize them from the command line.</p>
+<p>Using the <code class="docutils literal notranslate"><span class="pre">to_dict</span></code> method will turn your configuration into a basic dictionary with some extra keys.
+You can decorate your functions with <code class="docutils literal notranslate"><span class="pre">load_config</span></code> to receive these dictionaries as arguments.
+The decorator will turn these dictionaries into proper configurations before passing it down to your function.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datagrowth.configuration</span> <span class="kn">import</span> <span class="n">create_config</span><span class="p">,</span> <span class="n">load_config</span>
+
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">create_config</span><span class="p">(</span><span class="s2">&quot;your_app&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s2">&quot;bar&quot;</span><span class="p">:</span> <span class="s2">&quot;definitely!&quot;</span>
+<span class="p">})</span>
+<span class="n">dict_config</span> <span class="o">=</span> <span class="n">config</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+<span class="nd">@load_config</span><span class="p">()</span>
+<span class="k">def</span> <span class="nf">task_function</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">bar</span><span class="p">,</span> <span class="n">arg</span><span class="p">)</span>
+
+
+<span class="n">task_function</span><span class="p">(</span><span class="s2">&quot;baz&quot;</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">dict_config</span><span class="p">)</span>
+<span class="c1"># out: definitely! baz</span>
+</pre></div>
+</div>
+<p>Alternatively you can turn your own dictionary configuration into proper configurations using <code class="docutils literal notranslate"><span class="pre">from_dict</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datagrowth.configuration</span> <span class="kn">import</span> <span class="n">ConfigurationType</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">ConfigurationType</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">dict_config</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>It’s possible to get a hash value from a dictionary in such a way
+that identical configurations will generate identical hashes.
+This is useful if you need to retrieve models based on their configuration</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datagrowth.configuration</span> <span class="kn">import</span> <span class="n">get_standardized_configuration</span>
+
+<span class="kn">from</span> <span class="nn">your_app.models</span> <span class="kn">import</span> <span class="n">YourModel</span>
+
+<span class="n">config</span> <span class="o">=</span> <span class="n">create_config</span><span class="p">(</span><span class="s2">&quot;your_app&quot;</span><span class="p">,</span> <span class="p">{</span>
+    <span class="s2">&quot;bar&quot;</span><span class="p">:</span> <span class="s2">&quot;definitely!&quot;</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+<p>Last but not least it is possible to deserialize a configuration that is given to a Django command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.core.management.base</span> <span class="kn">import</span> <span class="n">BaseCommand</span>
+
+<span class="kn">from</span> <span class="nn">datagrowth.configuration</span> <span class="kn">import</span> <span class="n">DecodeConfigAction</span>
+
+
+<span class="k">class</span> <span class="nc">Command</span><span class="p">(</span><span class="n">BaseCommand</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">add_arguments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parser</span><span class="p">):</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span><span class="s1">&#39;-c&#39;</span><span class="p">,</span> <span class="s1">&#39;--config&#39;</span><span class="p">,</span>
+            <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
+            <span class="n">action</span><span class="o">=</span><span class="n">DecodeConfigAction</span><span class="p">,</span>
+            <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;?&quot;</span><span class="p">,</span>
+            <span class="n">default</span><span class="o">=</span><span class="p">{}</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">handle</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">options</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">options</span><span class="p">[</span><span class="s2">&quot;config&quot;</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">config</span><span class="o">.</span><span class="n">foo</span><span class="p">,</span> <span class="n">config</span><span class="o">.</span><span class="n">bar</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>To use this on the command line you would write:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">manage</span><span class="o">.</span><span class="n">py</span> <span class="n">baz_command</span> <span class="o">--</span><span class="n">config</span><span class="o">=</span><span class="s2">&quot;foo=yes&amp;bar=no&quot;</span>
+
+<span class="c1"># out: yes no</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../processors/index.html" class="btn btn-neutral float-right" title="Processors" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../resources/index.html" class="btn btn-neutral" title="Resources" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Fako Berkers.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.16.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

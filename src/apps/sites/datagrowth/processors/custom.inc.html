@@ -1,0 +1,287 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Custom made &mdash; Data Growth 0.16.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Data Growth 0.16.0 documentation" href="../index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> Data Growth
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../resources/index.html">Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../resources/index.html#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../resources/index.html#http-resource">Http Resource</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#basic-usage">Basic usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#downloading-files">Downloading files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#customize-requests">Customize requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#continuation-requests">Continuation requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#authenticating-requests">Authenticating requests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../resources/index.html#shell-resource">Shell Resource</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#specify-command">Specify command</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#cleaning-output">Cleaning output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#working-directory">Working directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#environment">Environment</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configurations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#django-fields">Django fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#updating">Updating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#serializers">Serializers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Processors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#input">Input</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#custom-made">Custom made</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/index.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html">Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../resources/reference.html">Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../resources/reference.html#module-datagrowth.resources.base">Resource (base class)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/reference.html#module-datagrowth.resources.http">Http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/reference.html#module-datagrowth.resources.shell">Shell</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/reference.html">Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../configuration/reference.html#module-datagrowth.configuration.types">Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configuration/reference.html#module-datagrowth.configuration.fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configuration/reference.html#module-datagrowth.configuration.serializers">Serializers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference.html">Processors</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference.html#module-datagrowth.processors.base">Processor (base class)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference.html#module-datagrowth.processors.input.extraction">ExtractProcessor</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../utils/reference.html">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.iterators">Iterators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.datetime">Datetime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.io">Input/Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.data">Data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Data Growth</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Custom made</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/processors/custom.inc.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="custom-made">
+<h1>Custom made<a class="headerlink" href="#custom-made" title="Permalink to this headline">¶</a></h1>
+<p>It can be useful to create a <code class="docutils literal notranslate"><span class="pre">Processor</span></code> that others can use
+or it can be cleaner to use a <code class="docutils literal notranslate"><span class="pre">Processor</span></code> with Datagrowth where you could use other means.</p>
+<p>We’ll illustrate how to create your own <code class="docutils literal notranslate"><span class="pre">Processor</span></code> and use it with an <code class="docutils literal notranslate"><span class="pre">ExtractionProcessor</span></code>.
+You’ll see that when extracting HTML or XML it’s a much cleaner method than using BeautifulSoup strings.</p>
+<p>First we’ll show you how an extraction configuration could look when using a custom processor</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">config</span> <span class="o">=</span> <span class="n">create_config</span><span class="p">(</span><span class="s2">&quot;extraction_processor&quot;</span><span class="p">,</span> <span class="p">{</span>
+
+    <span class="c1"># Objectives indicate what data you want to retrieve from a source</span>
+    <span class="s2">&quot;objective&quot;</span><span class="p">:</span> <span class="p">{</span>
+
+        <span class="c1"># The DataToolingExtractor is a class we&#39;ll define later</span>
+        <span class="c1"># It will have methods like get_entries and get_source</span>
+        <span class="s2">&quot;@&quot;</span><span class="p">:</span> <span class="s2">&quot;DataToolingExtractor.get_entries&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;#source&quot;</span><span class="p">:</span> <span class="s2">&quot;DataToolingExtractor.get_source&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;DataToolingExtractor.get_name&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;description: &quot;</span><span class="n">DataToolingExtractor</span><span class="o">.</span><span class="n">get_description</span><span class="s2">&quot;</span>
+    <span class="p">}</span>
+
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>The big advantage of using a processor over embedding functions in your objective directly
+is that you’ll be able to serialize the objective to for instance JSON and transfer it over the wire.</p>
+<p>To create the <code class="docutils literal notranslate"><span class="pre">DataToolingExtractor</span></code> that we can use with the <code class="docutils literal notranslate"><span class="pre">ExtractionProcessor</span></code>.
+You’ll need to create a <code class="docutils literal notranslate"><span class="pre">processors</span></code> module and place it inside of an installed Django app.</p>
+<p>Inside that module you can create processors by inheriting from the <code class="docutils literal notranslate"><span class="pre">Processor</span></code> class</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datagrowth.processors</span> <span class="kn">import</span> <span class="n">Processor</span>
+
+
+<span class="k">class</span> <span class="nc">DataToolingExtractor</span><span class="p">(</span><span class="n">Processor</span><span class="p">):</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_entries</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">soup</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s1">&#39;li&#39;</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_source</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">soup</span><span class="p">):</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;title&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">title</span><span class="o">.</span><span class="n">text</span> <span class="k">if</span> <span class="n">title</span> <span class="k">else</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_name</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">soup</span><span class="p">,</span> <span class="n">el</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">el</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span> <span class="nf">get_description</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">soup</span><span class="p">,</span> <span class="n">el</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">el</span><span class="o">.</span><span class="n">text</span>
+</pre></div>
+</div>
+<p>You can also use processors from your own code.
+There are class methods on <code class="docutils literal notranslate"><span class="pre">Processor</span></code> called <code class="docutils literal notranslate"><span class="pre">create_processor</span></code> and <code class="docutils literal notranslate"><span class="pre">get_processor_class</span></code>
+that can help you do that.
+Read more about them in the <a class="reference external" href="reference.html#module-datagrowth.processors.base">Processor reference</a></p>
+</div>
+
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Fako Berkers.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.16.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

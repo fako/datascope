@@ -1,0 +1,379 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Shell Resource &mdash; Data Growth 0.16.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Data Growth 0.16.0 documentation" href="../index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> Data Growth
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#http-resource">Http Resource</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="index.html#basic-usage">Basic usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#downloading-files">Downloading files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#customize-requests">Customize requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#continuation-requests">Continuation requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#authenticating-requests">Authenticating requests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#shell-resource">Shell Resource</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="index.html#specify-command">Specify command</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#cleaning-output">Cleaning output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#working-directory">Working directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#environment">Environment</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configurations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#django-fields">Django fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#updating">Updating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#serializers">Serializers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../processors/index.html">Processors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../processors/index.html#getting-started">Getting started</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/index.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html">Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference.html">Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference.html#module-datagrowth.resources.base">Resource (base class)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference.html#module-datagrowth.resources.http">Http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference.html#module-datagrowth.resources.shell">Shell</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/reference.html">Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../configuration/reference.html#module-datagrowth.configuration.types">Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configuration/reference.html#module-datagrowth.configuration.fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configuration/reference.html#module-datagrowth.configuration.serializers">Serializers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../utils/reference.html">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.iterators">Iterators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.datetime">Datetime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.io">Input/Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.data">Data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Data Growth</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Shell Resource</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/resources/shell.inc.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="shell-resource">
+<h1>Shell Resource<a class="headerlink" href="#shell-resource" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">ShellResource</span></code> retrieves data from a shell command.
+You’ll need to create a class that inherits from <code class="docutils literal notranslate"><span class="pre">ShellResource</span></code> and specify a few attributes
+to make a <code class="docutils literal notranslate"><span class="pre">ShellResource</span></code> run your commands and gather data.</p>
+<div class="section" id="specify-command">
+<h2>Specify command<a class="headerlink" href="#specify-command" title="Permalink to this headline">¶</a></h2>
+<p>Any command that a ShellResource needs to run gets passed down to the <code class="docutils literal notranslate"><span class="pre">subprocess</span></code> module.
+That module accepts commands as a list of strings, where each element is a part of the command.
+This means that a <code class="docutils literal notranslate"><span class="pre">grep</span></code> command that finds the string “test” in files in the current directory looks as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">command</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;grep&quot;</span><span class="p">,</span> <span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>Let’s assume that we want to gather data by searching for certain strings in certain directories.
+Let’s further assume that the strings to search for and directories to get data from can very per context.
+A resource that is capable of gathering such data would look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datagrowth.resources</span> <span class="kn">import</span> <span class="n">ShellResource</span>
+
+
+<span class="k">class</span> <span class="nc">MyGrepDataSource</span><span class="p">(</span><span class="n">ShellResource</span><span class="p">):</span>
+
+    <span class="n">CMD_TEMPLATE</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;grep&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">MyGrepDataSource</span><span class="p">()</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
+<span class="c1"># data_source now contains lines of text where &quot;test&quot; is found in files in current directory.</span>
+<span class="c1"># You can call the debug method to see which command was executed exactly.</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">debug</span><span class="p">()</span>  <span class="c1"># out: grep &quot;test&quot; .</span>
+
+<span class="c1"># The ShellResource is nothing but a thin Django wrapper around the subprocess module</span>
+<span class="c1"># You can check if the command succeeded and get the data.</span>
+<span class="c1"># It will return the data as unicode text by default.</span>
+<span class="k">if</span> <span class="n">data_source</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+    <span class="n">content_type</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">data_source</span><span class="o">.</span><span class="n">content</span>
+
+<span class="c1"># Resource objects are actually Django models which can be closed to save them to the database</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>It’s also possible to specify flags. For flags without values you don’t need to do anyting extra
+like <code class="docutils literal notranslate"><span class="pre">grep's</span></code> <code class="docutils literal notranslate"><span class="pre">-R</span></code> flag. Some other flags except values like <code class="docutils literal notranslate"><span class="pre">grep's</span></code> <code class="docutils literal notranslate"><span class="pre">context</span></code>.
+These flags need to be specified in the <code class="docutils literal notranslate"><span class="pre">FLAGS</span></code> attribute.
+Furthermore you need to add the <code class="docutils literal notranslate"><span class="pre">CMD_FLAGS</span></code> element to your <code class="docutils literal notranslate"><span class="pre">CMD_TEMPLATE</span></code>
+to indicate where these flags with values should get inserted in the command.
+Once this is done you can specify the values for the flags through the keyword arguments of <code class="docutils literal notranslate"><span class="pre">run</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datagrowth.resources</span> <span class="kn">import</span> <span class="n">ShellResource</span>
+
+
+<span class="k">class</span> <span class="nc">MyGrepDataSource</span><span class="p">(</span><span class="n">ShellResource</span><span class="p">):</span>
+
+    <span class="n">CMD_TEMPLATE</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="s2">&quot;grep&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;-R&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;CMD_FLAGS&quot;</span><span class="p">,</span>  <span class="c1"># CMD_FLAGS gets replaced by actual flags</span>
+        <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span>
+    <span class="p">]</span>
+
+    <span class="n">FLAGS</span> <span class="o">=</span> <span class="p">{</span>  <span class="c1"># keys correspond to the kwargs of run and values to command flags</span>
+        <span class="s2">&quot;context&quot;</span><span class="p">:</span> <span class="s2">&quot;--context=&quot;</span>
+    <span class="p">}</span>
+
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">MyGrepDataSource</span><span class="p">()</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">debug</span><span class="p">()</span>  <span class="c1"># out: grep -R --context=5 test .</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="cleaning-output">
+<h2>Cleaning output<a class="headerlink" href="#cleaning-output" title="Permalink to this headline">¶</a></h2>
+<p>It’s often best to pass through as much data as you can from a <code class="docutils literal notranslate"><span class="pre">Resource</span></code>.
+That makes the <code class="docutils literal notranslate"><span class="pre">Resource</span></code> easier to re-use in different contexts.
+However when dealing with shell commands the output can be much more than you desire and some cleanup is necessary.</p>
+<p>There are two ways to do this:</p>
+<ol class="arabic simple">
+<li><p>Override the <code class="docutils literal notranslate"><span class="pre">clean_stdout</span></code> and/or <code class="docutils literal notranslate"><span class="pre">clean_stderr</span></code> methods to clean data <strong>before storage</strong></p></li>
+<li><p>Override the <code class="docutils literal notranslate"><span class="pre">transform</span></code> method to clean data <strong>after storage</strong></p></li>
+</ol>
+<p>Using the earlier example cleaning the data could look like this</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datagrowth.resources</span> <span class="kn">import</span> <span class="n">ShellResource</span>
+
+
+<span class="k">class</span> <span class="nc">MyGrepDataSource</span><span class="p">(</span><span class="n">ShellResource</span><span class="p">):</span>
+
+    <span class="n">CMD_TEMPLATE</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;grep&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">clean_stdout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdout</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">clean_stdout</span><span class="p">(</span><span class="n">stdout</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">out</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">clean_stdout</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stderr</span><span class="p">):</span>
+        <span class="n">err</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">clean_stdout</span><span class="p">(</span><span class="n">stderr</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">err</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stdout</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">stdout</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;TEST&quot;</span><span class="p">)</span>
+
+
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">MyGrepDataSource</span><span class="p">()</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data_source</span><span class="o">.</span><span class="n">stdout</span><span class="p">)</span>  <span class="c1"># out: stdout without \r but with &quot;test&quot; in lowercase</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data_source</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>  <span class="c1"># out: stderr without \r</span>
+<span class="n">content_type</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">data_source</span><span class="o">.</span><span class="n">content</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>  <span class="c1"># out: stdout without \r and with &quot;test&quot; in uppercase</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="working-directory">
+<h2>Working directory<a class="headerlink" href="#working-directory" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">grep</span></code> command is present globally on most systems.
+However often you want to retrieve data from a command that is not system wide available.
+Instead the binary of that command sits somewhere in a directory, where it got installed or compiled.
+To run such commands you could prefix the command with a full path,
+but that would make the <code class="docutils literal notranslate"><span class="pre">ShellResource</span></code> less portable.
+Alternatively you can specify the <code class="docutils literal notranslate"><span class="pre">DIRECTORY_SETTING</span></code> attribute.
+When specified the <code class="docutils literal notranslate"><span class="pre">ShellResource</span></code> will look for the Django setting by that name.
+It then changes the working directory to the value of that setting.</p>
+<p>For example: setting <code class="docutils literal notranslate"><span class="pre">DIRECTORY_SETTING</span></code> to <code class="docutils literal notranslate"><span class="pre">&quot;BREW_BIN_DIRECTORY&quot;</span></code> and adding a setting <code class="docutils literal notranslate"><span class="pre">BREW_BIN_DIRECTORY</span></code>
+with the value <code class="docutils literal notranslate"><span class="pre">&quot;/usr/local/bin&quot;</span></code> will run the command specified in the <code class="docutils literal notranslate"><span class="pre">ShellResource</span></code> from the Brew directory.
+On a Mac that would allow retrieving data from commands like <code class="docutils literal notranslate"><span class="pre">wget</span></code> or <code class="docutils literal notranslate"><span class="pre">htop</span></code> when installed through Brew.</p>
+</div>
+<div class="section" id="environment">
+<h2>Environment<a class="headerlink" href="#environment" title="Permalink to this headline">¶</a></h2>
+<p>The exact behaviour of commands is often regulated through environment variables.
+You can specify these for a <code class="docutils literal notranslate"><span class="pre">ShellResource</span></code> by overriding the <code class="docutils literal notranslate"><span class="pre">environment</span></code> method.
+That method receives the input from the <code class="docutils literal notranslate"><span class="pre">run</span></code> method and should return a dictionary with key-value pairs
+that will be used as environment variables or <code class="docutils literal notranslate"><span class="pre">None</span></code> when no variables should get set.
+If you only use static variables it’s possible to define those on the <code class="docutils literal notranslate"><span class="pre">VARIABLES</span></code> attribute.
+The default <code class="docutils literal notranslate"><span class="pre">environment</span></code> method returns <code class="docutils literal notranslate"><span class="pre">VARIABLES</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datagrowth.resources</span> <span class="kn">import</span> <span class="n">ShellResource</span>
+
+
+<span class="k">class</span> <span class="nc">MyShellDataSource</span><span class="p">(</span><span class="n">ShellResource</span><span class="p">):</span>
+
+    <span class="n">CMD_TEMPLATE</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;command.sh&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">environment</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">mode</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;mode&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">mode</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;COMMAND_MODE&quot;</span><span class="p">:</span> <span class="n">mode</span>
+        <span class="p">}</span>
+
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">MyShellDataSource</span><span class="p">()</span>
+<span class="c1"># The call below will execute whatever is in &quot;command.sh&quot; with a COMMAND_MODE set to &quot;foo&quot;</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="s2">&quot;test&quot;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;foo&quot;</span><span class="p">)</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">debug</span><span class="p">()</span>  <span class="c1"># out: command.sh test</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Fako Berkers.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.16.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

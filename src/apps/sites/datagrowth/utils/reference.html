@@ -1,0 +1,392 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Utils &mdash; Data Growth 0.16.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Data Growth 0.16.0 documentation" href="../index.html"/>
+        <link rel="up" title="Reference" href="../reference.html"/>
+        <link rel="prev" title="Configuration" href="../configuration/reference.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> Data Growth
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../resources/index.html">Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../resources/index.html#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../resources/index.html#http-resource">Http Resource</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#basic-usage">Basic usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#downloading-files">Downloading files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#customize-requests">Customize requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#continuation-requests">Continuation requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#authenticating-requests">Authenticating requests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../resources/index.html#shell-resource">Shell Resource</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#specify-command">Specify command</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#cleaning-output">Cleaning output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#working-directory">Working directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/index.html#environment">Environment</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configurations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#django-fields">Django fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#updating">Updating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#serializers">Serializers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../processors/index.html">Processors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../processors/index.html#getting-started">Getting started</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Utils</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../reference.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../resources/reference.html">Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../resources/reference.html#module-datagrowth.resources.base">Resource (base class)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/reference.html#module-datagrowth.resources.http">Http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../resources/reference.html#module-datagrowth.resources.shell">Shell</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/reference.html">Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../configuration/reference.html#module-datagrowth.configuration.types">Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configuration/reference.html#module-datagrowth.configuration.fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configuration/reference.html#module-datagrowth.configuration.serializers">Serializers</a></li>
+</ul>
+</li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-datagrowth.utils.iterators">Iterators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-datagrowth.utils.datetime">Datetime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-datagrowth.utils.io">Input/Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-datagrowth.utils.data">Data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Data Growth</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../reference.html">Reference</a> &raquo;</li>
+      
+    <li>Utils</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/utils/reference.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="utils">
+<h1>Utils<a class="headerlink" href="#utils" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-datagrowth.utils.iterators">
+<span id="iterators"></span><h2>Iterators<a class="headerlink" href="#module-datagrowth.utils.iterators" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="datagrowth.utils.iterators.ibatch">
+<code class="sig-prename descclassname">datagrowth.utils.iterators.</code><code class="sig-name descname">ibatch</code><span class="sig-paren">(</span><em class="sig-param">iterable</em>, <em class="sig-param">batch_size</em>, <em class="sig-param">progress_bar=False</em>, <em class="sig-param">total=None</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.utils.iterators.ibatch" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an iterator that iterates over an iterable in batches of a constant size.
+Each batch will be held in memory.
+Optionally this function will display a progress bar, showing the amount of iterated batches.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>iterable</strong> – (iter) the iterator to batchify</p></li>
+<li><p><strong>batch_size</strong> – (int) the size of one batch</p></li>
+<li><p><strong>progress_bar</strong> – (bool) whether to display a progress bar</p></li>
+<li><p><strong>total</strong> – (int) the size of the iterator (only used for the progress bar)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>Iterator</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-datagrowth.utils.datetime">
+<span id="datetime"></span><h2>Datetime<a class="headerlink" href="#module-datagrowth.utils.datetime" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="datagrowth.utils.datetime.parse_datetime_string">
+<code class="sig-prename descclassname">datagrowth.utils.datetime.</code><code class="sig-name descname">parse_datetime_string</code><span class="sig-paren">(</span><em class="sig-param">time_str</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.utils.datetime.parse_datetime_string" title="Permalink to this definition">¶</a></dt>
+<dd><p>Parses a time string to a datetime using the <code class="docutils literal notranslate"><span class="pre">DATAGROWTH_DATETIME_FORMAT</span></code>.
+<code class="docutils literal notranslate"><span class="pre">parse_datetime_string</span></code> and <code class="docutils literal notranslate"><span class="pre">format_datetime</span></code>
+consistently cast between strings and datetimes when used together.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>time_str</strong> – (str) a string representing a datetime</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>datetime</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="datagrowth.utils.datetime.format_datetime">
+<code class="sig-prename descclassname">datagrowth.utils.datetime.</code><code class="sig-name descname">format_datetime</code><span class="sig-paren">(</span><em class="sig-param">datetime</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.utils.datetime.format_datetime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Formats a datetime into a string using the <code class="docutils literal notranslate"><span class="pre">DATAGROWTH_DATETIME_FORMAT</span></code>
+<code class="docutils literal notranslate"><span class="pre">parse_datetime_string</span></code> and <code class="docutils literal notranslate"><span class="pre">format_datetime</span></code>
+consistently cast between strings and datetimes when used together.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>datetime</strong> – a datetime object</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>string representing the datetime</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-datagrowth.utils.io">
+<span id="input-output"></span><h2>Input/Output<a class="headerlink" href="#module-datagrowth.utils.io" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="datagrowth.utils.io.get_model_path">
+<code class="sig-prename descclassname">datagrowth.utils.io.</code><code class="sig-name descname">get_model_path</code><span class="sig-paren">(</span><em class="sig-param">app_label</em>, <em class="sig-param">model_type=''</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.utils.io.get_model_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a path to a directory inside the global data directory specified by <code class="docutils literal notranslate"><span class="pre">DATAGROWTH_DATA_DIR</span></code>.
+The idea is to store computer models inside this directory.
+The path will contain the app_label to make sure that related models are stored together.
+It optionally also includes a subdirectory for the model type in order to separate different computer models.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app_label</strong> – (str) the app label that is related to the computer model you’re getting a path for</p></li>
+<li><p><strong>model_type</strong> – (str) an optional model type that can further group models within apps</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>path to models directory without a trailing slash</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="datagrowth.utils.io.get_media_path">
+<code class="sig-prename descclassname">datagrowth.utils.io.</code><code class="sig-name descname">get_media_path</code><span class="sig-paren">(</span><em class="sig-param">app_label</em>, <em class="sig-param">media_type=''</em>, <em class="sig-param">absolute=True</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.utils.io.get_media_path" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a directory path for a particular app to store media in.
+Optionally this path can include a media type to further separate media files in subdirectories.
+By default the path is absolute and inside the <code class="docutils literal notranslate"><span class="pre">DATAGROWTH_MEDIA_ROOT</span></code>,
+but you can also return a path relative to the media root directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>app_label</strong> – (str) the app label that you’re getting a media path for</p></li>
+<li><p><strong>media_type</strong> – (str) an optional media type that can further group media within apps</p></li>
+<li><p><strong>absolute</strong> – (bool) whether to return an absolute or relative path</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>path to media directory without a trailing slash</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-datagrowth.utils.data">
+<span id="data"></span><h2>Data<a class="headerlink" href="#module-datagrowth.utils.data" title="Permalink to this headline">¶</a></h2>
+<dl class="function">
+<dt id="datagrowth.utils.data.reach">
+<code class="sig-prename descclassname">datagrowth.utils.data.</code><code class="sig-name descname">reach</code><span class="sig-paren">(</span><em class="sig-param">path</em>, <em class="sig-param">data</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.utils.data.reach" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reach takes a path and data structure. It will return the value from the data structure belonging to the path.</p>
+<p>Paths are essentially multiple keys or indexes separated by <code class="docutils literal notranslate"><span class="pre">.</span></code> and start with <code class="docutils literal notranslate"><span class="pre">$</span></code>.
+Each part of a path should correspond to another level in the structure given.</p>
+<p>Example data structure:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;test&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;test&quot;</span><span class="p">:</span> <span class="s2">&quot;second level test&quot;</span><span class="p">},</span>
+    <span class="s2">&quot;list of tests&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;test0&quot;</span><span class="p">,</span><span class="s2">&quot;test1&quot;</span><span class="p">,</span><span class="s2">&quot;test2&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>In the example above <code class="docutils literal notranslate"><span class="pre">$.test.test</span></code> as path would return “second level test”
+while <code class="docutils literal notranslate"><span class="pre">$.test.1</span></code> as path would return “test1”.</p>
+<p>Reach will return None if path does not lead to a value in the data structure
+or the data structure entirely if path matches <code class="docutils literal notranslate"><span class="pre">$</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>path</strong> – (str) a key path starting with <code class="docutils literal notranslate"><span class="pre">$</span></code> to find in the data structure</p></li>
+<li><p><strong>data</strong> – (dict, list or tuple) a data structure to search</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>value corresponding to path in data structure or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="datagrowth.utils.data.override_dict">
+<code class="sig-prename descclassname">datagrowth.utils.data.</code><code class="sig-name descname">override_dict</code><span class="sig-paren">(</span><em class="sig-param">parent</em>, <em class="sig-param">child</em><span class="sig-paren">)</span><a class="headerlink" href="#datagrowth.utils.data.override_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>A convenience function that will copy parent and then copy any items of child to that copy.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parent</strong> – (dict) the source dictionary to use as a base</p></li>
+<li><p><strong>child</strong> – (dict) a dictionary with items that should be added/overridden</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a copy of parent with added/overridden items from child</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../configuration/reference.html" class="btn btn-neutral" title="Configuration" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Fako Berkers.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.16.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

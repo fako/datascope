@@ -1,0 +1,411 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Http Resource &mdash; Data Growth 0.16.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="../genindex.html"/>
+        <link rel="search" title="Search" href="../search.html"/>
+    <link rel="top" title="Data Growth 0.16.0 documentation" href="../index.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+
+        
+          <a href="../index.html" class="icon icon-home"> Data Growth
+        
+
+        
+        </a>
+
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="index.html">Resources</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="index.html#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#http-resource">Http Resource</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="index.html#basic-usage">Basic usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#downloading-files">Downloading files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#customize-requests">Customize requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#continuation-requests">Continuation requests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#authenticating-requests">Authenticating requests</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#shell-resource">Shell Resource</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="index.html#specify-command">Specify command</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#cleaning-output">Cleaning output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#working-directory">Working directory</a></li>
+<li class="toctree-l3"><a class="reference internal" href="index.html#environment">Environment</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../configuration/index.html">Configurations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#getting-started">Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#django-fields">Django fields</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#updating">Updating</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/index.html#serializers">Serializers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../processors/index.html">Processors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="../processors/index.html#getting-started">Getting started</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../utils/index.html">Utils</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference.html">Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference.html">Resources</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference.html#module-datagrowth.resources.base">Resource (base class)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference.html#module-datagrowth.resources.http">Http</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference.html#module-datagrowth.resources.shell">Shell</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../configuration/reference.html">Configuration</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../configuration/reference.html#module-datagrowth.configuration.types">Types</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configuration/reference.html#module-datagrowth.configuration.fields">Fields</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../configuration/reference.html#module-datagrowth.configuration.serializers">Serializers</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../utils/reference.html">Utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.iterators">Iterators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.datetime">Datetime</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.io">Input/Output</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../utils/reference.html#module-datagrowth.utils.data">Data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../index.html">Data Growth</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../index.html">Docs</a> &raquo;</li>
+      
+    <li>Http Resource</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/resources/http.inc.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="http-resource">
+<h1>Http Resource<a class="headerlink" href="#http-resource" title="Permalink to this headline">¶</a></h1>
+<p>The <code class="docutils literal notranslate"><span class="pre">HttpResource</span></code> retrieves data from any HTTP source. Typically these sources are API’s or websites.</p>
+<div class="section" id="basic-usage">
+<h2>Basic usage<a class="headerlink" href="#basic-usage" title="Permalink to this headline">¶</a></h2>
+<p>The most basic usage for fetching data from a HTTP source is inheriting from <code class="docutils literal notranslate"><span class="pre">URLResource</span></code>,
+which in turn inherits from <code class="docutils literal notranslate"><span class="pre">HttpResource</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">Count</span>
+
+<span class="kn">from</span> <span class="nn">datagrowth.resources</span> <span class="kn">import</span> <span class="n">URLResource</span>
+
+
+<span class="k">class</span> <span class="nc">MyHTTPDataSource</span><span class="p">(</span><span class="n">URLResource</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">MyHTTPDataSource</span><span class="p">()</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;https://example.com&quot;</span><span class="p">)</span>
+<span class="c1"># data_source now contains the response from example.com</span>
+
+<span class="c1"># The URLResource is nothing but a thin Django wrapper around the requests library</span>
+<span class="c1"># You can check if the request succeeded and get the data.</span>
+<span class="c1"># It will return Python objects for JSON responses or BeautifulSoup instances for HTML and XML</span>
+<span class="k">if</span> <span class="n">data_source</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+    <span class="n">content_type</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">data_source</span><span class="o">.</span><span class="n">content</span>
+
+<span class="c1"># Resource objects are actually Django models which can be closed to save them to the database</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="c1"># Using the Django ORM it is easy to query how requests did</span>
+<span class="n">statuses</span> <span class="o">=</span> <span class="n">Counter</span><span class="p">(</span>
+    <span class="n">MyHTTPDataSource</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">exclude</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span><span class="o">.</span><span class="n">values_list</span><span class="p">(</span><span class="s2">&quot;status&quot;</span><span class="p">,</span> <span class="n">flat</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="c1"># And as explained above the database has other advantages like storing data already retrieved.</span>
+<span class="c1"># The below does not make a request, but fetches results from the database.</span>
+<span class="c1"># It does this because above we saved a resource to the exact same request</span>
+<span class="n">data_source_cache</span> <span class="o">=</span> <span class="n">MyHTTPDataSource</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;https://example.com&quot;</span><span class="p">)</span>
+
+<span class="c1"># Apart from GET you can also do POST.</span>
+<span class="c1"># Any keyword arguments will be send as the body of the POST request.</span>
+<span class="n">data_source_post</span> <span class="o">=</span> <span class="n">MyHTTPDataSource</span><span class="p">()</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;https://example.com&quot;</span><span class="p">,</span> <span class="n">example</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="downloading-files">
+<h2>Downloading files<a class="headerlink" href="#downloading-files" title="Permalink to this headline">¶</a></h2>
+<p>Usually data is available under the <code class="docutils literal notranslate"><span class="pre">content</span></code> property.
+It is also possible to save responses to disk in files. This can be convenient to save images.
+To do this you use the <code class="docutils literal notranslate"><span class="pre">HttpImageResource</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datagrowth.resources</span> <span class="kn">import</span> <span class="n">HttpImageResource</span>
+
+
+<span class="k">class</span> <span class="nc">MyHTTPImageSource</span><span class="p">(</span><span class="n">URLResource</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="n">image_source</span> <span class="o">=</span> <span class="n">MyHTTPImageSource</span><span class="p">()</span>
+<span class="n">image_source</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;https://example.com/image.jpg&quot;</span><span class="p">)</span>
+
+<span class="c1"># The content property will now return the image file instead of data</span>
+<span class="k">if</span> <span class="n">image_source</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
+    <span class="n">content_type</span><span class="p">,</span> <span class="n">image_file</span> <span class="o">=</span> <span class="n">image_source</span><span class="o">.</span><span class="n">content</span>
+</pre></div>
+</div>
+<p>It’s also possible to save other types of files.
+This can be done by using <code class="docutils literal notranslate"><span class="pre">HttpFileResource</span></code> instead of <code class="docutils literal notranslate"><span class="pre">HttpImageResource</span></code>.</p>
+</div>
+<div class="section" id="customize-requests">
+<h2>Customize requests<a class="headerlink" href="#customize-requests" title="Permalink to this headline">¶</a></h2>
+<p>In most cases it isn’t sufficient to simply pass URL’s to <code class="docutils literal notranslate"><span class="pre">URLResource</span></code> or <code class="docutils literal notranslate"><span class="pre">HttpImageResource</span></code>.
+By setting some attributes you can customize how any <code class="docutils literal notranslate"><span class="pre">HttpResource</span></code> fetches data:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datagrowth.resources</span> <span class="kn">import</span> <span class="n">HttpResource</span>
+
+
+<span class="k">class</span> <span class="nc">MyHTTPDataSource</span><span class="p">(</span><span class="n">HttpResource</span><span class="p">):</span>
+
+    <span class="n">URI_TEMPLATE</span> <span class="o">=</span> <span class="s2">&quot;https://example.com?query=</span><span class="si">{}</span><span class="s2">&quot;</span>
+
+
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">MyHTTPDataSource</span><span class="p">()</span>
+<span class="c1"># The call below will make a request to https://example.com?query=my-query-terms</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;my-query-terms&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data_source</span><span class="o">.</span><span class="n">request</span><span class="p">)</span>  <span class="c1"># outputs the request being made</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">URI_TEMPLATE</span></code> is the most basic way to declare how resources should be fetched.
+A more complete example is below. The example is using <code class="docutils literal notranslate"><span class="pre">post</span></code>, but most attributes also work for <code class="docutils literal notranslate"><span class="pre">get</span></code>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datagrowth.resources</span> <span class="kn">import</span> <span class="n">HttpResource</span>
+
+
+<span class="k">class</span> <span class="nc">MyHTTPDataSource</span><span class="p">(</span><span class="n">HttpResource</span><span class="p">):</span>
+
+    <span class="n">URI_TEMPLATE</span> <span class="o">=</span> <span class="s2">&quot;https://example.com&quot;</span>
+
+    <span class="c1"># Add query parameters to the end of URL&#39;s with PARAMETERS</span>
+    <span class="n">PARAMETERS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;defaults&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Or add headers with HEADERS</span>
+    <span class="n">HEADERS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Content-Type&quot;</span><span class="p">:</span> <span class="s2">&quot;application/json&quot;</span>
+    <span class="p">}</span>
+
+    <span class="c1"># As this resource will now be using POST we&#39;ll add default data with DATA</span>
+    <span class="n">DATA</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;default_data&quot;</span><span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">MyHTTPDataSource</span><span class="p">()</span>
+<span class="c1"># The call below makes a POST request to https://example.com?defaults=1</span>
+<span class="c1"># It will add a JSON content header</span>
+<span class="c1"># and sends a dictionary with data containing the default_data and more_data keys.</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="n">more_data</span><span class="o">=</span><span class="s2">&quot;Yassss&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">data_source</span><span class="o">.</span><span class="n">request</span><span class="p">)</span>  <span class="c1"># outputs the request being made</span>
+</pre></div>
+</div>
+<p>If you need more control over parameters, headers or data,
+then you can override the <code class="docutils literal notranslate"><span class="pre">parameters</span></code>, <code class="docutils literal notranslate"><span class="pre">headers</span></code> and <code class="docutils literal notranslate"><span class="pre">data</span></code> methods.
+These methods by default return the <code class="docutils literal notranslate"><span class="pre">PARAMETERS</span></code>, <code class="docutils literal notranslate"><span class="pre">HEADERS</span></code> and <code class="docutils literal notranslate"><span class="pre">DATA</span></code> attributes.
+The <code class="docutils literal notranslate"><span class="pre">data</span></code> method will also merge in any keyword arguments coming from the call to <code class="docutils literal notranslate"><span class="pre">post</span></code> if applicable.</p>
+</div>
+<div class="section" id="continuation-requests">
+<h2>Continuation requests<a class="headerlink" href="#continuation-requests" title="Permalink to this headline">¶</a></h2>
+<p>Usually a response also contains some information on how to get more data from the same source.
+The <code class="docutils literal notranslate"><span class="pre">HttpResource</span></code> provides a mechanism to easily follow up on requests made by the resource.
+You’ll have to override the <code class="docutils literal notranslate"><span class="pre">next_parameters</span></code> method to indicate which data to use for continuation requests.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datagrowth.resources</span> <span class="kn">import</span> <span class="n">HttpResource</span>
+
+
+<span class="k">class</span> <span class="nc">MyHTTPDataSource</span><span class="p">(</span><span class="n">HttpResource</span><span class="p">):</span>
+
+    <span class="n">URI_TEMPLATE</span> <span class="o">=</span> <span class="s2">&quot;https://example.com?query=</span><span class="si">{}</span><span class="s2">&quot;</span>
+
+    <span class="k">def</span> <span class="nf">next_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This method looks if there is a &quot;next&quot; key in the response data.</span>
+<span class="sd">        If there is none it simply returns an empty dict.</span>
+<span class="sd">        If there is one it returns the value under a &quot;page&quot; key.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">next_parameters</span><span class="p">()</span>
+        <span class="n">content_type</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">content</span>
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">params</span>
+        <span class="n">page</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;next&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">page</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">params</span>
+        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;page&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">page</span>
+        <span class="k">return</span> <span class="n">params</span>
+
+
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">MyHTTPDataSource</span><span class="p">()</span>
+<span class="c1"># The call below will make a request to https://example.com?query=my-query-terms</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;my-query-terms&quot;</span><span class="p">)</span>
+<span class="n">next_request</span> <span class="o">=</span> <span class="n">data_source</span><span class="o">.</span><span class="n">create_next_request</span><span class="p">()</span>
+<span class="n">follow_up</span> <span class="o">=</span> <span class="n">MyHTTPDataSource</span><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="n">next_request</span><span class="p">)</span>
+<span class="c1"># The call below will make a request to https://example.com?query=my-query-terms&amp;page=1</span>
+<span class="c1"># Provided that the response data contains a &quot;next&quot; key with value 1</span>
+<span class="n">follow_up</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="authenticating-requests">
+<h2>Authenticating requests<a class="headerlink" href="#authenticating-requests" title="Permalink to this headline">¶</a></h2>
+<p>Authenticating requests is very similar to other customization of a <code class="docutils literal notranslate"><span class="pre">HttpResource</span></code>.
+You need to override the <code class="docutils literal notranslate"><span class="pre">auth_headers</span></code> or <code class="docutils literal notranslate"><span class="pre">auth_parameters</span></code> methods.
+The headers and/or parameters returned by these methods in a dictionary get added to the request,
+but only when a request is made. This sensitive information is not getting stored in the database.
+Inside the methods it’s possible to use for instance the <code class="docutils literal notranslate"><span class="pre">config</span></code> to provide credentials.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Beware that non-default values for <code class="docutils literal notranslate"><span class="pre">config</span></code> get stored in plain text in the database.
+So credentials shouldn’t get passed to a config directly use <code class="docutils literal notranslate"><span class="pre">register_defaults</span></code> instead
+(see: <a class="reference external" href="/configuration/index.html#getting-started">register defaults example</a>)</p>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datagrowth.resources</span> <span class="kn">import</span> <span class="n">HttpResource</span>
+
+
+<span class="k">class</span> <span class="nc">MyHTTPDataSource</span><span class="p">(</span><span class="n">HttpResource</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">auth_headers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;Authorization&quot;</span><span class="p">:</span> <span class="s2">&quot;Bearer </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">api_token</span><span class="p">)</span>
+        <span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2018, Fako Berkers.
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'0.16.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="../_static/language_data.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
