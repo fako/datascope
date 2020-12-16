@@ -4,6 +4,7 @@ datascope.iml
 
 *.pyc
 *.pkl
+*.mo
 celerybeat-schedule.db
 
 venv/

@@ -30,12 +30,17 @@ footer {
 }
 
 h2 {
+    font-size: 26px;
     color: #0000FF
 }
 
 /******************************
 * BOOTSTRAP
 ******************************/
+
+.lead {
+    font-size: 18px;
+}
 
 .navbar-default {
     background: #F4EDED;
@@ -59,7 +64,7 @@ h2 {
 }
 
 .pad-section {
-    padding: 50px 0;
+    padding: 20px 0;
 }
 .pad-section img {
     width: 100%;
@@ -187,6 +192,10 @@ h2 {
 * ABOUT
 ******************************/
 
+#about h2 {
+    text-transform: uppercase;
+}
+
 @media (min-width:768px) {
     #about h2 {
         margin-top: 0;
@@ -297,6 +306,7 @@ only screen and (                min-resolution: 2dppx) {
     opacity: 0.85;
 }
 #information .panel-title {
+    font-size: 24px;
     color: #C77818;
 }
 

@@ -60,7 +60,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     <li><a href="#about">{% trans %}Handbook{% endtrans %}</a></li>
                     <li><a href="#team">{% trans %}Team{% endtrans %}</a></li>
-                    <li><a href="#information">{% trans %}Partners{% endtrans %}</a></li>
+                    <li><a href="#information">{% trans %}GFF{% endtrans %}</a></li>
                     <li><a href="#contact">{% trans %}Contact{% endtrans %}</a></li>
                     {% for locale, link in language_links %}
                         {% if app.language not in locale %}
@@ -83,22 +83,19 @@
         <div class="container">
             <div class="row">
                 <div id="example-questions-wrapper" class="col-sm-6">
-                    <img src="{{ app.get_app_static('images/good-fashion-friend.jpg') }}" alt="{% trans %}The Good Fashion Friend app shows you vintage treasures in your size and in your neighborhood{% endtrans %}" />
-                    <p><em>{% trans %}The Good Fashion Friend app shows you vintage treasures in your size and in your neighborhood{% endtrans %}</em></p>
+                    <img src="{{ app.get_app_static('images/good-fashion-friend.jpg') }}" alt="{% trans %}In this manual we explain how a fast fashion addiction works, how you can change your habits and what you can do to become the prowd owner of a sustainable closet.{% endtrans %}" />
+                    <p><em>{% trans %}In this manual we explain how a fast fashion addiction works, how you can change your habits and what you can do to become the prowd owner of a sustainable closet.{% endtrans %}</em></p>
                 </div>
                 <div class="col-sm-6 text-center">
-                    <h2>{% trans %}Your Good Fashion Friend{% endtrans %}</h2>
+                    <h2>{% trans %}A manual for addicts to break with fast fashion{% endtrans %}</h2>
                     <p class="lead">
-                        {% trans %}
-                            Would you like to have a more sustainable and circular
-                            wardrobe? The best place to start is by buying pre-owned
-                            and pre-loved items so clothes don’t have to be newly
-                            produced.
-                            The Good Fashion Friend app helps you to find secondhand
-                            items &amp; vintage that suits you perfectly.
-                        {% endtrans %}
+                        {% trans %}In this manual we explain how a fast fashion addiction works, how you can change your habits and what you can do to become the prowd owner of a sustainable closet.{% endtrans %}
                         <br/><br/>
-                        {% trans %}Subscribe to our mailing list to be the first one to pick when we put new clothes online{% endtrans %}
+                        {% trans %}Discover what type of shopper you are and receive loads of tips and tricks about where you CAN shop in the coolest vintage shops around the Netherlands.{% endtrans %}
+                        <br/><br/>
+                        {% trans %}The 12 step plan to recovery are attainable for every fast fashion junkie{% endtrans %}
+                        <br/><br/>
+                        {% trans %}Download the e-book here and leave your comments at our social accounts{% endtrans %}
                     </p>
                     <div class="form-group form-submit text-center">
 
@@ -160,28 +157,24 @@
                 <div class="col-sm-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h2 class="panel-title">{% trans %}For the customer{% endtrans %}</h2>
+                            <h2 class="panel-title">Good Fashion Friend</h2>
                         </div>
                         <div class="panel-body lead">
-                            {% trans %}
-                                We make the photographs, create filters and offer styling and transport services
-                                to make vintage shopping easy, fun and fast.
-                                Our goal is to support every shop in every major city and create a circular shopping eco-system.
-                            {% endtrans %}
+                            {% trans %}We are Gaspard, Fako and Fransje and we have founded the online platform and app Good Fashion Friend in 2020. GFF helps local vintage shops in Rotterdam to thrive in an increasingly digital world. Our handbook is the closure of the is project with which we share our attained knowledge with you.{% endtrans %}
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            <h2 class="panel-title">{% trans %}For shops and investors{% endtrans %}</h2>
+                            <h2 class="panel-title">{% trans %}Testimonials{% endtrans %}</h2>
                         </div>
                         <div class="panel-body lead">
-                            {% trans %}
-                                Tried going online with your shop, but found it too much of a hassle without enough benefits?
-                                Or do you want your money to make a positive social impact as an investor?
-                                Contact us.
-                            {% endtrans %}
+                            {% trans %}Milica – our fan of the first hour{% endtrans %}<br/>
+                            <i>"{% trans %}It explains clearly how an addiction arises and the psychology behind it. Great tips about your shopping behavior.{% endtrans %}"</i>
+                            <br/><br/>
+                            {% trans %}Marlous – our very first customer{% endtrans %}<br/>
+                            <i>"{% trans %}I like my wardrobe to consist of 90% vintage and prefer to buy local. Through GFF I got to know three new shops that I never heard of in Rotterdam.{% endtrans %}"</i>
                         </div>
                     </div>
                 </div>

@@ -32,3 +32,21 @@ def container(ctx, version=None):
     if rsl.failed:
         print(rsl.stderr)
         raise RuntimeError("Failed to push image tagged {}".format(tag))
+
+
+@task()
+def translations(ctx):
+    print("Extracting translation strings from source")
+    ctx.run(
+        "pybabel extract -F src/datascope/locales/babel.cfg -o src/datascope/locales/template.po "
+        "--sort-by-file --no-wrap --omit-header --no-location src/*",
+        echo=True
+    )
+    print("Generating Dutch translations")
+    ctx.run(
+        "pybabel update -d src/datascope/locales/ -l nl -i src/datascope/locales/template.po -D django --no-wrap",
+        echo=True
+    )
+    print("Compiling local messages")
+    with ctx.cd("src"):
+        ctx.run("python manage.py compilemessages", echo=True)
