@@ -1,0 +1,157 @@
+msgid "Toggle navigation"
+msgstr ""
+
+msgid "Handbook"
+msgstr ""
+
+msgid "Team"
+msgstr ""
+
+msgid "GFF"
+msgstr ""
+
+msgid "Contact"
+msgstr ""
+
+msgid "In this manual we explain how a fast fashion addiction works, how you can change your habits and what you can do to become the prowd owner of a sustainable closet."
+msgstr ""
+
+msgid "A manual for addicts to break with fast fashion"
+msgstr ""
+
+msgid "Discover what type of shopper you are and receive loads of tips and tricks about where you CAN shop in the coolest vintage shops around the Netherlands."
+msgstr ""
+
+msgid "The 12 step plan to recovery are attainable for every fast fashion junkie"
+msgstr ""
+
+msgid "Download the e-book here and leave your comments at our social accounts"
+msgstr ""
+
+msgid "Download"
+msgstr ""
+
+msgid "The Good Fashion Friend Team"
+msgstr ""
+
+msgid "We are Gaspard, Fako and Fransje and we have founded the online platform and app Good Fashion Friend in 2020. GFF helps local vintage shops in Rotterdam to thrive in an increasingly digital world. Our handbook is the closure of the is project with which we share our attained knowledge with you."
+msgstr ""
+
+msgid "Testimonials"
+msgstr ""
+
+msgid "Milica – our fan of the first hour"
+msgstr ""
+
+msgid "It explains clearly how an addiction arises and the psychology behind it. Great tips about your shopping behavior."
+msgstr ""
+
+msgid "Marlous – our very first customer"
+msgstr ""
+
+msgid "I like my wardrobe to consist of 90% vintage and prefer to buy local. Through GFF I got to know three new shops that I never heard of in Rotterdam."
+msgstr ""
+
+msgid "Contact us"
+msgstr ""
+
+msgid "Copyright"
+msgstr ""
+
+msgid "Webpack"
+msgstr ""
+
+msgid "Page"
+msgstr ""
+
+msgid "route"
+msgstr ""
+
+msgid "locale"
+msgstr ""
+
+msgid "type"
+msgstr ""
+
+msgid "package"
+msgstr ""
+
+msgid "version"
+msgstr ""
+
+msgid "title"
+msgstr ""
+
+msgid "description"
+msgstr ""
+
+msgid "static image"
+msgstr ""
+
+msgid "tracker"
+msgstr ""
+
+#, python-format
+msgid "No reverse match found for route \"%(route)s\". Please specify a valid route."
+msgstr ""
+
+msgid "Webapps of type webpack should specify a package version."
+msgstr ""
+
+msgid "created at"
+msgstr ""
+
+msgid "modified at"
+msgstr ""
+
+msgid "website"
+msgstr ""
+
+msgid "search"
+msgstr ""
+
+msgid "Your query is being processed. Please wait."
+msgstr ""
+
+msgid "Search for something fake."
+msgstr ""
+
+msgid "No results found, please try again."
+msgstr ""
+
+msgid "English"
+msgstr ""
+
+msgid "Dutch"
+msgstr ""
+
+msgid "Future Fashion is looking. Please wait."
+msgstr ""
+
+msgid "Future fashion aims to stimulate re-use of clothing."
+msgstr ""
+
+msgid "No clothing found"
+msgstr ""
+
+msgid "Search for a single word and see the canonical visuals for that word in different languages."
+msgstr ""
+
+msgid "No results found for"
+msgstr ""
+
+msgid "Please try with another word."
+msgstr ""
+
+msgid "Search for a single word and see the canonical images for that word in Chinese, Russian and Portuguese."
+msgstr ""
+
+msgid "Wiki Feed is being generated. Please wait."
+msgstr ""
+
+msgid "Wiki Feed is a research with the aim to create a collaborative feed system."
+msgstr ""
+
+msgid "No feed content found"
+msgstr ""
+

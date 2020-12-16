@@ -161,6 +161,11 @@ LANGUAGES = (
     ('nl', gettext('Dutch')),
 )
 
+LOCALE_PATHS = (
+    os.path.join(BASE_DIR, 'datascope', 'locales'),
+)
+
+
 # Django settings can contain a site id which will force get_current_site to that site.
 # When this is not set it will use get_host to determine which site is being used.
 # See: https://docs.djangoproject.com/en/2.2/ref/contrib/sites/

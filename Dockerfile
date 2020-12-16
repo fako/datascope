@@ -29,6 +29,9 @@ RUN python -m spacy link /usr/etc/models/spacy/nl_core_news_sm-2.0.0/nl_core_new
 # NB: runs with production settings
 RUN python manage.py collectstatic --noinput
 
+# Compiling translations
+RUN python manage.py compilemessages
+
 # We're switching user to a non-priviliged user
 # The Python packages directory and datagrowth package needs to belong to that user
 # for dynamic packaging (see entrypoint)

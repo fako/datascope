@@ -1,0 +1,176 @@
+# Dutch translations for PROJECT.
+# Copyright (C) 2020 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2020-12-16 13:09+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: nl\n"
+"Language-Team: nl <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.0\n"
+
+msgid "Toggle navigation"
+msgstr "Wissel navigatie"
+
+msgid "Handbook"
+msgstr "Handboek"
+
+msgid "Team"
+msgstr "Team"
+
+msgid "GFF"
+msgstr "GFF"
+
+msgid "Contact"
+msgstr "Contact"
+
+msgid "In this manual we explain how a fast fashion addiction works, how you can change your habits and what you can do to become the prowd owner of a sustainable closet."
+msgstr "In dit handboek vertellen we hoe een fast fashion verslaving werkt, hoe je gedrag en gewoontes veranderd en wat jij zelf kan doen om de trotse eigenaar van een duurzame kast te worden."
+
+msgid "A manual for addicts to break with fast fashion"
+msgstr "Afkick handboek voor de fastfashion verslaafden"
+
+msgid "Discover what type of shopper you are and receive loads of tips and tricks about where you CAN shop in the coolest vintage shops around the Netherlands."
+msgstr "Ontdek wat voor soort shopper jij bent en krijg enorm veel tips over waar je dan wél kunt shoppen in de allertofste vintage winkels van Nederland."
+
+msgid "The 12 step plan to recovery are attainable for every fast fashion junkie"
+msgstr "De 12 stappen van herstel zijn haalbaar voor iedere fastfashionjunkie"
+
+msgid "Download the e-book here and leave your comments at our social accounts"
+msgstr "Download het e-book hier en laat je comments achter op onze socials"
+
+msgid "Download"
+msgstr "Download"
+
+msgid "The Good Fashion Friend Team"
+msgstr "Het Good Fashion Friend Team"
+
+msgid "We are Gaspard, Fako and Fransje and we have founded the online platform and app Good Fashion Friend in 2020. GFF helps local vintage shops in Rotterdam to thrive in an increasingly digital world. Our handbook is the closure of the is project with which we share our attained knowledge with you."
+msgstr "Wij zijn Gaspard, Fako en Fransje en hebben in 2020 het online platform en app Good Fashion Friend opgericht voor lokale vintage winkeliers in Rotterdam om hen te helpen als fysieke winkel te overleven in de steeds digitaler wordende wereld. Dit handboek is een afsluiting van dit project waarmee we onze opgedane kennis met jou delen."
+
+msgid "Testimonials"
+msgstr "Getuigenissen"
+
+msgid "Milica – our fan of the first hour"
+msgstr "Milica - onze fan van het eerste uur"
+
+msgid "It explains clearly how an addiction arises and the psychology behind it. Great tips about your shopping behavior."
+msgstr "Op een hele simpele wijze toegelicht hoe een verslaving ontstaat en welke psychologie erachter zit. Fijne tips over je eigen shopgedrag"
+
+msgid "Marlous – our very first customer"
+msgstr "Marloes - onze koper van het eerste uur"
+
+msgid "I like my wardrobe to consist of 90% vintage and prefer to buy local. Through GFF I got to know three new shops that I never heard of in Rotterdam."
+msgstr "Ik wil graag een kast bestaande uit 90% vintage en koop het liefst bij lokale winkels. Via GFF heb ik 3 winkels leren kennen in Rotterdam waar ik nog nooit van gehoord had"
+
+msgid "Contact us"
+msgstr "Contact"
+
+msgid "Copyright"
+msgstr "Copyright"
+
+msgid "Webpack"
+msgstr "Webpack"
+
+msgid "Page"
+msgstr "Pagina"
+
+msgid "route"
+msgstr "route"
+
+msgid "locale"
+msgstr "lokaal"
+
+msgid "type"
+msgstr "type"
+
+msgid "package"
+msgstr "package"
+
+msgid "version"
+msgstr "versie"
+
+msgid "title"
+msgstr "titel"
+
+msgid "description"
+msgstr "omschrijving"
+
+msgid "static image"
+msgstr "statische afbeelding"
+
+msgid "tracker"
+msgstr "tracker"
+
+#, python-format
+msgid "No reverse match found for route \"%(route)s\". Please specify a valid route."
+msgstr "Geen omgekeerde match gevonden voor route \"%(route)s\". Specifieer alsjeblieft een geldige route."
+
+msgid "Webapps of type webpack should specify a package version."
+msgstr "Webapps van het type webpack moeten een package versie specificeren."
+
+msgid "created at"
+msgstr "gemaakt op"
+
+msgid "modified at"
+msgstr "aangepast op"
+
+msgid "website"
+msgstr "website"
+
+msgid "search"
+msgstr "zoek"
+
+msgid "Your query is being processed. Please wait."
+msgstr "Je zoekopdracht wordt verwerkt. Even geduld alsjeblieft."
+
+msgid "Search for something fake."
+msgstr "Zoek naar iets niet-bestaands"
+
+msgid "No results found, please try again."
+msgstr "Geen resultaten gevonden, probeer het alsjeblieft opnieuw."
+
+msgid "English"
+msgstr "Engels"
+
+msgid "Dutch"
+msgstr "Nederlands"
+
+msgid "Future Fashion is looking. Please wait."
+msgstr "Future Fashion is aan het zoeken. Even geduld alsjeblieft."
+
+msgid "Future fashion aims to stimulate re-use of clothing."
+msgstr "Future Fashion streeft naar het hergebruik van kleding."
+
+msgid "No clothing found"
+msgstr "Geen kleding gevonden"
+
+msgid "Search for a single word and see the canonical visuals for that word in different languages."
+msgstr "Zoek naar een enkel woord en zie de canon afbeeldingen voor dat woord in verschillende talen."
+
+msgid "No results found for"
+msgstr "Geen resultaten voor"
+
+msgid "Please try with another word."
+msgstr "Probeer het alsjeblieft opnieuw met een ander woord"
+
+msgid "Search for a single word and see the canonical images for that word in Chinese, Russian and Portuguese."
+msgstr "Zoek naar een enkel woord en zie de canon afbeeldingen voor dat woord in het Chinees, Russisch of Portugees"
+
+msgid "Wiki Feed is being generated. Please wait."
+msgstr "Wiki Feed wordt aangemaakt. Even geduld alsjeblieft."
+
+msgid "Wiki Feed is a research with the aim to create a collaborative feed system."
+msgstr "Wiki Feed is een onderzoeksproject met het doel om samenwerkingsfeeds te maken."
+
+msgid "No feed content found"
+msgstr "Geen inhoud gevonden voor de feed"
+
