@@ -78,7 +78,7 @@ class Webapp(TimestampMixin, SiteMixin):
             raise ValidationError(_("Webapps of type webpack should specify a package version."))
 
     def __str__(self):
-        return "{} ({})".format(self.route, self.language)
+        return "{}, {} ({})".format(self.site.domain, self.route, self.language)
 
     class Meta:
-        unique_together = ("route", "language",)
+        unique_together = ("route", "language", "site")
