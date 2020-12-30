@@ -15,9 +15,8 @@ $(function() {
             target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
             if (target.length) {
                 ga('send', 'pageview', this.hash);
-                $('#navbar-collapse-main').collapse('hide');
                 $('html,body').animate({
-                    scrollTop: windowOffset + target.offset().top - parseInt(target.css('padding-top'))
+                    scrollTop: windowOffset + target.offset().top - 2*parseInt(target.css('padding-top'))
                 }, 1000);
                 return false;
             }

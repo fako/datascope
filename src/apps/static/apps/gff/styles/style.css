@@ -21,7 +21,6 @@ html, body {
     background: #F4EDED;
     color: #000054;
     overflow-x: hidden;
-    /*overflow-y: scroll;*/
     -webkit-overflow-scrolling: touch;
 }
 
@@ -31,6 +30,10 @@ footer {
 
 h2 {
     font-size: 26px;
+    color: #0000FF
+}
+
+a {
     color: #0000FF
 }
 
@@ -313,7 +316,7 @@ only screen and (                min-resolution: 2dppx) {
 @media (max-width:767px) {
 
     #information {
-        background: url(../images/vintage-2.jpg) no-repeat center center;
+        background: url(../images/vintage-2-mobile.jpg) no-repeat center center;
     }
 
 }

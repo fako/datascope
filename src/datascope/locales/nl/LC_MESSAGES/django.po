@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2020-12-16 13:09+0100\n"
+"POT-Creation-Date: 2020-12-30 09:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: nl\n"
@@ -32,11 +32,11 @@ msgstr "GFF"
 msgid "Contact"
 msgstr "Contact"
 
-msgid "In this manual we explain how a fast fashion addiction works, how you can change your habits and what you can do to become the prowd owner of a sustainable closet."
-msgstr "In dit handboek vertellen we hoe een fast fashion verslaving werkt, hoe je gedrag en gewoontes veranderd en wat jij zelf kan doen om de trotse eigenaar van een duurzame kast te worden."
-
 msgid "A manual for addicts to break with fast fashion"
 msgstr "Afkick handboek voor de fastfashion verslaafden"
+
+msgid "In this manual we explain how a fast fashion addiction works, how you can change your habits and what you can do to become the prowd owner of a sustainable closet."
+msgstr "In dit handboek vertellen we hoe een fast fashion verslaving werkt, hoe je gedrag en gewoontes veranderd en wat jij zelf kan doen om de trotse eigenaar van een duurzame kast te worden."
 
 msgid "Discover what type of shopper you are and receive loads of tips and tricks about where you CAN shop in the coolest vintage shops around the Netherlands."
 msgstr "Ontdek wat voor soort shopper jij bent en krijg enorm veel tips over waar je dan wél kunt shoppen in de allertofste vintage winkels van Nederland."
@@ -44,8 +44,8 @@ msgstr "Ontdek wat voor soort shopper jij bent en krijg enorm veel tips over waa
 msgid "The 12 step plan to recovery are attainable for every fast fashion junkie"
 msgstr "De 12 stappen van herstel zijn haalbaar voor iedere fastfashionjunkie"
 
-msgid "Download the e-book here and leave your comments at our social accounts"
-msgstr "Download het e-book hier en laat je comments achter op onze socials"
+msgid "Download the e-book here and leave your comments at <a href=\"#contact\">our social accounts</a>"
+msgstr "Download het e-book hier en laat je comments achter op <a href=\"#contact\">onze socials</a>"
 
 msgid "Download"
 msgstr "Download"
@@ -53,11 +53,11 @@ msgstr "Download"
 msgid "The Good Fashion Friend Team"
 msgstr "Het Good Fashion Friend Team"
 
-msgid "We are Gaspard, Fako and Fransje and we have founded the online platform and app Good Fashion Friend in 2020. GFF helps local vintage shops in Rotterdam to thrive in an increasingly digital world. Our handbook is the closure of the is project with which we share our attained knowledge with you."
+msgid "We are Gaspard, Fako and Fransje and we have founded the online platform and app Good Fashion Friend in 2020. GFF helps local vintage shops in Rotterdam to thrive in an increasingly digital world. Our handbook is the closure of the project with which we share our attained knowledge with you."
 msgstr "Wij zijn Gaspard, Fako en Fransje en hebben in 2020 het online platform en app Good Fashion Friend opgericht voor lokale vintage winkeliers in Rotterdam om hen te helpen als fysieke winkel te overleven in de steeds digitaler wordende wereld. Dit handboek is een afsluiting van dit project waarmee we onze opgedane kennis met jou delen."
 
-msgid "Testimonials"
-msgstr "Getuigenissen"
+msgid "Reviews"
+msgstr "Reviews"
 
 msgid "Milica – our fan of the first hour"
 msgstr "Milica - onze fan van het eerste uur"
@@ -173,4 +173,7 @@ msgstr "Wiki Feed is een onderzoeksproject met het doel om samenwerkingsfeeds te
 
 msgid "No feed content found"
 msgstr "Geen inhoud gevonden voor de feed"
+
+#~ msgid "Testimonials"
+#~ msgstr "Getuigenissen"
 

@@ -13,10 +13,10 @@ msgstr ""
 msgid "Contact"
 msgstr ""
 
-msgid "In this manual we explain how a fast fashion addiction works, how you can change your habits and what you can do to become the prowd owner of a sustainable closet."
+msgid "A manual for addicts to break with fast fashion"
 msgstr ""
 
-msgid "A manual for addicts to break with fast fashion"
+msgid "In this manual we explain how a fast fashion addiction works, how you can change your habits and what you can do to become the prowd owner of a sustainable closet."
 msgstr ""
 
 msgid "Discover what type of shopper you are and receive loads of tips and tricks about where you CAN shop in the coolest vintage shops around the Netherlands."
@@ -25,7 +25,7 @@ msgstr ""
 msgid "The 12 step plan to recovery are attainable for every fast fashion junkie"
 msgstr ""
 
-msgid "Download the e-book here and leave your comments at our social accounts"
+msgid "Download the e-book here and leave your comments at <a href=\"#contact\">our social accounts</a>"
 msgstr ""
 
 msgid "Download"
@@ -34,10 +34,10 @@ msgstr ""
 msgid "The Good Fashion Friend Team"
 msgstr ""
 
-msgid "We are Gaspard, Fako and Fransje and we have founded the online platform and app Good Fashion Friend in 2020. GFF helps local vintage shops in Rotterdam to thrive in an increasingly digital world. Our handbook is the closure of the is project with which we share our attained knowledge with you."
+msgid "We are Gaspard, Fako and Fransje and we have founded the online platform and app Good Fashion Friend in 2020. GFF helps local vintage shops in Rotterdam to thrive in an increasingly digital world. Our handbook is the closure of the project with which we share our attained knowledge with you."
 msgstr ""
 
-msgid "Testimonials"
+msgid "Reviews"
 msgstr ""
 
 msgid "Milica – our fan of the first hour"
