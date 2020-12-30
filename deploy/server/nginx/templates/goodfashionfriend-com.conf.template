@@ -11,15 +11,12 @@ server {
     ssl_certificate         /etc/nginx/certificates/goodfashionfriend-com.crt;
     ssl_certificate_key     /etc/nginx/certificates/goodfashionfriend-com.key;
 
+    # Rewrite the old app paths to root
+    rewrite ^/app /nl/ last;
+    rewrite ^(/.*)/app$ $1/ last;
+    rewrite ^(/.*)/app/ $1/ last;
+
     # DJANGO
-    location =/ {
-        rewrite ^/nl/gff$uri break;
-        include /etc/nginx/uwsgi-pass.conf;
-    }
-    location ~ ^/(en/|nl/)?app {
-        rewrite ^/nl/gff/ break;
-        include /etc/nginx/uwsgi-pass.conf;
-    }
     location / {
         include /etc/nginx/uwsgi-pass.conf;
     }
