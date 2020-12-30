@@ -55,7 +55,6 @@ datagrowth_patterns = [
 #############################################
 
 urlpatterns = [
-    path("", webapp, {"path": ""}, name='root'),
     url(r'^api/v1/?$', views.index, name="datascope-index"),
     url(r'^data/v1/', include((legacy_patterns, "v1",))),
     url(r'^api/v1/auth/token/?$', rest_views.obtain_auth_token),
@@ -66,6 +65,7 @@ urlpatterns = [
 ]
 
 urlpatterns += i18n_patterns(
+    path("", webapp, {"path": ""}, name='root'),
     path("gff/", webapp, {"path": ""}, name='gff'),
 )
 
