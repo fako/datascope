@@ -1,6 +1,7 @@
 from django.shortcuts import render, Http404
 from django.templatetags.static import static
 from django.template.exceptions import TemplateDoesNotExist
+from django.contrib.sites.shortcuts import get_current_site
 
 
 from apps.models import Webapp
@@ -11,10 +12,11 @@ def webapp(request, path):
     route = request.resolver_match.url_name
     current_language = request.LANGUAGE_CODE.split("-")[0]
     base = request.path_info.replace(path, "")
+    site = get_current_site(request)
 
     current_app = None
     language_links = []
-    for app in Webapp.objects.filter(route=route).select_related("site"):
+    for app in Webapp.objects.filter(route=route, site=site).select_related("site"):
         if app.language == current_language:
             current_app = app
         language_links.append(
