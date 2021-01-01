@@ -32,13 +32,8 @@ $(function() {
         ga('send', 'event', 'Contact', event.currentTarget.attributes.href.value)
     });
 
-
-    /*****************************
-     * Form
-     *****************************/
-
-    $('#subscribe-form').submit(function() {
-        ga('send', 'event', 'Subscribe')
-    })
+    $('a.download').click(function() {
+        ga('send', 'event', 'Download')
+    });
 
 });
