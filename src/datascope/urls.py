@@ -1,5 +1,5 @@
 from django.conf.urls import include, url
-from django.urls import path
+from django.urls import path, re_path
 from django.conf import settings
 from django.contrib import admin
 from django.views import static
@@ -61,7 +61,8 @@ urlpatterns = [
     url(r'^api/v1/', include((datagrowth_patterns, "api-v1",))),
     url(r'^admin/', admin.site.urls),
     url(r'^health/?$', views.health_check),
-
+    path("discourse-scope-promo/", webapp, {"path": ""}, name='discourse-scope-promo'),
+    re_path('^discourse-scope/?(?P<path>.*)?', webapp, name='discourse-scope'),
 ]
 
 urlpatterns += i18n_patterns(
