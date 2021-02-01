@@ -1,7 +1,7 @@
 from copy import copy
 
 from django.shortcuts import Http404
-from rest_framework import generics
+from rest_framework import views
 from rest_framework.response import Response
 
 from core.views import CommunityView
@@ -9,7 +9,7 @@ from online_discourse.elastic import get_es_client
 from online_discourse.models import ElasticIndex
 
 
-class DiscourseSearchView(generics.GenericAPIView):
+class DiscourseSearchView(views.APIView):
 
     elastic = get_es_client(silent=True)
 
