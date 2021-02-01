@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="nl" >
+<head>
+    <meta charset="utf-8" />
+    <title>{{ app.title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="{{ app.description }}">
+
+    <link rel="apple-touch-icon" sizes="57x57" href="{{ app.get_app_static('images/icons/apple-icon-57x57.png') }}">
+    <link rel="apple-touch-icon" sizes="60x60" href="{{ app.get_app_static('images/icons/apple-icon-60x60.png') }}">
+    <link rel="apple-touch-icon" sizes="72x72" href="{{ app.get_app_static('images/icons/apple-icon-72x72.png') }}">
+    <link rel="apple-touch-icon" sizes="76x76" href="{{ app.get_app_static('images/icons/apple-icon-76x76.png') }}">
+    <link rel="apple-touch-icon" sizes="114x114" href="{{ app.get_app_static('images/icons/apple-icon-114x114.png') }}">
+    <link rel="apple-touch-icon" sizes="120x120" href="{{ app.get_app_static('images/icons/apple-icon-120x120.png') }}">
+    <link rel="apple-touch-icon" sizes="144x144" href="{{ app.get_app_static('images/icons/apple-icon-144x144.png') }}">
+    <link rel="apple-touch-icon" sizes="152x152" href="{{ app.get_app_static('images/icons/apple-icon-152x152.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ app.get_app_static('images/icons/apple-icon-180x180.png') }}">
+    <link rel="icon" type="image/png" sizes="192x192"  href="{{ app.get_app_static('images/icons/android-icon-192x192.png') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ app.get_app_static('images/icons/favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="96x96" href="{{ app.get_app_static('images/icons/favicon-96x96.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ app.get_app_static('images/icons/favicon-16x16.png') }}">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="{{ app.get_app_static('images/icons//ms-icon-144x144.png') }}">
+    <meta name="theme-color" content="#ffffff">
+
+    <meta property="og:title" content="{{ app.title }}"/>
+    <meta property="og:description" content="{{ app.description }}"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="{{ app.build_absolute_uri() }}"/>
+    <meta property="og:image" content="{{ app.static_image_absolute_uri() }}">
+    <meta property="og:locale" content="nl_NL"/>
+
+    <link href="{{ app.get_app_static('styles/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ app.get_app_static('styles/font-awesome.min.css') }}" rel="stylesheet">
+    <link href="{{ app.get_app_static('styles/style.css') }}" rel="stylesheet" />
+    <link href="{{ app.get_app_static('styles/svg.css') }}" rel="stylesheet" />
+
+</head>
+<body>
+    <!-- navigation panel -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-main">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#home">De Debat Kijker</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbar-collapse-main" style="overflow: hidden">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#about">Debat visualisaties</a></li>
+                    <li><a href="#projects">Gratis voorbeelden</a></li>
+                    <li><a href="#information">Hoe werkt het?</a></li>
+                    <li><a href="#order">Contact</a></li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+
+    <!-- first section - Home -->
+    <div id="home" class="home">
+        <div class="center-box text-vcenter">
+            <h1>De Debat Kijker</h1>
+            <h3>overzichten van elk maatschappelijk debat</h3>
+        </div>
+        <img class="svg svg-01" src="{{ app.get_app_static('images/svg/talk-cloud-01.svg') }}">
+        <img class="svg svg-02" src="{{ app.get_app_static('images/svg/talk-cloud-02.svg') }}">
+        <img class="svg svg-03" src="{{ app.get_app_static('images/svg/talk-cloud-03.svg') }}">
+        <img class="svg svg-04" src="{{ app.get_app_static('images/svg/talk-cloud-04.svg') }}">
+        <img class="svg svg-05" src="{{ app.get_app_static('images/svg/talk-cloud-05.svg') }}">
+        <img class="svg svg-06" src="{{ app.get_app_static('images/svg/talk-cloud-06.svg') }}">
+        <img class="svg svg-07" src="{{ app.get_app_static('images/svg/talk-cloud-07.svg') }}">
+        <img class="svg svg-08" src="{{ app.get_app_static('images/svg/talk-cloud-08.svg') }}">
+        <img class="svg svg-09" src="{{ app.get_app_static('images/svg/talk-cloud-09.svg') }}">
+        <img class="svg svg-10" src="{{ app.get_app_static('images/svg/talk-cloud-10.svg') }}">
+        <img class="svg svg-11" src="{{ app.get_app_static('images/svg/talk-cloud-11.svg') }}">
+        <img class="svg svg-12" src="{{ app.get_app_static('images/svg/talk-cloud-12.svg') }}">
+        <img class="svg svg-13" src="{{ app.get_app_static('images/svg/talk-cloud-13.svg') }}">
+        <img class="svg svg-14" src="{{ app.get_app_static('images/svg/talk-cloud-14.svg') }}">
+        <img class="svg svg-15" src="{{ app.get_app_static('images/svg/talk-cloud-15.svg') }}">
+        <img class="svg svg-16" src="{{ app.get_app_static('images/svg/talk-cloud-16.svg') }}">
+        <img class="svg svg-17" src="{{ app.get_app_static('images/svg/talk-cloud-17.svg') }}">
+        <img class="svg svg-18" src="{{ app.get_app_static('images/svg/talk-cloud-18.svg') }}">
+    </div>
+    <!-- /first section -->
+    <!-- second section - About -->
+    <div id="about" class="pad-section">
+        <div class="container">
+            <div class="row">
+                <div id="example-image" class="col-sm-6">
+                    <img class="" src="{{ app.get_app_static('images/visualisation-example-wiv.png') }}" alt="" />
+                    <p><em>een voorbeeld van een debat visualisatie</em></p>
+                </div>
+                <div class="col-sm-6 text-center">
+                    <h2>Online Meningen In Een Overzicht</h2>
+                    <p class="lead">
+                        De Debat Kijker visualiseert maatschappelijke debatten overzichtelijk.
+                        Zodat je snel een beeld krijgt van verschillende standpunten, die online opgeschreven zijn.
+                        Ook de ongebruikelijke meningen zijn in het overzicht opgenomen!
+                        Bij elk standpunt, dat je beter wilt leren kennen, kun je doorklikken naar de bronnen.
+                    </p>
+                    <p><a href="#order" class="btn btn-primary">Bestel nu</a></p>
+                    <h2 class="pad-header">Zelf Aan De Slag</h2>
+                    <p class="lead">
+                        De meningen in een maatschappelijk debat liggen vaak ver uit elkaar.
+                        Niet alleen qua inhoud!
+                        Je zult flink moeten zoeken binnen allerlei bronnen om alle standpunten op een rij te krijgen.
+                        Samen met het SIDN fonds heeft De Debat Kijker open source software ontwikkeld die je helpt een online debat te onderzoeken.
+                    </p>
+                    <p><a href="app/" class="btn btn-primary">Probeer gratis software</a></p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-6 text-center col-sm-offset-6">
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /second section -->
+    <!-- third section - Services -->
+    <div id="projects" class="pad-section">
+        <div class="container">
+            <h2 class="text-center">Gratis Debat Visualisatie Voorbeelden</h2> <hr />
+            <div class="row text-center">
+                <div class="col-sm-6 col-xs-6">
+                    <a class="download" href="{{ app.get_app_static('visualisations/wet-inlichten-en-veiligheid.pdf') }}" target="_blank">
+                    <i class="glyphicon wiv"> </i>
+                    <h4>Privacy Wetgeving</h4>
+                    <p>
+                        Er was veel kritiek op het toezicht bij deze wet.
+                        Dat had de Raad van State ook, maar niet omdat er te weinig toezicht was.
+                        Het <span class="emphasis">uitgebreide toezicht is onwerkbaar</span> in de praktijk volgens de Raad van State
+                        en daarom ontoereikend.
+                    </p>
+                    </a>
+                </div>
+                <div class="col-sm-6 col-xs-6">
+                    <a class="download" href="{{ app.get_app_static('visualisations/doodstraf.pdf') }}" target="_blank">
+                    <i class="glyphicon death-penalty"> </i>
+                    <h4>Doodstraf</h4>
+                    <p>
+                        Amerikaans onderzoek is er heel duidelijk over. De <span class="emphasis">doodstraf is duurder dan levenslang</span>.
+                        Dat komt omdat de doodstraf een zeer nauwkeurig proces vereist
+                        en veroordeelden altijd tot het naadje procederen.
+                    </p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /third section -->
+    <!-- fourth section - Information -->
+    <div id="information" class="pad-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">Hoe werkt het?</h2>
+                        </div>
+                        <div class="panel-body lead">
+                            De software van De Debat Kijker doet honderden Google searches naar relevante kernwoorden.
+                            Daar komen tien duizenden resultaten uit die je met de software vervolgens kunt filteren.
+                            Websites met met relatief veel argumenten in de tekst komen bovenaan te staan.
+                            Je kunt onze redactie <a href="#order">vragen een overzicht te maken</a> van een debat of <a href="app/">zelf aan de slag met de software</a> om een eigen overzicht te maken.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">Met steun van het SIDN Fonds</h2>
+                        </div>
+                        <div class="panel-body lead">
+                            De Debat Kijker is mede mogelijk gemaakt door het <a href="https://www.sidnfonds.nl/projecten/de-debat-kijker">SIDN Fonds</a>.
+                            De eerste visualisaties zijn via hen tot stand gekomen en zijn gratis beschikbaar.
+                            Daarnaast is de software open source beschikbaar en zal een installatie daarvan minimaal 1 jaar gehost worden door ons.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <img class="svg svg-01" src="{{ app.get_app_static('images/svg/talk-cloud-01.svg') }}">
+        <img class="svg svg-02" src="{{ app.get_app_static('images/svg/talk-cloud-02.svg') }}">
+        <img class="svg svg-03" src="{{ app.get_app_static('images/svg/talk-cloud-03.svg') }}">
+        <img class="svg svg-04" src="{{ app.get_app_static('images/svg/talk-cloud-04.svg') }}">
+        <img class="svg svg-05" src="{{ app.get_app_static('images/svg/talk-cloud-05.svg') }}">
+        <img class="svg svg-06" src="{{ app.get_app_static('images/svg/talk-cloud-06.svg') }}">
+        <img class="svg svg-07" src="{{ app.get_app_static('images/svg/talk-cloud-07.svg') }}">
+        <img class="svg svg-08" src="{{ app.get_app_static('images/svg/talk-cloud-08.svg') }}">
+        <img class="svg svg-09" src="{{ app.get_app_static('images/svg/talk-cloud-09.svg') }}">
+        <img class="svg svg-10" src="{{ app.get_app_static('images/svg/talk-cloud-10.svg') }}">
+        <img class="svg svg-11" src="{{ app.get_app_static('images/svg/talk-cloud-11.svg') }}">
+        <img class="svg svg-12" src="{{ app.get_app_static('images/svg/talk-cloud-12.svg') }}">
+        <img class="svg svg-13" src="{{ app.get_app_static('images/svg/talk-cloud-13.svg') }}">
+        <img class="svg svg-14" src="{{ app.get_app_static('images/svg/talk-cloud-14.svg') }}">
+        <img class="svg svg-15" src="{{ app.get_app_static('images/svg/talk-cloud-15.svg') }}">
+        <img class="svg svg-16" src="{{ app.get_app_static('images/svg/talk-cloud-16.svg') }}">
+        <img class="svg svg-17" src="{{ app.get_app_static('images/svg/talk-cloud-17.svg') }}">
+        <img class="svg svg-18" src="{{ app.get_app_static('images/svg/talk-cloud-18.svg') }}">
+    </div>
+    <!-- /fourth section -->
+    <!-- fifth section -->
+    <div id="order" class="pad-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <h3>Vraag vrijblijvende offerte aan óf hulp met de open source software</h3>
+                    <div class=" col-sm-8 col-sm-offset-2 text-center">
+                        <form id="order-form" action="#" method="post">
+                            <div class="form-group">
+                                <label for="name">Naam</label>
+                                <input id="name" type="text" name="name" class="form-control" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">E-mail</label>
+                                <input id="email" type="email" name="email" class="form-control" required/>
+                            </div>
+                            <div class="form-group">
+                                <label for="topic">Welk debat onderwerp wil je gevisualiseerd zien?</label>
+                                <input id="topic" type="text" name="topic" class="form-control" required/>
+                            </div>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input id="privacy" type="checkbox" name="privacy" required/>
+                                    <label for="privacy">Ik ga ermee akkoord dat iemand eenmalig contact met mij opneemt via mijn e-mail adres</label>
+                                </div>
+                            </div>
+                            <div class="form-group form-submit">
+                                <input type="submit" name="submit" value="Neem contact op" class="btn btn-primary" required>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /fifth section -->
+    <!-- sixth section -->
+    <div id="contact" class="pad-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <h3>Of connect via deze media</h3>
+                    <div class="social col-sm-12 text-center">
+                        <p><a href="mailto:fuckoffATfakoberkersDOTnl" onclick="this.href=this.href.replace(/AT/,'&#64;').replace(/DOT/,'&#46;').replace(/fuckoff/,'email')" target="_blank"><i class="fa fa-envelope-square fa-4x"></i></a></p>
+                        <p><a href="https://twitter.com/fako_85" target="_blank"><i class="fa fa-twitter-square fa-4x"></i></a></p>
+                        <p><a href="https://www.linkedin.com/pub/fako-berkers/13/229/642" target="_blank"><i class="fa fa-linkedin-square fa-4x"></i></a></p>
+                        <p><a href="https://github.com/fako/datascope" target="_blank"><i class="fa fa-github-square fa-4x"></i></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /sixth section -->
+
+    <!-- footer -->
+    <footer>
+        <div class="container">
+            <p class="text-right">Copyright &copy; Data Scope Search 2018, Fako Berkers</p>
+        </div>
+    </footer>
+    <!-- /footer -->
+
+    <script src="{{ app.get_app_static('scripts/lodash.min.js') }}"></script>
+    <script src="{{ app.get_app_static('scripts/jquery.min.js') }}"></script>
+    <script src="{{ app.get_app_static('scripts/bootstrap.min.js') }}"></script>
+    <!-- Google Analytics -->
+    <script>
+        var hasTracker = {% if app.tracker %}true{% else %}false{% endif %};
+        if(window.location.hostname !== 'localhost' && hasTracker) {
+            (function (i, s, o, g, r, a, m) {
+                i['GoogleAnalyticsObject'] = r;
+                i[r] = i[r] || function () {
+                    (i[r].q = i[r].q || []).push(arguments)
+                }, i[r].l = 1 * new Date();
+                a = s.createElement(o),
+                    m = s.getElementsByTagName(o)[0];
+                a.async = 1;
+                a.src = g;
+                m.parentNode.insertBefore(a, m)
+            })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
+            ga('create', '{{ app.tracker }}', 'auto');
+            ga('send', 'pageview');
+        } else {
+            ga = function() {}
+        }
+    </script>
+    <!-- end Google Analytics -->
+    <script src="{{ app.get_app_static('scripts/main.js') }}"></script>
+
+</body>
+</html>
