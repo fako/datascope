@@ -17,6 +17,8 @@ datascope:
   locafora_password: "secret"
   wiki_user: "Wiki Feed Bot"
   wiki_password: "secret"
+  email_user: "anonymous"
+  email_password: "secret"
 postgres:
   credentials:
   host: "127.0.0.1"

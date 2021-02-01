@@ -49,6 +49,9 @@ GOOGLE_API_KEY = environment.datascope.google_api_key
 WIKI_USER = environment.datascope.wiki_user
 WIKI_PASSWORD = environment.datascope.wiki_password
 
+EMAIL_HOST_USER = environment.datascope.email_user
+EMAIL_HOST_PASSWORD = environment.datascope.email_password
+
 
 #######################################################
 # DATAGROWTH BOOTSTRAP
@@ -332,7 +335,7 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERYD_TASK_TIME_LIMIT = 300  # 5 minutes for a single task
 
 EMAIL_USE_TLS = True
-EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST = "smtp-relay.gmail.com"
 EMAIL_PORT = 587
 EMAIL_SUBJECT_PREFIX = "[datascope] "
 SERVER_EMAIL = "no-reply@fakoberkers.nl"
