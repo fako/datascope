@@ -339,7 +339,7 @@ EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp-relay.gmail.com"
 EMAIL_PORT = 587
 EMAIL_SUBJECT_PREFIX = "[datascope] "
-SERVER_EMAIL = "no-reply@fakoberkers.nl"
+SERVER_EMAIL = environment.datascope.email_user
 ADMINS = (
     (environment.django.administrator.name, environment.django.administrator.email),
 )
