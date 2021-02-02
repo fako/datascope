@@ -4,11 +4,15 @@ server {
 
     # DJANGO
     location / {
-        rewrite ^$ /globe-scope/ break;
+        rewrite ^/(.*)$ /globe-scope/$1 break;
         include /etc/nginx/uwsgi-pass.conf;
     }
     location /views {
-        rewrite ^(.+)$ /static/apps/globe-scope/$1 break;
+        rewrite ^/(.+)$ /static/apps/globe-scope/$1 break;
+        include /etc/nginx/uwsgi-pass.conf;
+    }
+    location /images {
+        rewrite ^/(.+)$ /static/apps/globe-scope/$1 break;
         include /etc/nginx/uwsgi-pass.conf;
     }
     location /api {
