@@ -128,6 +128,7 @@ ALLOWED_HOSTS = [
     '.data-scope.com',
     '.gff.shopping',
     '.goodfashionfriend.com',
+    '.debatkijker.nl',
 ]
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:9000',
