@@ -1,0 +1,39 @@
+server {
+    server_name          ~^(www\.)?debatkijker.nl$;
+    listen               80;
+    return               301 https://debatkijker.nl$request_uri;
+}
+
+
+server {
+    server_name             ~^(www\.)?debatkijker.nl$;
+    listen                  443 ssl;
+    ssl_certificate         /etc/nginx/certificates/debatkijker.crt;
+    ssl_certificate_key     /etc/nginx/certificates/debatkijker.key;
+
+    # DJANGO
+    location / {
+        rewrite ^/$ /discourse-scope-promo/ break;
+        include /etc/nginx/uwsgi-pass.conf;
+    }
+    location /app {
+        rewrite ^/app/?(.+)$ /discourse-scope/$1 break;
+        include /etc/nginx/uwsgi-pass.conf;
+    }
+    location /api {
+        include /etc/nginx/uwsgi-pass.conf;
+    }
+    location /admin {
+        include /etc/nginx/uwsgi-pass.conf;
+    }
+    location /static/apps/promo {
+        rewrite ^/static/apps/promo/(.+)$ /static/apps/gff/$1 break;
+        include /etc/nginx/uwsgi-pass.conf;
+    }
+    location /static {
+        include /etc/nginx/uwsgi-pass.conf;
+    }
+
+    include                 /etc/nginx/server-www.conf;
+
+}
