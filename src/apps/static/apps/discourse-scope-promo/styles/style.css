@@ -8,9 +8,13 @@ html, body {
 }
 
 footer {
-    color: #ffffff;
-    background-color: #dddddd;
+    color: #000000;
+    background-color: #eeeeee;
     padding: 20px 0;
+}
+
+h2 {
+    font-size: 24px;
 }
 
 /******************************
@@ -18,23 +22,23 @@ footer {
 ******************************/
 
 .navbar-default .navbar-brand, .navbar {
-    color: #FFE135;
-    background-color: #0046FF;
+    color: #000000;
+    background-color: #FFFFFF;
 }
 
 .navbar-default .navbar-nav>li>a {
-    color: #FFE135;
+    color: #000000;
 }
 .navbar-default .navbar-toggle .icon-bar {
-    background-color: #FFE135;
+    background-color: #000000;
 }
 .navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
-    background-color: #FFFFFF;
+    background-color: #f15100;
 }
 
 .navbar-default .navbar-nav>li>a:hover, .navbar-default .navbar-nav>li>a:focus,
 .navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
-    color: #FFFFFF;
+    color: #f15100;
 }
 
 .pad-section {
@@ -48,14 +52,14 @@ footer {
 }
 
 .btn-primary {
-    background-color: #0046FF;
-    line-height: 40px;
-    font-size: 20px;
-    border: 1px solid #FFFFFF;
+    background-color: #f15100;
+
+
+    border: 1px solid #f15100;
 }
 .btn-primary:hover, .btn-primary:active, .btn-primary:focus {
-    background-color: #E32636;
-    border: 1px solid #FFFFFF;
+    background-color: #B2E9B5;
+    border: 1px solid #B2E9B5;
 }
 
 /******************************
@@ -90,7 +94,6 @@ form {
     text-align: left;
 }
 form .form-submit {
-    margin-top: 50px;
     text-align: center;
 }
 
@@ -99,7 +102,7 @@ form .form-submit {
 ******************************/
 
 #home {
-    background: #dddddd;
+    background: #eeeeee;
     height: 88%;
     position: relative;
     width: 100%;
@@ -108,25 +111,25 @@ form .form-submit {
 #home h1 {
     position: relative;
     z-index: 10;
-    color: #FFFFFF;
+    color: #000000;
     text-shadow:
-            3px 3px 0 #aaaaaa,
-            1px -1px 0 #aaaaaa,
-            -1px 1px 0 #aaaaaa,
-            1px 1px 0 #aaaaaa;
+            3px 3px 0 #FFFFFF,
+            1px -1px 0 #FFFFFF,
+            -1px 1px 0 #FFFFFF,
+            1px 1px 0 #FFFFFF;
 }
 
 #home h3 {
     position: relative;
     z-index: 10;
-    color: #FFFFFF;
+    color: #000000;
     font-weight: bold;
     font-size: 30px;
     text-shadow:
-            -1px -1px 0 #aaaaaa,
-            1px -1px 0 #aaaaaa,
-            -1px 1px 0 #aaaaaa,
-            1px 1px 0 #aaaaaa;
+            -1px -1px 0 #FFFFFF,
+            1px -1px 0 #FFFFFF,
+            -1px 1px 0 #FFFFFF,
+            1px 1px 0 #FFFFFF;
 }
 
 /******************************
@@ -134,11 +137,11 @@ form .form-submit {
 ******************************/
 
 #about {
-    color: #E32636;
-    background-color: #FFE135;
+    color: #000000;
+    background-color: #FFFFFF;
 }
 #about h2 {
-    color: #E32636;
+    color: #000000;
 }
 
 @media (min-width:768px) {
@@ -152,7 +155,8 @@ form .form-submit {
 }
 
 #example-image img {
-    border: 5px solid white;
+    border: 2px solid #f15100;
+    padding: 5px;
 }
 
 /******************************
@@ -160,13 +164,13 @@ form .form-submit {
 ******************************/
 
 #projects {
-    color: #FFE135;
-    background-color: #E32636;
+    color: #FFFFFF;
+    background-color: #000000;
 }
 
 
 #projects .glyphicon {
-    border: 2px solid #FFE135;
+    border: 2px solid #f15100;
     border-radius: 50%;
     display: inline-block;
     font-size: 60px;
@@ -180,13 +184,13 @@ form .form-submit {
     display: block;
     width: 100%;
     height: 100%;
-    color: #FFE135;
+    color: #FFFFFF;
 }
 #projects hr {
-    border-color: #FFE135;
+    border-color: #FFFFFF;
 }
 #projects a:visited {
-    color: #FFE135;
+    color: #f15100;
 }
 #projects a:hover {
     text-decoration: none;
@@ -232,26 +236,26 @@ only screen and (                min-resolution: 2dppx) {
     width: 100%;
     height: 400px;
     overflow: hidden;
-    background: #dddddd;
+    background: #eeeeee;
 }
 #information .panel {
     position: relative;
     z-index: 10;
     opacity: 0.85;
-    background-color: #0046FF;
-    color: #ffffff;
+    background-color: #FFFFFF;
+    color: #000000;
 }
 #information .panel-heading {
-    background-color: #0046FF;
-    color: #ffffff
+    background-color: #FFFFFF;
+    color: #000000
 }
 
 #information a {
     text-decoration: underline;
-    color: #FFE135;
+    color: #f15100;
 }
 #information a:visited {
-    color: white;
+    color: #000000;
 }
 
 /******************************
@@ -259,16 +263,16 @@ only screen and (                min-resolution: 2dppx) {
 ******************************/
 
 #order {
-    background-color: #FFE135;
+    background-color: #000000;
     color: #ffffff;
 }
 
 form {
-    color: #0046FF;
+    color: #FFFFFF;
 }
 
 #order h3, #order h4 {
-    color: #0046FF;
+    color: #FFFFFF;
     text-shadow: none;
 }
 
@@ -293,8 +297,8 @@ label[for=privacy] {
 ******************************/
 
 #contact {
-    background-color: #E32636;
-    color: #ffffff;
+    background-color: #FFFFFF;
+    color: #000000;
 }
 
 #contact .social {
@@ -305,12 +309,12 @@ label[for=privacy] {
     margin-right: 15px;
 }
 #contact h3, #contact h4 {
-    color: #FFE135;
+    color: #000000;
     text-shadow: none;
 }
 #contact .social a {
-    color: #FFE135;
+    color: #f15100;
 }
 #contact .social a:visited {
-    color: #FFE135;
+    color: #f15100;
 }
