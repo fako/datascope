@@ -1,0 +1,23 @@
+<nav id="main-navigation">
+    <div class="nav-bar" ng-class="{'out-of-sight': hidden}">
+        <div class="search-container"
+             ng-include="'views/search-form.html'"
+             ng-controller="SearchCtrl"
+             ng-init="placeholder = 'Try again'">
+        </div>
+    </div>
+</nav>
+
+<div class="central-box-outer">
+    <div class="central-box-inner">
+        <div class="central-box-content">
+            <h2>{{ query }} Not Found</h2>
+            <p>We couldn't find the word you were looking for. A few things you could do:</p>
+            <ol>
+                <li>   Search in English</li>
+                <li>   Search for singular words</li>
+                <li>   Think of your favorite thing and search for that</li>
+            </ol>
+        </div>
+    </div>
+</div>

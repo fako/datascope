@@ -1,0 +1,21 @@
+<nav id="main-navigation">
+    <div class="nav-bar" ng-class="{'out-of-sight': hidden}">
+        <div class="search-container"
+             ng-include="'views/search-form.html'"
+             ng-controller="SearchCtrl"
+             ng-init="placeholder = 'Try again'">
+        </div>
+    </div>
+</nav>
+
+<div class="central-box-outer">
+    <div class="central-box-inner">
+        <div class="central-box-content">
+            <h2>An error occured :(</h2>
+            <div
+                ng-include="'views/question-form.html'"
+                ng-init="question = 'Could you shortly describe what happened to help improve my project?'; submit = 'Send feedback'"
+            ></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,48 @@
+<!doctype html>
+<!--[if lte IE 8]><html class="no-js ie lte-ie9"><![endif]-->
+<!--[if IE 9]><html class="no-js ie lte-ie9"><![endif]-->
+<!--[if gt IE 9]><html class="no-js ie"><![endif]-->
+<html class="no-js">
+
+<head>
+
+    <title>{{ app.title }}</title>
+
+    <meta charset="utf-8">
+    <meta name="description" content="{{ app.description }}">
+    <meta name="viewport" content="width=device-width">
+    <meta name="google" value="notranslate">
+
+    <link rel="shortcut icon" href="{{ app.get_app_static('favicon.ico') }}" />
+
+    <link rel="stylesheet" href="{{ app.get_app_static('styles/0429fa46.main.css') }}"/>
+
+</head>
+
+<body ng-app="globeScopeApp">
+
+    <div id="main" ui-view="main" ng-class="loadClass">
+
+        <div class="central-box-outer">
+            <div class="central-box-inner">
+                <div class="central-box-content">
+                    <!--[if lt IE 10]>
+                        <h2 class="old-browser">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</h2>
+                    <![endif]-->
+                    <noscript>
+                        <h2>To use this website you need to have Javascript enabled.</h2>
+                    </noscript>
+                    <h2 class="loading-screen">Loading ... please wait :)</h2>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="load" ui-view="load" ng-class="loadClass"></div>
+
+    <script src="{{ app.get_app_static('scripts/db74efd3.vendor.js') }}"></script>
+    <script src="{{ app.get_app_static('scripts/1bb46fa4.scripts.js') }}"></script>
+
+</body>
+</html>

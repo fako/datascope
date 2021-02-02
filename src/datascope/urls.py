@@ -63,6 +63,7 @@ urlpatterns = [
     url(r'^health/?$', views.health_check),
     path("discourse-scope-promo/", webapp, {"path": ""}, name='discourse-scope-promo'),
     re_path('^discourse-scope/?(?P<path>.*)?', webapp, name='discourse-scope'),
+    path("globe-scope/", webapp, {"path": ""}, name='globe-scope'),
 ]
 
 urlpatterns += i18n_patterns(

@@ -1,0 +1,13 @@
+<div>
+    <div class="image" ng-if="medium == 'images' && flag == 'false'">
+        <img ng-src="{{ source }}" ng-class="image.cssClass()" ng-style="image.style()"/>
+    </div>
+
+    <div class="video" ng-if="medium == 'videos' && flag == 'false'">
+        <iframe ng-src="{{ video.getSource(vids) }}" width="{{ video.width }}" height="{{ video.height }}" ng-style="video.style()"></iframe>
+    </div>
+
+    <div class="flag" ng-if="flag == 'true' && language">
+        <img ng-src="images/{{ language }}.png" alt="flag {{ language }}" ng-style="flagStyle">
+    </div>
+</div>

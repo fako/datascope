@@ -1,0 +1,8 @@
+<form name="questionForm" class="question-box" ng-submit="send()" ng-controller="QuestionCtrl">
+    <fieldset class="question-fields">
+        <p>{{ question }}</p>
+        <textarea ng-model="questionForm.answer" type="text" placeholder="Feedback" ng-required></textarea>
+        <input ng-model="questionForm.email" type="email" placeholder="Email address (optional)"/>
+        <input type="submit" name="search" value="{{ submit }}">
+    </fieldset>
+</form>

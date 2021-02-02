@@ -1,0 +1,26 @@
+server {
+    server_name          ~^(www\.)?globe-scope.com$;
+    listen               80;
+
+    # DJANGO
+    location / {
+        rewrite ^$ /globe-scope/ break;
+        include /etc/nginx/uwsgi-pass.conf;
+    }
+    location /views {
+        rewrite ^(.+)$ /static/apps/globe-scope/$1 break;
+        include /etc/nginx/uwsgi-pass.conf;
+    }
+    location /api {
+        include /etc/nginx/uwsgi-pass.conf;
+    }
+    location /admin {
+        include /etc/nginx/uwsgi-pass.conf;
+    }
+    location /static {
+        include /etc/nginx/uwsgi-pass.conf;
+    }
+
+    include                 /etc/nginx/server-www.conf;
+
+}
