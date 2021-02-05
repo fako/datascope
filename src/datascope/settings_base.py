@@ -336,7 +336,7 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERYD_TASK_TIME_LIMIT = 300  # 5 minutes for a single task
 
 EMAIL_USE_TLS = True
-EMAIL_HOST = "smtp-relay.gmail.com"
+EMAIL_HOST = "smtp.sendgrid.net"
 EMAIL_PORT = 587
 EMAIL_SUBJECT_PREFIX = "[datascope] "
 SERVER_EMAIL = environment.datascope.email_user
