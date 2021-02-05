@@ -49,7 +49,7 @@ GOOGLE_API_KEY = environment.datascope.google_api_key
 WIKI_USER = environment.datascope.wiki_user
 WIKI_PASSWORD = environment.datascope.wiki_password
 
-EMAIL_HOST_USER = environment.datascope.email_user
+EMAIL_HOST_USER = "apikey"  # SendGrid requirement. For "from" see SERVER_EMAIL setting
 EMAIL_HOST_PASSWORD = environment.datascope.email_password
 
 
