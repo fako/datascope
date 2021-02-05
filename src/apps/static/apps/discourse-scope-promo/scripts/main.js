@@ -99,7 +99,7 @@ $(function() {
             data.name += " (" + campaign + ")"
         }
 
-        $.post("https://data-scope.com/data/v1/discourse-search/order/", data, null, "json")
+        $.post("/api/v1/discourse-search/order/", data, null, "json")
             .done(function() {
                 alert("Bedankt voor de aanvraag we nemen spoedig contact met je op :)");
                 ga('send', 'event', 'Order', 'done');
