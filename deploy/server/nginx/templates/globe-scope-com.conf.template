@@ -1,6 +1,13 @@
 server {
-    server_name          ~^(www\.)?globe-scope.com$;
-    listen               80;
+    server_name             *.globe-scope.com;
+    listen                  80;
+    return                  301 http://globe-scope.com$request_uri;
+}
+
+
+server {
+    server_name             globe-scope.com;
+    listen                  80;
 
     # DJANGO
     location / {

@@ -4,14 +4,23 @@ upstream dsdata {
 
 
 server {
-    server_name          ~^(www\.)?data-scope(\..+)?$;
-    listen               80;
-    return               301 https://data-scope.com$request_uri;
+    server_name             *.data-scope.com;
+    listen                  80;
+    return                  301 https://data-scope.com$request_uri;
 }
 
 
 server {
-    server_name             ~^(www\.)?data-scope(\..+)?$;
+    server_name             *.data-scope.com;
+    listen                  443 ssl;
+    ssl_certificate         /etc/nginx/certificates/data-scope.crt;
+    ssl_certificate_key     /etc/nginx/certificates/data-scope.key;
+    return                  301 https://data-scope.com$request_uri;
+}
+
+
+server {
+    server_name             data-scope.com;
     listen                  443 ssl;
     ssl_certificate         /etc/nginx/certificates/data-scope.crt;
     ssl_certificate_key     /etc/nginx/certificates/data-scope.key;

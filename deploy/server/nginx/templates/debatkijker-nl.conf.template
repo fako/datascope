@@ -1,12 +1,21 @@
 server {
-    server_name          ~^(www\.)?debatkijker.nl$;
-    listen               80;
-    return               301 https://debatkijker.nl$request_uri;
+    server_name             *.debatkijker.nl;
+    listen                  80;
+    return                  301 https://debatkijker.nl$request_uri;
 }
 
 
 server {
-    server_name             ~^(www\.)?debatkijker.nl$;
+    server_name             *.debatkijker.nl;
+    listen                  443 ssl;
+    ssl_certificate         /etc/nginx/certificates/debatkijker.crt;
+    ssl_certificate_key     /etc/nginx/certificates/debatkijker.key;
+    return                  301 https://debatkijker.nl$request_uri;
+}
+
+
+server {
+    server_name             debatkijker.nl;
     listen                  443 ssl;
     ssl_certificate         /etc/nginx/certificates/debatkijker.crt;
     ssl_certificate_key     /etc/nginx/certificates/debatkijker.key;

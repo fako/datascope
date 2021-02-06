@@ -1,12 +1,21 @@
 server {
-    server_name          ~^(www\.)?goodfashionfriend.com$;
-    listen               80;
-    return               301 https://goodfashionfriend.com$request_uri;
+    server_name             *.goodfashionfriend.com;
+    listen                  80;
+    return                  301 https://goodfashionfriend.com$request_uri;
 }
 
 
 server {
-    server_name             ~^(www\.)?goodfashionfriend.com$;
+    server_name             *.goodfashionfriend.com;
+    listen                  443 ssl;
+    ssl_certificate         /etc/nginx/certificates/goodfashionfriend-com.crt;
+    ssl_certificate_key     /etc/nginx/certificates/goodfashionfriend-com.key;
+    return                  301 https://goodfashionfriend.com$request_uri;
+}
+
+
+server {
+    server_name             goodfashionfriend.com;
     listen                  443 ssl;
     ssl_certificate         /etc/nginx/certificates/goodfashionfriend-com.crt;
     ssl_certificate_key     /etc/nginx/certificates/goodfashionfriend-com.key;
