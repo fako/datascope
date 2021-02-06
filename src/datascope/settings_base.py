@@ -288,10 +288,9 @@ LOGGING = {
         },
     },
     'loggers': {
-        'django.request': {
+        'django': {  # prevents emails from Django as it removes 'mail_admins' handler
             'handlers': ['console'],
-            'level': 'ERROR',
-            'propagate': True,
+            'level': 'INFO',
         },
         'datascope': {
             'handlers': ['file'],
