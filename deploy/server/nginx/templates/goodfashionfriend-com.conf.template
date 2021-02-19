@@ -1,5 +1,5 @@
 server {
-    server_name             *.goodfashionfriend.com;
+    server_name             goodfashionfriend.com *.goodfashionfriend.com;
     listen                  80;
     return                  301 https://goodfashionfriend.com$request_uri;
 }

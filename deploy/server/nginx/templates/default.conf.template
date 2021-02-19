@@ -4,7 +4,7 @@ upstream dsdata {
 
 
 server {
-    server_name             *.data-scope.com;
+    server_name             data-scope.com *.data-scope.com;
     listen                  80;
     return                  301 https://data-scope.com$request_uri;
 }
