@@ -99,14 +99,11 @@ INSTALLED_APPS = (
     'sources',
     'apps',
     # Algorithms
-    'wiki_feed',
     'visual_translations',
     'future_fashion',
     'open_data',
     'wiki_scope',
     'online_discourse',
-    'nautilus',
-    'setup_utrecht'
 )
 
 DATABASES = {

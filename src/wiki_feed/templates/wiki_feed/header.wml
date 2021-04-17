@@ -1,5 +1,0 @@
-{{ feed_template }}
-
-<!-- DO NOT EDIT BELOW THIS LINE -->
-__NOTOC__
-Last updated: {% now "H:i j M Y" %}
