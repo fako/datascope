@@ -112,7 +112,7 @@ class VisualTranslationsBRICCommunity(Community):
         updated = []
         for individuals in grouped_translations.values():
             updated += individuals
-        out.update(updated + new)
+        out.add(updated + new, reset=True)
 
     def error_translations_not_found(self, errors, out):
         if out.has_content:
@@ -135,7 +135,7 @@ class VisualTranslationsBRICCommunity(Community):
                 community=self,
                 schema=out.schema
             )
-            col.update(images)
+            col.add(images, reset=True)
             ind.properties["images"] = col.url
             ind.save()
 

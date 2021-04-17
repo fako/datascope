@@ -65,9 +65,8 @@ class CollectiveContentView(ContentView):
         return Response(serializer.data)
 
     def post(self, request, pk):
-        # TODO: this does an add not an update. rename accordingly
         try:
-            additions = self.request.organism.update(request.data, reset=False)
+            additions = self.request.organism.add(request.data, reset=False)
         except ValidationError as exc:
             schema = getattr(exc, "schema")
             return Response({"detail":

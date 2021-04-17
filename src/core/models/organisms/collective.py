@@ -29,9 +29,6 @@ class Collective(CollectionBase):
             properties=data
         )
 
-    def update(self, data, validate=True, reset=True, batch_size=500):
-        return self.add(data, validate=validate, reset=reset, batch_size=batch_size)
-
     @property
     def url(self):
         if not self.id:

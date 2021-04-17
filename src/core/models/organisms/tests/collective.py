@@ -50,24 +50,24 @@ class TestCollective(TransactionTestCase):
         for ind in self.instance.content:
             validate_method.assert_any_call(ind, self.instance.schema)
 
-    def get_update_list_and_ids(self, value):
-        updates = []
+    def get_docs_list_and_ids(self, value):
+        docs = []
         individual_ids = []
         for index, individual in enumerate(self.instance2.individual_set.all()):
             individual_ids.append(individual.id)
             individual.properties["value"] = value
-            updates.append(individual) if index % 2 else updates.append(individual.properties)
-        return updates, individual_ids
+            docs.append(individual) if index % 2 else docs.append(individual.properties)
+        return docs, individual_ids
 
     @patch('core.models.organisms.individual.Individual.validate')
     @patch('core.models.organisms.collective.Collective.influence')
-    def test_update(self, influence_method, validate_method):
-        updates, individual_ids = self.get_update_list_and_ids(value="value 3")
+    def test_add(self, influence_method, validate_method):
+        docs, individual_ids = self.get_docs_list_and_ids(value="value 3")
         with self.assertNumQueries(3):
             # Query 1: reset
             # Query 2: fetch community to set it for pure dicts becoming Individuals
             # Query 3: insert individuals
-            self.instance2.update(updates, validate=False, reset=True)
+            self.instance2.add(docs, validate=False, reset=True)
         validate_method.assert_not_called()
         self.assertEqual(influence_method.call_count, 5)
         self.assertEqual(self.instance2.individual_set.count(), 5)
@@ -76,12 +76,12 @@ class TestCollective(TransactionTestCase):
             self.assertNotIn(individual.id, individual_ids)
 
         influence_method.reset_mock()
-        updates, individual_ids = self.get_update_list_and_ids(value="value 4")
+        docs, individual_ids = self.get_docs_list_and_ids(value="value 4")
         with self.assertNumQueries(2):
             # Query 1: reset
             # NB: no need to fetch community as this has been done
             # Query 2: insert individuals
-            self.instance2.update(updates, validate=True, reset=True)
+            self.instance2.add(docs, validate=True, reset=True)
         self.assertEqual(validate_method.call_count, 5)
         self.assertEqual(influence_method.call_count, 5)
         self.assertEqual(self.instance2.individual_set.count(), 5)
@@ -90,12 +90,12 @@ class TestCollective(TransactionTestCase):
             self.assertNotIn(individual.id, individual_ids)
 
         influence_method.reset_mock()
-        updates, individual_ids = self.get_update_list_and_ids(value="value 5")
+        docs, individual_ids = self.get_docs_list_and_ids(value="value 5")
         with self.assertNumQueries(1):  # query set cache is filled, -1 query
             # NB: no reset
             # NB: no need to fetch community as this has been done
             # Query 1: insert individuals
-            self.instance2.update(updates, validate=True, reset=False)
+            self.instance2.add(docs, validate=True, reset=False)
         self.assertEqual(validate_method.call_count, 10)
         self.assertEqual(influence_method.call_count, 5)
         self.assertEqual(self.instance2.individual_set.count(), 10)
@@ -106,16 +106,16 @@ class TestCollective(TransactionTestCase):
         for id_value in individual_ids:
             self.assertIn(id_value, new_ids)
 
-    def test_update_batch(self):
-        updates = list(self.instance2.individual_set.all()) * 5
+    def test_add_batch(self):
+        docs = list(self.instance2.individual_set.all()) * 5
         with self.assertNumQueries(4):
-            self.instance2.update(updates, validate=False, reset=True, batch_size=20)
+            self.instance2.add(docs, validate=False, reset=True, batch_size=20)
         self.assertEqual(self.instance2.individual_set.count(), 25)
 
     @patch('core.models.organisms.collective.Collective.influence')
-    def test_copy_update(self, influence_method):
-        updates, original_ids = self.get_update_list_and_ids("copy")
-        self.instance.update(updates, validate=False, reset=False)
+    def test_copy_add(self, influence_method):
+        docs, original_ids = self.get_docs_list_and_ids("copy")
+        self.instance.add(docs, validate=False, reset=False)
         self.assertEqual(self.instance.individual_set.count(), 8)
         for ind in self.instance.individual_set.all():
             self.assertNotIn(ind.id, original_ids)
