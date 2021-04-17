@@ -8,7 +8,7 @@ from core.models.organisms import Community, Collective, Individual
 from sources.models import ImageDownload
 
 
-class UniformImagesCommunity(Community):
+class UniformImagesCommunity(object):
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("images", {

@@ -10,7 +10,6 @@ from rest_framework.authtoken import views as rest_views
 from datascope import views
 from core import views as core_views
 from apps.views import webapp
-from wiki_feed.urls import urlpatterns as wiki_feed_patterns
 from visual_translations.urls import urlpatterns as visual_translations_patterns
 from future_fashion import urls as future_fashion_urls
 from future_fashion.urls import mediapatterns
@@ -32,7 +31,6 @@ legacy_patterns = [
     url(r'^individual/(?P<pk>\d+)/$', core_views.IndividualView.as_view(), name="individual"),
     url(r'^question/$', views.question, name="datascope-question")
 ]
-legacy_patterns += wiki_feed_patterns
 legacy_patterns += visual_translations_patterns
 legacy_patterns += wiki_scope_patterns
 if settings.USE_MOCKS:

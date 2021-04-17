@@ -1,7 +1,7 @@
 from core.models.resources.http import HttpResource
 
 
-class LocaforaLogin(HttpResource):
+class LocaforaLogin(object):
 
     URI_TEMPLATE = "http://locafora.nl/api/person/model_login"
 
@@ -10,7 +10,7 @@ class LocaforaLogin(HttpResource):
     }
 
 
-class LocaforaOrders(HttpResource):
+class LocaforaOrders(object):
 
     URI_TEMPLATE = "http://locafora.nl/api/order/collection?status[]=1&status[]=2"
 

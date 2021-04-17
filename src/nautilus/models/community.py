@@ -9,7 +9,7 @@ from core.models.organisms import Community
 from nautilus.locafora import get_product
 
 
-class LocaforaOrderOverviewCommunity(Community):
+class LocaforaOrderOverviewCommunity(object):
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("orders", {

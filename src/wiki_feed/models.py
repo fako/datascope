@@ -15,7 +15,7 @@ from datagrowth.exceptions import DGResourceException
 from sources.models.wikipedia.categories import WikipediaCategories
 
 
-class WikiFeedCommunity(Community):
+class WikiFeedCommunity(object):
 
     USER_AGENT = "WikiFeedBot (DataScope v{})".format(settings.DATASCOPE_VERSION)
 
@@ -261,7 +261,7 @@ class WikiFeedCommunity(Community):
         verbose_name_plural = "Wiki feeds"
 
 
-class WikiFeedPublishCommunity(Community):
+class WikiFeedPublishCommunity(object):
 
     USER_AGENT = "WikiFeedBot (DataScope v{})".format(settings.DATASCOPE_VERSION)
 

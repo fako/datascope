@@ -3,7 +3,7 @@ from collections import OrderedDict
 from core.models.organisms import Community, Individual
 
 
-class RedditScrapeCommunity(Community):
+class RedditScrapeCommunity(object):
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("subjects", {

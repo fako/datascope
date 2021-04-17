@@ -7,7 +7,7 @@ def is_reddis_thing(element_id):
     return element_id and element_id.startswith('thing_')
 
 
-class RedditList(HttpResource):
+class RedditList(object):
 
     URI_TEMPLATE = "https://www.reddit.com/r/{}/top/"
 
@@ -38,7 +38,7 @@ class RedditList(HttpResource):
         }
 
 
-class RedditPermalink(HttpResource):
+class RedditPermalink(object):
 
     URI_TEMPLATE = "https://www.reddit.com{}"  # meant to include permalinks
 
