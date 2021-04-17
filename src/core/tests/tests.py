@@ -7,7 +7,6 @@ from core.processors.tests.resources import TestHttpResourceProcessor
 from core.processors.tests.rank import TestRankProcessor, TestRankProcessorLegacy
 from core.processors.tests.expansion import TestExpansionProcessor
 from core.processors.tests.compare import TestCompareProcessor
-from core.processors.tests.manifest import TestManifestProcessor
 
 from core.models.organisms.tests.growth import TestGrowth
 from core.models.organisms.tests.community import TestCommunityMock
