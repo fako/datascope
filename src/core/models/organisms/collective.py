@@ -25,7 +25,6 @@ class Collective(CollectionBase):
         return Individual(
             community=self.community,
             collective=self,
-            schema=self.schema,
             properties=data
         )
 
