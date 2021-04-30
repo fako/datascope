@@ -15,7 +15,6 @@ class Collection(DocumentCollectionMixin, CollectionBase):
         return Document(
             community=self.community,
             collection=collection,
-            schema=self.schema,
             properties=data
         )
 

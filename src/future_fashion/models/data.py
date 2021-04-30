@@ -159,7 +159,6 @@ class ClothingDataCommunity(Community):
             Individual.objects.create(
                 community=self,
                 collective=collective,
-                schema={},
                 properties={
                     "listing": target_listing
                 }

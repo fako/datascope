@@ -160,7 +160,7 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
             configuration.singular_subjects + configuration.plural_subjects,
             configuration.descriptive_adjectives
         )
-        collection = Collection.objects.create(community=self, schema={})
+        collection = Collection.objects.create(community=self)
         for terms in combinations:
             Document.objects.create(
                 community=self,

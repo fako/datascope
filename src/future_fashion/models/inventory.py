@@ -98,7 +98,7 @@ class ClothingInventoryCommunity(Community):
     ]
 
     def initial_input(self, *args):
-        collection = self.create_organism("Collection", schema={}, identifier="path", referee="rid")
+        collection = self.create_organism("Collection", identifier="path", referee="rid")
         scanner = SemanticDirectoryScan(file_pattern="*f.jpg", progress_bar=True)
         content = []
         target_directory = get_media_path(self._meta.app_label, args[0])

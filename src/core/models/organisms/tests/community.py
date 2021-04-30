@@ -109,12 +109,11 @@ class TestCommunityMock(CommunityTestMixin):
         self.assertTrue(self.instance.finish_phase1.called)
 
     def test_create_organism(self):
-        result = self.instance.create_organism("Individual", {"test": "test"})
+        result = self.instance.create_organism("Individual")
         self.assertGreater(result.id, 0)
         self.assertIsInstance(result, Individual)
         self.assertEqual(result.community, self.instance)
-        self.assertEqual(result.schema, {"test": "test"})
-        result = self.instance.create_organism("Collective", {"test": "test"})
+        result = self.instance.create_organism("Collective")
         self.assertGreater(result.id, 0)
         self.assertIsInstance(result, Collective)
         self.assertEqual(result.community, self.instance)
