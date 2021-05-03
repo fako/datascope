@@ -3,7 +3,6 @@ from elasticsearch.helpers import streaming_bulk
 from django.conf import settings
 from django.db import models
 from django.utils.text import slugify
-from django.contrib.postgres.fields import JSONField
 from rest_framework import serializers
 
 from online_discourse.models import DiscourseSearchCommunity
@@ -18,7 +17,7 @@ class ElasticIndex(models.Model):
     signature = models.CharField(max_length=255)
     language = models.CharField(max_length=5, choices=settings.ELASTIC_SEARCH_ANALYSERS.items())
     dataset = models.ForeignKey(DiscourseSearchCommunity, related_name="indices", on_delete=models.CASCADE)
-    configuration = JSONField(blank=True)
+    configuration = models.JSONField(blank=True)
     error_count = models.IntegerField(default=0)
 
     created_at = models.DateTimeField(auto_now_add=True)

@@ -19,7 +19,7 @@ class Collection(DocumentCollectionMixin, CollectionBase):
         )
 
 
-class Document(DocumentPostgres, DocumentBase):
+class Document(DocumentBase):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)

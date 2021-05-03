@@ -28,10 +28,9 @@ datagrowth_patterns = [
     url(r'^future-fashion/', include(future_fashion_urls)),
     url(r'^discourse-search/', include(online_discourse_urls)),
     # TODO: use stricter URLs with more prefixes here
-    url(r'', include(visual_translations_patterns)),
     url(r'', include(core_patterns)),
     url(r'', include(wiki_scope_patterns)),
-
+    url(r'', include(visual_translations_patterns)),
     url(r'^question/$', views.question, name="datascope-question")
 ]
 

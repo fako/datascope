@@ -3,10 +3,27 @@
         "fields": {
             "body": "{\"list\": [\"value 0\", \"value 1\", \"value 2\"], \"dict\": {\"test\": \"nested value\", \"dict\": {\"test\": \"test\"}, \"list\": [\"nested value 0\", \"nested value 1\", \"nested value 2\"]}, \"unicode\": [\"\\u00fcberhaupt\"], \"dotted.key\": \"another value\"}",
             "status": 200,
-            "head": "{\"content-type\":\"application/json\"}",
+            "head": {
+                "content-type": "application/json"
+            },
             "modified_at": "2015-05-12T18:45:22.105Z",
             "created_at": "2015-05-12T18:45:22.105Z",
-            "request": "{\"args\": [\"en\", \"success\"], \"kwargs\": {}, \"headers\": {\"User-Agent\": \"DataGrowth (test); python-requests/2.20.0\", \"Accept\": \"application/json\", \"Accept-Encoding\": \"gzip, deflate\", \"Connection\": \"keep-alive\"}, \"method\": \"get\", \"url\": \"http://localhost:8000/en/?param=1&q=success\", \"data\": null}",
+            "request": {
+                "args": [
+                    "en",
+                    "success"
+                ],
+                "kwargs": {},
+                "headers": {
+                    "User-Agent": "DataGrowth (test); python-requests/2.20.0",
+                    "Accept": "application/json",
+                    "Accept-Encoding": "gzip, deflate",
+                    "Connection": "keep-alive"
+                },
+                "method": "get",
+                "url": "http://localhost:8000/en/?param=1&q=success",
+                "data": null
+            },
             "uri": "localhost:8000/en/?param=1&q=success",
             "data_hash": "",
             "config": "{}",
@@ -19,10 +36,27 @@
         "fields": {
             "body": "{\"error\": \"failure\"}",
             "status": 502,
-            "head": "{\"content-type\":\"application/json\"}",
+            "head": {
+                "content-type": "application/json"
+            },
             "modified_at": "2015-05-12T18:45:22.105Z",
             "created_at": "2015-05-12T18:45:22.105Z",
-            "request": "{\"headers\": {\"User-Agent\": \"DataGrowth (test); python-requests/2.20.0\", \"Connection\": \"keep-alive\", \"Accept-Encoding\": \"gzip, deflate\", \"Accept\": \"application/json\"}, \"data\": null, \"kwargs\": {}, \"url\": \"http://localhost:8000/en/?q=fail&param=1\", \"args\": [\"en\", \"fail\"], \"method\": \"get\"}",
+            "request": {
+                "headers": {
+                    "User-Agent": "DataGrowth (test); python-requests/2.20.0",
+                    "Connection": "keep-alive",
+                    "Accept-Encoding": "gzip, deflate",
+                    "Accept": "application/json"
+                },
+                "data": null,
+                "kwargs": {},
+                "url": "http://localhost:8000/en/?q=fail&param=1",
+                "args": [
+                    "en",
+                    "fail"
+                ],
+                "method": "get"
+            },
             "uri": "localhost:8000/en/?param=1&q=fail",
             "data_hash": "",
             "config": "{}",
@@ -35,10 +69,27 @@
         "fields": {
             "body": "{\"list\": [\"value 0\", \"value 1\", \"value 2\"], \"next\": 1, \"dict\": {\"test\": \"nested value\", \"dict\": {\"test\": \"test\"}, \"list\": [\"nested value 0\", \"nested value 1\", \"nested value 2\"]}, \"dotted.key\": \"another value\"}",
             "status": 200,
-            "head": "{\"content-type\":\"application/json\"}",
+            "head": {
+                "content-type": "application/json"
+            },
             "modified_at": "2015-05-12T18:45:22.105Z",
             "created_at": "2015-05-12T18:45:22.105Z",
-            "request": "{\"method\": \"get\", \"args\": [\"en\", \"next\"], \"url\": \"http://localhost:8000/en/?param=1&q=next\", \"data\": null, \"headers\": {\"User-Agent\": \"DataGrowth (test); python-requests/2.20.0\", \"Accept-Encoding\": \"gzip, deflate\", \"Accept\": \"application/json\", \"Connection\": \"keep-alive\"}, \"kwargs\": {}}",
+            "request": {
+                "method": "get",
+                "args": [
+                    "en",
+                    "next"
+                ],
+                "url": "http://localhost:8000/en/?param=1&q=next",
+                "data": null,
+                "headers": {
+                    "User-Agent": "DataGrowth (test); python-requests/2.20.0",
+                    "Accept-Encoding": "gzip, deflate",
+                    "Accept": "application/json",
+                    "Connection": "keep-alive"
+                },
+                "kwargs": {}
+            },
             "uri": "localhost:8000/en/?param=1&q=next",
             "data_hash": "",
             "config": "{}",
@@ -51,10 +102,33 @@
         "fields": {
             "body": "{\"list\": [\"value 0\", \"value 1\", \"value 2\"], \"dict\": {\"test\": \"nested value\", \"dict\": {\"test\": \"test\"}, \"list\": [\"nested value 0\", \"nested value 1\", \"nested value 2\"]}, \"unicode\": [\"\\u00fcberhaupt\"], \"dotted.key\": \"another value\"}",
             "status": 200,
-            "head": "{\"content-type\":\"application/json\"}",
+            "head": {
+                "content-type": "application/json"
+            },
             "modified_at": "2015-05-12T18:45:22.105Z",
             "created_at": "2015-05-12T18:45:22.105Z",
-            "request": "{\"url\": \"http://localhost:8000/en/?q=success&param=1\", \"kwargs\": {\"query\": \"success\"}, \"headers\": {\"Content-Length\": \"8\", \"User-Agent\": \"DataGrowth (test); python-requests/2.7.0 CPython/3.5.1 Darwin/15.6.0\", \"Content-Type\": \"application/x-www-form-urlencoded\", \"Accept-Encoding\": \"gzip, deflate\", \"Accept\": \"application/json\", \"Connection\": \"keep-alive\"}, \"method\": \"post\", \"args\": [\"en\", \"success\"], \"data\": {\"test\": \"success\"}}",
+            "request": {
+                "url": "http://localhost:8000/en/?q=success&param=1",
+                "kwargs": {
+                    "query": "success"
+                },
+                "headers": {
+                    "Content-Length": "8",
+                    "User-Agent": "DataGrowth (test); python-requests/2.7.0 CPython/3.5.1 Darwin/15.6.0",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Accept-Encoding": "gzip, deflate",
+                    "Accept": "application/json",
+                    "Connection": "keep-alive"
+                },
+                "method": "post",
+                "args": [
+                    "en",
+                    "success"
+                ],
+                "data": {
+                    "test": "success"
+                }
+            },
             "uri": "localhost:8000/en/?param=1&q=success",
             "data_hash": "3e962f43d36058d30b49e69849ea34c308491809",
             "config": "{}",
@@ -67,10 +141,33 @@
         "fields": {
             "body": "{\"error\": \"failure\"}",
             "status": 502,
-            "head": "{\"content-type\":\"application/json\"}",
+            "head": {
+                "content-type": "application/json"
+            },
             "modified_at": "2015-05-12T18:45:22.105Z",
             "created_at": "2015-05-12T18:45:22.105Z",
-            "request": "{\"kwargs\": {\"query\": \"fail\"}, \"data\": {\"test\": \"fail\"}, \"method\": \"post\", \"args\": [\"en\", \"fail\"], \"url\": \"http://localhost:8000/en/?param=1&q=fail\", \"headers\": {\"User-Agent\": \"DataGrowth (test); python-requests/2.7.0 CPython/3.5.1 Darwin/15.6.0\", \"Content-Type\": \"application/x-www-form-urlencoded\", \"Content-Length\": \"8\", \"Connection\": \"keep-alive\", \"Accept-Encoding\": \"gzip, deflate\", \"Accept\": \"application/json\"}}",
+            "request": {
+                "kwargs": {
+                    "query": "fail"
+                },
+                "data": {
+                    "test": "fail"
+                },
+                "method": "post",
+                "args": [
+                    "en",
+                    "fail"
+                ],
+                "url": "http://localhost:8000/en/?param=1&q=fail",
+                "headers": {
+                    "User-Agent": "DataGrowth (test); python-requests/2.7.0 CPython/3.5.1 Darwin/15.6.0",
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Content-Length": "8",
+                    "Connection": "keep-alive",
+                    "Accept-Encoding": "gzip, deflate",
+                    "Accept": "application/json"
+                }
+            },
             "uri": "localhost:8000/en/?param=1&q=fail",
             "data_hash": "2ec016e9d3ea67872019014f612ce1a848465cea",
             "config": "{}",
@@ -83,10 +180,31 @@
         "fields": {
             "body": "{\"list\": [\"value 0\", \"value 1\", \"value 2\"], \"next\": 1, \"dict\": {\"test\": \"nested value\", \"dict\": {\"test\": \"test\"}, \"list\": [\"nested value 0\", \"nested value 1\", \"nested value 2\"]}, \"unicode\": [\"\\u00fcberhaupt\"], \"dotted.key\": \"another value\"}",
             "status": 200,
-            "head": "{\"content-type\":\"application/json\"}",
+            "head": {
+                "content-type": "application/json"
+            },
             "modified_at": "2015-05-12T18:45:22.105Z",
             "created_at": "2015-05-12T18:45:22.105Z",
-            "request": "{\"url\": \"http://localhost:8000/en/?q=next&key=oehhh&param=1\", \"args\": [\"en\", \"next\"], \"method\": \"post\", \"data\": {\"test\": \"next\"}, \"headers\": {\"Accept-Encoding\": \"gzip, deflate\", \"Connection\": \"keep-alive\", \"Accept\": \"application/json\", \"User-Agent\": \"DataGrowth (test); python-requests/2.20.0\"}, \"kwargs\": {\"query\": \"next\"}}",
+            "request": {
+                "url": "http://localhost:8000/en/?q=next&key=oehhh&param=1",
+                "args": [
+                    "en",
+                    "next"
+                ],
+                "method": "post",
+                "data": {
+                    "test": "next"
+                },
+                "headers": {
+                    "Accept-Encoding": "gzip, deflate",
+                    "Connection": "keep-alive",
+                    "Accept": "application/json",
+                    "User-Agent": "DataGrowth (test); python-requests/2.20.0"
+                },
+                "kwargs": {
+                    "query": "next"
+                }
+            },
             "uri": "localhost:8000/en/?param=1&q=next",
             "data_hash": "b9818bf6ce7c1a3bf83b987b8a4289895d9c6341",
             "config": "{}",
@@ -99,10 +217,33 @@
         "fields": {
             "body": "{\"list\": [\"value 0\", \"value 1\", \"value 2\"], \"dict\": {\"test\": \"nested value\", \"dict\": {\"test\": \"test\"}, \"list\": [\"nested value 0\", \"nested value 1\", \"nested value 2\"]}, \"unicode\": [\"\\u00fcberhaupt\"], \"dotted.key\": \"another value\"}",
             "status": 200,
-            "head": "{\"content-type\":\"application/json\"}",
+            "head": {
+                "content-type": "application/json"
+            },
             "modified_at": "2015-05-12T18:45:22.105Z",
             "created_at": "2015-05-12T18:45:22.105Z",
-            "request": "{\"data\": {\"test\": \"success\", \"file\": \"text-file.txt\"}, \"method\": \"post\", \"args\": [\"en\", \"success\"], \"kwargs\": {\"query\": \"success\", \"file\": \"text-file.txt\"}, \"url\": \"http://localhost:8000/en/?param=1&q=success\", \"headers\": {\"Connection\": \"keep-alive\", \"Accept\": \"application/json\", \"User-Agent\": \"DataGrowth (test); python-requests/2.20.0\", \"Accept-Encoding\": \"gzip, deflate\"}}",
+            "request": {
+                "data": {
+                    "test": "success",
+                    "file": "text-file.txt"
+                },
+                "method": "post",
+                "args": [
+                    "en",
+                    "success"
+                ],
+                "kwargs": {
+                    "query": "success",
+                    "file": "text-file.txt"
+                },
+                "url": "http://localhost:8000/en/?param=1&q=success",
+                "headers": {
+                    "Connection": "keep-alive",
+                    "Accept": "application/json",
+                    "User-Agent": "DataGrowth (test); python-requests/2.20.0",
+                    "Accept-Encoding": "gzip, deflate"
+                }
+            },
             "uri": "localhost:8000/en/?param=1&q=success",
             "data_hash": "01cf57ac8055c1f5730724270dc5e089f7036d02",
             "config": "{}",
@@ -115,10 +256,33 @@
         "fields": {
             "body": "{\"error\": \"failure\"}",
             "status": 502,
-            "head": "{\"content-type\":\"application/json\"}",
+            "head": {
+                "content-type": "application/json"
+            },
             "modified_at": "2015-05-12T18:45:22.105Z",
             "created_at": "2015-05-12T18:45:22.105Z",
-            "request": "{\"data\": {\"file\": \"text-file.txt\", \"test\": \"fail\"}, \"url\": \"http://localhost:8000/en/?param=1&q=fail\", \"kwargs\": {\"query\": \"fail\", \"file\": \"text-file.txt\"}, \"args\": [\"en\", \"fail\"], \"method\": \"post\", \"headers\": {\"Accept-Encoding\": \"gzip, deflate\", \"Accept\": \"application/json\", \"User-Agent\": \"DataGrowth (test); python-requests/2.20.0\", \"Connection\": \"keep-alive\"}}",
+            "request": {
+                "data": {
+                    "file": "text-file.txt",
+                    "test": "fail"
+                },
+                "url": "http://localhost:8000/en/?param=1&q=fail",
+                "kwargs": {
+                    "query": "fail",
+                    "file": "text-file.txt"
+                },
+                "args": [
+                    "en",
+                    "fail"
+                ],
+                "method": "post",
+                "headers": {
+                    "Accept-Encoding": "gzip, deflate",
+                    "Accept": "application/json",
+                    "User-Agent": "DataGrowth (test); python-requests/2.20.0",
+                    "Connection": "keep-alive"
+                }
+            },
             "uri": "localhost:8000/en/?param=1&q=fail",
             "data_hash": "f7ec00448981803a8767effb4eea4d30f717b3cc",
             "config": "{}",
@@ -131,10 +295,33 @@
         "fields": {
             "body": "{\"list\": [\"value 0\", \"value 1\", \"value 2\"], \"next\": 1, \"dict\": {\"test\": \"nested value\", \"dict\": {\"test\": \"test\"}, \"list\": [\"nested value 0\", \"nested value 1\", \"nested value 2\"]}, \"unicode\": [\"\\u00fcberhaupt\"], \"dotted.key\": \"another value\"}",
             "status": 200,
-            "head": "{\"content-type\":\"application/json\"}",
+            "head": {
+                "content-type": "application/json"
+            },
             "modified_at": "2015-05-12T18:45:22.105Z",
             "created_at": "2015-05-12T18:45:22.105Z",
-            "request": "{\"headers\": {\"Accept\": \"application/json\", \"Accept-Encoding\": \"gzip, deflate\", \"User-Agent\": \"DataGrowth (test); python-requests/2.20.0\", \"Connection\": \"keep-alive\"}, \"method\": \"post\", \"data\": {\"test\": \"next\", \"file\": \"text-file.txt\"}, \"args\": [\"en\", \"next\"], \"url\": \"http://localhost:8000/en/?param=1&q=next\", \"kwargs\": {\"query\": \"next\", \"file\": \"text-file.txt\"}}",
+            "request": {
+                "headers": {
+                    "Accept": "application/json",
+                    "Accept-Encoding": "gzip, deflate",
+                    "User-Agent": "DataGrowth (test); python-requests/2.20.0",
+                    "Connection": "keep-alive"
+                },
+                "method": "post",
+                "data": {
+                    "test": "next",
+                    "file": "text-file.txt"
+                },
+                "args": [
+                    "en",
+                    "next"
+                ],
+                "url": "http://localhost:8000/en/?param=1&q=next",
+                "kwargs": {
+                    "query": "next",
+                    "file": "text-file.txt"
+                }
+            },
             "uri": "localhost:8000/en/?param=1&q=next",
             "data_hash": "9ecfb38c8fb31b5fd2f812dd1c3f0c9e80fe0ca6",
             "config": "{}",
