@@ -12,11 +12,11 @@ class TestExpansionProcessor(TestCase):
         super().setUp()
         self.individual_content = {
             "individual": "content",
-            "expand": "/data/v1/collective/1/content/"
+            "expand": "/api/v1/collective/1/content/"
         }
         self.individual = Individual(properties={
             "individual": "instance",
-            "expand": "/data/v1/collective/1/"
+            "expand": "/api/v1/collective/1/"
         })
         self.expected_content_expansion = {
             "individual": "content",

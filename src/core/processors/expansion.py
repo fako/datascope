@@ -13,17 +13,18 @@ class ExpansionProcessor(Processor):
 
         individuals = list(individuals)
         updates = {}
-        pattern = re.compile("/data/v\d+/collective/(?P<collective_id>\d+)/?(content/)?")
+        pattern = re.compile("/api/v\d+/collective/(?P<collective_id>\d+)/?(content/)?")
         for index, ind in enumerate(individuals):
             for key, value in six.iteritems(ind):
-                if isinstance(value, six.string_types) and value.startswith("/data/"):
+                if isinstance(value, six.string_types) and value.startswith("/api/"):
                     match = pattern.match(value)
                     if match is not None:
                         updates[(index, key, match.group("collective_id"),)] = ind
 
-        # TODO: make this a true generator and do not traverse the whole list to gather nested collectives?
         # TODO: update this to work with Collections and Documents
-        qs = Collective.objects.prefetch_related("individual_set").filter(pk__in=[int(pk) for index, prop, pk in six.iterkeys(updates)])
+        qs = Collective.objects.prefetch_related("individual_set").filter(
+            pk__in=[int(pk) for index, prop, pk in six.iterkeys(updates)]
+        )
         collectives = {
             collective.id: collective
             for collective in qs

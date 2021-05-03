@@ -22,4 +22,4 @@ class Individual(DocumentMysql, DocumentBase):
     def url(self):
         if not self.id:
             raise ValueError("Can't get url for unsaved Individual")
-        return reverse("v1:individual-content", args=[self.id])  # TODO: make version aware
+        return reverse("v1:core:individual-content", args=[self.id])

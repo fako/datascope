@@ -32,4 +32,4 @@ class Collective(CollectionBase):
     def url(self):
         if not self.id:
             raise ValueError("Can't get url for unsaved Collective")
-        return reverse("v1:collective-content", args=[self.id])  # TODO: make version aware
+        return reverse("v1:core:collective-content", args=[self.id])

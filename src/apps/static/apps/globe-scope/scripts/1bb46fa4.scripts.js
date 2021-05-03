@@ -22,7 +22,7 @@ window.HIF = {
 
 angular.module('dsSettings', [])
 
-.constant('DS', {translationEndpoint:'https://data-scope.com/data/v1/visual-translations-bric/service/',questionEndpoint:'https://data-scope.com/data/v1/question/',defaultMedium:'images'})
+.constant('DS', {translationEndpoint:'/api/v1/visual-translations-bric/service/',questionEndpoint:'/api/v1/question/',defaultMedium:'images'})
 
 ;
 'use strict';

@@ -17,6 +17,4 @@ from core.models.resources.tests.manifestation import TestManifestationResource
 
 from core.tasks.tests.manifestation import TestManifestationTasks
 
-from core.views.tests.collective import TestCollectiveView, TestCollectiveContentView
-from core.views.tests.individual import TestIndividualView, TestIndividualContentView
 from core.views.tests.community import TestCommunityView, TestHtmlCommunityView

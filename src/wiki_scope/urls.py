@@ -4,6 +4,7 @@ from core.views.community import CommunityView, HtmlCommunityView
 from wiki_scope.models import WikipediaCategorySimilarityCommunity
 
 
+app_name = "wiki_scope"
 urlpatterns = [
     url(
         r'^category-similarity/service/(?P<path>.+)/$',
