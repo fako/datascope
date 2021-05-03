@@ -4,7 +4,6 @@
 psycopg2-binary==2.8.5
 spacy==2.0.18
 spacy-arguing-lexicon==0.0.3
-IndicoIo==0.15.4
 
 # Translations
 Babel==2.9.0

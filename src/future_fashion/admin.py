@@ -3,7 +3,7 @@ from django.contrib import admin
 from datagrowth.admin import HttpResourceAdmin
 from core.admin.organisms import CommunityAdmin
 from future_fashion.models import (ClothingDataCommunity, ClothingInventoryCommunity, BrandRecognitionService,
-                                   ClothingTypeRecognitionService, ImageFeatures, ColorClothingSet,
+                                   ClothingTypeRecognitionService, ColorClothingSet,
                                    ClothingImageDownload)
 
 
@@ -16,6 +16,5 @@ admin.site.register(ClothingDataCommunity, CommunityAdmin)
 admin.site.register(ClothingInventoryCommunity, CommunityAdmin)
 admin.site.register(BrandRecognitionService, HttpResourceAdmin)
 admin.site.register(ClothingTypeRecognitionService, HttpResourceAdmin)
-admin.site.register(ImageFeatures, HttpResourceAdmin)
 admin.site.register(ColorClothingSet, ColorClothingSetAdmin)
 admin.site.register(ClothingImageDownload, HttpResourceAdmin)
