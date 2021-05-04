@@ -64,7 +64,7 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
             "config": {
                 "_args": ["$.url"],
                 "_kwargs": {},
-                "_resource": "sources.WebContentDownload",
+                "_resource": "online_discourse.WebContentDownload",
                 "_update_key": "url",
                 "$language": "en",  # TODO: think of a way to include language as a parameter without using config
                 # Keys below are used by WebContentDownload to format its output
@@ -82,7 +82,7 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
             "config": {
                 "_args": ["$.home"],
                 "_kwargs": {},
-                "_resource": "sources.WebContentDownload",
+                "_resource": "online_discourse.WebContentDownload",
                 "_update_key": "home",
                 # Keys below are used by WebContentDownload to format its output
                 "url_key": "home",
