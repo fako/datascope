@@ -9,7 +9,6 @@ import six
 import warnings
 from copy import deepcopy
 
-from datagrowth.configuration import DEFAULT_CONFIGURATION
 from core.utils.helpers import merge_iter
 from core.processors.base import Processor
 from core.utils.configuration import ConfigurationProperty
@@ -17,12 +16,7 @@ from core.utils.configuration import ConfigurationProperty
 
 class LegacyRankProcessor(Processor):
 
-    config = ConfigurationProperty(
-        storage_attribute="_config",
-        defaults=DEFAULT_CONFIGURATION,
-        private=[],
-        namespace="rank_processor"
-    )
+    config = ConfigurationProperty(namespace="rank_processor")
 
     def score(self, individuals):
         warnings.warn("The RankProcessor.score method is deprecated. Use by_feature instead.", DeprecationWarning)
@@ -104,7 +98,6 @@ class LegacyRankProcessor(Processor):
 
 from itertools import islice
 
-from datagrowth.configuration import DEFAULT_CONFIGURATION
 from core.processors.base import QuerySetProcessor
 from core.utils.data import NumericFeaturesFrame, TextFeaturesFrame
 from core.utils.configuration import ConfigurationProperty
@@ -112,12 +105,7 @@ from core.utils.configuration import ConfigurationProperty
 
 class RankProcessor(QuerySetProcessor):
 
-    config = ConfigurationProperty(
-        storage_attribute="_config",
-        defaults=DEFAULT_CONFIGURATION,
-        private=[],
-        namespace="rank_processor"
-    )
+    config = ConfigurationProperty(namespace="rank_processor")
 
     contextual_features = []
 
