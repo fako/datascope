@@ -1,6 +1,5 @@
-from datagrowth.configuration import DEFAULT_CONFIGURATION
+from datagrowth.configuration import DEFAULT_CONFIGURATION, ConfigurationProperty
 from datagrowth.resources.http.tasks import send, send_mass
-from datagrowth.configuration import ConfigurationProperty
 from core.processors.resources.base import ResourceProcessor
 
 
