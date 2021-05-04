@@ -9,7 +9,7 @@ djangorestframework==3.11.2
 django-cors-headers==3.4.0
 requests==2.24.0
 jsonschema==2.4.0
-html5lib==1.0b8
+html5lib==1.1
 beautifulsoup4==4.8.0
 numpy==1.19.4
 pandas==1.1.4
