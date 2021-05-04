@@ -1,13 +1,10 @@
 ##################################################################
 # START LEGACY
 ##################################################################
-from __future__ import unicode_literals, absolute_import, print_function, division
-# noinspection PyUnresolvedReferences
-from six.moves import reduce
-import six
 
 import warnings
 from copy import deepcopy
+from functools import reduce
 
 from core.utils.helpers import merge_iter
 from core.processors.base import Processor
@@ -44,7 +41,7 @@ class LegacyRankProcessor(Processor):
         config_dict = self.config.to_dict()
         hooks = [
             getattr(self, hook[1:])
-            for hook, weight in six.iteritems(config_dict)  # config gets whitelisted by Community
+            for hook, weight in config_dict.items()  # config gets whitelisted by Community
             if isinstance(hook, str) and hook.startswith("$") and callable(getattr(self, hook[1:], None)) and weight
         ]
         sort_key = lambda el: el["_rank"].get("rank", 0)
@@ -74,7 +71,7 @@ class LegacyRankProcessor(Processor):
                     "weight": module_weight
                 }
             # Aggregate all ranks to a single rank
-            hook_rankings = [ranking for ranking in six.itervalues(rank_info) if ranking["rank"]]
+            hook_rankings = [ranking for ranking in rank_info.values() if ranking["rank"]]
             if hook_rankings:
                 rank_info["rank"] = reduce(
                     lambda reduced, hook_rank_info: reduced + hook_rank_info["rank"],
