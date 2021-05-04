@@ -10,10 +10,10 @@ class ExpansionProcessor(Processor):
 
         individuals = list(individuals)
         updates = {}
-        pattern = re.compile("/api/v\d+/collective/(?P<collective_id>\d+)/?(content/)?")
+        pattern = re.compile("/(api|data)/v\d+/collective/(?P<collective_id>\d+)/?(content/)?")
         for index, ind in enumerate(individuals):
             for key, value in ind.items():
-                if isinstance(value, str) and value.startswith("/api/"):
+                if isinstance(value, str) and (value.startswith("/api/") or value.startswith("/data/")):
                     match = pattern.match(value)
                     if match is not None:
                         updates[(index, key, match.group("collective_id"),)] = ind
