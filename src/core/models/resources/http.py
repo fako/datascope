@@ -1,3 +1,4 @@
+import os
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -24,7 +25,7 @@ class BrowserResource(HttpResource):  # TODO: write tests
         browser = webdriver.PhantomJS(
             desired_capabilities=dcap,
             service_args=['--ignore-ssl-errors=true'],
-            service_log_path=settings.PATH_TO_LOGS + "ghostdriver.log"
+            service_log_path=os.path.join(settings.PATH_TO_LOGS, "ghostdriver.log")
         )
 
         url = self.request.get("url")
