@@ -1,6 +1,3 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-import six
-
 import re
 
 from core.processors.base import Processor
@@ -13,23 +10,24 @@ class ExpansionProcessor(Processor):
 
         individuals = list(individuals)
         updates = {}
-        pattern = re.compile("/data/v\d+/collective/(?P<collective_id>\d+)/?(content/)?")
+        pattern = re.compile("/(api|data)/v\d+/collective/(?P<collective_id>\d+)/?(content/)?")
         for index, ind in enumerate(individuals):
-            for key, value in six.iteritems(ind):
-                if isinstance(value, six.string_types) and value.startswith("/data/"):
+            for key, value in ind.items():
+                if isinstance(value, str) and (value.startswith("/api/") or value.startswith("/data/")):
                     match = pattern.match(value)
                     if match is not None:
                         updates[(index, key, match.group("collective_id"),)] = ind
 
-        # TODO: make this a true generator and do not traverse the whole list to gather nested collectives?
         # TODO: update this to work with Collections and Documents
-        qs = Collective.objects.prefetch_related("individual_set").filter(pk__in=[int(pk) for index, prop, pk in six.iterkeys(updates)])
+        qs = Collective.objects.prefetch_related("individual_set").filter(
+            pk__in=[int(pk) for index, prop, pk in updates.keys()]
+        )
         collectives = {
             collective.id: collective
             for collective in qs
         }
 
-        for key, value in six.iteritems(updates):
+        for key, value in updates.items():
             index, prop, pk = key
             value[prop] = list(collectives[int(pk)].content)
 

@@ -25,15 +25,11 @@ class Collective(CollectionBase):
         return Individual(
             community=self.community,
             collective=self,
-            schema=self.schema,
             properties=data
         )
-
-    def update(self, data, validate=True, reset=True, batch_size=500):
-        return self.add(data, validate=validate, reset=reset, batch_size=batch_size)
 
     @property
     def url(self):
         if not self.id:
             raise ValueError("Can't get url for unsaved Collective")
-        return reverse("v1:collective-content", args=[self.id])  # TODO: make version aware
+        return reverse("v1:core:collective-content", args=[self.id])

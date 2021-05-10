@@ -99,14 +99,11 @@ INSTALLED_APPS = (
     'sources',
     'apps',
     # Algorithms
-    'wiki_feed',
     'visual_translations',
     'future_fashion',
     'open_data',
     'wiki_scope',
     'online_discourse',
-    'nautilus',
-    'setup_utrecht'
 )
 
 DATABASES = {
@@ -119,6 +116,7 @@ DATABASES = {
         #'PORT': os.environ.get('PGPORT', '5432')
     }
 }
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Hosts/domain names that are valid for this site; required if DEBUG is False
 # See https://docs.djangoproject.com/en/1.4/ref/settings/#allowed-hosts

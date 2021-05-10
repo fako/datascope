@@ -40,6 +40,7 @@ DATAGROWTH_DEFAULT_CONFIGURATION = {
     "global_user_agent": "DataGrowth (test)",
     "global_token": "",
     "global_purge_immediately": False,
+    "global_purge_after": {},
     "global_sample_size": 0,
     "global_cache_only": False,
     # mock configuration for testing HttpResourceMock

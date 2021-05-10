@@ -1,6 +1,5 @@
-from datagrowth.configuration import DEFAULT_CONFIGURATION
-from datagrowth.resources.http.tasks import send, send_mass
 from datagrowth.configuration import ConfigurationProperty
+from datagrowth.resources.http.tasks import send, send_mass
 from core.processors.resources.base import ResourceProcessor
 
 
@@ -9,10 +8,8 @@ class HttpResourceProcessor(ResourceProcessor):
     ARGS_BATCH_METHODS = ['fetch_mass', 'submit_mass']
 
     config = ConfigurationProperty(
-        storage_attribute="_config",
-        defaults=DEFAULT_CONFIGURATION,
-        private=["_resource", "_continuation_limit", "_batch_size"],
-        namespace="http_resource"
+        namespace="http_resource",
+        private=["_resource", "_continuation_limit"]
     )
 
     #######################################################

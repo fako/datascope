@@ -35,7 +35,7 @@ class TestCommunityView(TestCase):
         full_path = CommunityView.get_uri(CommunityMock, "test/path", {"test": "test"})
         self.assertEqual(
             full_path,
-            "/data/v1/mock/service/test/path?test=test#0dcbfb0b84aff2403ed170e77c8e80b5c2aac17586a55f03b500446a4291b105"
+            "/api/v1/mock/service/test/path?test=test#0dcbfb0b84aff2403ed170e77c8e80b5c2aac17586a55f03b500446a4291b105"
         )
         self.skipTest("add test for created_at argument")
 
@@ -81,7 +81,7 @@ class TestCommunityView(TestCase):
 
     def test_get(self):
         client = Client()
-        response = client.get("/data/v1/mock/service/test-ready/?setting1=const")
+        response = client.get("/api/v1/mock/service/test-ready/?setting1=const")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {
             "error": None,
@@ -112,7 +112,7 @@ class TestCommunityView(TestCase):
 
     def test_get_filter(self):
         client = Client()
-        response = client.get("/data/v1/mock/service/test-ready/?setting1=const&include_even=0")
+        response = client.get("/api/v1/mock/service/test-ready/?setting1=const&include_even=0")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {
             "error": None,
@@ -137,12 +137,12 @@ class TestCommunityView(TestCase):
 
     def test_get_invalid_time(self):
         client = Client()
-        response = client.get("/data/v1/mock/service/test-ready/?setting1=const&t=1")
+        response = client.get("/api/v1/mock/service/test-ready/?setting1=const&t=1")
         self.assertEqual(response.status_code, 404)
 
     def test_get_valid_time(self):
         client = Client()
-        response = client.get("/data/v1/mock/service/test-ready/?setting1=const&t=20160605161754000")
+        response = client.get("/api/v1/mock/service/test-ready/?setting1=const&t=20160605161754000")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {
             "error": None,
@@ -173,7 +173,7 @@ class TestCommunityView(TestCase):
             }
         }
         client = Client()
-        response = client.post("/data/v1/mock/service/test-ready/?setting1=const",
+        response = client.post("/api/v1/mock/service/test-ready/?setting1=const",
                                json.dumps(data),
                                content_type="application/json")
         self.assertEqual(response.status_code, 200)
@@ -206,10 +206,10 @@ class TestHtmlCommunityView(TestCase):
     def setUp(self):
         super().setUp()
         self.client = Client()
-        self.ready_url = "/data/v1/mock/html/test-ready/?setting1=const"
-        self.processing_url = "/data/v1/mock/html/test/?setting1=const"
-        self.index_url = "/data/v1/mock/html/?setting1=const"
-        self.empty_url = "/data/v1/mock/html/test-empty/?setting1=const"
+        self.ready_url = "/api/v1/mock/html/test-ready/?setting1=const"
+        self.processing_url = "/api/v1/mock/html/test/?setting1=const"
+        self.index_url = "/api/v1/mock/html/?setting1=const"
+        self.empty_url = "/api/v1/mock/html/test-empty/?setting1=const"
 
     def check_response(self, response, template, data):
         self.assertIsInstance(response, TemplateResponse)

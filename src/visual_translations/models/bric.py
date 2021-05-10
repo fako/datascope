@@ -70,10 +70,7 @@ class VisualTranslationsBRICCommunity(Community):
     LOCALES = [("pt", "BR",), ("ru", "RU",), ("zh", "CN",)]
 
     def initial_input(self, *args):
-        collective = Collective.objects.create(
-            community=self,
-            schema={}
-        )
+        collective = Collective.objects.create(community=self)
         for language, country in self.LOCALES:
             Individual.objects.create(
                 community=self,
@@ -82,8 +79,7 @@ class VisualTranslationsBRICCommunity(Community):
                     "query": args[0],
                     "translate_to": language,
                     "country": "country" + country
-                },
-                schema={}
+                }
             )
         return collective
 
@@ -112,7 +108,7 @@ class VisualTranslationsBRICCommunity(Community):
         updated = []
         for individuals in grouped_translations.values():
             updated += individuals
-        out.update(updated + new)
+        out.add(updated + new, reset=True)
 
     def error_translations_not_found(self, errors, out):
         if out.has_content:
@@ -131,11 +127,8 @@ class VisualTranslationsBRICCommunity(Community):
             if not len(images):
                 ind.delete()
                 continue
-            col = Collective.objects.create(
-                community=self,
-                schema=out.schema
-            )
-            col.update(images)
+            col = Collective.objects.create(community=self)
+            col.add(images, reset=True)
             ind.properties["images"] = col.url
             ind.save()
 

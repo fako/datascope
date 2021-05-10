@@ -134,7 +134,7 @@ class WikipediaCategorySimilarityCommunity(Community):
             elif current.identity != member.identity:  # new group
                 buffer.append(current)
                 if len(buffer) >= buffer_size:
-                    filtered.update(buffer, batch_size=buffer_size, reset=False)
+                    filtered.add(buffer, batch_size=buffer_size, reset=False)
                     buffer = []
                 current = member
                 if not current["categories"]:
@@ -148,7 +148,7 @@ class WikipediaCategorySimilarityCommunity(Community):
                     ]
         else:
             buffer.append(current)
-            filtered.update(buffer, batch_size=buffer_size, reset=False)
+            filtered.add(buffer, batch_size=buffer_size, reset=False)
 
         self.current_growth.output = filtered
         self.current_growth.save()

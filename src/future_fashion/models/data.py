@@ -159,7 +159,6 @@ class ClothingDataCommunity(Community):
             Individual.objects.create(
                 community=self,
                 collective=collective,
-                schema={},
                 properties={
                     "listing": target_listing
                 }
@@ -187,7 +186,7 @@ class ClothingDataCommunity(Community):
         if collective.identifier != "brand":
             collective.identifier = "brand"
             collective.save()
-            collective.update(collective.documents.iterator(), validate=False, reset=False)
+            collective.add(collective.documents.iterator(), validate=False, reset=False)
         # Calculate which brands are significant to train on
         df = pd.DataFrame.from_records(collective.content)
         brand_counts = df["brand"].value_counts()

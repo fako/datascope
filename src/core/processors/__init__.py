@@ -1,4 +1,4 @@
-from .resources import HttpResourceProcessor, ManifestProcessor, ShellResourceProcessor
+from .resources import HttpResourceProcessor, ShellResourceProcessor
 from .authentication import HttpPrivateResourceProcessor
 from .rank import RankProcessor, LegacyRankProcessor
 from .compare import ComparisonProcessor

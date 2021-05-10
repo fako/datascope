@@ -120,10 +120,7 @@ class VisualTranslationsEUCommunity(Community):
     # TODO: don't hard code the source language
 
     def initial_input(self, *args):
-        collective = Collective.objects.create(
-            community=self,
-            schema={}
-        )
+        collective = Collective.objects.create(community=self)
         query = args[0]
         for language, country, grid, factor in self.LOCALES:
             if language == "en":
@@ -136,8 +133,7 @@ class VisualTranslationsEUCommunity(Community):
                     "translate_from": "en",
                     "translate_to": language,
                     "country": "country" + country
-                },
-                schema={}
+                }
             )
         return collective
 
@@ -195,10 +191,7 @@ class VisualTranslationsEUCommunity(Community):
                 translations.output.individual_set.remove(ind)
                 continue
 
-            col = Collective.objects.create(
-                community=self,
-                schema=out.schema
-            )
+            col = Collective.objects.create(community=self)
             col.add(images, reset=True)
             ind.properties["images"] = col.url
             ind.save()

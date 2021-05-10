@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Getting started &mdash; Data Growth 0.17.0 documentation</title>
+  <title>Configuration &mdash; Data Growth 0.17.0 documentation</title>
   
 
   
@@ -161,11 +161,11 @@
   <ul class="wy-breadcrumbs">
     <li><a href="../index.html">Docs</a> &raquo;</li>
       
-    <li>Getting started</li>
+    <li>Configuration</li>
       <li class="wy-breadcrumbs-aside">
         
           
-            <a href="../_sources/resources/usage.inc.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/resources/configuration.inc.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -174,52 +174,60 @@
 </div>
           <div role="main" class="document">
             
-  <div class="section" id="getting-started">
-<h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<p>To get started with gathering data through resources you need to pick a <code class="docutils literal notranslate"><span class="pre">Resource</span></code> class
-based on the data source you want to connect to.
-You can choose between <code class="docutils literal notranslate"><span class="pre">HttpResource</span></code> (for API connections and scraping websites)
-or <code class="docutils literal notranslate"><span class="pre">ShellResource</span></code> (for getting data from local commands).
-You’ll at least need to declare some class attributes on your own <code class="docutils literal notranslate"><span class="pre">Resource</span></code> to gather data from a source.
-Before this gets explained in detail we’ll demonstrate how resources are used in general.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">Resource</span></code> model is the base class for all Datagrowth resources.
-What follows is pseudo code to demonstrate how the flow with <code class="docutils literal notranslate"><span class="pre">Resource</span></code> derived classes are used to gather data.
-This pseudo example uses a <code class="docutils literal notranslate"><span class="pre">grow</span></code> method, which currently does not exist.
-Instead you would use <code class="docutils literal notranslate"><span class="pre">get</span></code> and <code class="docutils literal notranslate"><span class="pre">post</span></code> with <code class="docutils literal notranslate"><span class="pre">HttpResource</span></code> and <code class="docutils literal notranslate"><span class="pre">run</span></code> with <code class="docutils literal notranslate"><span class="pre">ShellResource</span></code>.
-These methods kick-off the data collection for their derived classes.</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">resource</span> <span class="o">=</span> <span class="n">Resource</span><span class="p">(</span>  <span class="c1"># abstract class, instantiate derived class in real code</span>
-    <span class="n">config</span><span class="o">=</span><span class="n">config</span>  <span class="c1"># resources take a Datagrowth config to handle context</span>
-<span class="p">)</span>
-<span class="c1"># the call below kicks-off data collection through the resource</span>
-<span class="c1"># &quot;grow&quot; is only a pseudo-method for this example</span>
-<span class="c1"># use &quot;get&quot;, &quot;post&quot; or &quot;run&quot; instead of &quot;grow&quot; depending on the data source</span>
-<span class="c1"># input for the data collection can consist of args and kwargs</span>
-<span class="n">resource</span><span class="o">.</span><span class="n">grow</span><span class="p">(</span>
-    <span class="s2">&quot;some&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">,</span>
-    <span class="n">session</span><span class="o">=</span><span class="n">session</span>
-<span class="p">)</span>
+  <div class="section" id="configuration">
+<h1>Configuration<a class="headerlink" href="#configuration" title="Permalink to this headline">¶</a></h1>
+<p>You can adjust how a <code class="docutils literal notranslate"><span class="pre">Resource</span></code> retrieves data by using some configuration options.
+See the <a class="reference external" href="../configuration/index.html">configuration</a> section to learn more on how to set configuration defaults.
+Here we’ll be explaining the available configurations by setting them directly only.</p>
+<div class="section" id="caching-behaviour">
+<h2>Caching behaviour<a class="headerlink" href="#caching-behaviour" title="Permalink to this headline">¶</a></h2>
+<p>An important aspect about <code class="docutils literal notranslate"><span class="pre">Resource</span></code> is that it will act as a cache if retrieving data was successful.
+There are a few configuration options that modify the cache behaviour. All examples below use a namespace of “global”</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">example</span> <span class="kn">import</span> <span class="n">MyResource</span>
 
-<span class="k">if</span> <span class="ow">not</span> <span class="n">resource</span><span class="o">.</span><span class="n">success</span><span class="p">:</span>
-    <span class="c1"># when things go wrong it&#39;s sometimes convenient to save some context</span>
-    <span class="c1"># &quot;retain&quot; stores a generic relation on resource to any other model</span>
-    <span class="n">resource</span><span class="o">.</span><span class="n">retain</span><span class="p">(</span><span class="n">any_django_model</span><span class="p">)</span>
-<span class="n">resource</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># cleans and saves the resource to cache the collected data</span>
+<span class="c1"># This configuration disables all cache.</span>
+<span class="c1"># It still stores the Resource, but it will never get used twice.</span>
+<span class="n">MyResource</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="p">{</span>
+    <span class="s2">&quot;purge_immediately&quot;</span><span class="p">:</span> <span class="kc">True</span>
+<span class="p">})</span>
 
-<span class="n">content_type</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">resource</span><span class="o">.</span><span class="n">content</span>
-<span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="c1"># handle the data ...</span>
+<span class="c1"># For more fine grained control the purge_after configuration can be used</span>
+<span class="n">MyResource</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="p">{</span>
+    <span class="s2">&quot;purge_after&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;days&quot;</span><span class="p">:</span> <span class="mi">30</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+<span class="c1"># Such a configuration will indicate to Datagrowth that the Resource</span>
+<span class="c1"># should not be used as cache after 30 days.</span>
+<span class="c1"># The value of purge_after can be any dict that gets accepted as kwargs to Python&#39;s timedelta.</span>
+<span class="c1"># This makes it possible to be very flexible about when a Resource</span>
+<span class="c1"># should not get used anymore, but it won&#39;t delete any Resources.</span>
+<span class="c1"># Datagrowth just doesn&#39;t use them as cache after the specified time.</span>
 
-<span class="c1"># When making the exact same &quot;grow&quot; call again.</span>
-<span class="c1"># This time the data will come from the database as it has been stored before.</span>
-<span class="n">resource</span><span class="o">.</span><span class="n">grow</span><span class="p">(</span>
-    <span class="s2">&quot;some&quot;</span><span class="p">,</span> <span class="s2">&quot;input&quot;</span><span class="p">,</span>
-    <span class="n">session</span><span class="o">=</span><span class="n">session</span>
-<span class="p">)</span>
+<span class="c1"># Sometimes getting data from a Resource is very computation intensive.</span>
+<span class="c1"># In such cases it might be a good idea to never actually retrieve data</span>
+<span class="c1"># unless it is cached by a background process.</span>
+<span class="c1"># By using the cache_only configuration you can force a Resource</span>
+<span class="c1"># to only return if there is a cached result and to never start real data retrieval.</span>
+<span class="n">resource</span> <span class="o">=</span> <span class="n">MyResource</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="p">{</span>
+    <span class="s2">&quot;cache_only&quot;</span><span class="p">:</span> <span class="kc">True</span>
+<span class="p">})</span>
+<span class="n">resource</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>  <span class="c1"># this never makes a real request</span>
 </pre></div>
 </div>
-<p>Retrieving the data from the database instead of the actual source is very convenient
-when dealing with large data sources.
-It allows for retries without starting over, it keeps resource use low and makes consequent runs much faster.</p>
+</div>
+<div class="section" id="user-agent-configuration">
+<h2>User Agent configuration<a class="headerlink" href="#user-agent-configuration" title="Permalink to this headline">¶</a></h2>
+<p>This configuration is only useful for <code class="docutils literal notranslate"><span class="pre">HttpResource</span></code> and child classes. It uses the “global” namespace</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">example</span> <span class="kn">import</span> <span class="n">MyResource</span>
+
+<span class="c1"># This configuration sets the user agent for any request made by the Resource.</span>
+<span class="n">MyResource</span><span class="p">(</span><span class="n">config</span><span class="o">=</span><span class="p">{</span>
+    <span class="s2">&quot;user_agent&quot;</span><span class="p">:</span> <span class="s2">&quot;My custom crawler User Agent&quot;</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 

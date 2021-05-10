@@ -1,5 +1,3 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
 from django.conf.urls import url
 
 from core.views.community import CommunityView
@@ -8,6 +6,7 @@ from visual_translations.views.community import VisualTranslationsHtmlView, Visu
 from visual_translations.views.eu import visual_translation_map, visual_translations_controller, web_sockets_broadcast
 
 
+app_name = "visual-translations"
 urlpatterns = [
     url(
         r'^visual-translations-bric/service/(?P<path>.+)/$',

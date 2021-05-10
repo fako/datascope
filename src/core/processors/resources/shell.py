@@ -1,7 +1,6 @@
-from datagrowth.configuration import DEFAULT_CONFIGURATION
+from datagrowth.configuration import ConfigurationProperty
+from datagrowth.resources.shell.tasks import run, run_serie
 from core.processors.resources.base import ResourceProcessor
-from core.tasks.shell import run, run_serie
-from core.utils.configuration import ConfigurationProperty
 
 
 class ShellResourceProcessor(ResourceProcessor):
@@ -9,10 +8,8 @@ class ShellResourceProcessor(ResourceProcessor):
     ARGS_BATCH_METHODS = ['run_mass']
 
     config = ConfigurationProperty(
-        storage_attribute="_config",
-        defaults=DEFAULT_CONFIGURATION,
-        private=["_resource",],
-        namespace="shell_resource"
+        namespace="shell_resource",
+        private=["_resource"]
     )
 
     #######################################################

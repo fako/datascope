@@ -1,27 +1,15 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
+from rest_framework import generics
 
-from rest_framework import serializers, generics
-
+from datagrowth.datatypes.views import DocumentBaseSerializer
 from core.models.organisms import Individual
 from core.views.content import ContentView, ContentSerializer
 
 
-class IndividualSerializer(serializers.ModelSerializer):
-
-    properties = serializers.SerializerMethodField()
-
-    def get_properties(self, individual):
-        return individual.properties
+class IndividualSerializer(DocumentBaseSerializer):
 
     class Meta:
         model = Individual
-        fields = (
-            "id",
-            "created_at",
-            "modified_at",
-            "identity",
-            "properties",
-        )
+        fields = DocumentBaseSerializer.default_fields
 
 
 class IndividualView(generics.RetrieveUpdateDestroyAPIView):

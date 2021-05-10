@@ -3,10 +3,10 @@ from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 from django.urls import reverse
 
 
-from datagrowth.datatypes import DocumentBase, DocumentMysql
+from datagrowth.datatypes import DocumentBase
 
 
-class Individual(DocumentMysql, DocumentBase):
+class Individual(DocumentBase):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)
@@ -22,4 +22,4 @@ class Individual(DocumentMysql, DocumentBase):
     def url(self):
         if not self.id:
             raise ValueError("Can't get url for unsaved Individual")
-        return reverse("v1:individual-content", args=[self.id])  # TODO: make version aware
+        return reverse("v1:core:individual-content", args=[self.id])

@@ -15,12 +15,11 @@ class Collection(DocumentCollectionMixin, CollectionBase):
         return Document(
             community=self.community,
             collection=collection,
-            schema=self.schema,
             properties=data
         )
 
 
-class Document(DocumentPostgres, DocumentBase):
+class Document(DocumentBase):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)

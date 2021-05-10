@@ -154,9 +154,9 @@ class Community(models.Model, ProcessorMixin):
         else:
             return apps.get_model("{}.{}".format(self._meta.app_label, data_type))
 
-    def create_organism(self, organism_type, schema, identifier=None, referee=None):
+    def create_organism(self, organism_type, identifier=None, referee=None):
         model = self.get_storage_model(organism_type)
-        instance = model(community=self, schema=schema)
+        instance = model(community=self)
         if identifier and hasattr(instance, "identifier"):
             instance.identifier = identifier
         if referee and hasattr(instance, "referee"):
@@ -169,7 +169,6 @@ class Community(models.Model, ProcessorMixin):
         Will create all Growth objects based on the community_spirit
         """
         for growth_type, growth_config in self.COMMUNITY_SPIRIT.items():
-            sch = growth_config["schema"]
             cnf = self.config.to_dict(protected=True)
             if self.SAMPLE_SIZE:
                 cnf["sample_size"] = self.SAMPLE_SIZE
@@ -195,10 +194,10 @@ class Community(models.Model, ProcessorMixin):
                     inp, identifier = inp.split("#")
                 else:
                     identifier = None
-                inp = self.create_organism(inp, sch, identifier)
+                inp = self.create_organism(inp, identifier=identifier)
                 inp.identifier = identifier
             elif inp == "Individual" or inp == "Document":
-                inp = self.create_organism(inp, sch)
+                inp = self.create_organism(inp)
 
             out = growth_config["output"]
 
@@ -218,10 +217,10 @@ class Community(models.Model, ProcessorMixin):
                     out, identifier = out.split("#")
                 else:
                     identifier = None
-                out = self.create_organism(out, sch, identifier)
+                out = self.create_organism(out, identifier=identifier)
                 out.identifier = identifier
             elif out == "Individual" or out == "Document":
-                out = self.create_organism(out, sch)
+                out = self.create_organism(out)
             else:
                 raise AssertionError("Invalid value for output: {}".format(out))
             growth = Growth(

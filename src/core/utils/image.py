@@ -1,7 +1,3 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-# noinspection PyUnresolvedReferences
-from six.moves import range
-
 import os
 
 from PIL import Image

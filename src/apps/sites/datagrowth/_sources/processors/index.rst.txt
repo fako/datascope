@@ -30,6 +30,6 @@ The first type of processors that Datagrowth ships with is processors that handl
 .. include:: custom.inc.rst
 
 
-.. _configuration_getting_started: ../configuration
+.. _configuration_getting_started: ../configuration/index.html
 
 __ configuration_getting_started_

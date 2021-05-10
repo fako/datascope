@@ -1,15 +1,11 @@
 ##################################################################
 # START LEGACY
 ##################################################################
-from __future__ import unicode_literals, absolute_import, print_function, division
-# noinspection PyUnresolvedReferences
-from six.moves import reduce
-import six
 
 import warnings
 from copy import deepcopy
+from functools import reduce
 
-from datagrowth.configuration import DEFAULT_CONFIGURATION
 from core.utils.helpers import merge_iter
 from core.processors.base import Processor
 from core.utils.configuration import ConfigurationProperty
@@ -17,12 +13,7 @@ from core.utils.configuration import ConfigurationProperty
 
 class LegacyRankProcessor(Processor):
 
-    config = ConfigurationProperty(
-        storage_attribute="_config",
-        defaults=DEFAULT_CONFIGURATION,
-        private=[],
-        namespace="rank_processor"
-    )
+    config = ConfigurationProperty(namespace="rank_processor")
 
     def score(self, individuals):
         warnings.warn("The RankProcessor.score method is deprecated. Use by_feature instead.", DeprecationWarning)
@@ -50,7 +41,7 @@ class LegacyRankProcessor(Processor):
         config_dict = self.config.to_dict()
         hooks = [
             getattr(self, hook[1:])
-            for hook, weight in six.iteritems(config_dict)  # config gets whitelisted by Community
+            for hook, weight in config_dict.items()  # config gets whitelisted by Community
             if isinstance(hook, str) and hook.startswith("$") and callable(getattr(self, hook[1:], None)) and weight
         ]
         sort_key = lambda el: el["_rank"].get("rank", 0)
@@ -80,7 +71,7 @@ class LegacyRankProcessor(Processor):
                     "weight": module_weight
                 }
             # Aggregate all ranks to a single rank
-            hook_rankings = [ranking for ranking in six.itervalues(rank_info) if ranking["rank"]]
+            hook_rankings = [ranking for ranking in rank_info.values() if ranking["rank"]]
             if hook_rankings:
                 rank_info["rank"] = reduce(
                     lambda reduced, hook_rank_info: reduced + hook_rank_info["rank"],
@@ -104,7 +95,6 @@ class LegacyRankProcessor(Processor):
 
 from itertools import islice
 
-from datagrowth.configuration import DEFAULT_CONFIGURATION
 from core.processors.base import QuerySetProcessor
 from core.utils.data import NumericFeaturesFrame, TextFeaturesFrame
 from core.utils.configuration import ConfigurationProperty
@@ -112,12 +102,7 @@ from core.utils.configuration import ConfigurationProperty
 
 class RankProcessor(QuerySetProcessor):
 
-    config = ConfigurationProperty(
-        storage_attribute="_config",
-        defaults=DEFAULT_CONFIGURATION,
-        private=[],
-        namespace="rank_processor"
-    )
+    config = ConfigurationProperty(namespace="rank_processor")
 
     contextual_features = []
 

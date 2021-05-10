@@ -6,8 +6,6 @@ from core.processors import RankProcessor, LegacyRankProcessor
 class MockProcessor(Processor):
 
     config = ConfigurationProperty(
-        storage_attribute="_config",
-        defaults=None,
         namespace="mock_processor",
         private=[]
     )
