@@ -1,6 +1,4 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
-from mock import Mock
+from unittest.mock import Mock
 
 from celery import Task
 from celery.result import AsyncResult, states as CeleryState

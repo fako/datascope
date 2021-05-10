@@ -1,8 +1,6 @@
-from __future__ import unicode_literals
-
 from django.test import TestCase
 
-from mock import Mock, patch
+from unittest.mock import Mock, patch
 
 from datagrowth.datatypes.documents.db.base import DataStorage
 from core.models.organisms import Individual, Collective, Growth, Community

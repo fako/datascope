@@ -3,7 +3,7 @@ import types
 from PIL import Image
 
 from unittest import TestCase
-from mock import Mock, MagicMock
+from unittest.mock import Mock, MagicMock
 
 from core.utils.image import ImageGrid, ImageRejected, CouldNotFillGrid
 

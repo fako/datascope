@@ -1,12 +1,10 @@
-from __future__ import unicode_literals, absolute_import, print_function, division
-
 import json
 
 import requests
 from requests.models import Response
 from requests.structures import CaseInsensitiveDict
 
-from mock import Mock, NonCallableMock
+from unittest.mock import Mock, NonCallableMock
 
 from core.tests.mocks.data import MOCK_DATA
 
