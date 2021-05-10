@@ -22,3 +22,5 @@ The Resource makes connecting to data sources easier because:
 .. include:: http.inc.rst
 
 .. include:: shell.inc.rst
+
+.. include:: configuration.inc.rst

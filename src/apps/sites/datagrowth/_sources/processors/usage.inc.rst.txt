@@ -1,5 +1,0 @@
-
-Getting started
----------------
-
-Using processors!
