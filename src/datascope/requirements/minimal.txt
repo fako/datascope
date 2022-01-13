@@ -27,7 +27,7 @@ vine==1.3.0
 
 # Advanced features
 selenium==2.47.1
-Pillow==8.1.1
+Pillow==9.0.0
 colorz==1.0.3
 elasticsearch==6.0.0
 
