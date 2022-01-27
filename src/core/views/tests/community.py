@@ -1,5 +1,5 @@
 from copy import copy
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 import json
 
 from django.test import TestCase

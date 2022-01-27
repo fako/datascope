@@ -1,9 +1,8 @@
-from mock import patch
+from unittest.mock import patch
 
 from django.test import TestCase
 
 from core.models.resources.manifestation import Manifestation
-from core.tests.mocks.community import CommunityMock
 from core.exceptions import DSProcessUnfinished
 from core.tests.mocks.celery import MockAsyncResultSuccess, MockAsyncResultError, MockAsyncResultWaiting
 

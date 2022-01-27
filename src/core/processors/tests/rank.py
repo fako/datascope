@@ -2,7 +2,7 @@ import os
 from functools import reduce
 from collections import Iterator
 from operator import itemgetter
-from mock import patch, Mock
+from unittest.mock import patch, Mock
 
 from django.test import TestCase
 from django.db.models.query import QuerySet
