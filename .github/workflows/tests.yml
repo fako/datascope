@@ -1,0 +1,54 @@
+name: Datascope tests
+
+on:
+    [push, pull_request]
+
+jobs:
+    build:
+
+        runs-on: ubuntu-latest
+        strategy:
+            max-parallel: 4
+            matrix:
+                python-version: ["3.6", "3.7", "3.8"]
+
+        services:
+            postgres:
+                image: postgres:10
+                env:
+                    POSTGRES_USER: django
+                    POSTGRES_PASSWORD: LqjXVGnBkqdu7CWuC23jgSjb7EtCWnNK
+                    POSTGRES_DB: datascope
+                ports:
+                    - 5432:5432
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+
+        steps:
+            - uses: actions/checkout@v1
+            - name: Set up Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v2
+              with:
+                  python-version: ${{ matrix.python-version }}
+            - name: Install dependencies
+              run: |
+                  sudo apt-get install -y libxml2-dev libxslt1-dev python-dev
+                  sudo apt-get install -y libblas-dev liblapack-dev libatlas-base-dev gfortran
+                  python -m pip install --upgrade pip
+                  pip install -r src/datascope/requirements/production.txt
+                  cd src
+                  python manage.py collectstatic --noinput
+              env:
+                  DJANGO_CONTEXT: host
+            - name: Tests
+              run: |
+                  cd src
+                  python manage.py test --settings=datascope.settings_test
+              env:
+                  DJANGO_CONTEXT: host
+                  DJANGO_DATABASE_USER: django
+                  DJANGO_DATABASE_PASSWORD: LqjXVGnBkqdu7CWuC23jgSjb7EtCWnNK
+                  INVOKE_POSTGRES_HOST: 127.0.0.1
