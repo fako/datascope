@@ -49,6 +49,6 @@ jobs:
                   python manage.py test --settings=datascope.settings_test
               env:
                   DJANGO_CONTEXT: host
-                  DJANGO_DATABASE_USER: django
-                  DJANGO_DATABASE_PASSWORD: LqjXVGnBkqdu7CWuC23jgSjb7EtCWnNK
+                  INVOKE_DJANGO_DATABASE_USER: django
+                  INVOKE_DJANGO_DATABASE_PASSWORD: LqjXVGnBkqdu7CWuC23jgSjb7EtCWnNK
                   INVOKE_POSTGRES_HOST: 127.0.0.1
