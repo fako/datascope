@@ -1,6 +1,6 @@
 from datagrowth.management.commands.grow_dataset import Command as GrowDatasetCommand
 
-from sources.models import GoogleImage, GoogleTranslate
+from sources.models import GoogleImage, GoogleTranslateShell
 
 
 class Command(GrowDatasetCommand):
@@ -16,7 +16,7 @@ class Command(GrowDatasetCommand):
 
     def handle(self, *args, **options):
         if options["delete"]:
-            GoogleTranslate.objects.all().delete()
+            GoogleTranslateShell.objects.all().delete()
             GoogleImage.objects.all().delete()
         super(Command, self).handle(*args, **options)
         self.model.objects.delete_manifestations_by_signature(signature=self.signature)
