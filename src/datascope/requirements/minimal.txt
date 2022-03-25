@@ -17,6 +17,7 @@ scipy==1.5.4
 scikit-learn==0.23.2
 tqdm==4.19.8
 Jinja2==2.11.3
+markupsafe==2.0.1
 django-webpack-loader==0.6.0
 
 # Celery plugins
