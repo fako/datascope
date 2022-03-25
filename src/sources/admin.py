@@ -1,14 +1,14 @@
 from django.contrib import admin
 
 from core.admin.resources import ResourceAdmin
-from sources.models import (GoogleImage, WikipediaTranslate, GoogleTranslate, ImageDownload, WikipediaRecentChanges,
+from sources.models import (GoogleImage, WikipediaTranslate, GoogleTranslateShell, ImageDownload, WikipediaRecentChanges,
                             WikipediaListPages, WikiDataItems, WikipediaTransclusions, WikipediaRevisions,
                             WikipediaSearch, WikipediaCategoryMembers, WikipediaCategories, KledingListing, GoogleText)
 
 
 admin.site.register(WikipediaTranslate, ResourceAdmin)
 admin.site.register(GoogleImage, ResourceAdmin)
-admin.site.register(GoogleTranslate, ResourceAdmin)
+admin.site.register(GoogleTranslateShell, ResourceAdmin)
 admin.site.register(ImageDownload, ResourceAdmin)
 admin.site.register(WikipediaRecentChanges, ResourceAdmin)
 admin.site.register(WikipediaListPages, ResourceAdmin)

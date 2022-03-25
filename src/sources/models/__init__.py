@@ -12,7 +12,7 @@ from .wikipedia.edit import WikipediaEdit
 from .wikipedia.categories import WikipediaCategories, WikipediaCategoryMembers
 
 from .google.images import GoogleImage
-from .google.translations import GoogleTranslate
+from .google.translations import GoogleTranslate, GoogleTranslateShell
 from .google.text import GoogleText
 
 from .downloads import ImageDownload

@@ -19,14 +19,14 @@ class VisualTranslationsEUCommunity(Community):
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("translations", {
-            "process": "HttpResourceProcessor.fetch_mass",
+            "process": "ShellResourceProcessor.run_mass",
             "input": None,
             "contribute": "Append:ExtractProcessor.extract_from_resource",
             "output": "Collective",
             "config": {
                 "_args": ["$.translate_from", "$.translate_to", "$.query"],
                 "_kwargs": {},
-                "_resource": "sources.GoogleTranslate",
+                "_resource": "sources.GoogleTranslateShell",
                 "_objective": {
                     "@": "$",
                     "language": "$.language",

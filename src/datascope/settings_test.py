@@ -52,6 +52,7 @@ DATAGROWTH_DEFAULT_CONFIGURATION = {
     "http_resource_interval_duration": 0,  # NB: milliseconds!
     "http_resource_concat_args_size": 0,
     "http_resource_concat_args_symbol": "|",
+    "global_backoff_delays": [2, 4, 8, 16],
     "mock_processor_include_odd": False,
     "mock_processor_include_even": False,
     # micro services
