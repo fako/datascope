@@ -2,7 +2,7 @@
 
 https://projects.unbit.it/downloads/uwsgi-lts.tar.gz
 psycopg2-binary==2.8.5
-spacy==2.0.18
+spacy==2.3.5
 spacy-arguing-lexicon==0.0.3
 
 # Datagrowth
