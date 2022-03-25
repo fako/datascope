@@ -37,6 +37,7 @@ jobs:
               run: |
                   sudo apt-get install -y libxml2-dev libxslt1-dev python-dev
                   sudo apt-get install -y libblas-dev liblapack-dev libatlas-base-dev gfortran
+                  pip install setuptools==58
                   python -m pip install --upgrade pip
                   pip install -r src/datascope/requirements/production.txt
                   cd src
