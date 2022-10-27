@@ -84,7 +84,7 @@ class NumericFeaturesFrame(object):
                 missing = series.index.difference(self.data[column].index)
                 new[series.name] = series.loc[list(missing.values)]
                 update[series.name] = series.loc[list(intersection.values)]
-        self.data = self.data.append(new, sort=False)
+        self.data = pd.concat([self.data, new])
         self.data.update(update)
 
     @staticmethod

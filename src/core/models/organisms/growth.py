@@ -1,6 +1,6 @@
 import logging
 from operator import xor
-from collections import Iterator
+from collections.abc import Iterator
 
 from django.apps import apps
 from django.db import models

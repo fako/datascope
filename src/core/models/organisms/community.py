@@ -1,7 +1,8 @@
 import warnings
 
 from itertools import groupby
-from collections import OrderedDict, Iterator
+from collections import OrderedDict
+from collections.abc import Iterator
 import logging
 
 from django.apps import apps

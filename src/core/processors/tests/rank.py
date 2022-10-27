@@ -1,6 +1,6 @@
 import os
 from functools import reduce
-from collections import Iterator
+from collections.abc import Iterator
 from operator import itemgetter
 from unittest.mock import patch, Mock
 

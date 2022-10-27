@@ -164,7 +164,8 @@ class TestNumericFeaturesFrame(TestCase):
         except Exception as exc:
             self.assertEqual(
                 str(exc),
-                "invalid_arguments feature: TypeError: invalid_arguments() takes 0 positional arguments but 1 was given"
+                "invalid_arguments feature: TypeError: TestNumericFeaturesFrame.invalid_arguments() "
+                "takes 0 positional arguments but 1 was given"
             )
         features = [
             TestNumericFeaturesFrame.invalid_return
@@ -347,7 +348,7 @@ class TestNumericFeaturesFrame(TestCase):
             TestNumericFeaturesFrame.is_english
         ])
         self.test_frame = self.test_frame.drop(labels="is_dutch", axis=1)
-        assert_frame_equal(frame.data, self.test_frame[0:0], check_like=True)
+        assert_frame_equal(frame.data, self.test_frame[0:0], check_like=True, check_index_type=False)
         sorted_feature_names = ["is_english", "value_number"]
         self.assertEqual(
             sorted(frame.features.keys()),
@@ -391,9 +392,9 @@ class TestNumericFeaturesFrame(TestCase):
 
     def test_rank_by_params(self):
         ranking = self.frame.rank_by_params({"is_dutch": 1, "value_number": 1})
-        self.assertEqual(ranking, [5, 8, 6, 4, 7])
+        self.assertEqual(ranking, [5, 4, 6, 8, 7])
         ranking = self.frame.rank_by_params({"is_dutch": 0.5, "value_number": -1, "is_english": 2, "is_french": 100})
-        self.assertEqual(ranking, [7, 8, 6, 4, 5])
+        self.assertEqual(ranking, [7, 8, 4, 6, 5])
 
     def test_get_content_hash(self):
         self.skipTest("not tested")
