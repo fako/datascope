@@ -1,6 +1,6 @@
 -r minimal.txt
 
-https://projects.unbit.it/downloads/uwsgi-lts.tar.gz
+uwsgi==2.0.20
 psycopg2-binary==2.8.5
 spacy==2.3.8
 spacy-arguing-lexicon==0.0.3
