@@ -162,11 +162,8 @@ class TestNumericFeaturesFrame(TestCase):
             )
             self.fail("NumericFeaturesFrame did not raise with invalid feature")
         except Exception as exc:
-            self.assertEqual(
-                str(exc),
-                "invalid_arguments feature: TypeError: TestNumericFeaturesFrame.invalid_arguments() "
-                "takes 0 positional arguments but 1 was given"
-            )
+            self.assertIn("TypeError", str(exc))
+            self.assertIn("takes 0 positional arguments but 1 was given", str(exc))
         features = [
             TestNumericFeaturesFrame.invalid_return
         ]
