@@ -52,7 +52,6 @@ urlpatterns = [
 
 urlpatterns += i18n_patterns(
     path("", webapp, {"path": ""}, name='root'),
-    path("gff/", webapp, {"path": ""}, name='gff'),
 )
 
 

@@ -36,17 +36,8 @@ def container(ctx, version=None):
 
 @task()
 def translations(ctx):
-    print("Extracting translation strings from source")
-    ctx.run(
-        "pybabel extract -F src/datascope/locales/babel.cfg -o src/datascope/locales/template.po "
-        "--sort-by-file --no-wrap --omit-header --no-location src/*",
-        echo=True
-    )
-    print("Generating Dutch translations")
-    ctx.run(
-        "pybabel update -d src/datascope/locales/ -l nl -i src/datascope/locales/template.po -D django --no-wrap",
-        echo=True
-    )
-    print("Compiling local messages")
     with ctx.cd("src"):
+        print("Make messages")
+        ctx.run("python manage.py makemessages --all", echo=True)
+        print("Compiling local messages")
         ctx.run("python manage.py compilemessages", echo=True)
