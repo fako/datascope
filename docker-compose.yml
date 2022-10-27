@@ -22,7 +22,7 @@ services:
       - INVOKE_DJANGO_DEBUG=${INVOKE_DJANGO_DEBUG}
 
   postgres:
-    image: postgres:10.10
+    image: postgres:14.5
     command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
     environment:
       POSTGRES_PASSWORD: 33SebQd4Ugkqx4KjqanZDsWRXTR54M6k

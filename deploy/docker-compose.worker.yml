@@ -29,7 +29,7 @@ services:
       - "8000:8000"
 
   postgres:
-    image: postgres:10.10
+    image: postgres:14.5
     deploy:
       replicas: 1
       resources:
