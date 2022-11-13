@@ -13,7 +13,6 @@ WORKDIR /usr/src/app
 RUN useradd -ms /bin/bash app
 
 # Install Python dependencies and copy app
-RUN pip install setuptools==58
 RUN pip install --upgrade pip
 COPY src/datascope/requirements /usr/src/app/datascope/requirements
 RUN pip install --no-cache-dir -r datascope/requirements/production.txt

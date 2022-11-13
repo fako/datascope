@@ -2,8 +2,9 @@ Django==3.2.16
 whitenoise==5.1.0
 sqlparse==0.2.2  # raw sql queries
 URLObject==2.4.0
-celery==4.4.0
-kombu==4.6.10
+celery==5.2.6
+celery[redis]
+# kombu==4.6.10
 git+https://github.com/fako/django-json-field.git
 djangorestframework==3.12.4
 django-cors-headers==3.4.0
@@ -20,10 +21,10 @@ markupsafe==2.0.1
 django-webpack-loader==0.6.0
 
 # Celery plugins
-django-celery-results==1.0.1
+# django-celery-results==1.0.1
 # anyjson==0.3.3
-redis==3.3.8
-vine==1.3.0
+redis==4.3.4
+# vine==1.3.0
 
 # Advanced features
 selenium==2.47.1

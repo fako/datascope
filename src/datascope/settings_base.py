@@ -87,7 +87,6 @@ INSTALLED_APPS = (
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
     # 3rd party
-    'django_celery_results',
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
@@ -326,11 +325,8 @@ WEBPACK_LOADER = load_webpack_configurations(BASE_DIR, DEBUG)
 
 # Celery settings
 CELERY_BROKER_URL = environment.redis.broker_url
-CELERY_RESULT_BACKEND = "django-db"
-CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
-CELERY_ACCEPT_CONTENT = ['application/json']
-CELERYD_TASK_TIME_LIMIT = 300  # 5 minutes for a single task
+CELERY_RESULT_BACKEND = environment.redis.broker_url
+CELERY_TASK_TIME_LIMIT = 300  # 5 minutes for a single task
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = "smtp.sendgrid.net"
