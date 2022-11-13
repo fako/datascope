@@ -13,12 +13,10 @@ class DocumentSerializer(DocumentBaseSerializer):
 
 
 class DocumentView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Document.objects.all()
     serializer_class = DocumentSerializer
 
 
 class DocumentContentView(ContentView, generics.UpdateAPIView):
-    queryset = Document.objects.all()
     serializer_class = ContentSerializer
     content_class = Document
 
@@ -33,10 +31,8 @@ class CollectionSerializer(CollectionBaseSerializer):
 
 
 class CollectionView(generics.RetrieveAPIView):
-    queryset = Collection.objects.all()
     serializer_class = CollectionSerializer
 
 
 class CollectionContentView(CollectionBaseContentView):
-    queryset = Collection.objects.all()
     content_class = Document

@@ -1,5 +1,5 @@
 from datagrowth.datatypes import AnnotationBase
 
 
-class Annotation(AnnotationBase):
+class Annotation(object):
     pass

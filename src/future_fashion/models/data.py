@@ -101,7 +101,7 @@ TARGET_LISTINGS = [
 ]
 
 
-class ClothingDataCommunity(Community):
+class ClothingDataCommunity(object):
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("items", {

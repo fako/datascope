@@ -8,7 +8,7 @@ from rest_framework import serializers
 from .storage import Document
 
 
-class ColorClothingSet(models.Model):
+class ColorClothingSet(object):
 
     email = models.EmailField(null=True, blank=True)
     processing_permission = models.BooleanField(default=False)
@@ -18,8 +18,8 @@ class ColorClothingSet(models.Model):
     bottom_color = models.CharField(max_length=6)
     match_style = models.CharField(max_length=20, null=True, blank=True)
 
-    top_item = models.ForeignKey(Document, related_name="+", on_delete=models.DO_NOTHING)
-    bottom_item = models.ForeignKey(Document, related_name="+", on_delete=models.DO_NOTHING)
+    #top_item = models.ForeignKey(Document, related_name="+", on_delete=models.DO_NOTHING)
+    #bottom_item = models.ForeignKey(Document, related_name="+", on_delete=models.DO_NOTHING)
 
     def top_item_image(self):
         return format_html('<img width="100px" src="{}" /><div>{}</div',

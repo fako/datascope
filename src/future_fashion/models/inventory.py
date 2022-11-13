@@ -13,7 +13,7 @@ from future_fashion.colors import (extract_dominant_colors, create_colors_data, 
 from future_fashion.models.storage import Document, Collection
 
 
-class ClothingInventoryCommunity(Community):
+class ClothingInventoryCommunity(object):
 
     collection_set = GenericRelation(Collection, content_type_field="community_type", object_id_field="community_id")
     document_set = GenericRelation(Document, content_type_field="community_type", object_id_field="community_id")

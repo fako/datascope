@@ -1,9 +1,9 @@
 from sources.models import ImageRecognitionService
 
 
-class BrandRecognitionService(ImageRecognitionService):
+class BrandRecognitionService(object):
     pass
 
 
-class ClothingTypeRecognitionService(ImageRecognitionService):
+class ClothingTypeRecognitionService(object):
     MICRO_SERVICE = "clothing_type_recognition"

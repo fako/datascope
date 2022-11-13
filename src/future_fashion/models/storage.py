@@ -1,10 +1,8 @@
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 
-from datagrowth.datatypes import CollectionBase, DocumentCollectionMixin, DocumentBase, DocumentPostgres
 
-
-class Collection(DocumentCollectionMixin, CollectionBase):
+class Collection(object):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)
@@ -19,7 +17,7 @@ class Collection(DocumentCollectionMixin, CollectionBase):
         )
 
 
-class Document(DocumentBase):
+class Document(object):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)
