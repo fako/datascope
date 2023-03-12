@@ -17,34 +17,21 @@ This is the environment that you should have on your machine before installing D
 
 * Docker
 
-Optionally you may also want to install
-
-* PhantomJS (for web scraping)
 
 Installation
 ------------
 
 After cloning this repo to the machine you want to install Data Scope on. 
 Activate the environment where you want to install Data Scope into. 
-Then go into the repo directory and run the following for a local install.
+Then go into the repo directory and run the following for a local installation.
 
 ```bash
-cp datascope/environments/local_bootstrap.py datascope/bootstrap.py
-cp datascope/environments/local_settings.py datascope/settings.py
-cp datascope/environments/secrets_example.py datascope/secrets.py
-pip install -r datascope/environments/local_requirements.txt
+pip install -r datascope/environments/development.txt
 ```
 
-Alternatively you can change ```local``` in these commands to ```digital-ocean``` or ```wikipedia``` 
-for an installation in the Digital Ocean or Wikipedia cloud respectively.
-
-Then edit the ```datascope/bootstrap.py```, ```datascope/settings.py``` and ```datascope/secrets.py``` 
-to correct the setup of the machine/cloud.
-
-After this you need to setup the services used by Datascope through Docker. You can run:
+After this you need to set up the services used by Datascope through Docker. You can run:
 
 ```bash
-docker volume create --name postgres-data
 docker-compose up --build
 ```
 
@@ -55,17 +42,6 @@ you can run the following docker-compose command to restart services.
 docker-compose up
 ```
 
-
-Next steps
-----------
-
-Depending on which project you're working on you may want to run additional installation steps. 
-These steps are outlined in the readme's of these projects. Below are the links to all current projects:
-
-* [Wiki Feed](wiki_feed/README.md)
-* [Union Scope](visual_translations/README.md)
-* [Robo Roaster](setup_utrecht/README.md)
-* [Future Fashion](future_fashion/README.md)
 
 Roadmap
 =======

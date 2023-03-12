@@ -45,4 +45,3 @@ gcloud secrets versions access 3 --secret=debatkijker-certificate-key > server/n
 invoke pull
 invoke init production web
 invoke deploy
-
