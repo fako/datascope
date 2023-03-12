@@ -111,7 +111,7 @@ DATABASES = {
         'USER': environment.django.database_user,
         'PASSWORD': environment.django.database_password,
         'HOST': environment.postgres.host,
-        #'PORT': os.environ.get('PGPORT', '5432')
+        'PORT': environment.postgres.port
     }
 }
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
@@ -383,6 +383,7 @@ ELASTIC_SEARCH_ANALYSERS = {
     'nl': 'dutch'
 }
 ELASTIC_SEARCH_HOST = environment.elastic_search.host
+ELASTIC_SEARCH_PASSWORD = environment.elastic_search.password
 
 
 # Sentry error reporting

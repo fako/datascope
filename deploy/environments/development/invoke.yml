@@ -22,7 +22,8 @@ datascope:
 postgres:
   credentials:
   host: "127.0.0.1"
+  port: 5432
 elastic_search:
-  host: "elastic"
+  host: "http://elasticsearch:9200"
 redis:
   broker_url: "redis://redis:6379/0"

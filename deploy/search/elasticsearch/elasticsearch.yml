@@ -1,0 +1,12 @@
+cluster.name: elasticsearch
+node.name: elasticsearch
+discovery.type: single-node
+bootstrap.memory_lock: true
+network.host: 0.0.0.0
+
+xpack.security.enabled: true
+xpack.security.enrollment.enabled: true
+xpack.security.transport.ssl:
+  enabled: false
+xpack.security.http.ssl:
+  enabled: false

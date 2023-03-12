@@ -7,10 +7,11 @@ def get_es_client(silent=False):
     """
     Returns the elasticsearch client which uses the configuration file
     """
-    es_client = Elasticsearch([settings.ELASTIC_SEARCH_HOST],
-                              scheme='http',
-                              port=9200,
-                              http_compress=True)
+    es_client = Elasticsearch(
+        [settings.ELASTIC_SEARCH_HOST],
+        http_auth=("elastic", settings.ELASTIC_SEARCH_PASSWORD),
+        http_compress=True,
+    )
     # test if it works
     if not silent and not es_client.cat.health(request_timeout=30):
         raise ValueError('Credentials do not work for Elastic search')
@@ -30,28 +31,26 @@ def get_index_config(lang):
             }
         },
         'mappings': {
-            '_doc': {
-                'properties': {
-                    'title': {
-                        'type': 'text',
-                        'analyzer': settings.ELASTIC_SEARCH_ANALYSERS[lang]
-                    },
-                    'content': {
-                        'type': 'text',
-                        'analyzer': settings.ELASTIC_SEARCH_ANALYSERS[lang]
-                    },
-                    'url': {'type': 'text'},
-                    'title_plain': {'type': 'text'},
-                    'content_plain': {'type': 'text'},
-                    'author': {
-                        'type': 'keyword'
-                    },
-                    'source': {
-                        'type': 'keyword'
-                    },
-                    'argument_score': {
-                        'type': 'float'
-                    }
+            'properties': {
+                'title': {
+                    'type': 'text',
+                    'analyzer': settings.ELASTIC_SEARCH_ANALYSERS[lang]
+                },
+                'content': {
+                    'type': 'text',
+                    'analyzer': settings.ELASTIC_SEARCH_ANALYSERS[lang]
+                },
+                'url': {'type': 'text'},
+                'title_plain': {'type': 'text'},
+                'content_plain': {'type': 'text'},
+                'author': {
+                    'type': 'keyword'
+                },
+                'source': {
+                    'type': 'keyword'
+                },
+                'argument_score': {
+                    'type': 'float'
                 }
             }
         }

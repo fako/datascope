@@ -37,7 +37,7 @@ class ElasticIndex(models.Model):
     def remote_exists(self):
         if not self.id:
             raise ValueError("Can't check for existence with an unsaved object")
-        return self.client.indices.exists(self.remote_name)
+        return self.client.indices.exists(index=self.remote_name)
 
     def push(self, elastic_documents, recreate=True, request_timeout=300):  # why is the elastic cluster usually slow?
         if not self.id:
@@ -45,7 +45,7 @@ class ElasticIndex(models.Model):
 
         remote_name = self.remote_name
         if self.remote_exists and recreate:
-            self.client.indices.delete(remote_name)
+            self.client.indices.delete(index=remote_name)
 
         self.client.indices.create(
             index=remote_name,
@@ -54,9 +54,8 @@ class ElasticIndex(models.Model):
         )
         if recreate:
             self.error_count = 0
-        for is_ok, result in streaming_bulk(self.client, elastic_documents, index=remote_name, doc_type="_doc",
-                                            chunk_size=100, yield_ok=False, raise_on_error=False,
-                                            request_timeout=request_timeout):
+        for is_ok, result in streaming_bulk(self.client, elastic_documents, index=remote_name, chunk_size=100,
+                                            yield_ok=False, raise_on_error=False, request_timeout=request_timeout):
             if not is_ok:
                 self.error_count += 1
                 print(f'Error in sending bulk:{result}')
