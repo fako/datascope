@@ -99,7 +99,6 @@ INSTALLED_APPS = (
     'apps',
     # Algorithms
     'visual_translations',
-    'future_fashion',
     'open_data',
     'wiki_scope',
     'online_discourse',
