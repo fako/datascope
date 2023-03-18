@@ -119,6 +119,14 @@ services:
 
   kibana:
     image: docker.elastic.co/kibana/kibana:8.5.3
+    deploy:
+      replicas: 1
+      resources:
+        limits:
+          cpus: "1"
+          memory: 0.5G
+      restart_policy:
+        condition: any
     environment:
       ELASTICSEARCH_SERVICEACCOUNTTOKEN: ${ELASTICSEARCH_SERVICE_TOKEN}
     depends_on:
@@ -155,3 +163,4 @@ services:
 volumes:
   postgres-data:
   elastic-data:
+  kibana-data:
