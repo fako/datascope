@@ -75,7 +75,7 @@ services:
       - postgres-data:/var/lib/postgresql/data/pgdata
       - ./postgres/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
     ports:
-      - 5432:5432
+      - "5432:5432"
     labels:
       nl.surfpol.db: "postgres"
 
@@ -112,6 +112,8 @@ services:
       memlock:
         soft: -1
         hard: -1
+    ports:
+      - "9200:9200"
     volumes:
       - elastic-data:/usr/share/elasticsearch/data
       - ./environments/production/secrets/service_tokens:/usr/share/elasticsearch/config/service_tokens
