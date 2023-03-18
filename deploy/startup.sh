@@ -42,6 +42,12 @@ gcloud secrets versions access 3 --secret=debatkijker-certificate-key > server/n
 # Start project
 ############################
 
+# For Kibana to be able to connect to Elasticsearch it needs to get a service token
+# Create a service token through the following page:
+# https://www.elastic.co/guide/en/elasticsearch/reference/current/service-tokens-command.html
+# Add the token as ELASTICSEARCH_SERVICE_TOKEN in the .env file.
+# Copy the contents of the service_tokens file into the secrets directory of the environment.
+
 invoke pull
 invoke init production web
 invoke deploy
