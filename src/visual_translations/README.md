@@ -22,7 +22,7 @@ Getting the data
 ----------------
 
 You can get a new snapshot of the data through the following steps:
-* Up the Google API limit to a sufficiently high limit per day.
+* Up the [Google API limit](https://console.cloud.google.com/apis/api/customsearch.googleapis.com/quotas?project=optical-wall-133808&supportedpurview=project) to a sufficiently high limit per day.
 * Run ```./manage.py generate_eu_visual_translations -a <word>``` where <word> is the term you're interested in.
 * Use the ```delete_word``` and ```delete_image``` commands to clean the data.
 * Run ```./manage.py generate_image_grids -a <word>``` to clean the grid for a term. 
