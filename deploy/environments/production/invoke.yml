@@ -25,5 +25,6 @@ postgres:
   port: 5432
 elastic_search:
   host: "http://elasticsearch:9200"
+  password: None
 redis:
   broker_url: "redis://redis:6379/0"
