@@ -24,7 +24,7 @@ redis==4.3.4
 
 # Advanced features
 selenium==2.47.1
-Pillow==9.0.1
+Pillow==9.3.0
 colorz==1.0.3
 elasticsearch==8.5.2
 
