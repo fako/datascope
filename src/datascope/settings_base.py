@@ -57,7 +57,7 @@ EMAIL_HOST_PASSWORD = environment.datascope.email_password
 # DATAGROWTH BOOTSTRAP
 #######################################################
 
-DATAGROWTH_DATA_DIR = os.environ.get('DATAGROWTH_DATA_DIR', os.path.join(BASE_DIR, "..", "data"))
+DATAGROWTH_DATA_DIR = os.environ.get('DATAGROWTH_DATA_DIR', os.path.join(BASE_DIR, "data"))
 DATAGROWTH_BIN_DIR = os.path.join(DATAGROWTH_DATA_DIR, "bin")
 
 

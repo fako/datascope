@@ -1,4 +1,5 @@
 data/
+src/data/
 postgres/
 redis/
 venv/
