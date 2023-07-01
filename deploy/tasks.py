@@ -159,7 +159,6 @@ def run(ctx):
     )
 
 
-
 @task()
 def publish_scripts(ctx):
     ctx.run("gsutil rsync -rd -J deploy gs://ds-deploy/")
