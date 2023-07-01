@@ -20,7 +20,7 @@ markupsafe==2.0.1
 django-webpack-loader==0.6.0
 
 # Celery plugins
-redis==4.3.4
+redis==4.4.4
 
 # Advanced features
 selenium==2.47.1
