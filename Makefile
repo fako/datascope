@@ -9,7 +9,7 @@ backup-data:
 	# -t means preserve creation and modification times
 	# -h means human readable output
 	# -v means verbose
-	rsync -zrthv --progress data /Volumes/Leo65/data/datascope
+	rsync -zrthv --progress data /media/fako/Leo65/data/datascope
 
 start-celery:
 	cd src && celery -A datascope worker --loglevel=info -B
