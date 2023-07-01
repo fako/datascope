@@ -1,9 +1,9 @@
-from core.management.commands._community import CommunityCommand
+from datagrowth.management.base import DatasetCommand
 
 
-class Command(CommunityCommand):
+class Command(DatasetCommand):
 
-    community_model = "VisualTranslationsEUCommunity"
+    dataset_model = "visual_translations.VisualTranslationsEUCommunity"
 
-    def handle_community(self, community, *arguments, **options):
-        community.finish_download(None, None)
+    def handle_dataset(self, dataset, *arguments, **options):
+        dataset.finish_download(None, None)
