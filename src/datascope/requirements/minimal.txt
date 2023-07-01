@@ -1,6 +1,6 @@
 Django==3.2.19
 whitenoise==5.1.0
-sqlparse==0.2.2  # raw sql queries
+sqlparse==0.4.4  # raw sql queries
 URLObject==2.4.0
 celery==5.2.6
 celery[redis]
