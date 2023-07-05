@@ -1,4 +1,4 @@
-Django==3.2.19
+Django==3.2.20
 whitenoise==5.1.0
 sqlparse==0.4.4  # raw sql queries
 URLObject==2.4.0
