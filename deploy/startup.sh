@@ -48,6 +48,6 @@ gcloud secrets versions access 3 --secret=debatkijker-certificate-key > server/n
 # Add the token as ELASTICSEARCH_SERVICE_TOKEN in the .env file.
 # Copy the contents of the service_tokens file into the secrets directory of the environment.
 
-invoke pull
-invoke init production web
+invoke pull -v 0.20.3
+invoke init production worker
 invoke deploy

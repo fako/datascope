@@ -37,7 +37,12 @@ def get_versions_by_mode(ctx):
 def get_new_versions(ctx):
     # Get the lastest local version of an image
     local_images = ctx.run("docker image ls", hide=True)
-    last_local_image = next(image for image in local_images.stdout.split("\n") if image.startswith(REPOSITORY))
+    last_local_image = next(
+        (image for image in local_images.stdout.split("\n") if image.startswith(REPOSITORY)),
+        None
+    )
+    if last_local_image is None:
+        return []
     last_local_version_columns = last_local_image.split()
     last_local_version = last_local_version_columns[1] if len(last_local_version_columns) else None
     # List all versions of the images from the remote
