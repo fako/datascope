@@ -123,7 +123,7 @@ class WikipediaCategorySimilarityCommunity(Community):
             schema=out.schema
         )
         buffer = []
-        buffer_size = 500
+        buffer_size = 100
         current = None
 
         for member in out.individual_set.all().order_by("identity").iterator():
@@ -134,7 +134,7 @@ class WikipediaCategorySimilarityCommunity(Community):
             elif current.identity != member.identity:  # new group
                 buffer.append(current)
                 if len(buffer) >= buffer_size:
-                    filtered.add(buffer, batch_size=buffer_size, reset=False)
+                    filtered.add(buffer, reset=False)
                     buffer = []
                 current = member
                 if not current["categories"]:
@@ -148,7 +148,7 @@ class WikipediaCategorySimilarityCommunity(Community):
                     ]
         else:
             buffer.append(current)
-            filtered.add(buffer, batch_size=buffer_size, reset=False)
+            filtered.add(buffer, reset=False)
 
         self.current_growth.output = filtered
         self.current_growth.save()

@@ -1,9 +1,7 @@
 from copy import copy
 
-from core.models.resources.http import HttpResource
 
-
-class ComplexityAnalysis(HttpResource):
+class ComplexityAnalysis(object):
 
     URI_TEMPLATE = "https://api.wizenoze.com/v2/complexity/url?targetAudienceId=31"
 
