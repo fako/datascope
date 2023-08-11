@@ -6,12 +6,14 @@ SINGULAR_SUBJECTS = [
     "oorlog slachtoffer",
     "oorlog getraumatiseerde",
     "Syrische vluchteling",
+    "Oekrainse vluchteling",
     "Asiel Zoekers Centrum",
     "AZC",
     "asielzoekers opvang",
     "smokkelaar",
     "opvang land",
     "opvang in de regio",
+    "klimaatvluchteling"
     # Allochtoon
     "allochtoon",
     "zwarte Nederlander",
@@ -29,7 +31,6 @@ SINGULAR_SUBJECTS = [
     "3e generatie",
     "immigrant",
     "nieuwe Nederlander",
-    "allochtoon",
     "gelukzoeker",
     "Moslim",
     "Islamiet",
@@ -40,10 +41,13 @@ SINGULAR_SUBJECTS = [
     "Indonesier",
     "Antiliaan",
     "Caribisch",
+    "Oost Europees",
+    "Christen",
     "arbeidsmigrant",
     "werkzoeker",
     "flexmigrant",
     "buitenlander",
+    "veiligelander",
     # Autochtoon
     "Nederlander",
     "Nederlands",
@@ -70,61 +74,18 @@ SINGULAR_SUBJECTS = [
     "inburgeren",
     "inburgering",
     "assimilatie",
+    "Richtlijn Tijdelijke Bescherming",
 ]
 
 PLURAL_SUBJECTS = [
     # Actualiteiten
-    "oorlog slachtoffers",
-    "oorlog getraumatiseerden",
-    "Syrische vluchtelingen",
     "Asiel Zoekers Centra",
-    "smokkelaars",
-    "opvang landen",
     # Allochtoon
     "allochtonen",
-    "zwarte Nederlanders",
-    "gekleurde Nederlanders",
-    "bruine Nederlanders",
-    "vluchtelingen",
-    "ontheemden",
-    "statushouders",
-    "illegalen",
-    "immigranten",
-    "nieuwe Nederlanders",
-    "allochtonen",
-    "gelukzoekers",
-    "Moslims",
-    "Islamieten",
-    "Molukkers",
-    "Turken",
     "Marokkanen",
-    "Surinamers",
-    "Indonesiers",
     "Antilianen",
-    "arbeidsmigranten",
-    "werkzoekers",
-    "flexmigranten",
-    "buitenlanders",
-    # Autochtoon
-    "Nederlanders",
-    "Hollanders",
-    "autochtone Nederlanders",
-    "echte Nederlanders",
-    "echte Hollanders",
-    "allochtone Nederlanders",
-    "witte Nederlanders",
-    "blanke Nederlanders",
-    "blanke Hollanders",
+    "Oost Europeanen",
     "autochtonen",
-    "kolonisten",
-    # Slang
-    "Mocros",
-    "Suris",
-    "Kaaskoppen",
-    "Indos",
-    # Institutioneel
-    "werkvergunningen",
-    "expats",
 ]
 
 DESCRIPTIVE_ADJECTIVES = [
@@ -223,7 +184,6 @@ DESCRIPTIVE_ADJECTIVES = [
     "eenmanszaak",
     "zielig",
     "treurig",
-    # Continue here!
     "uitbuiten",
     "uitbuiters",
     "uitkering trekkers",
@@ -256,7 +216,22 @@ DESCRIPTIVE_ADJECTIVES = [
     "ras",
     "sociaal-economisch",
     "achtergrond",
-    "afkomst"
+    "afkomst",
+    "moedig",
+    "heldhaftig",
+    "patriottistisch",
+    "onderdrukt",
+    "lui",
+    "corrupt",
+    "uitzetten",
+    "natuurramp",
+    "opwarming van de aarde",
+    "overstroming",
+    "hongersnood",
+    "water tekort",
+    "mislukte oogst",
+    "voedselprijzen",
+    "land van herkomst",
 ]
 
 immigranten = DiscourseConfiguration(
@@ -264,7 +239,7 @@ immigranten = DiscourseConfiguration(
     description="Nederland is aantrekkelijk voor mensen om verschillende redenen. "
                 "In Nederland zelf is niet iedereen het eens hoe we met deze nieuwe mensen om moeten gaan.",
     language="nl",
-    topics=[],  # TODO: set to sane values
+    topics=["migrant", "vluchteling", "statushouder", "buitenlander", "veiligelander"],
     singular_subjects=SINGULAR_SUBJECTS,
     plural_subjects=PLURAL_SUBJECTS,
     descriptive_adjectives=DESCRIPTIVE_ADJECTIVES
