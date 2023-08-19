@@ -8,8 +8,8 @@ services:
       replicas: 1
       resources:
         limits:
-          cpus: "1"
-          memory: 0.5G
+          cpus: "3"
+          memory: 14G
       restart_policy:
         condition: any
     depends_on:
@@ -25,6 +25,8 @@ services:
       - DJANGO_MODE=${DJANGO_MODE}
       - INVOKE_DJANGO_DEBUG=${INVOKE_DJANGO_DEBUG}
       - INVOKE_POSTGRES_CREDENTIALS=${INVOKE_POSTGRES_CREDENTIALS}
+    volumes:
+      - ./data:/usr/src/app/data
     ports:
       - "8000:8000"
 
@@ -35,7 +37,7 @@ services:
       resources:
         limits:
           cpus: "1"
-          memory: 1G
+          memory: 2G
       restart_policy:
         condition: any
     command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'

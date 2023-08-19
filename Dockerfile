@@ -17,6 +17,8 @@ RUN pip install --upgrade pip
 COPY src/datascope/requirements /usr/src/app/datascope/requirements
 RUN pip install --no-cache-dir -r datascope/requirements/production.txt
 COPY --chown=app:app src /usr/src/app
+RUN mkdir -p /usr/src/app/data
+RUN chown app:app /usr/src/app/data
 
 # We setup spaCy models outside of the pip flow to prevent repetious downloads
 RUN python -m spacy link /usr/etc/models/spacy/en_core_web_lg-2.0.0/en_core_web_lg en_core_web_lg
