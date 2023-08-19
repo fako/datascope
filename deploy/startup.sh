@@ -32,6 +32,7 @@ gcloud auth configure-docker -q
 cd /srv
 gsutil rsync -r -J gs://ds-deploy/ .
 mkdir -p data
+chown ubuntu:ubuntu data
 cp server/datascope-cron /etc/cron.d/
 
 gcloud secrets versions access 4 --secret=datascope-certificate-key > server/nginx/certificates/data-scope.key
