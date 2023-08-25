@@ -4,6 +4,7 @@ from collections.abc import Iterator
 
 from django.apps import apps
 from django.db import models
+from django.db.utils import DataError
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 from django.core.exceptions import ValidationError
 
@@ -197,7 +198,11 @@ class Growth(models.Model, ProcessorMixin):
             for document in affected_documents.iterator():
                 document.properties[inline_key] = contribution
                 document.clean()
-                document.save()
+                # We may get DataError because the contribution dictionary contains a \u0000 byte somewhere
+                try:
+                    document.save()
+                except DataError:
+                    pass
 
     def _update_collection_by_key(self, contributions, update_key):
         for contribution in contributions:
