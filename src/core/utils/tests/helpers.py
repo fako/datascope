@@ -3,9 +3,6 @@ from unittest import TestCase
 
 class TestUtilHelpers(TestCase):
 
-    def test_get_any_model(self):
-        self.skipTest("not tested")
-
     def test_merge_iter(self):
         self.skipTest("not tested")
 

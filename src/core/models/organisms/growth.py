@@ -13,7 +13,6 @@ from datagrowth.exceptions import DGNoContent
 from core.processors.base import ArgumentsTypes
 from core.processors.mixins import ProcessorMixin
 from core.utils.configuration import ConfigurationField
-from core.utils.helpers import get_any_model
 from core.exceptions import DSProcessError
 from core.models.organisms import Individual, Collective
 

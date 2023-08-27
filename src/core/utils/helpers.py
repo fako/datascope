@@ -7,17 +7,6 @@ from django.apps import apps as django_apps
 from datagrowth.utils import parse_datetime_string, format_datetime, override_dict
 
 
-def get_any_model(name):  # TODO: test to unlock
-    try:
-        app_label, model = next(
-            (model._meta.app_label, model.__name__)
-            for model in django_apps.get_models() if model.__name__ == name
-        )
-    except StopIteration:
-        raise LookupError("Could not find {} in any app_labels".format(name))
-    return django_apps.get_model(app_label, name)
-
-
 def merge_iter(*iterables, **kwargs):  # TODO: test to unlock, works bad with empty iterables (don't flush RankProcessor.score at end for instance)
     """
     Given a set of reversed sorted iterables, yield the next value in merged order
