@@ -8,7 +8,7 @@ class Collection(object):
     community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)
     community_id = models.PositiveIntegerField()
 
-    def init_document(self, data, collection=None):
+    def build_document(self, data, collection=None):
         Document = self.get_document_model()
         return Document(
             community=self.community,

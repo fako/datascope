@@ -291,7 +291,7 @@ LOGGING = {
             'level': 'DEBUG',
             'propagate': False,
         },
-        'datagrowth.command': {
+        'datagrowth': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': False,
