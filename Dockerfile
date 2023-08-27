@@ -21,8 +21,8 @@ RUN mkdir -p /usr/src/app/data
 RUN chown app:app /usr/src/app/data
 
 # We setup spaCy models outside of the pip flow to prevent repetious downloads
-RUN python -m spacy link /usr/etc/models/spacy/en_core_web_lg-2.0.0/en_core_web_lg en_core_web_lg
-RUN python -m spacy link /usr/etc/models/spacy/nl_core_news_sm-2.0.0/nl_core_news_sm nl_core_news_sm
+RUN python -m spacy link /usr/etc/models/spacy/en_core_web_lg-2.3.0/en_core_web_lg en_core_web_lg
+RUN python -m spacy link /usr/etc/models/spacy/nl_core_news_sm-2.3.0/nl_core_news_sm nl_core_news_sm
 
 # We're serving static files through Whitenoise
 # See: http://whitenoise.evans.io/en/stable/index.html#
