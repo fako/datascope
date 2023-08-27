@@ -199,9 +199,9 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
             return document
         try:
             with open(data["resourcePath"], encoding=encoding) as fp:
-                article = BeautifulSoup(fp, "html5lib")
+                article = BeautifulSoup(fp, "html.parser")
             with open(document.properties["home_resource"], encoding=encoding) as fp:
-                home = BeautifulSoup(fp, "html5lib")
+                home = BeautifulSoup(fp, "html.parser")
         except FileNotFoundError:
             log.warning("Missing a file for document: {}".format(document.id))
             document["content"] = []
