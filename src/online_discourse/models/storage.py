@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 
-from datagrowth.datatypes import CollectionBase, DocumentCollectionMixin, DocumentBase, DocumentPostgres
+from datagrowth.datatypes import CollectionBase, DocumentCollectionMixin, DocumentBase
 
 
 class Collection(DocumentCollectionMixin, CollectionBase):

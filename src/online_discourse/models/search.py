@@ -18,7 +18,7 @@ except ImportError:
 from django.db.models import Q
 import json_field
 
-from datagrowth.utils import get_model_path
+from datagrowth.utils import get_model_path, ibatch
 from datagrowth.resources import HttpResource
 from core.models.organisms import Community, CommunityCollectionDocumentMixin
 from core.models.organisms.states import CommunityState
@@ -324,34 +324,37 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
         out.save()
         total = out.documents.count()
         invalids = []
-        for document in tqdm(out.documents.iterator(), total=total):
-            # Skip reset when it has already been done
-            if document.properties.get("tika", None):
-                continue
-            # Checking if there is any content data to work with.
-            # Then undoing a weird hack where content data gets stored under resourcePath
-            # It happens because inline_key and identifier need to match
-            # TODO: allow inline_key to be different from identifier
-            data = document.properties.get("resourcePath", {})
-            if isinstance(data, str):
-                log.warning("resourcePath not replaced by dict: {}".format(document.id))
-                continue
-            document.properties["tika"] = data
-            content = data.get("content", "")
-            # We're only keeping the content that actually holds topics of interest.
-            if not data or not content:
-                invalids.append(document.id)
-                continue
-            for topic in configuration.topics:
-                if topic in content:
-                    break
-            else:
-                invalids.append(document.id)
-                continue
+        for batch in ibatch(out.documents.iterator(), batch_size=100, progress_bar=True, total=total):
+            updates = []
+            for document in batch:
+                # Skip reset when it has already been done
+                if document.properties.get("tika", None):
+                    continue
+                # Checking if there is any content data to work with.
+                # Then undoing a weird hack where content data gets stored under resourcePath
+                # It happens because inline_key and identifier need to match
+                # TODO: allow inline_key to be different from identifier
+                data = document.properties.get("resourcePath", {})
+                if isinstance(data, str):
+                    log.warning("resourcePath not replaced by dict: {}".format(document.id))
+                    continue
+                document.properties["tika"] = data
+                content = data.get("content", "")
+                # We're only keeping the content that actually holds topics of interest.
+                if not data or not content:
+                    invalids.append(document.id)
+                    continue
+                for topic in configuration.topics:
+                    if topic in content:
+                        break
+                else:
+                    invalids.append(document.id)
+                    continue
 
-            del document.properties["resourcePath"]
-            document.clean()
-            document.save()
+                del document.properties["resourcePath"]
+                document.clean()
+                updates.append(document)
+            Document.objects.bulk_update(updates, out.document_update_fields)
         deletes = out.documents.filter(id__in=invalids).delete()
         log.info("Deletes: {}".format(deletes))
 
@@ -369,39 +372,41 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
                 spacy_parsers[language] = nlp
         # Actual content extraction
         off_topics = []
-        for document in tqdm(out.documents.iterator(), total=total):
+        for batch in ibatch(out.documents.iterator(), batch_size=100, progress_bar=True, total=total):
+            updates = []
+            for document in batch:
+                # We're skipping any entries that have already been processed at some point
+                if document.properties.get("argument_score", None) is not None:
+                    continue
 
-            # We're skipping any entries that have already been processed at some point
-            if document.properties.get("argument_score", None) is not None:
-                continue
+                # Now we turn raw content into something consistent set on the document
+                document = self._set_author(document)
+                document = self._set_main_content(document)
 
-            # Now we turn raw content into something consistent set on the document
-            document = self._set_author(document)
-            document = self._set_main_content(document)
+                # Lots of code still depends on a property named "paragraph_groups".
+                # This was used in an early version of text extraction
+                # We mimick it here to keep backwards compatability
+                # TODO: migrate code away from paragraph_groups
+                content = document.properties.get("content")
+                if not len(content):
+                    document.clean()
+                    updates.append(document)
+                    continue
+                document.properties["paragraph_groups"] = [content]
 
-            # Lots of code still depends on a property named "paragraph_groups".
-            # This was used in an early version of text extraction
-            # We mimick it here to keep backwards compatability
-            # TODO: migrate code away from paragraph_groups
-            content = document.properties.get("content")
-            if not len(content):
+                nlp = spacy_parsers[self.config.language]
+                argument_count = 0
+                sents_count = 0
+                for doc in nlp.pipe(content):
+                    sents_count += len(list(doc.sents))
+                    argument_spans = list(doc._.arguments.get_argument_spans())
+                    argument_count += len(argument_spans)
+                if sents_count:
+                    document.properties["argument_score"] = argument_count / sents_count
+
                 document.clean()
-                document.save()
-                continue
-            document.properties["paragraph_groups"] = [content]
-
-            nlp = spacy_parsers[self.config.language]
-            argument_count = 0
-            sents_count = 0
-            for doc in nlp.pipe(content):
-                sents_count += len(list(doc.sents))
-                argument_spans = list(doc._.arguments.get_argument_spans())
-                argument_count += len(argument_spans)
-            if sents_count:
-                document.properties["argument_score"] = argument_count / sents_count
-
-            document.clean()
-            document.save()
+                updates.append(document)
+            Document.objects.bulk_update(updates, out.document_update_fields)
 
         #################################################################################
         # Handling aggregations which is not supported by the framework at this time
