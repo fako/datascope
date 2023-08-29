@@ -16,6 +16,7 @@ except ImportError:
     log.warning("Not supporting spacy on this platform")
 
 from django.db.models import Q
+from django.db import connection, OperationalError
 import json_field
 
 from datagrowth.utils import get_model_path, ibatch
@@ -354,7 +355,11 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
                 del document.properties["resourcePath"]
                 document.clean()
                 updates.append(document)
-            Document.objects.bulk_update(updates, out.document_update_fields)
+            try:
+                Document.objects.bulk_update(updates, out.document_update_fields)
+            except OperationalError:
+                connection.connect()
+                Document.objects.bulk_update(updates, out.document_update_fields)
         deletes = out.documents.filter(id__in=invalids).delete()
         log.info("Deletes: {}".format(deletes))
 
@@ -406,7 +411,11 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
 
                 document.clean()
                 updates.append(document)
-            Document.objects.bulk_update(updates, out.document_update_fields)
+            try:
+                Document.objects.bulk_update(updates, out.document_update_fields)
+            except OperationalError:
+                connection.connect()
+                Document.objects.bulk_update(updates, out.document_update_fields)
 
         #################################################################################
         # Handling aggregations which is not supported by the framework at this time
