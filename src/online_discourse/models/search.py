@@ -402,7 +402,11 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
                 nlp = spacy_parsers[self.config.language]
                 argument_count = 0
                 sents_count = 0
-                for doc in nlp.pipe(content[:1000000]):  # 1.000.000 char limit for spaCy due to memory allocation
+                truncated_content = [
+                    cnt[:1000000]  # 1.000.000 char limit for spaCy due to memory allocation
+                    for cnt in content
+                ]
+                for doc in nlp.pipe(truncated_content):
                     sents_count += len(list(doc.sents))
                     argument_spans = list(doc._.arguments.get_argument_spans())
                     argument_count += len(argument_spans)
