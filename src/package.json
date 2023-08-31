@@ -1,6 +1,6 @@
 {
     "name": "datascope",
-    "version": "0.20.10",
+    "version": "0.20.11",
     "data": {
         "digital-ocean": {
             "data/online_discourse/dumps": "online_discourse/dumps"
