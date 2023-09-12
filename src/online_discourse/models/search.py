@@ -325,7 +325,7 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
         out.save()
         total = out.documents.count()
         invalids = []
-        for batch in ibatch(out.documents.iterator(), batch_size=100, progress_bar=True, total=total):
+        for batch in ibatch(out.documents.iterator(), batch_size=10, progress_bar=True, total=total):
             updates = []
             for document in batch:
                 # Skip reset when it has already been done
@@ -377,7 +377,7 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
                 spacy_parsers[language] = nlp
         # Actual content extraction
         off_topics = []
-        for batch in ibatch(out.documents.iterator(), batch_size=100, progress_bar=True, total=total):
+        for batch in ibatch(out.documents.iterator(), batch_size=10, progress_bar=True, total=total):
             updates = []
             for document in batch:
                 # We're skipping any entries that have already been processed at some point

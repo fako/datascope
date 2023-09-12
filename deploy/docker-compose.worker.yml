@@ -9,7 +9,7 @@ services:
       resources:
         limits:
           cpus: "3"
-          memory: 14G
+          memory: 12G
       restart_policy:
         condition: any
     depends_on:
@@ -37,7 +37,7 @@ services:
       resources:
         limits:
           cpus: "1"
-          memory: 2G
+          memory: 4G
       restart_policy:
         condition: any
     command: postgres -c 'config_file=/etc/postgresql/postgresql.conf'
