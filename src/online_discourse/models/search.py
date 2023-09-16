@@ -430,17 +430,23 @@ class DiscourseSearchCommunity(CommunityCollectionDocumentMixin, Community):
 
     def set_aggregates(self, collection):
         log.info("Aggregating sources and authors")
-        self.aggregates.update(
-            self.get_source_and_author_aggregates(collection)
-        )
+        if "authors" not in self.aggregates or "sources" not in self.aggregates:
+            self.aggregates.update(
+                self.get_source_and_author_aggregates(collection)
+            )
+        self.save()
         log.info("Aggregating topics")
-        self.aggregates.update(
-            self.get_topic_aggregates(collection)
-        )
+        if "most_important_words" not in self.aggregates:
+            self.aggregates.update(
+                self.get_topic_aggregates(collection)
+            )
+        self.save()
         log.info("Aggregating entities")
-        self.aggregates.update(
-            self.get_entity_aggregates(collection)
-        )
+        if "entities" not in self.aggregates:
+            self.aggregates.update(
+                self.get_entity_aggregates(collection)
+            )
+        self.save()
 
     def get_source_and_author_aggregates(self, collection):
         sources = set()
