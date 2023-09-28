@@ -47,6 +47,7 @@ class DutchParlementRecordSearch(HttpResource):
 
     def variables(self, *args):
         return {
+            "url": [],
             "topic": args[0],
             "date_range": args[1:]
         }
