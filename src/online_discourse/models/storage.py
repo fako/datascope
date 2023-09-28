@@ -6,6 +6,8 @@ from datagrowth.datatypes import CollectionBase, DocumentCollectionMixin, Docume
 
 class Collection(DocumentCollectionMixin, CollectionBase):
 
+    dataset_version = None  # prevents having to declare a DatasetVersion model
+
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)
     community_id = models.PositiveIntegerField()
@@ -20,6 +22,8 @@ class Collection(DocumentCollectionMixin, CollectionBase):
 
 
 class Document(DocumentBase):
+
+    dataset_version = None  # prevents having to declare a DatasetVersion model
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)
