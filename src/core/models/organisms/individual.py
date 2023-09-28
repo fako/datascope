@@ -8,6 +8,8 @@ from datagrowth.datatypes import DocumentBase
 
 class Individual(DocumentBase):
 
+    dataset_version = None  # prevents having to declare a DatasetVersion model
+
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)
     community_id = models.PositiveIntegerField()
