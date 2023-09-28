@@ -1,2 +1,3 @@
 from .dutch_parliament.community import DutchParliamentarySeatingTranscriptsCommunity
-from .dutch_parliament.sources import OfficialAnnouncementsNetherlands, OfficialAnnouncementsDocumentNetherlands
+from .dutch_parliament.sources.legacy import OfficialAnnouncementsNetherlands, OfficialAnnouncementsDocumentNetherlands
+from .dutch_parliament.sources.records import DutchParlementRecordSearch, DutchParlementRecord
