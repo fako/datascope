@@ -1,6 +1,6 @@
 -r minimal.txt
 
-uwsgi==2.0.21
+uwsgi==2.0.22
 psycopg2-binary==2.8.5
 spacy==2.3.8
 spacy-arguing-lexicon==0.0.3
