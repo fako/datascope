@@ -1,9 +1,9 @@
 -r minimal.txt
 
-uwsgi==2.0.21
-psycopg2-binary==2.8.5
+uwsgi==2.0.24
+psycopg2-binary==2.9.9
 spacy==2.3.8
 spacy-arguing-lexicon==0.0.3
 
 # Datagrowth
-datagrowth==0.19.1
+datagrowth==0.19.8

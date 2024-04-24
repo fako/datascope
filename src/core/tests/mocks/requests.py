@@ -37,7 +37,7 @@ def prepare_request(request):
     return requests.Session().prepare_request(request)
 
 
-def return_response(prepared_request, proxies, verify, timeout):
+def return_response(prepared_request, proxies, verify, timeout, allow_redirects):
     if "404" in prepared_request.url:
         return not_found_response
     elif "500" in prepared_request.url:

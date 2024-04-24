@@ -36,7 +36,7 @@ DATAGROWTH_DEFAULT_CONFIGURATION = {
     "name_namespace_configuration": "namespace configuration",
     "global_global_configuration": "global configuration",
     "global_asynchronous": True,
-    "global_async": True,
+    "global_allow_redirects": True,
     "global_user_agent": "DataGrowth (test)",
     "global_token": "",
     "global_purge_immediately": False,

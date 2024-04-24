@@ -1,7 +1,7 @@
 -r minimal.txt
 
 # Extended production dependencies
-psycopg2-binary==2.8.5
+psycopg2-binary==2.9.9
 spacy==2.3.8
 spacy-arguing-lexicon==0.0.3
 
@@ -10,7 +10,7 @@ django-extensions==1.9.0
 Sphinx==1.3.1
 sphinx-rtd-theme==0.1.8
 pipdeptree==0.10.1
-docker-compose==1.27.4
+fabric==3.2.2
 
 # SpaCy language models
 https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-2.3.0/en_core_web_lg-2.3.0.tar.gz
