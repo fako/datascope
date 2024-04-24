@@ -38,4 +38,4 @@ sentry-sdk==1.44.1
 ipdb==0.13.13
 ipython==8.22.2
 django-debug-toolbar==3.2.1
-wheel==0.38.1
+wheel==0.43.0
