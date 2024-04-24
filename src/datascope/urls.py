@@ -11,8 +11,6 @@ from datascope import views
 from core import urls as core_patterns
 from apps.views import webapp
 from visual_translations import urls as visual_translations_patterns
-from future_fashion import urls as future_fashion_urls
-from future_fashion.urls import mediapatterns
 from wiki_scope import urls as wiki_scope_patterns
 from online_discourse import urls as online_discourse_urls
 
@@ -25,7 +23,6 @@ admin.autodiscover()
 #############################################
 
 datagrowth_patterns = [
-    url(r'^future-fashion/', include(future_fashion_urls)),
     url(r'^discourse-search/', include(online_discourse_urls)),
     # TODO: use stricter URLs with more prefixes here
     url(r'', include(core_patterns)),
@@ -60,7 +57,6 @@ urlpatterns += i18n_patterns(
 #############################################
 
 if settings.DEBUG:
-    urlpatterns += mediapatterns
     urlpatterns += [
         url(r'^media/(?P<path>.*)$', static.serve,
             {'document_root': settings.MEDIA_ROOT, 'show_indexes': True }),
