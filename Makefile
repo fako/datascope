@@ -16,6 +16,3 @@ start-celery:
 
 start-postgres:
 	psql -h localhost -U postgres -d postgres
-
-test:
-	cd src && ./manage.py test --settings=datascope.settings_test $(filter)
