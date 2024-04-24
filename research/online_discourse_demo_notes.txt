@@ -1,0 +1,17 @@
+Death penalty setup:
+https://github.com/fako/datascope/blob/master/src/online_discourse/discourse/configurations/en/death_penalty.py
+
+Death penalty result:
+https://debatkijker.nl/app/#/
+
+Bryan Stevenson: https://en.wikipedia.org/wiki/Bryan_Stevenson
+Antonin Scalia: https://en.wikipedia.org/wiki/Antonin_Scalia
+
+Death penalty final product:
+https://debatkijker.nl/static/apps/discourse-scope-promo/visualisations/doodstraf.187767252ffc.pdf
+
+ChatGPT and abortion:
+stance_classification
+
+Kialo:
+https://www.kialo.com/
