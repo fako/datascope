@@ -9,7 +9,7 @@ def get_es_client(silent=False):
     """
     es_client = Elasticsearch(
         [settings.ELASTIC_SEARCH_HOST],
-        http_auth=("elastic", settings.ELASTIC_SEARCH_PASSWORD),
+        basic_auth=("elastic", settings.ELASTIC_SEARCH_PASSWORD),
         http_compress=True,
     )
     # test if it works

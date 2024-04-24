@@ -361,7 +361,7 @@ class TestNumericFeaturesFrame(TestCase):
         self.frame.features = None
         self.frame.reset(content=self.get_extra_iterator)
         self.assertEqual(self.frame.content.__name__, self.get_extra_iterator.__name__)  # TODO: better equality test
-        assert_frame_equal(self.frame.data, pd.DataFrame(dtype=np.float), check_like=True)
+        assert_frame_equal(self.frame.data, pd.DataFrame(dtype=float), check_like=True)
 
     def test_clean_params(self):
         test_params = {

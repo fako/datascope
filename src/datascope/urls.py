@@ -1,4 +1,4 @@
-from django.conf.urls import include, url
+from django.conf.urls import include
 from django.urls import path, re_path
 from django.conf import settings
 from django.contrib import admin
@@ -23,12 +23,12 @@ admin.autodiscover()
 #############################################
 
 datagrowth_patterns = [
-    url(r'^discourse-search/', include(online_discourse_urls)),
+    re_path(r'^discourse-search/', include(online_discourse_urls)),
     # TODO: use stricter URLs with more prefixes here
-    url(r'', include(core_patterns)),
-    url(r'', include(wiki_scope_patterns)),
-    url(r'', include(visual_translations_patterns)),
-    url(r'^question/$', views.question, name="datascope-question")
+    re_path(r'', include(core_patterns)),
+    re_path(r'', include(wiki_scope_patterns)),
+    re_path(r'', include(visual_translations_patterns)),
+    re_path(r'^question/$', views.question, name="datascope-question")
 ]
 
 
@@ -37,11 +37,11 @@ datagrowth_patterns = [
 #############################################
 
 urlpatterns = [
-    url(r'^api/v1/?$', views.index, name="datascope-index"),
-    url(r'^api/v1/auth/token/?$', rest_views.obtain_auth_token),
-    url(r'^api/v1/', include((datagrowth_patterns, "v1",))),
-    url(r'^admin/', admin.site.urls),
-    url(r'^health/?$', views.health_check),
+    re_path(r'^api/v1/?$', views.index, name="datascope-index"),
+    re_path(r'^api/v1/auth/token/?$', rest_views.obtain_auth_token),
+    re_path(r'^api/v1/', include((datagrowth_patterns, "v1",))),
+    re_path(r'^admin/', admin.site.urls),
+    re_path(r'^health/?$', views.health_check),
     path("discourse-scope-promo/", webapp, {"path": ""}, name='discourse-scope-promo'),
     re_path('^discourse-scope/?(?P<path>.*)?', webapp, name='discourse-scope'),
     re_path("globe-scope/?(?P<path>.*)?", webapp, {"path": ""}, name='globe-scope'),
@@ -58,13 +58,13 @@ urlpatterns += i18n_patterns(
 
 if settings.DEBUG:
     urlpatterns += [
-        url(r'^media/(?P<path>.*)$', static.serve,
+        re_path(r'^media/(?P<path>.*)$', static.serve,
             {'document_root': settings.MEDIA_ROOT, 'show_indexes': True }),
-        url(r'^static/(?P<path>.*)$', static.serve,
+        re_path(r'^static/(?P<path>.*)$', static.serve,
             {'document_root': settings.STATIC_ROOT})
     ]
 if settings.DEBUG_TOOLBAR:
     import debug_toolbar
     urlpatterns = [
-        url(r'^__debug__/', include(debug_toolbar.urls)),
+        re_path(r'^__debug__/', include(debug_toolbar.urls)),
     ] + urlpatterns

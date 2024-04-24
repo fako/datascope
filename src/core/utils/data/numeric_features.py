@@ -154,7 +154,7 @@ class NumericFeaturesFrame(object):
         """
         assert content is not None or features is not None, \
             "Either content or features should be given to reset the numeric frame"
-        self.data = pd.DataFrame(dtype=np.float)
+        self.data = pd.DataFrame(dtype=float)
         if content is not None:
             self.content = content
         if features is not None:
