@@ -4,7 +4,7 @@ from collections import OrderedDict
 from core.models.organisms import Community, Collective, Individual
 
 
-class DutchParliamentarySeatingTranscriptsCommunity(Community):
+class DutchParliamentarySeatingTranscriptsCommunity(object):
 
     COMMUNITY_SPIRIT = OrderedDict([
         ("index", {

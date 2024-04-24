@@ -3,7 +3,7 @@ from urlobject import URLObject
 from core.models.resources.http import HttpResource, URLResource
 
 
-class OfficialAnnouncementsNetherlands(HttpResource):
+class OfficialAnnouncementsNetherlands(object):
 
     URI_TEMPLATE = "https://zoek.officielebekendmakingen.nl/zoeken/resultaat/?spd={}&epd={}"
 
@@ -64,7 +64,7 @@ class OfficialAnnouncementsNetherlands(HttpResource):
         verbose_name_plural = "Official announcements (Dutch)"
 
 
-class OfficialAnnouncementsDocumentNetherlands(URLResource):
+class OfficialAnnouncementsDocumentNetherlands(object):
 
     class Meta:
         verbose_name = "Official announcements document (Dutch)"
