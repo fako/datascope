@@ -23,8 +23,6 @@ MIGRATION_MODULES = {
     'sources': None,
     'wiki_feed': None,
     'visual_translations': None,
-    'future_fashion': None,
-    'open_data': None,
     'wiki_scope': None,
     'online_discourse': None,
     'nautilus': None,
