@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="nl" >
+<head>
+    <meta charset="utf-8" />
+    <title>{{ app.title }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="description" content="{{ app.description }}">
+
+    <meta property="og:title" content="{{ app.title }}"/>
+    <meta property="og:description" content="{{ app.description }}"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="{{ app.build_absolute_uri() }}"/>
+    <meta property="og:image" content="{{ app.static_image_absolute_uri() }}">
+    <meta property="og:locale" content="nl_NL"/>
+
+    <link href="{{ app.get_app_static('styles/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ app.get_app_static('styles/font-awesome.min.css') }}" rel="stylesheet">
+    <link href="{{ app.get_app_static('styles/style.css') }}" rel="stylesheet" />
+
+</head>
+<body>
+    <!-- navigation panel -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-main">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#home">AI Brainstorm</a>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbar-collapse-main" style="overflow: hidden">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#about">Werkproces</a></li>
+                    <li><a href="#projects">Uitkomsten</a></li>
+                    <li><a href="#information">Voordelen</a></li>
+                    <li><a href="#order">Contact</a></li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+
+    <!-- first section - Home -->
+    <div id="home" class="home">
+        <div class="top-left-box">
+            <h3>Event: 31 mei, 20:00 tot 22:00 in <a href="https://www.google.nl/maps/place/Nautilus+Hall/@52.3708941,4.9654532,16z/data=!3m1!4b1!4m6!3m5!1s0x47c609317cfbc72f:0xeed533e651b8e6ad!8m2!3d52.3708909!4d4.9680281!16s%2Fg%2F11c2lfd8kk?entry=ttu">Nautilus</a> (drankje vanaf 19:30)</h3>
+        </div>
+        <div class="center-box text-vcenter">
+            <h1>AI Brainstorm</h1>
+            <h3>samen de beste toepassingen van AI bedenken</h3>
+        </div>
+    </div>
+    <!-- /first section -->
+    <!-- second section - About -->
+    <div id="about" class="pad-section">
+        <div class="container">
+            <div class="row">
+                <div id="example-image" class="col-sm-6">
+                    <img class="" src="{{ app.get_app_static('images/brainstorm-robot.webp') }}" alt="" />
+                    <p><em>De beste ideeën zijn het resultaat van nauwgezette en voortdurende sociale exploratie - Alex Pentland</em></p>
+                </div>
+                <div class="col-sm-6 text-center">
+                    <h2>AI, daar zouden we iets mee moeten...</h2>
+                    <p>
+                        Natuurlijk kan iedereen inloggen om AI te gebruiken tijdens het werk, maar kan er niet meer dan dat?
+                        Het ene na het andere tech bedrijf rolt indrukwekkende nieuwe technologie uit,
+                        maar voorbeeld toepassingen blijven beperkt tot: "het verbeteren van klantenservice" of "mooie plaatjes maken".
+                    </p>
+                    <br/><br/>
+                    <h2>Koppen bij elkaar</h2>
+                    <p>
+                        Bij een goede brainstorm wisselen wij ideeën uit om tot innovatieve toepassingen te komen.
+                        Organisaties en bedrijven brengen interessante problemen in van de doelgroepen waar zij mee werken.
+                        Techneuten geven aan op welke manier de nieuwe technologieën een bijdrage kunnen leveren aan de oplossingen.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /second section -->
+    <!-- third section - Services -->
+    <div id="projects" class="pad-section">
+        <div class="container">
+            <h2 class="text-center">Uitkomsten van een brainstorm</h2>
+            <p class="text-center">Aan het eind van een brainstorm mag je de volgende soort ideeën verwachten:</p>
+            <div class="row text-center">
+                <div class="col-sm-3 col-xs-6">
+                    <i class="glyphicon glyphicon-ok"> </i>
+                    <h4>Goed idee</h4>
+                    <p>
+                        Dit zijn ideeën die direct in praktijk gebracht kunnen worden via standaard tools of diensten.
+                        Het zijn waardevolle ideeën, maar niet per se innovaties.
+                        Ze gebruiken misschien zelfs geen AI, maar een goed idee is een goed idee!
+                    </p>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <i class="glyphicon glyphicon-wrench"> </i>
+                    <h4>Innovatief idee</h4>
+                    <p>
+                        Deze ideeën gebruiken AI om iets mogelijk te maken wat eerst niet mogelijk was.
+                        Ze zijn waardevol, maar technisch een uitdaging.
+                        Er moet waarschijnlijk een simpel prototype of proof-of-technology gemaakt worden om de haalbaarheid te testen.
+                    </p>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <i class="glyphicon glyphicon-star"> </i>
+                    <h4>Droom</h4>
+                    <p>
+                        Soms hopen we dat een technologie iets kan betekenen, maar is het praktisch niet haalbaar.
+                        Die ideeën blijven voorlopig dromen, maar wie weet waar de technologie over een aantal jaar staat!
+                    </p>
+                </div>
+                <div class="col-sm-3 col-xs-6">
+                    <i class="glyphicon glyphicon-remove"> </i>
+                    <h4>Nachtmerrie</h4>
+                    <p>
+                        Ideeën die leiden tot verlies van banen of juist afdelingen overspoelen met nieuw werk zijn niet wenselijk.
+                        Tijdens de brainstorm houden we ruimte om slechte ideeën af te schieten als een nachtmerrie.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /third section -->
+    <!-- fourth section - Information -->
+    <div id="information" class="pad-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">Concrete startpunten voor innovatie</h2>
+                        </div>
+                        <div class="panel-body">
+                            Het doel van de brainstorm is om voor enkele ideeën duidelijk te krijgen welk probleem een idee wilt oplossen,
+                            welke technologie toegepast kan worden en hoe ingewikkeld/makkelijk dat is voor een organisatie of bedrijf.
+                            Dit is essentiële informatie om scherpe keuzes te maken over welke ideeën wel en niet gerealiseerd gaan worden.
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">Leer beter prompten</h2>
+                        </div>
+                        <div class="panel-body">
+                            Om samen waardevolle ideeën te genereren is het belangrijk dat iedereen een basis begrip krijgt over wat er wel en niet kan met AI.
+                            Deze kennis komt ook van pas in het dagelijks gebruik.
+                            Deelnemers aan de brainstorm zullen dan ook leren betere vragen en instructies te schrijven om het meeste uit AI systemen te halen.
+                            <br/><br/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- /fourth section -->
+    <!-- fifth section -->
+    <div id="order" class="pad-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <h3>AI brainstorm voor organisaties en bedrijven</h3>
+                    <p>
+                        De technologie heeft een spannende sprong gemaakt. Plotseling is er meer mogelijk tegen lagere kosten.
+                        Welke toepassingen AI allemaal heeft, wordt langzaam duidelijk, maar techneuten kunnen die toepassingen niet alleen verzinnen.
+                        Dit moet samen met allerlei partijen uit de samenleving.
+                        Samen brainstormen is een beproefde methode voor het uitwisselen van ideeën en daar komen de beste innovaties uit voort!
+                        Neem dus contact op voor het plannen van een brainstorm met Data Scope.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /fifth section -->
+    <!-- sixth section -->
+    <div id="contact" class="pad-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <h3>Connect via deze media</h3>
+                    <div class="social col-sm-12 text-center">
+                        <p><a href="mailto:fuckoffATfakoberkersDOTnl" onclick="this.href=this.href.replace(/AT/,'&#64;').replace(/DOT/,'&#46;').replace(/fuckoff/,'email')" target="_blank"><i class="fa fa-envelope-square fa-4x"></i></a></p>
+                        <p><a href="https://www.linkedin.com/pub/fako-berkers/13/229/642" target="_blank"><i class="fa fa-linkedin-square fa-4x"></i></a></p>
+                        <p><a href="https://github.com/fako/datascope" target="_blank"><i class="fa fa-github-square fa-4x"></i></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /sixth section -->
+
+    <!-- footer -->
+    <footer>
+        <div class="container">
+            <p class="text-right">Copyright &copy; Data Scope Search {{ datetime.now().strftime("%Y") }}, Fako Berkers</p>
+        </div>
+    </footer>
+    <!-- /footer -->
+
+    <script src="{{ app.get_app_static('scripts/lodash.min.js') }}"></script>
+    <script src="{{ app.get_app_static('scripts/jquery.min.js') }}"></script>
+    <script src="{{ app.get_app_static('scripts/bootstrap.min.js') }}"></script>
+    <!-- Google tag (gtag.js) -->
+    {% if app.tracker %}
+        <script async src="https://www.googletagmanager.com/gtag/js?id={{ app.tracker }}"></script>
+    {% endif %}
+    <script>
+        var hasTracker = {% if app.tracker %}true{% else %}false{% endif %};
+        if(window.location.hostname !== 'localhost' && hasTracker) {
+            window.dataLayer = window.dataLayer || [];
+            function gtag() { dataLayer.push(arguments); }
+            gtag('js', new Date());
+            gtag('config', '{{ app.tracker }}');
+        } else {
+            gtag = function() {}
+        }
+    </script>
+    <!-- End Google tag -->
+    <script src="{{ app.get_app_static('scripts/main.js') }}"></script>
+
+</body>
+</html>

@@ -42,6 +42,8 @@ urlpatterns = [
     re_path(r'^api/v1/', include((datagrowth_patterns, "v1",))),
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^health/?$', views.health_check),
+    path("ai-brainstorm/", webapp, {"path": ""}, name='ai-brainstorm'),
+    path("about/", webapp, {"path": ""}, name='datascope-about'),
     path("discourse-scope-promo/", webapp, {"path": ""}, name='discourse-scope-promo'),
     re_path('^discourse-scope/?(?P<path>.*)?', webapp, name='discourse-scope'),
     re_path("globe-scope/?(?P<path>.*)?", webapp, {"path": ""}, name='globe-scope'),
