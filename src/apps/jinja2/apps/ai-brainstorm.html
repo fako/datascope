@@ -10,7 +10,7 @@
     <meta property="og:description" content="{{ app.description }}"/>
     <meta property="og:type" content="website"/>
     <meta property="og:url" content="{{ app.build_absolute_uri() }}"/>
-    <meta property="og:image" content="{{ app.static_image_absolute_uri() }}">
+    <meta property="og:image:secure_url" content="https:{{ app.static_image_absolute_uri() }}">
     <meta property="og:locale" content="nl_NL"/>
 
     <link href="{{ app.get_app_static('styles/bootstrap.min.css') }}" rel="stylesheet">
