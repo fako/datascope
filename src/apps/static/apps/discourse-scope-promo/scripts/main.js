@@ -13,7 +13,7 @@ $(function() {
             var target = $(this.hash);
             target = target.length ? target : $('[name=' + this.hash.slice(1) +']');
             if (target.length) {
-                ga('send', 'pageview', this.hash);
+                gtag('event', 'page_view', { 'page_path': this.hash });
                 $('#navbar-collapse-main').collapse('hide');
                 $('html,body').animate({
                     scrollTop: target.offset().top - parseInt(target.css('padding-top'))
@@ -25,11 +25,19 @@ $(function() {
     });
 
     $('a.download').click(function(event) {
-        ga('send', 'event', 'Download', event.currentTarget.attributes.href.value)
+        gtag('event', 'social_click', {  // "social_click" is a custom event name
+            'event_category': 'Download',  // Categorize this event
+            'event_label': event.currentTarget.getAttribute('href'),  // Use the href as the label
+            'transport_type': 'beacon'  // Ensures the event is sent before the page unloads
+        });
     });
 
     $('.social a').click(function(event) {
-        ga('send', 'event', 'Contact', event.currentTarget.attributes.href.value)
+        gtag('event', 'social_click', {  // "social_click" is a custom event name
+            'event_category': 'Contact',  // Categorize this event
+            'event_label': event.currentTarget.getAttribute('href'),  // Use the href as the label
+            'transport_type': 'beacon'  // Ensures the event is sent before the page unloads
+        });
     });
 
     /*****************************
@@ -102,11 +110,19 @@ $(function() {
         $.post("/api/v1/discourse-search/order/", data, null, "json")
             .done(function() {
                 alert("Bedankt voor de aanvraag we nemen spoedig contact met je op :)");
-                ga('send', 'event', 'Order', 'done');
+                gtag('event', 'social_click', {  // "social_click" is a custom event name
+                    'event_category': 'Order',  // Categorize this event
+                    'event_label': 'done',
+                    'transport_type': 'beacon'  // Ensures the event is sent before the page unloads
+                });
             })
             .fail(function(){
                 alert("Er is helaas iets mis gegaan met je aanvraag. Probeer het straks alsjeblieft nog een keer!");
-                ga('send', 'event', 'Order', 'fail');
+                gtag('event', 'social_click', {  // "social_click" is a custom event name
+                    'event_category': 'Order',  // Categorize this event
+                    'event_label': 'fail',
+                    'transport_type': 'beacon'  // Ensures the event is sent before the page unloads
+                });
             });
 
         event.preventDefault();
