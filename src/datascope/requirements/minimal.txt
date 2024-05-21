@@ -7,7 +7,7 @@ celery[redis]
 git+https://github.com/fako/django-json-field.git
 djangorestframework==3.15.1
 django-cors-headers==3.14.0
-requests==2.31.0
+requests==2.32.0
 jsonschema==2.6.0
 beautifulsoup4==4.12.3
 lxml==4.9.4
