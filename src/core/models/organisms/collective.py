@@ -4,11 +4,10 @@ from django.contrib.contenttypes.fields import GenericForeignKey, ContentType
 from django.urls import reverse
 
 from datagrowth.datatypes import CollectionBase
+from core.models.organisms.backward_compatability import SupressDatasetVersionFeatures
 
 
-class Collective(CollectionBase):
-
-    dataset_version = None  # prevents having to declare a DatasetVersion model
+class Collective(SupressDatasetVersionFeatures, CollectionBase):
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)

@@ -1,5 +1,3 @@
-import warnings
-
 from itertools import groupby
 from collections import OrderedDict
 from collections.abc import Iterator
@@ -10,7 +8,7 @@ from django.db import models
 from django.db.models.query import QuerySet
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation, ContentType
 
-from datagrowth.datatypes.documents.db.base import DataStorage
+from datagrowth.datatypes.storage import DataStorage
 from datagrowth.datatypes import CollectionBase
 from datagrowth.configuration import ConfigurationField
 from core.models.organisms.states import CommunityState, COMMUNITY_STATE_CHOICES
@@ -108,12 +106,6 @@ class Community(models.Model, ProcessorMixin):
         scope_keys.update(public_config_keys)
         # Actual filtering of input
         return {key: value for key, value in kwargs.items() if key.strip("$") in scope_keys}
-
-    @classmethod
-    def get_configuration_from_input(cls, *args, **kwargs):
-        warnings.warn("Community.get_configuration_from_input is deprecated in favor of "
-                      "Community.filter_growth_configuration or Community.filter_scope_configuration")
-        return cls.filter_growth_configuration(*args, **kwargs)
 
     def call_finish_callback(self, phase, out, errors):
         callback_name = "finish_" + phase

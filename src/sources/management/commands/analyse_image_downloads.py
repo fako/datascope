@@ -1,7 +1,6 @@
 import os
 import pandas as pd
 import logging
-from tqdm import tqdm
 
 from django.core.management.base import BaseCommand
 from django.apps import apps

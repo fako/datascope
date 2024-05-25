@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd ..
-python manage.py generate_eu_visual_translations -a immigrants -d
+python manage.py generate_eu_visual_translations -a immigrants --delete
 python manage.py generate_eu_visual_translations -a privatization
 python manage.py generate_eu_visual_translations -a peace
 python manage.py generate_eu_visual_translations -a cowshed

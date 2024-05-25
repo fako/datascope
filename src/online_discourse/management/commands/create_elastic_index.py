@@ -14,12 +14,14 @@ log = logging.getLogger("datagrowth")
 
 class Command(DatasetCommand):
 
+    cast_as_community = True
+
     def add_arguments(self, parser):
         super().add_arguments(parser)
         parser.add_argument('-r', '--recreate', action="store_true")
         parser.add_argument('-p', '--promote', action="store_true")
 
-    def handle_dataset(self, dataset, *args, **options):
+    def handle_community(self, dataset, *args, **options):
 
         configuration_name = next(arg for arg in dataset.signature.split("&") if "=" not in arg)
         configuration = getattr(configurations, configuration_name)
