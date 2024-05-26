@@ -16,4 +16,7 @@ python manage.py generate_eu_visual_translations -a virus
 python manage.py generate_eu_visual_translations -a vaccine
 python manage.py generate_eu_visual_translations -a corona
 python manage.py generate_eu_visual_translations -a brexit
+python manage.py generate_eu_visual_translations -a ukraine
+python manage.py generate_eu_visual_translations -a war
+python manage.py generate_eu_visual_translations -a inflation
 cd -
