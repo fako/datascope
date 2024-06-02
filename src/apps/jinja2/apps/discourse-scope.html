@@ -29,7 +29,6 @@
         var STATICS_PREFIX = "{{ STATICS_PREFIX }}";
     </script>
 
-    {{ render_bundle('chunk-vendors', 'css', config=BUNDLE) }}
     {{ render_bundle('app', 'css', config=BUNDLE) }}
 
 </head>
@@ -69,7 +68,6 @@
     </script>
     <!-- End Google tag -->
 
-    {{ render_bundle('chunk-vendors', 'js', config=BUNDLE) }}
     {{ render_bundle('app', 'js', config=BUNDLE) }}
 
 </body>
