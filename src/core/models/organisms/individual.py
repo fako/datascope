@@ -4,9 +4,12 @@ from django.urls import reverse
 
 
 from datagrowth.datatypes import DocumentBase
+from core.models.organisms.backward_compatability import SupressDatasetVersionFeatures
 
 
-class Individual(DocumentBase):
+class Individual(SupressDatasetVersionFeatures, DocumentBase):
+
+    dataset_version = None  # prevents having to declare a DatasetVersion model
 
     community = GenericForeignKey(ct_field="community_type", fk_field="community_id")
     community_type = models.ForeignKey(ContentType, related_name="+", on_delete=models.PROTECT)

@@ -1,11 +1,11 @@
 import json
 
 from datagrowth.management.base import DatasetCommand
-from core.utils.configuration import DecodeConfigAction
 
 
 class Command(DatasetCommand):
 
+    cast_as_community = True
     dataset_model = "visual_translations.VisualTranslationsEUCommunity"
 
     def add_arguments(self, parser):
@@ -13,7 +13,7 @@ class Command(DatasetCommand):
         parser.add_argument('-l', '--country', type=str, nargs="?", default="")
         parser.add_argument('-w', '--word', type=str, nargs="?", default="")
 
-    def handle_dataset(self, dataset, *arguments, **options):
+    def handle_community(self, dataset, *arguments, **options):
         word_encoded = json.dumps(options["word"])
         qs = dataset.documents.filter(properties__contains="word\": {}".format(word_encoded))
         if options["country"]:

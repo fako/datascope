@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from unittest.mock import Mock, patch
 
-from datagrowth.datatypes.documents.db.base import DataStorage
+from datagrowth.datatypes.storage import DataStorage
 from core.models.organisms import Individual, Collective, Growth, Community
 from core.models.organisms.community import CommunityState
 from core.models.organisms.growth import GrowthState

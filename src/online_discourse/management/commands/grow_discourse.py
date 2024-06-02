@@ -11,6 +11,7 @@ log = logging.getLogger("datascope")
 
 class Command(GrowCommand):
 
+    cast_as_community = True
     dataset_model = "online_discourse.DiscourseSearchCommunity"
 
     def add_arguments(self, parser):
