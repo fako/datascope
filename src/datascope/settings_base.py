@@ -172,14 +172,23 @@ LOCALE_PATHS = (
 # If you set this to False, Django will make some optimizations so as not
 # to load the internationalization machinery.
 USE_I18N = True
-
-# If you set this to False, Django will not format dates, numbers and
-# calendars according to the current locale.
-USE_L10N = True
 DATETIME_FORMAT = 'd-m-y H:i:s/u'  # default would get overridden by L18N
 
 # If you set this to False, Django will not use timezone-aware datetimes.
 USE_TZ = False
+
+
+# Storages
+# https://docs.djangoproject.com/en/4.2/ref/settings/#storages
+
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
 
 # Static files (CSS, JavaScript, Images)
@@ -187,7 +196,6 @@ USE_TZ = False
 
 STATIC_URL = URL_TO_PROJECT + 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'datascope', 'statics')
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 WHITENOISE_INDEX_FILE = 'index.html'
 MEDIA_URL = URL_TO_PROJECT + 'media/'
 MEDIA_ROOT = os.path.join(DATAGROWTH_DATA_DIR, "media")
