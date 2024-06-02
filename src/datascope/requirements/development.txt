@@ -2,7 +2,7 @@
 
 # Extended production dependencies
 psycopg2-binary==2.9.9
-spacy==2.3.8
+spacy==2.3.9
 spacy-arguing-lexicon==0.0.3
 
 # Debugging and development

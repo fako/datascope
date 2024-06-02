@@ -26,7 +26,9 @@ Activate the environment where you want to install Data Scope into.
 Then go into the repo directory and run the following for a local installation.
 
 ```bash
-pip install -r datascope/environments/development.txt
+python3 -m venv venv --copies --upgrade-deps
+source activate.sh
+pip install -r src/datascope/requirements/development.txt
 ```
 
 After this you need to set up the services used by Datascope through Docker. You can run:
