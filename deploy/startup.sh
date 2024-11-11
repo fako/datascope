@@ -35,8 +35,8 @@ mkdir -p data
 chown ubuntu:ubuntu -R data
 cp server/datascope-cron /etc/cron.d/
 
-gcloud secrets versions access 5 --secret=datascope-certificate-key > server/nginx/certificates/data-scope.key
-gcloud secrets versions access 4 --secret=debatkijker-certificate-key > server/nginx/certificates/debatkijker.key
+gcloud secrets versions access 6 --secret=datascope-certificate-key > server/nginx/certificates/data-scope.key
+gcloud secrets versions access 5 --secret=debatkijker-certificate-key > server/nginx/certificates/debatkijker.key
 
 
 ############################
