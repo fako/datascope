@@ -1,4 +1,4 @@
-django==4.2.11
+django==4.2.15
 whitenoise==6.6.0
 sqlparse==0.5.0  # raw sql queries
 urlobject==2.4.3
